@@ -17,7 +17,7 @@ The project follows a Clean Architecture Layout.
 ### Infrastructure
 
 `GameControllerForZwift.GamepadWinRT` leverages Windows Runtime APIs to capture XInput controllers.
-`GameControllerForZwift.ZwiftWiFi` presents this project as a network-based controller for Zwift to talk to.
+`GameControllerForZwift.ZwiftNetwork` presents this project as a network-based controller for Zwift to talk to.
 
 ### Presentation
 

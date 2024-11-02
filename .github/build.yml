@@ -1,0 +1,82 @@
+name: CI/CD for WPF .NET C# Project
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' 
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build solution
+      run: dotnet build --configuration Release
+
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build --verbosity normal
+
+  deploy:
+    needs: build-and-test
+    runs-on: windows-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x' # Adjust based on your project's .NET version
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build solution
+      run: dotnet build --configuration Release
+
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build --verbosity normal
+
+    - name: Extract version from .csproj 
+      id: get_version 
+      run: | 
+        VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj) echo "##[set-output name=VERSION;]$VERSION"
+
+    - name: Publish artifacts
+      run: dotnet publish --configuration Release --output ./artifacts
+
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: 'v${{ steps.get_version.outputs.VERSION }}' 
+        release_name: 'Release v${{ steps.get_version.outputs.VERSION }}' 
+        draft: false 
+        prerelease: false
+
+    - name: Upload Release Assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts
+        asset_name: artifacts.zip
+        asset_content_type: application/zip
