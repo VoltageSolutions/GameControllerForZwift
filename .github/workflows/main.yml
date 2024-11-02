@@ -55,8 +55,10 @@ jobs:
 
     - name: Extract version from .csproj 
       id: get_version 
-      run: | 
-        VERSION=$(grep -oPm1 "(?<=<Version>)[^<]+" src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj) echo "##[set-output name=VERSION;]$VERSION"
+      shell: pwsh 
+      run:  | 
+        $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
+        echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
     - name: Publish artifacts
       run: dotnet publish --configuration Release --output ./artifacts
@@ -66,8 +68,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: 'v${{ steps.get_version.outputs.VERSION }}' 
-        release_name: 'Release v${{ steps.get_version.outputs.VERSION }}' 
+        tag_name: 'v${{ env.VERSION }}' 
+        release_name: 'Release v${{ env.VERSION }}' 
         draft: false 
         prerelease: false
 
