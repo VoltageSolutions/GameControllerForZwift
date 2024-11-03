@@ -22,4 +22,5 @@ The project follows a Clean Architecture Layout.
 ### Presentation
 
 `GameControllerForZwift.UI.WPF` contains ViewModels and any custom controls.
+
 `GameControllerForZwift.WPF` is a WPF executable application.
