@@ -38,9 +38,12 @@ jobs:
         $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
         echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-    - name: Publish artifacts
-      run: dotnet publish --configuration Release --output ./artifacts
-
+    - name: Publish artifacts 
+      run: | 
+        mkdir ./artifacts 
+        Copy-Item -Recurse -Path src/Presentation/GameControllerForZwift.WPF/bin/Release/net8.0-windows10.0.17763.0/* -Destination ./artifacts/ 
+        Compress-Archive -Path ./artifacts/* -DestinationPath ./artifacts/artifacts.zip
+        
     - name: Create GitHub Release
       id: create_release
       uses: actions/create-release@v1
