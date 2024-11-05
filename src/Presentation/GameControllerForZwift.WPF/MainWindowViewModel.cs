@@ -10,6 +10,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -96,7 +97,16 @@ namespace GameControllerForZwift.WPF
             //dostuff(dataIntegrator, cts.Token);
             ReadDataCommand = new RelayCommand(ReadData);
             RefreshListCommand = new RelayCommand(RefreshList);
+            CheckQueueCommand = new RelayCommand(CheckQueue);
+
+
+            _inputService = new GamepadService();
+            _dataIntegrator = new DataIntegrator(_inputService);
         }
+
+        private IInputService _inputService;
+        private DataIntegrator _dataIntegrator;
+
 
         // Command to be bound to the Button
         public ICommand ReadDataCommand { get; }
@@ -104,14 +114,13 @@ namespace GameControllerForZwift.WPF
         // Method to execute when the button is clicked
         private void ReadData()
         {
-            IInputService inputService = new GamepadService();
-            DataIntegrator dataIntegrator = new DataIntegrator(inputService);
-
-            var controllerData = dataIntegrator.ReadData();
+            var controllerData = _dataIntegrator.ReadData();
 
 
             bool aIsPressed = (controllerData.Buttons & ControllerButtons.A) != ControllerButtons.None;
             ColorHex = aIsPressed ? Brushes.Black : Brushes.Red;
+
+            _dataIntegrator.StartProcessing();
         }
 
         public ICommand RefreshListCommand { get; }
@@ -119,10 +128,31 @@ namespace GameControllerForZwift.WPF
         // Method to execute when the button is clicked
         private void RefreshList()
         {
-            IInputService inputService = new GamepadService();
-            DataIntegrator dataIntegrator = new DataIntegrator(inputService);
-
-            Controllers = inputService.GetControllers().ToList();
+            Controllers = _inputService.GetControllers().ToList();
         }
+
+        public ICommand CheckQueueCommand { get; }
+
+        // Method to execute when the button is clicked
+        private void CheckQueue()
+        {
+            List<ControllerData> tempList = new List<ControllerData>();
+            foreach (ControllerData data in _dataIntegrator.DataQueue)
+                tempList.Add(data);
+
+            ReadValues = tempList;
+            //var count = _dataIntegrator.DataQueue.Count;
+
+            //MessageBox.Show(string.Format("There are {0} entries in the queue", count.ToString()), "Check!");
+        }
+
+        private List<ControllerData> _readValues;
+
+        public List<ControllerData> ReadValues
+        {
+            get { return _readValues; }
+            set { _readValues = value; NotifyPropertyChanged(); }
+        }
+
     }
 }

@@ -34,7 +34,13 @@
                         <Button Grid.Column="2" Content="Read Data" Command="{Binding ReadDataCommand}"/>
                     </Grid>
                 </GroupBox>
-                
+
+                <GroupBox Header="Debug">
+
+                    <Button Content="Check Items in Queue" Command="{Binding CheckQueueCommand}"/>
+
+                </GroupBox>
+
                 <GroupBox Header="Buttons">
                     <StackPanel Orientation="Vertical">
                         <TextBlock Text="A" Foreground="{Binding ColorHex, UpdateSourceTrigger=PropertyChanged}"/>
@@ -52,5 +58,7 @@
             </StackPanel>
             
         </Grid>
+
+        <DataGrid Grid.Row="1" ItemsSource="{Binding ReadValues}" AutoGenerateColumns="True"/>
     </Grid>
 </UserControl>

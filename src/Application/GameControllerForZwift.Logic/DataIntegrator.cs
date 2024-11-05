@@ -22,8 +22,8 @@ namespace GameControllerForZwift.Logic
 
         public void StartProcessing()
         {
-            ReadDataAsync(_cts.Token);
-            //_ = Task.Run(() => ReadDataAsync(_cts.Token));
+            //ReadDataAsync(_cts.Token);
+            _ = Task.Run(() => ReadDataAsync(_cts.Token));
             //_ = Task.Run(() => WriteDataAsync(_cts.Token));
         }
 
@@ -42,23 +42,27 @@ namespace GameControllerForZwift.Logic
         {
             // for testing only
             var controllers = _inputService.GetControllers();
-            IController controller = controllers.First();
 
-            if (controller != null)
+            if (controllers.Any())
             {
+                IController controller = controllers.First();
 
-                while (!cancellationToken.IsCancellationRequested)
+                if (controller != null)
                 {
-                    var data = controller.ReadData();
 
-                    // Add data to the queue, discarding the oldest if the queue is full
-                    if (_dataQueue.Count >= _maxQueueSize)
+                    while (!cancellationToken.IsCancellationRequested)
                     {
-                        _dataQueue.TryDequeue(out _); // Remove the oldest data
-                    }
-                    _dataQueue.Enqueue(data);
+                        var data = controller.ReadData();
 
-                    await Task.Delay(50, cancellationToken);
+                        // Add data to the queue, discarding the oldest if the queue is full
+                        if (_dataQueue.Count >= _maxQueueSize)
+                        {
+                            _dataQueue.TryDequeue(out _); // Remove the oldest data
+                        }
+                        _dataQueue.Enqueue(data);
+
+                        await Task.Delay(500, cancellationToken);
+                    }
                 }
             }
         }
