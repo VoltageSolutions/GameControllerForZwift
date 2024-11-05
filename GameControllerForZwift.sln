@@ -35,13 +35,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.UI.W
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.GamepadWinRT.Tests", "tests\GameControllerForZwift.GamepadWinRT.Tests\GameControllerForZwift.GamepadWinRT.Tests.csproj", "{A11FBB6A-362B-4FDD-A227-243C370386A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.ZwiftNetwork.Tests", "tests\GameControllerForZwift.ZwiftNetwork.Tests\GameControllerForZwift.ZwiftNetwork.Tests.csproj", "{C0877BD6-BB6A-4909-A29B-874759A43E18}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.ZwiftNetwork", "src\Infrastructure\GameControllerForZwift.ZwiftNetwork\GameControllerForZwift.ZwiftNetwork.csproj", "{43C246EE-BE88-4E85-9099-5C5AF1AEC937}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Logic", "src\Application\GameControllerForZwift.Logic\GameControllerForZwift.Logic.csproj", "{95003E82-1C12-4CB3-90EF-8E31DDE32038}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.GamepadSDL3", "src\Infrastructure\GameControllerForZwift.GamepadSDL3\GameControllerForZwift.GamepadSDL3.csproj", "{A55AA7E1-4411-468D-AE1C-A386620D9BB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Keyboard", "src\Infrastructure\GameControllerForZwift.Keyboard\GameControllerForZwift.Keyboard.csproj", "{33614972-B93F-4DC9-8A75-152DCE9B7286}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,22 +73,14 @@ Global
 		{A11FBB6A-362B-4FDD-A227-243C370386A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A11FBB6A-362B-4FDD-A227-243C370386A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A11FBB6A-362B-4FDD-A227-243C370386A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C0877BD6-BB6A-4909-A29B-874759A43E18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C0877BD6-BB6A-4909-A29B-874759A43E18}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C0877BD6-BB6A-4909-A29B-874759A43E18}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C0877BD6-BB6A-4909-A29B-874759A43E18}.Release|Any CPU.Build.0 = Release|Any CPU
-		{43C246EE-BE88-4E85-9099-5C5AF1AEC937}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{43C246EE-BE88-4E85-9099-5C5AF1AEC937}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{43C246EE-BE88-4E85-9099-5C5AF1AEC937}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{43C246EE-BE88-4E85-9099-5C5AF1AEC937}.Release|Any CPU.Build.0 = Release|Any CPU
 		{95003E82-1C12-4CB3-90EF-8E31DDE32038}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{95003E82-1C12-4CB3-90EF-8E31DDE32038}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95003E82-1C12-4CB3-90EF-8E31DDE32038}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{95003E82-1C12-4CB3-90EF-8E31DDE32038}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A55AA7E1-4411-468D-AE1C-A386620D9BB8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A55AA7E1-4411-468D-AE1C-A386620D9BB8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A55AA7E1-4411-468D-AE1C-A386620D9BB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A55AA7E1-4411-468D-AE1C-A386620D9BB8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33614972-B93F-4DC9-8A75-152DCE9B7286}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33614972-B93F-4DC9-8A75-152DCE9B7286}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33614972-B93F-4DC9-8A75-152DCE9B7286}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33614972-B93F-4DC9-8A75-152DCE9B7286}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,10 +100,8 @@ Global
 		{E88D86BC-F064-4871-A257-7E8078F15C38} = {56554698-C496-4258-87D4-738201ABA9A2}
 		{7B0C849C-17B4-46D6-9040-CA69E0CA094C} = {7CBC7254-F8CE-46A5-B9E3-FB536D38BDAC}
 		{A11FBB6A-362B-4FDD-A227-243C370386A0} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
-		{C0877BD6-BB6A-4909-A29B-874759A43E18} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
-		{43C246EE-BE88-4E85-9099-5C5AF1AEC937} = {A4B699F3-1B47-4622-A16B-B87D0980157D}
 		{95003E82-1C12-4CB3-90EF-8E31DDE32038} = {D2D79B52-88D9-4EC0-97E4-991A34015403}
-		{A55AA7E1-4411-468D-AE1C-A386620D9BB8} = {A4B699F3-1B47-4622-A16B-B87D0980157D}
+		{33614972-B93F-4DC9-8A75-152DCE9B7286} = {A4B699F3-1B47-4622-A16B-B87D0980157D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF0E7AD0-FDA6-4F93-B78A-B07984BD96C9}

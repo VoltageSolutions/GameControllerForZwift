@@ -26,6 +26,15 @@ namespace GameControllerForZwift.WPF
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName)); 
         }
 
+        private ZwiftFunctionSelectorViewModel _firstFunctionVM;
+
+        public ZwiftFunctionSelectorViewModel FirstFunctionVM
+        {
+            get { return _firstFunctionVM; }
+            set { _firstFunctionVM = value; }
+        }
+
+
         private Brush _colorHex = Brushes.Red;
 
         public Brush ColorHex
@@ -102,6 +111,8 @@ namespace GameControllerForZwift.WPF
 
             _inputService = new GamepadService();
             _dataIntegrator = new DataIntegrator(_inputService);
+
+            FirstFunctionVM = new ZwiftFunctionSelectorViewModel();
         }
 
         private IInputService _inputService;

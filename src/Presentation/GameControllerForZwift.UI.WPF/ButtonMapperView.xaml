@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:GameControllerForZwift.UI.WPF"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="600" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -41,19 +41,72 @@
 
                 </GroupBox>
 
-                <GroupBox Header="Buttons">
-                    <StackPanel Orientation="Vertical">
-                        <TextBlock Text="A" Foreground="{Binding ColorHex, UpdateSourceTrigger=PropertyChanged}"/>
-                        <TextBlock Text="B"/>
-                        <TextBlock Text="X"/>
-                        <TextBlock Text="Y"/>
-                        <TextBlock Text="Menu"/>
-                        <TextBlock Text="Change View"/>
-                        <TextBlock Text="Left Trigger"/>
-                        <TextBlock Text="Right Trigger"/>
-                        <TextBlock Text="Left Stick"/>
-                        <TextBlock Text="Right Stick"/>
-                    </StackPanel>
+                <GroupBox Header="Button Mapping">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width=".5*"/>
+                            <ColumnDefinition Width=".5*"/>
+                        </Grid.ColumnDefinitions>
+
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="A" Foreground="{Binding ColorHex, UpdateSourceTrigger=PropertyChanged}"/>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="B"/>
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="X"/>
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Y"/>
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Menu (Start)"/>
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Change View (Select)"/>
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="D-Pad - Up"/>
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="D-Pad - Down"/>
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="D-Pad - Left"/>
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="D-Pad - Right"/>
+                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Left Trigger (L1)"/>
+                        <TextBlock Grid.Row="11" Grid.Column="0" Text="Left Bumper (L2)"/>
+                        <TextBlock Grid.Row="12" Grid.Column="0" Text="Left Stick (L3)"/>
+                        <TextBlock Grid.Row="13" Grid.Column="0" Text="Left Stick - Up"/>
+                        <TextBlock Grid.Row="14" Grid.Column="0" Text="Left Stick - Down"/>
+                        <TextBlock Grid.Row="15" Grid.Column="0" Text="Left Stick - Left"/>
+                        <TextBlock Grid.Row="16" Grid.Column="0" Text="Left Stick - Right"/>
+                        <TextBlock Grid.Row="17" Grid.Column="0" Text="Right Trigger (L1)"/>
+                        <TextBlock Grid.Row="18" Grid.Column="0" Text="Right Bumper (L2)"/>
+                        <TextBlock Grid.Row="19" Grid.Column="0" Text="Right Stick (L3)"/>
+                        <TextBlock Grid.Row="20" Grid.Column="0" Text="Right Stick - Up"/>
+                        <TextBlock Grid.Row="21" Grid.Column="0" Text="Right Stick - Down"/>
+                        <TextBlock Grid.Row="22" Grid.Column="0" Text="Right Stick - Left"/>
+                        <TextBlock Grid.Row="23" Grid.Column="0" Text="Right Stick - Right"/>
+
+                        <local:ZwiftFunctionSelector Grid.Row="0" Grid.Column="1" DataContext="{Binding FirstFunctionVM}"/>
+
+                    </Grid>
                 </GroupBox>
             </StackPanel>
             
