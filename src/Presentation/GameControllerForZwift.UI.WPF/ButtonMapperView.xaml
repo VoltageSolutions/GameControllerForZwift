@@ -6,6 +6,9 @@
              xmlns:local="clr-namespace:GameControllerForZwift.UI.WPF"
              mc:Ignorable="d" 
              d:DesignHeight="600" d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="b2VConverter"/>
+    </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -89,22 +92,48 @@
                         <TextBlock Grid.Row="7" Grid.Column="0" Text="D-Pad - Down"/>
                         <TextBlock Grid.Row="8" Grid.Column="0" Text="D-Pad - Left"/>
                         <TextBlock Grid.Row="9" Grid.Column="0" Text="D-Pad - Right"/>
-                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Left Trigger (L1)"/>
-                        <TextBlock Grid.Row="11" Grid.Column="0" Text="Left Bumper (L2)"/>
+                        <TextBlock Grid.Row="10" Grid.Column="0" Text="Left Trigger (L2)"/>
+                        <TextBlock Grid.Row="11" Grid.Column="0" Text="Left Bumper (L1)"/>
                         <TextBlock Grid.Row="12" Grid.Column="0" Text="Left Stick (L3)"/>
                         <TextBlock Grid.Row="13" Grid.Column="0" Text="Left Stick - Up"/>
                         <TextBlock Grid.Row="14" Grid.Column="0" Text="Left Stick - Down"/>
                         <TextBlock Grid.Row="15" Grid.Column="0" Text="Left Stick - Left"/>
                         <TextBlock Grid.Row="16" Grid.Column="0" Text="Left Stick - Right"/>
-                        <TextBlock Grid.Row="17" Grid.Column="0" Text="Right Trigger (L1)"/>
-                        <TextBlock Grid.Row="18" Grid.Column="0" Text="Right Bumper (L2)"/>
+                        <TextBlock Grid.Row="17" Grid.Column="0" Text="Right Trigger (L2)"/>
+                        <TextBlock Grid.Row="18" Grid.Column="0" Text="Right Bumper (L1)"/>
                         <TextBlock Grid.Row="19" Grid.Column="0" Text="Right Stick (L3)"/>
                         <TextBlock Grid.Row="20" Grid.Column="0" Text="Right Stick - Up"/>
                         <TextBlock Grid.Row="21" Grid.Column="0" Text="Right Stick - Down"/>
                         <TextBlock Grid.Row="22" Grid.Column="0" Text="Right Stick - Left"/>
                         <TextBlock Grid.Row="23" Grid.Column="0" Text="Right Stick - Right"/>
 
-                        <local:ZwiftFunctionSelector Grid.Row="0" Grid.Column="1" DataContext="{Binding FirstFunctionVM}"/>
+                        <!--<local:ZwiftFunctionSelector Grid.Row="0" Grid.Column="1" DataContext="{Binding FirstFunctionVM}"/>-->
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.A, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.B, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.X, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.Y, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.Menu, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="5" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.View, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+
+                        <TextBlock Grid.Row="6" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.DPadUp, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="7" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.DPadDown, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="8" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.DPadLeft, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="9" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.DPadRight, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+
+                        <TextBlock Grid.Row="10" Grid.Column="1" Text="{Binding CurrentControllerValues.LeftTrigger}"/>                        
+                        <TextBlock Grid.Row="11" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.LeftBumper, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="12" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.LeftThumbstick, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+
+                        <TextBlock Grid.Row="13" Grid.Column="1" Text="{Binding CurrentControllerValues.LeftThumbstickY}" />
+                        <TextBlock Grid.Row="14" Grid.Column="1" Text="{Binding CurrentControllerValues.LeftThumbstickX}" />
+
+                        <TextBlock Grid.Row="17" Grid.Column="1" Text="{Binding CurrentControllerValues.RightTrigger}" />
+                        <TextBlock Grid.Row="18" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.RightBumper, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+                        <TextBlock Grid.Row="19" Grid.Column="1" Text="ON" Visibility="{Binding CurrentControllerValues.RightThumbstick, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource b2VConverter}}" />
+
+                        <TextBlock Grid.Row="20" Grid.Column="1" Text="{Binding CurrentControllerValues.RightThumbstickY}" />
+                        <TextBlock Grid.Row="21" Grid.Column="1" Text="{Binding CurrentControllerValues.RightThumbstickX}" />
 
                     </Grid>
                 </GroupBox>
@@ -112,6 +141,6 @@
             
         </Grid>
 
-        <DataGrid Grid.Row="1" ItemsSource="{Binding ReadValues}" AutoGenerateColumns="True"/>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Datas, UpdateSourceTrigger=PropertyChanged}" AutoGenerateColumns="True"/>
     </Grid>
 </UserControl>

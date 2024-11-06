@@ -29,11 +29,12 @@ namespace GameControllerForZwift.Logic
 
         public void StopProcessing() => _cts.Cancel();
 
-        public ControllerData ReadData()
+        // this is a test method to help get things going
+        public ControllerData ReadData(IController controller)
         {
-            // for testing only
-            var controllers = _inputService.GetControllers();
-            IController controller = controllers.First();
+            //// for testing only
+            //var controllers = _inputService.GetControllers();
+            //IController controller = controllers.First();
 
             return controller.ReadData();
         }

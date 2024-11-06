@@ -74,14 +74,7 @@ namespace GameControllerForZwift.WPF
             {
                 foreach (var item in dataProcessor.DataQueue)
                 {
-                    bool aIsPressed = (item.Buttons & ControllerButtons.A) != ControllerButtons.None;
-
-                    //_dispatcher.Invoke(() =>
-                    //{
-                    //    ColorHex = aIsPressed ? Brushes.Black : Brushes.Red;
-                    //});
-                    
-                    ColorHex = aIsPressed ? Brushes.Black : Brushes.Red;
+                    // do stuff on screen here
 
                     await Task.Delay(50, cancellationToken);
                 }
@@ -109,10 +102,12 @@ namespace GameControllerForZwift.WPF
             CheckQueueCommand = new RelayCommand(CheckQueue);
 
 
-            _inputService = new GamepadService();
+            //_inputService = new GamepadService();
+            _inputService = new DirectInputService();
             _dataIntegrator = new DataIntegrator(_inputService);
 
             FirstFunctionVM = new ZwiftFunctionSelectorViewModel();
+            CurrentControllerValues = new ControllerData();
         }
 
         private IInputService _inputService;
@@ -125,13 +120,17 @@ namespace GameControllerForZwift.WPF
         // Method to execute when the button is clicked
         private void ReadData()
         {
-            var controllerData = _dataIntegrator.ReadData();
+            if (null != SelectedController)
+                CurrentControllerValues = _dataIntegrator.ReadData(SelectedController);
+            //_dataIntegrator.StartProcessing();
+        }
 
+        private ControllerData _currentControllerValues;
 
-            bool aIsPressed = (controllerData.Buttons & ControllerButtons.A) != ControllerButtons.None;
-            ColorHex = aIsPressed ? Brushes.Black : Brushes.Red;
-
-            _dataIntegrator.StartProcessing();
+        public ControllerData CurrentControllerValues
+        {
+            get { return _currentControllerValues; }
+            set { _currentControllerValues = value; NotifyPropertyChanged(); }
         }
 
         public ICommand RefreshListCommand { get; }
