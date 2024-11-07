@@ -1,15 +1,5 @@
-﻿using GameControllerForZwift.WPF;
-using System.Text;
-using System.Threading;
+﻿using GameControllerForZwift.UI.WPF.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace GameControllerForZwift
 {
@@ -18,10 +8,10 @@ namespace GameControllerForZwift
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(MainWindowViewModel mainWindowViewModel)
         {
             InitializeComponent();
-            DataContext = new MainWindowViewModel();
+            DataContext = mainWindowViewModel;
         }
     }
 }

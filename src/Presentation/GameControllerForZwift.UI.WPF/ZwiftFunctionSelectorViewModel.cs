@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GameControllerForZwift.UI.WPF
+namespace GameControllerForZwift.UI.WPF.ViewModels
 {
     public class ZwiftFunctionSelectorViewModel : ViewModelBase
     {

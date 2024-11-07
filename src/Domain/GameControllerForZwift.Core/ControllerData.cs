@@ -16,8 +16,6 @@
         public bool RightBumper { get; set; }
         public bool LeftThumbstick { get; set; }
         public bool RightThumbstick { get; set; }
-
-        //public ControllerButtons Buttons;
         public double LeftThumbstickX { get; set; }
         public double LeftThumbstickY { get; set; }
         public double LeftTrigger { get; set; }

@@ -22,10 +22,10 @@ namespace GameControllerForZwift.GamepadWinRT
                 Y = state.Buttons[3],
                 LeftBumper = state.Buttons[4],
                 RightBumper = state.Buttons[5],
-                LeftTrigger = state.Buttons[6] ? 65565 : 0,
-                RightTrigger = state.Buttons[7] ? 65565 : 0,
-                View = state.Buttons[8],
-                Menu = state.Buttons[9],
+                LeftTrigger = state.Buttons[6] ? 65565 : 0, // View on xbox
+                RightTrigger = state.Buttons[7] ? 65565 : 0, // Menu on xbox
+                View = state.Buttons[8], //left stick l3 on xbox
+                Menu = state.Buttons[9], //right stick r3 on xbox
                 LeftThumbstick = state.Buttons[10],
                 RightThumbstick = state.Buttons[11],
                 DPadUp = (state.PointOfViewControllers[0] == 0) ? true : false,
@@ -37,6 +37,8 @@ namespace GameControllerForZwift.GamepadWinRT
                 RightThumbstickX = state.RotationX,
                 RightThumbstickY = state.RotationY,
                 Timestamp = DateTime.Now
+                //Z for left trigger - 32767 unpressed
+                //RotationX for right trigger
             };
         }
 
