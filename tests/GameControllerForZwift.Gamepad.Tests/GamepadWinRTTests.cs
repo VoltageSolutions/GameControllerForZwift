@@ -1,9 +1,9 @@
-﻿using GameControllerForZwift.Core;
-using NSubstitute;
-using Windows.Gaming.Input;
+﻿//using GameControllerForZwift.Core;
+//using NSubstitute;
+//using Windows.Gaming.Input;
 
-namespace GameControllerForZwift.GamepadWinRT.Tests
-{
+//namespace GameControllerForZwift.GamepadWinRT.Tests
+//{
     //public class GamepadWinRTTests
     //{
     //    [Fact]
@@ -105,4 +105,4 @@ namespace GameControllerForZwift.GamepadWinRT.Tests
     //        Assert.Equal(new DateTime(9999, 12, 31, 23, 59, 59, DateTimeKind.Utc), result);
     //    }
     //}
-}
+//}

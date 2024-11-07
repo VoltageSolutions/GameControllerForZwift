@@ -1,15 +1,14 @@
 ﻿using GameControllerForZwift.Core;
-using Windows.Gaming.Input;
 using SharpDX.DirectInput;
 
-namespace GameControllerForZwift.GamepadWinRT
+namespace GameControllerForZwift.Gamepad.DirectInput
 {
     public class DirectInputService : IInputService
     {
-        private DirectInput _directInput;
+        private SharpDX.DirectInput.DirectInput _directInput;
         public DirectInputService()
         {
-            _directInput = new DirectInput();
+            _directInput = new SharpDX.DirectInput.DirectInput();
         }
         public IEnumerable<IController> GetControllers()
         {

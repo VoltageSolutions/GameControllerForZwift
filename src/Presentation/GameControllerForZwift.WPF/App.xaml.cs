@@ -1,5 +1,6 @@
 ﻿using GameControllerForZwift.Core;
-using GameControllerForZwift.GamepadWinRT;
+using GameControllerForZwift.Gamepad.DirectInput;
+using GameControllerForZwift.Gamepad.WinRT;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,7 +34,8 @@ namespace GameControllerForZwift
         private void ConfigureServices(IServiceCollection services)
         {
             // Register other services as needed
-            services.AddSingleton<IInputService, DirectInputService>();
+            //services.AddSingleton<IInputService, DirectInputService>();
+            services.AddSingleton<IInputService, GamepadService>();
             services.AddSingleton<DataIntegrator>(); // this should have an interface so we can unit test it later
 
 

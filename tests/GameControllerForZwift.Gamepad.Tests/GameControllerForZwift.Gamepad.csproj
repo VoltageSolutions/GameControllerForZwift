@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Infrastructure\GameControllerForZwift.GamepadWinRT\GameControllerForZwift.GamepadWinRT.csproj" />
+    <ProjectReference Include="..\..\src\Infrastructure\GameControllerForZwift.Gamepad\GameControllerForZwift.Gamepad.csproj" />
   </ItemGroup>
 
   <ItemGroup>

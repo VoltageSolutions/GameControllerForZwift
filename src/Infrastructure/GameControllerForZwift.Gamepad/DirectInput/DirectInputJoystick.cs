@@ -1,8 +1,7 @@
 ﻿using GameControllerForZwift.Core;
-using SharpDX;
 using SharpDX.DirectInput;
 
-namespace GameControllerForZwift.GamepadWinRT
+namespace GameControllerForZwift.Gamepad.DirectInput
 {
     public class DirectInputJoystick : IController
     {
@@ -10,7 +9,7 @@ namespace GameControllerForZwift.GamepadWinRT
         private Joystick _joystick;
         public string Name { get { return _device.ProductName; } }
 
-        public DirectInputJoystick(DirectInput directInput, DeviceInstance device)
+        public DirectInputJoystick(SharpDX.DirectInput.DirectInput directInput, DeviceInstance device)
         {
             _device = device;
             var joystickGuid = _device.InstanceGuid;
@@ -22,7 +21,7 @@ namespace GameControllerForZwift.GamepadWinRT
             _joystick.Poll();
             var state = _joystick.GetCurrentState();
             //_joystick.Unacquire();
-            
+
             return state.AsControllerData();
         }
     }
