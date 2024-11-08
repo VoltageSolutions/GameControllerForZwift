@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Application\GameControllerForZwift.Logic\GameControllerForZwift.Logic.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Keyboard\GameControllerForZwift.Keyboard.csproj" />
   </ItemGroup>
 
 </Project>

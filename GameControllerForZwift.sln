@@ -37,7 +37,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Logi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Keyboard", "src\Infrastructure\GameControllerForZwift.Keyboard\GameControllerForZwift.Keyboard.csproj", "{33614972-B93F-4DC9-8A75-152DCE9B7286}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Gamepad", "tests\GameControllerForZwift.Gamepad.Tests\GameControllerForZwift.Gamepad.csproj", "{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Gamepad.Tests", "tests\GameControllerForZwift.Gamepad.Tests\GameControllerForZwift.Gamepad.Tests.csproj", "{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

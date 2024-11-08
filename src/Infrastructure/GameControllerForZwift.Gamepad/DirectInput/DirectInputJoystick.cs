@@ -1,5 +1,6 @@
 ﻿using GameControllerForZwift.Core;
 using SharpDX.DirectInput;
+using GameControllerForZwift.Gamepad.USB;
 
 namespace GameControllerForZwift.Gamepad.DirectInput
 {
@@ -7,7 +8,8 @@ namespace GameControllerForZwift.Gamepad.DirectInput
     {
         private DeviceInstance _device;
         private Joystick _joystick;
-        public string Name { get { return _device.ProductName; } }
+        DeviceLookup _deviceLookup = new DeviceLookup("./DeviceMap.json");
+        public string Name { get { return _deviceLookup.GetDeviceName(_device.ProductGuid); } }
 
         public DirectInputJoystick(SharpDX.DirectInput.DirectInput directInput, DeviceInstance device)
         {

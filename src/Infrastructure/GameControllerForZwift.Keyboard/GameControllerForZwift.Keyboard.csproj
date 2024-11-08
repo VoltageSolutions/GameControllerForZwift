@@ -6,4 +6,12 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="InputSimulatorEx" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
+  </ItemGroup>
+
 </Project>
