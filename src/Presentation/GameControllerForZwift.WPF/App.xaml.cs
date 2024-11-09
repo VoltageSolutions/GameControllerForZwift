@@ -3,6 +3,7 @@ using GameControllerForZwift.Gamepad.DirectInput;
 using GameControllerForZwift.Gamepad.WinRT;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF.ViewModels;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
 
@@ -33,6 +34,12 @@ namespace GameControllerForZwift
 
         private void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging(configure =>
+            {
+                configure.AddDebug();
+                configure.AddEventLog();
+            });
+
             // Register other services as needed
             services.AddSingleton<IInputService, DirectInputService>();
             //services.AddSingleton<IInputService, GamepadService>();

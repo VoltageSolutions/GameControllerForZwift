@@ -2,6 +2,7 @@
 using GameControllerForZwift.Keyboard;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,8 +28,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private List<IController> _controllers;
         private IController _selectedController;
 
+        private readonly ILogger<MainWindowViewModel> _logger;
+
         // test stuff
-        
+
         private ControllerData _currentControllerValues;
         private List<ControllerData> _readValues;
         private ZwiftFunctionSelectorViewModel _firstFunctionVM;
@@ -36,8 +39,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Constructor
 
-        public MainWindowViewModel(DataIntegrator dataIntegrator, IInputService inputService)
+        public MainWindowViewModel(ILogger<MainWindowViewModel> logger, DataIntegrator dataIntegrator, IInputService inputService)
         {
+            _logger = logger;
             //_dispatcher = Dispatcher.CurrentDispatcher;
             _inputService = inputService;
             _dataIntegrator = dataIntegrator;
@@ -114,6 +118,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         // Method to execute when the button is clicked
         private async void ReadData()
         {
+            _logger.LogInformation("Starting to read data.");
             //if (null != SelectedController)
             //    CurrentControllerValues = _dataIntegrator.ReadData(SelectedController);
             ////_dataIntegrator.StartProcessing();
@@ -132,7 +137,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         }
 
         // this should be an interface and it should return something back
-        private KeySimulator _keySimulator = new KeySimulator();
+        private KeyboardNavigator _keySimulator = new KeyboardNavigator();
 
         //temp async test stuff
         private async Task ReadTheData(CancellationToken cancellationToken)
