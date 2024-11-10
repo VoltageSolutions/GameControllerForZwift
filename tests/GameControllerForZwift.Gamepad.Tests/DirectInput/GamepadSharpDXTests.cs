@@ -1,0 +1,151 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using GameControllerForZwift.Core;
+using GameControllerForZwift.Gamepad.DirectInput;
+using GameControllerForZwift.Gamepad.USB;
+using NSubstitute;
+using SharpDX.DirectInput;
+using Xunit;
+
+namespace GameControllerForZwift.Gamepad.Tests.DirectInput
+{
+    public class GamepadSharpDXTests
+    {
+        [Fact]
+        public void AsControllers_ShouldThrowArgumentNullException_WhenGamepadsIsNull()
+        {
+            // Arrange
+            var directInput = Substitute.For<SharpDX.DirectInput.DirectInput>();
+            var deviceLookup = Substitute.For<IDeviceLookup>();
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => ((IList<DeviceInstance>)null).AsControllers(directInput, deviceLookup));
+        }
+
+        [Fact]
+        public void AsControllers_ShouldThrowArgumentNullException_WhenDirectInputIsNull()
+        {
+            // Arrange
+            var gamepads = new List<DeviceInstance> { new DeviceInstance() };
+            var deviceLookup = Substitute.For<IDeviceLookup>();
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => gamepads.AsControllers(null, deviceLookup));
+        }
+
+        [Fact]
+        public void AsControllers_ShouldThrowArgumentNullException_WhenDeviceLookupIsNull()
+        {
+            // Arrange
+            var gamepads = new List<DeviceInstance> { new DeviceInstance() };
+            var directInput = Substitute.For<SharpDX.DirectInput.DirectInput>();
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => gamepads.AsControllers(directInput, null));
+        }
+
+        [Fact]
+        public void AsControllers_ShouldReturnIControllerList_WhenParametersAreValid()
+        {
+            // Arrange
+            var gamepads = new List<DeviceInstance>
+            {
+                new DeviceInstance(),
+                new DeviceInstance()
+            };
+            var directInput = Substitute.For<SharpDX.DirectInput.DirectInput>();
+            var deviceLookup = Substitute.For<IDeviceLookup>();
+
+            // Act
+            var controllers = gamepads.AsControllers(directInput, deviceLookup).ToList();
+
+            // Assert
+            Assert.Equal(2, controllers.Count);
+            Assert.IsType<DirectInputJoystick>(controllers[0]);
+        }
+
+        [Fact]
+        public void AsControllerData_ShouldThrowArgumentNullException_WhenStateIsNull()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => ((JoystickState)null).AsControllerData());
+        }
+
+        [Fact]
+        public void AsControllerData_ShouldMapButtonsCorrectly()
+        {
+            // Arrange
+            var joystickState = Substitute.For<JoystickState>();
+            joystickState.Buttons.Returns(new bool[12]);
+            joystickState.Buttons[0] = true;  // A button pressed
+            joystickState.Buttons[1] = false; // B button not pressed
+            joystickState.X.Returns(100);
+            joystickState.Y.Returns(200);
+            joystickState.RotationX.Returns(300);
+            joystickState.RotationY.Returns(400);
+            joystickState.PointOfViewControllers.Returns(new int[] { 0 });
+
+            // Act
+            var controllerData = joystickState.AsControllerData();
+
+            // Assert
+            Assert.True(controllerData.A);
+            Assert.False(controllerData.B);
+            Assert.Equal(100, controllerData.LeftThumbstickX);
+            Assert.Equal(200, controllerData.LeftThumbstickY);
+            Assert.Equal(300, controllerData.RightThumbstickX);
+            Assert.Equal(400, controllerData.RightThumbstickY);
+            Assert.True(controllerData.DPadUp);
+            Assert.Equal(DateTime.Now.Date, controllerData.Timestamp.Date); // Compare only the date part
+        }
+
+        [Fact]
+        public void GetTriggerValue_ShouldReturnTriggerMaxValue_WhenButtonIsPressed()
+        {
+            // Arrange
+            var joystickState = Substitute.For<JoystickState>();
+            joystickState.Buttons.Returns(new bool[12]);
+            joystickState.Buttons[6] = true; // Left trigger pressed
+
+            // Act
+            var triggerValue = GamepadSharpDX.GetTriggerValue(joystickState, 6);
+
+            // Assert
+            Assert.Equal(65565, triggerValue);
+        }
+
+        [Fact]
+        public void GetTriggerValue_ShouldReturnZero_WhenButtonIsNotPressed()
+        {
+            // Arrange
+            var joystickState = Substitute.For<JoystickState>();
+            joystickState.Buttons.Returns(new bool[12]);
+            joystickState.Buttons[6] = false; // Left trigger not pressed
+
+            // Act
+            var triggerValue = GamepadSharpDX.GetTriggerValue(joystickState, 6);
+
+            // Assert
+            Assert.Equal(0, triggerValue);
+        }
+
+        [Fact]
+        public void GetDPadDirection_ShouldReturnTrue_WhenDPadIsAtSpecifiedAngle()
+        {
+            // Arrange
+            var joystickState = Substitute.For<JoystickState>();
+            joystickState.PointOfViewControllers.Returns(new int[] { 0 }); // DPad pointing Up
+
+            // Act
+            var dPadUp = GamepadSharpDX.GetDPadDirection(joystickState, 0);
+            var dPadRight = GamepadSharpDX.GetDPadDirection(joystickState, 9000);
+
+            // Assert
+            Assert.True(dPadUp);
+            Assert.False(dPadRight);
+        }
+
+
+    }
+}

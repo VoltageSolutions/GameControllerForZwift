@@ -6,6 +6,7 @@ using GameControllerForZwift.UI.WPF.ViewModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using GameControllerForZwift.Gamepad.USB;
 
 namespace GameControllerForZwift
 {
@@ -41,12 +42,20 @@ namespace GameControllerForZwift
             });
 
             // Register other services as needed
+            
+            // GameControllerForZwift.Gamepad
+            services.AddSingleton<IFileService, FileService>();
+            services.AddSingleton<IDeviceLookup, DeviceLookup>();
             services.AddSingleton<IInputService, DirectInputService>();
-            //services.AddSingleton<IInputService, GamepadService>();
+
+            // GameControllerForZwift.Keyboard
+
+            // GameControllerForZwift.Logic
             services.AddSingleton<DataIntegrator>(); // this should have an interface so we can unit test it later
 
 
-            // Register ViewModels
+            // GameControllerForZwift.UI.WPF
+            // ViewModels
             services.AddSingleton<MainWindowViewModel>();
 
             // Register MainWindow with DI so it can receive MainWindowViewModel
