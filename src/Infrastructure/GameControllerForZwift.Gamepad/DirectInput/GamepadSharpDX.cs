@@ -1,6 +1,7 @@
 ﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Gamepad.USB;
 using SharpDX.DirectInput;
+using System.Linq;
 
 namespace GameControllerForZwift.Gamepad.DirectInput
 {
@@ -8,20 +9,21 @@ namespace GameControllerForZwift.Gamepad.DirectInput
     {
         private const int TriggerMaxValue = 65565;
 
-        /// <summary>
-        /// Converts a list of DeviceInstance objects to an enumerable of IController instances.
-        /// </summary>
-        /// <param name="gamepads">The list of DeviceInstance objects representing connected gamepads.</param>
-        /// <param name="directInput">The DirectInput instance for interacting with DirectInput devices.</param>
-        /// <param name="deviceLookup">Lookup for device names based on IDs.</param>
-        /// <returns>An enumerable collection of IController instances.</returns>
-        public static IEnumerable<IController> AsControllers(this IList<DeviceInstance> gamepads, SharpDX.DirectInput.DirectInput directInput, IDeviceLookup deviceLookup)
+        public static IEnumerable<IController> AsControllers(
+            this IList<DeviceInstance> gamepads,
+            Func<DeviceInstance, IJoystick> joystickFactory,
+            IDeviceLookup deviceLookup)
         {
             if (gamepads == null) throw new ArgumentNullException(nameof(gamepads));
-            if (directInput == null) throw new ArgumentNullException(nameof(directInput));
+            if (joystickFactory == null) throw new ArgumentNullException(nameof(joystickFactory));
             if (deviceLookup == null) throw new ArgumentNullException(nameof(deviceLookup));
 
-            return gamepads.Select(gamepad => new DirectInputJoystick(directInput, gamepad, deviceLookup));
+            return gamepads.Select(gamepad =>
+            {
+                var joystick = joystickFactory(gamepad);
+                var name = deviceLookup.GetDeviceName(gamepad.ProductGuid);
+                return new DirectInputJoystick(joystick, deviceLookup, name);
+            });
         }
 
         /// <summary>
@@ -29,7 +31,7 @@ namespace GameControllerForZwift.Gamepad.DirectInput
         /// </summary>
         /// <param name="state">The JoystickState to convert.</param>
         /// <returns>A populated ControllerData instance.</returns>
-        public static ControllerData AsControllerData(this JoystickState state)
+        public static ControllerData AsControllerData(this IJoystickState state)
         {
             if (state == null) throw new ArgumentNullException(nameof(state));
 
@@ -62,17 +64,17 @@ namespace GameControllerForZwift.Gamepad.DirectInput
             };
         }
 
-        public static bool GetButtonState(JoystickState state, int index)
+        public static bool GetButtonState(IJoystickState state, int index)
         {
             return index < state.Buttons.Length && state.Buttons[index];
         }
 
-        public static int GetTriggerValue(JoystickState state, int index)
+        public static int GetTriggerValue(IJoystickState state, int index)
         {
             return GetButtonState(state, index) ? TriggerMaxValue : 0;
         }
 
-        public static bool GetDPadDirection(JoystickState state, int angle)
+        public static bool GetDPadDirection(IJoystickState state, int angle)
         {
             return state.PointOfViewControllers.Length > 0 && state.PointOfViewControllers[0] == angle;
         }

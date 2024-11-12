@@ -16,33 +16,22 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
         public void AsControllers_ShouldThrowArgumentNullException_WhenGamepadsIsNull()
         {
             // Arrange
-            var directInput = Substitute.For<SharpDX.DirectInput.DirectInput>();
+            Func<DeviceInstance, IJoystick> joystickFactory = _ => Substitute.For<IJoystick>();
             var deviceLookup = Substitute.For<IDeviceLookup>();
 
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => ((IList<DeviceInstance>)null).AsControllers(directInput, deviceLookup));
-        }
-
-        [Fact]
-        public void AsControllers_ShouldThrowArgumentNullException_WhenDirectInputIsNull()
-        {
-            // Arrange
-            var gamepads = new List<DeviceInstance> { new DeviceInstance() };
-            var deviceLookup = Substitute.For<IDeviceLookup>();
-
-            // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => gamepads.AsControllers(null, deviceLookup));
+            Assert.Throws<ArgumentNullException>(() => ((IList<DeviceInstance>)null).AsControllers(joystickFactory, deviceLookup));
         }
 
         [Fact]
         public void AsControllers_ShouldThrowArgumentNullException_WhenDeviceLookupIsNull()
         {
             // Arrange
-            var gamepads = new List<DeviceInstance> { new DeviceInstance() };
-            var directInput = Substitute.For<SharpDX.DirectInput.DirectInput>();
+            Func<DeviceInstance, IJoystick> joystickFactory = _ => Substitute.For<IJoystick>();
+            var deviceLookup = Substitute.For<IDeviceLookup>();
 
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => gamepads.AsControllers(directInput, null));
+            Assert.Throws<ArgumentNullException>(() => ((IList<DeviceInstance>)null).AsControllers(joystickFactory, null));
         }
 
         [Fact]
@@ -54,29 +43,32 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
                 new DeviceInstance(),
                 new DeviceInstance()
             };
-            var directInput = Substitute.For<SharpDX.DirectInput.DirectInput>();
+
+            // Create a joystick factory that returns a mock IJoystick
+            Func<DeviceInstance, IJoystick> joystickFactory = _ => Substitute.For<IJoystick>();
             var deviceLookup = Substitute.For<IDeviceLookup>();
 
             // Act
-            var controllers = gamepads.AsControllers(directInput, deviceLookup).ToList();
+            var controllers = gamepads.AsControllers(joystickFactory, deviceLookup).ToList();
 
             // Assert
             Assert.Equal(2, controllers.Count);
             Assert.IsType<DirectInputJoystick>(controllers[0]);
         }
 
+
         [Fact]
         public void AsControllerData_ShouldThrowArgumentNullException_WhenStateIsNull()
         {
             // Act & Assert
-            Assert.Throws<ArgumentNullException>(() => ((JoystickState)null).AsControllerData());
+            Assert.Throws<ArgumentNullException>(() => ((IJoystickState)null).AsControllerData());
         }
 
         [Fact]
         public void AsControllerData_ShouldMapButtonsCorrectly()
         {
             // Arrange
-            var joystickState = Substitute.For<JoystickState>();
+            var joystickState = Substitute.For<IJoystickState>();
             joystickState.Buttons.Returns(new bool[12]);
             joystickState.Buttons[0] = true;  // A button pressed
             joystickState.Buttons[1] = false; // B button not pressed
@@ -104,7 +96,7 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
         public void GetTriggerValue_ShouldReturnTriggerMaxValue_WhenButtonIsPressed()
         {
             // Arrange
-            var joystickState = Substitute.For<JoystickState>();
+            var joystickState = Substitute.For<IJoystickState>();
             joystickState.Buttons.Returns(new bool[12]);
             joystickState.Buttons[6] = true; // Left trigger pressed
 
@@ -119,7 +111,7 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
         public void GetTriggerValue_ShouldReturnZero_WhenButtonIsNotPressed()
         {
             // Arrange
-            var joystickState = Substitute.For<JoystickState>();
+            var joystickState = Substitute.For<IJoystickState>();
             joystickState.Buttons.Returns(new bool[12]);
             joystickState.Buttons[6] = false; // Left trigger not pressed
 
@@ -134,7 +126,7 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
         public void GetDPadDirection_ShouldReturnTrue_WhenDPadIsAtSpecifiedAngle()
         {
             // Arrange
-            var joystickState = Substitute.For<JoystickState>();
+            var joystickState = Substitute.For<IJoystickState>();
             joystickState.PointOfViewControllers.Returns(new int[] { 0 }); // DPad pointing Up
 
             // Act
@@ -145,7 +137,5 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
             Assert.True(dPadUp);
             Assert.False(dPadRight);
         }
-
-
     }
 }
