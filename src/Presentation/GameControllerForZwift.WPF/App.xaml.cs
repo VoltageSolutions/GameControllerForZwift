@@ -28,7 +28,23 @@ namespace GameControllerForZwift
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
             // Show the main window
-            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+            //var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+
+            // temp changes because i broke DI
+            using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
+                .SetMinimumLevel(LogLevel.Trace)
+                .AddEventLog());
+
+            ILogger<MainWindowViewModel> mainWindowlogger = loggerFactory.CreateLogger<MainWindowViewModel>();
+
+            ILogger<DirectInputService> inputLogger = loggerFactory.CreateLogger<DirectInputService>();
+            var inputService = new DirectInputService(inputLogger);
+            var dataIntegrator = new DataIntegrator(inputService);
+            var mainWindowViewModel = new MainWindowViewModel(mainWindowlogger, dataIntegrator, inputService);
+            var mainWindow = new MainWindow(mainWindowViewModel);
+
+
+
             mainWindow.Show();
         }
 
