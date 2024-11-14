@@ -9,6 +9,7 @@ using Serilog;
 using Serilog.Extensions.Logging;
 using System.Windows;
 using GameControllerForZwift.Gamepad.USB;
+using SharpDX.DirectInput;
 
 namespace GameControllerForZwift
 {
@@ -54,7 +55,13 @@ namespace GameControllerForZwift
             //ILogger<DirectInputService> inputLogger = loggerFactory.CreateLogger<DirectInputService>();
             ILogger<DirectInputService> inputLogger = serilogLoggerFactory.CreateLogger<DirectInputService>();
 
-            var inputService = new DirectInputService(inputLogger);
+            var fileService = new FileService();
+            string json = fileService.ReadFileContent("./DeviceMap.json");
+            var deviceLookup = new DeviceLookup(json);
+            Func<DeviceInstance, IJoystick> joystickFactory = (device) => new JoystickWrapper(new DirectInput(), device.InstanceGuid);
+
+
+            var inputService = new DirectInputService(inputLogger, deviceLookup, joystickFactory);
             var dataIntegrator = new DataIntegrator(inputService);
             var mainWindowViewModel = new MainWindowViewModel(mainWindowlogger, dataIntegrator, inputService);
             var mainWindow = new MainWindow(mainWindowViewModel);
@@ -77,6 +84,13 @@ namespace GameControllerForZwift
             // GameControllerForZwift.Gamepad
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IDeviceLookup, DeviceLookup>();
+
+            // Register the delegate
+            //services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>
+            //{
+            //    return (device) => new JoystickWrapper(new DirectInput(), device.InstanceGuid);
+            //});
+
             services.AddSingleton<IInputService, DirectInputService>();
 
             // GameControllerForZwift.Keyboard

@@ -9,14 +9,24 @@ namespace GameControllerForZwift.Gamepad.USB
 
         public DeviceLookup(string jsonContent)
         {
-            _deviceMap = LoadDeviceMap(jsonContent);
+            _deviceMap = LoadDeviceMap(jsonContent ?? string.Empty);
         }
 
         public Dictionary<string, string> LoadDeviceMap(string jsonContent)
         {
-            var deserializeMap = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent);
-
-            return deserializeMap ?? new Dictionary<string, string>();
+            if (string.IsNullOrEmpty(jsonContent))
+                return new Dictionary<string, string>();
+            
+            try
+            {
+                var deserializeMap = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent);
+                return deserializeMap ?? new Dictionary<string, string>();
+            }
+            catch (JsonException)
+            {
+                // return an empty dictionary in case of malformed JSON
+                return new Dictionary<string, string>();
+            }
         }
 
         public string GetDeviceName(string vendorId, string productId)

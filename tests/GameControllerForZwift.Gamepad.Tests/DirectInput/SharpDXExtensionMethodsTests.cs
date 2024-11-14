@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using GameControllerForZwift.Core;
-using GameControllerForZwift.Gamepad.DirectInput;
+﻿using GameControllerForZwift.Gamepad.DirectInput;
 using GameControllerForZwift.Gamepad.USB;
 using NSubstitute;
 using SharpDX.DirectInput;
-using Xunit;
 
 namespace GameControllerForZwift.Gamepad.Tests.DirectInput
 {
-    public class GamepadSharpDXTests
+    public class SharpDXExtensionMethodsTests
     {
         [Fact]
         public void AsControllers_ShouldThrowArgumentNullException_WhenGamepadsIsNull()
@@ -101,7 +96,7 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
             joystickState.Buttons[6] = true; // Left trigger pressed
 
             // Act
-            var triggerValue = GamepadSharpDX.GetTriggerValue(joystickState, 6);
+            var triggerValue = SharpDXExtensionMethods.GetTriggerValue(joystickState, 6);
 
             // Assert
             Assert.Equal(65565, triggerValue);
@@ -116,7 +111,7 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
             joystickState.Buttons[6] = false; // Left trigger not pressed
 
             // Act
-            var triggerValue = GamepadSharpDX.GetTriggerValue(joystickState, 6);
+            var triggerValue = SharpDXExtensionMethods.GetTriggerValue(joystickState, 6);
 
             // Assert
             Assert.Equal(0, triggerValue);
@@ -130,8 +125,8 @@ namespace GameControllerForZwift.Gamepad.Tests.DirectInput
             joystickState.PointOfViewControllers.Returns(new int[] { 0 }); // DPad pointing Up
 
             // Act
-            var dPadUp = GamepadSharpDX.GetDPadDirection(joystickState, 0);
-            var dPadRight = GamepadSharpDX.GetDPadDirection(joystickState, 9000);
+            var dPadUp = SharpDXExtensionMethods.GetDPadDirection(joystickState, 0);
+            var dPadRight = SharpDXExtensionMethods.GetDPadDirection(joystickState, 9000);
 
             // Assert
             Assert.True(dPadUp);

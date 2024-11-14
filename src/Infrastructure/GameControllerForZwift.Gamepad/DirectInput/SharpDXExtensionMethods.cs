@@ -1,11 +1,10 @@
 ﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Gamepad.USB;
 using SharpDX.DirectInput;
-using System.Linq;
 
 namespace GameControllerForZwift.Gamepad.DirectInput
 {
-    public static class GamepadSharpDX
+    public static class SharpDXExtensionMethods
     {
         private const int TriggerMaxValue = 65565;
 
@@ -22,7 +21,7 @@ namespace GameControllerForZwift.Gamepad.DirectInput
             {
                 var joystick = joystickFactory(gamepad);
                 var name = deviceLookup.GetDeviceName(gamepad.ProductGuid);
-                return new DirectInputJoystick(joystick, deviceLookup, name);
+                return new DirectInputJoystick(joystick, name);
             });
         }
 

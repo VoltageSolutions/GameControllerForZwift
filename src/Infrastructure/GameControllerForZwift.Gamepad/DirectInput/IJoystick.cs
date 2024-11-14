@@ -1,6 +1,4 @@
-﻿using SharpDX.DirectInput;
-
-namespace GameControllerForZwift.Gamepad.DirectInput
+﻿namespace GameControllerForZwift.Gamepad.DirectInput
 {
     public interface IJoystick
     {

@@ -25,7 +25,6 @@ namespace GameControllerForZwift.Gamepad.DirectInput
             var gamepads = _directInput.GetDevices(DeviceType.Gamepad, DeviceEnumerationFlags.AllDevices);
             return gamepads.Select(device => new DirectInputJoystick(
                 _joystickFactory(device),
-                _deviceLookup,
                 _deviceLookup.GetDeviceName(device.ProductGuid)));
         }
 
