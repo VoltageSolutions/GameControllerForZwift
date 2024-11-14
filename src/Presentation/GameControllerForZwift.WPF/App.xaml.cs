@@ -5,6 +5,8 @@ using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
+using Serilog.Extensions.Logging;
 using System.Windows;
 using GameControllerForZwift.Gamepad.USB;
 
@@ -29,7 +31,36 @@ namespace GameControllerForZwift
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
             // Show the main window
-            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+            //var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
+
+            // temp changes because i broke DI
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.EventLog("GameControllerForZwift", manageEventSource: false)
+                .CreateLogger();
+
+            // To integrate Serilog with Microsoft.Extensions.Logging
+            var serilogLoggerFactory = LoggerFactory.Create(builder => {
+                builder.AddSerilog();
+            });
+
+            using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
+                .SetMinimumLevel(LogLevel.Trace)
+                .AddEventLog());
+
+            //ILogger<MainWindowViewModel> mainWindowlogger = loggerFactory.CreateLogger<MainWindowViewModel>();
+            ILogger<MainWindowViewModel> mainWindowlogger = serilogLoggerFactory.CreateLogger<MainWindowViewModel>();
+
+            //ILogger<DirectInputService> inputLogger = loggerFactory.CreateLogger<DirectInputService>();
+            ILogger<DirectInputService> inputLogger = serilogLoggerFactory.CreateLogger<DirectInputService>();
+
+            var inputService = new DirectInputService(inputLogger);
+            var dataIntegrator = new DataIntegrator(inputService);
+            var mainWindowViewModel = new MainWindowViewModel(mainWindowlogger, dataIntegrator, inputService);
+            var mainWindow = new MainWindow(mainWindowViewModel);
+
+
+
             mainWindow.Show();
         }
 
