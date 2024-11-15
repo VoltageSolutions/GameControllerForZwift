@@ -1,15 +1,13 @@
 ﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Gamepad.DirectInput;
-using GameControllerForZwift.Gamepad.WinRT;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
-using Serilog.Extensions.Logging;
 using System.Windows;
 using GameControllerForZwift.Gamepad.USB;
 using SharpDX.DirectInput;
+using GameControllerForZwift.WPF.Logging;
 
 namespace GameControllerForZwift
 {
@@ -36,24 +34,14 @@ namespace GameControllerForZwift
 
             // temp changes because i broke DI
 
-            Log.Logger = new LoggerConfiguration()
-                .WriteTo.EventLog("GameControllerForZwift", manageEventSource: false)
-                .CreateLogger();
-
-            // To integrate Serilog with Microsoft.Extensions.Logging
-            var serilogLoggerFactory = LoggerFactory.Create(builder => {
-                builder.AddSerilog();
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder.ClearProviders();
+                builder.AddProvider(new CustomMessageEventLogLoggerProvider());
             });
-
-            using var loggerFactory = LoggerFactory.Create(loggingBuilder => loggingBuilder
-                .SetMinimumLevel(LogLevel.Trace)
-                .AddEventLog());
-
-            //ILogger<MainWindowViewModel> mainWindowlogger = loggerFactory.CreateLogger<MainWindowViewModel>();
-            ILogger<MainWindowViewModel> mainWindowlogger = serilogLoggerFactory.CreateLogger<MainWindowViewModel>();
-
-            //ILogger<DirectInputService> inputLogger = loggerFactory.CreateLogger<DirectInputService>();
-            ILogger<DirectInputService> inputLogger = serilogLoggerFactory.CreateLogger<DirectInputService>();
+            var mainWindowlogger = loggerFactory.CreateLogger<MainWindowViewModel>();
+            ILogger<DirectInputService> inputLogger = loggerFactory.CreateLogger<DirectInputService>();
+            
 
             var fileService = new FileService();
             string json = fileService.ReadFileContent("./DeviceMap.json");
@@ -73,11 +61,11 @@ namespace GameControllerForZwift
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddLogging(configure =>
-            {
-                configure.AddDebug();
-                configure.AddEventLog();
-            });
+            //services.AddLogging(configure =>
+            //{
+            //    configure.AddDebug();
+            //    configure.AddEventLog();
+            //});
 
             // Register other services as needed
             
