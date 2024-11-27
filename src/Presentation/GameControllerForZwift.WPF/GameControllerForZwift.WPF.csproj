@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>GameControllerForZwift</AssemblyName>
 	<Version>0.0.5</Version>
+	  <NoWarn>$(NoWarn);WPF0001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +22,10 @@
     <ProjectReference Include="..\..\Application\GameControllerForZwift.Logic\GameControllerForZwift.Logic.csproj" />
     <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Gamepad\GameControllerForZwift.Gamepad.csproj" />
     <ProjectReference Include="..\GameControllerForZwift.UI.WPF\GameControllerForZwift.UI.WPF.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
   </ItemGroup>
 
 </Project>

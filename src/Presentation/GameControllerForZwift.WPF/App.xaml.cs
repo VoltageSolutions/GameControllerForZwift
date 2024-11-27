@@ -8,6 +8,8 @@ using System.Windows;
 using GameControllerForZwift.Gamepad.USB;
 using SharpDX.DirectInput;
 using GameControllerForZwift.WPF.Logging;
+using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.Views;
 
 namespace GameControllerForZwift
 {
@@ -52,7 +54,11 @@ namespace GameControllerForZwift
             var inputService = new DirectInputService(inputLogger, deviceLookup, joystickFactory);
             var dataIntegrator = new DataIntegrator(inputService);
             var mainWindowViewModel = new MainWindowViewModel(mainWindowlogger, dataIntegrator, inputService);
-            var mainWindow = new MainWindow(mainWindowViewModel);
+
+
+            INavigationService navigationService = new NavigationService(ServiceProvider);
+            
+            var mainWindow = new MainWindow(mainWindowViewModel, navigationService);
 
 
 
@@ -72,6 +78,8 @@ namespace GameControllerForZwift
             // GameControllerForZwift.Gamepad
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IDeviceLookup, DeviceLookup>();
+            services.AddSingleton<INavigationService, NavigationService>();
+            services.AddTransient<HomePage>();
 
             // Register the delegate
             //services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>

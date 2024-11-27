@@ -24,3 +24,18 @@ The project follows a Clean Architecture Layout.
 `GameControllerForZwift.UI.WPF` contains ViewModels and any custom controls.
 
 `GameControllerForZwift.WPF` is a WPF executable application.
+
+## Project Goals
+
+### UI
+
+Follow WPF Gallary layout.
+
+Screen or wizard for selecting a controller and mapping its inputs
+way to save and recall profiles/configurations
+settings to configure app
+	run at startup
+	check for updates
+log
+debug - visualize controller button presses like
+https://ds4-windows.com/wp-content/uploads/2021/09/GamepadTesterDoubleInput.gif
