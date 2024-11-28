@@ -10,6 +10,7 @@ using System.Windows.Navigation;
 using System.Windows.Shell;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.Views;
+using GameControllerForZwift.UI.WPF.Models;
 
 namespace GameControllerForZwift
 {
@@ -18,12 +19,17 @@ namespace GameControllerForZwift
     /// </summary>
     public partial class MainWindow : Window
     {
+        #region Fields
+        private readonly IServiceProvider _serviceProvider;
         private readonly INavigationService _navigationService;
+        public MainWindowViewModel ViewModel { get; }
+        #endregion
 
+        #region Constructor
         public MainWindow(MainWindowViewModel mainWindowViewModel, INavigationService navigationService)
         {
             ViewModel = mainWindowViewModel;
-            DataContext = ViewModel;
+            DataContext = this;
 
             InitializeComponent();
             Toggle_TitleButtonVisibility();
@@ -48,37 +54,9 @@ namespace GameControllerForZwift
             SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
             this.StateChanged += MainWindow_StateChanged;
         }
+        #endregion
 
-        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (SystemParameters.HighContrast)
-                {
-                    MinimizeButton.Visibility = Visibility.Visible;
-                    MaximizeButton.Visibility = Visibility.Visible;
-                    CloseButton.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    MinimizeButton.Visibility = Visibility.Collapsed;
-                    MaximizeButton.Visibility = Visibility.Collapsed;
-                    CloseButton.Visibility = Visibility.Collapsed;
-                }
-            });
-        }
-
-        private void MainWindow_StateChanged(object sender, EventArgs e)
-        {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                MainGrid.Margin = new Thickness(8);
-            }
-            else
-            {
-                MainGrid.Margin = default;
-            }
-        }
+        #region Methods
 
         private void Toggle_TitleButtonVisibility()
         {
@@ -116,19 +94,52 @@ namespace GameControllerForZwift
             }
         }
 
-        private readonly IServiceProvider _serviceProvider;
+        #endregion
+
+        #region Event Handlers
+
+        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                if (SystemParameters.HighContrast)
+                {
+                    MinimizeButton.Visibility = Visibility.Visible;
+                    MaximizeButton.Visibility = Visibility.Visible;
+                    CloseButton.Visibility = Visibility.Visible;
+                }
+                else
+                {
+                    MinimizeButton.Visibility = Visibility.Collapsed;
+                    MaximizeButton.Visibility = Visibility.Collapsed;
+                    CloseButton.Visibility = Visibility.Collapsed;
+                }
+            });
+        }
+
+        private void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            if (this.WindowState == WindowState.Maximized)
+            {
+                MainGrid.Margin = new Thickness(8);
+            }
+            else
+            {
+                MainGrid.Margin = default;
+            }
+        }
 
         private void ControlsList_SelectedItemChanged()
         {
-            //if (ControlsList.SelectedItem is ControlInfoDataItem navItem)
-            //{
-            //    _navigationService.Navigate(navItem.PageType);
-            //    var tvi = ControlsList.ItemContainerGenerator.ContainerFromItem(navItem) as TreeViewItem;
-            //    if (tvi != null)
-            //    {
-            //        tvi.BringIntoView();
-            //    }
-            //}
+            if (ControlsList.SelectedItem is ControlInfoDataItem navItem)
+            {
+                _navigationService.Navigate(navItem.PageType);
+                var tvi = ControlsList.ItemContainerGenerator.ContainerFromItem(navItem) as TreeViewItem;
+                if (tvi != null)
+                {
+                    tvi.BringIntoView();
+                }
+            }
         }
 
         private void ControlsList_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -171,8 +182,6 @@ namespace GameControllerForZwift
             }
         }
 
-        public MainWindowViewModel ViewModel { get; }
-
         private void MinimizeWindow(object sender, RoutedEventArgs e)
         {
             this.WindowState = WindowState.Minimized;
@@ -208,35 +217,36 @@ namespace GameControllerForZwift
 
         private void RootContentFrame_Navigated(object sender, NavigationEventArgs e)
         {
-            //ViewModel.UpdateCanNavigateBack();
+            ViewModel.UpdateCanNavigateBack();
         }
 
         private void OnNavigating(object? sender, NavigatingEventArgs e)
         {
-            //List<ControlInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromPageType(e.PageType);
+            List<ControlInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromPageType(e.PageType);
 
-            //if (list.Count > 0)
-            //{
-            //    TreeViewItem selectedTreeViewItem = null;
-            //    ItemsControl itemsControl = ControlsList;
-            //    foreach (ControlInfoDataItem item in list)
-            //    {
-            //        var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-            //        if (tvi != null)
-            //        {
-            //            tvi.IsExpanded = true;
-            //            tvi.UpdateLayout();
-            //            itemsControl = tvi;
-            //            selectedTreeViewItem = tvi;
-            //        }
-            //    }
+            if (list.Count > 0)
+            {
+                TreeViewItem selectedTreeViewItem = null;
+                ItemsControl itemsControl = ControlsList;
+                foreach (ControlInfoDataItem item in list)
+                {
+                    var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+                    if (tvi != null)
+                    {
+                        tvi.IsExpanded = true;
+                        tvi.UpdateLayout();
+                        itemsControl = tvi;
+                        selectedTreeViewItem = tvi;
+                    }
+                }
 
-            //    if (selectedTreeViewItem != null)
-            //    {
-            //        selectedTreeViewItem.IsSelected = true;
-            //        ControlsList_SelectedItemChanged();
-            //    }
-            //}
+                if (selectedTreeViewItem != null)
+                {
+                    selectedTreeViewItem.IsSelected = true;
+                    ControlsList_SelectedItemChanged();
+                }
+            }
         }
+        #endregion
     }
 }

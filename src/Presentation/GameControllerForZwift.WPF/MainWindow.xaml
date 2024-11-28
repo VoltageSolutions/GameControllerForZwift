@@ -236,7 +236,7 @@
                             FontFamily="{StaticResource SymbolThemeFontFamily}"
                             FontSize="16"
                             Text="{Binding IconGlyph}"
-                                Visibility="{Binding IconGlyph, Converter={StaticResource EmptyToVisibilityConverter}}" />
+                                Visibility="{Binding IconGlyph, Converter={StaticResource EmptyToVisbilityConverter}}" />
                                 <TextBlock
                             Grid.Column="2"
                             VerticalAlignment="Center"
@@ -253,7 +253,7 @@
                 Margin="10"
                 HorizontalContentAlignment="Left"
                 AutomationProperties.Name="Settings"
-                Command="{Binding SettingsCommand}"
+                Command="{Binding ViewModel.SettingsCommand}"
                 Click="SettingsButton_Click"
                 DockPanel.Dock="Bottom">
                         <StackPanel Orientation="Horizontal">

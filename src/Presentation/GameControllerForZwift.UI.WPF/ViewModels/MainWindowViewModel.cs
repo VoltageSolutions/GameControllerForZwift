@@ -4,6 +4,7 @@ using GameControllerForZwift.Core;
 using GameControllerForZwift.Keyboard;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF;
+using GameControllerForZwift.UI.WPF.Models;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -31,7 +33,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private DataIntegrator _dataIntegrator;
         private List<IController> _controllers;
         private IController _selectedController;
+
+        [ObservableProperty]
+        private ICollection<ControlInfoDataItem> _controls;
+        [ObservableProperty]
+        private ControlInfoDataItem? _selectedControl;
         private readonly INavigationService _navigationService;
+        [ObservableProperty]
+        private bool _canNavigateback;
 
         private readonly ILogger<MainWindowViewModel> _logger;
 
@@ -40,12 +49,15 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private ControllerData _currentControllerValues;
         private List<ControllerData> _readValues;
         private ZwiftFunctionSelectorViewModel _firstFunctionVM;
+
+        
         #endregion
 
         #region Constructor
 
         public MainWindowViewModel(INavigationService navigationService, ILogger<MainWindowViewModel> logger, DataIntegrator dataIntegrator, IInputService inputService)
         {
+            _controls = ControlsInfoDataSource.Instance.ControlsInfo;
             _navigationService = navigationService;
             _logger = logger;
             //_dispatcher = Dispatcher.CurrentDispatcher;
@@ -205,10 +217,84 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _navigationService.Navigate(typeof(SettingsPage));
         }
 
+        [RelayCommand]
+        public void Back()
+        {
+            _navigationService.NavigateBack();
+        }
+
+        [RelayCommand]
+        public void Forward()
+        {
+            _navigationService.NavigateForward();
+        }
+
+        public List<ControlInfoDataItem> GetNavigationItemHierarchyFromPageType(Type? pageType)
+        {
+            List<ControlInfoDataItem> list = new List<ControlInfoDataItem>();
+            Stack<ControlInfoDataItem> _stack = new Stack<ControlInfoDataItem>();
+            Stack<ControlInfoDataItem> _revStack = new Stack<ControlInfoDataItem>();
+
+            if (pageType == null)
+            {
+                return list;
+            }
+            bool found = false;
+
+            foreach (var item in Controls)
+            {
+                _stack.Push(item);
+                found = FindNavigationItemsHierarchyFromPageType(pageType, item.Items, ref _stack);
+                if (found)
+                {
+                    break;
+                }
+                _stack.Pop();
+            }
+
+            while (_stack.Count > 0)
+            {
+                _revStack.Push(_stack.Pop());
+            }
+
+            foreach (var item in _revStack)
+            {
+                list.Add(item);
+            }
+
+            return list;
+        }
+
+        private bool FindNavigationItemsHierarchyFromPageType(Type pageType, ICollection<ControlInfoDataItem> pages, ref Stack<ControlInfoDataItem> stack)
+        {
+            var item = stack.Peek();
+            bool found = false;
+
+            if (pageType == item.PageType)
+            {
+                return true;
+            }
+
+            foreach (var child in item.Items)
+            {
+                stack.Push(child);
+                found = FindNavigationItemsHierarchyFromPageType(pageType, child.Items, ref stack);
+                if (found) { return true; }
+                stack.Pop();
+            }
+
+            return false;
+        }
+
+        public void UpdateCanNavigateBack()
+        {
+            CanNavigateback = _navigationService.IsBackHistoryNonEmpty();
+        }
+
         #endregion
 
         #region Methods
-        
+
 
         //public async void dostuff(DataIntegrator dataIntegrator, CancellationToken cancellationToken)
         //{
