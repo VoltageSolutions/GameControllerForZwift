@@ -253,7 +253,7 @@
                 Margin="10"
                 HorizontalContentAlignment="Left"
                 AutomationProperties.Name="Settings"
-                Command="{Binding ViewModel.SettingsCommand}"
+                Command="{Binding SettingsCommand}"
                 Click="SettingsButton_Click"
                 DockPanel.Dock="Bottom">
                         <StackPanel Orientation="Horizontal">

@@ -1,7 +1,11 @@
-﻿using GameControllerForZwift.Core;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using GameControllerForZwift.Core;
 using GameControllerForZwift.Keyboard;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF;
+using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,7 +23,7 @@ using System.Windows.Threading;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
 {
-    public class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ObservableObject //ViewModelBase
     {
         #region Fields
         //private readonly Dispatcher _dispatcher;
@@ -27,6 +31,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private DataIntegrator _dataIntegrator;
         private List<IController> _controllers;
         private IController _selectedController;
+        private readonly INavigationService _navigationService;
 
         private readonly ILogger<MainWindowViewModel> _logger;
 
@@ -39,8 +44,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Constructor
 
-        public MainWindowViewModel(ILogger<MainWindowViewModel> logger, DataIntegrator dataIntegrator, IInputService inputService)
+        public MainWindowViewModel(INavigationService navigationService, ILogger<MainWindowViewModel> logger, DataIntegrator dataIntegrator, IInputService inputService)
         {
+            _navigationService = navigationService;
             _logger = logger;
             //_dispatcher = Dispatcher.CurrentDispatcher;
             _inputService = inputService;
@@ -107,16 +113,17 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         private void InitializeCommands()
         {
-            ReadDataCommand = new RelayCommand(ReadData);
-            RefreshListCommand = new RelayCommand(RefreshList);
-            CheckQueueCommand = new RelayCommand(CheckQueue);
+            //ReadDataCommand = new RelayCommand(ReadData);
+            //RefreshListCommand = new RelayCommand(RefreshList);
+            //CheckQueueCommand = new RelayCommand(CheckQueue);
         }
 
         // Command to be bound to the Button
-        public ICommand ReadDataCommand { get; private set; }
+        //public ICommand ReadDataCommand { get; private set; }
 
         // Method to execute when the button is clicked
-        private async void ReadData()
+        [RelayCommand]
+        public async void ReadData()
         {
             _logger.LogInformation("Starting to read data.");
             //if (null != SelectedController)
@@ -167,18 +174,20 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         }
 
 
-        public ICommand RefreshListCommand { get; private set; }
+        //public ICommand RefreshListCommand { get; private set; }
 
         // Method to execute when the button is clicked
-        private void RefreshList()
+        [RelayCommand]
+        public void RefreshList()
         {
             Controllers = _inputService.GetControllers().ToList();
         }
 
-        public ICommand CheckQueueCommand { get; private set; }
+        //public ICommand CheckQueueCommand { get; private set; }
 
         // Method to execute when the button is clicked
-        private void CheckQueue()
+        [RelayCommand]
+        public void CheckQueue()
         {
             List<ControllerData> tempList = new List<ControllerData>();
             foreach (ControllerData data in _dataIntegrator.DataQueue)
@@ -188,6 +197,12 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             //var count = _dataIntegrator.DataQueue.Count;
 
             //MessageBox.Show(string.Format("There are {0} entries in the queue", count.ToString()), "Check!");
+        }
+
+        [RelayCommand]
+        public void Settings()
+        {
+            _navigationService.Navigate(typeof(SettingsPage));
         }
 
         #endregion

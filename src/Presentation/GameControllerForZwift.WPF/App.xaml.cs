@@ -51,12 +51,14 @@ namespace GameControllerForZwift
             Func<DeviceInstance, IJoystick> joystickFactory = (device) => new JoystickWrapper(new DirectInput(), device.InstanceGuid);
 
 
+            INavigationService navigationService = new NavigationService(ServiceProvider);
+
             var inputService = new DirectInputService(inputLogger, deviceLookup, joystickFactory);
             var dataIntegrator = new DataIntegrator(inputService);
-            var mainWindowViewModel = new MainWindowViewModel(mainWindowlogger, dataIntegrator, inputService);
+            var mainWindowViewModel = new MainWindowViewModel(navigationService, mainWindowlogger, dataIntegrator, inputService);
 
 
-            INavigationService navigationService = new NavigationService(ServiceProvider);
+            
             
             var mainWindow = new MainWindow(mainWindowViewModel, navigationService);
 
@@ -80,6 +82,7 @@ namespace GameControllerForZwift
             services.AddSingleton<IDeviceLookup, DeviceLookup>();
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddTransient<HomePage>();
+            services.AddTransient<SettingsPage>();
 
             // Register the delegate
             //services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>

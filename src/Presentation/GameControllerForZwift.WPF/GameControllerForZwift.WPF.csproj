@@ -8,7 +8,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>GameControllerForZwift</AssemblyName>
 	<Version>0.0.5</Version>
-	  <NoWarn>$(NoWarn);WPF0001</NoWarn>
+	<NoWarn>$(NoWarn);WPF0001</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -37,20 +37,21 @@
             CornerRadius="8,0,0,0">
 
                 <StackPanel Margin="36,48,0,0" VerticalAlignment="Top" TextElement.Foreground="Black">
-                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text=".NET 9" Margin="0,0,0,2" AutomationProperties.HeadingLevel="Level1" />
-                    <TextBlock Style="{StaticResource TitleLargeTextBlockStyle}" Text="WPF Gallery" Margin="0,0,0,8" AutomationProperties.HeadingLevel="Level1" />
+                    <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="Subtitle" Margin="0,0,0,2" AutomationProperties.HeadingLevel="Level1" />
+                    <TextBlock Style="{StaticResource TitleLargeTextBlockStyle}" Text="Title" Margin="0,0,0,8" AutomationProperties.HeadingLevel="Level1" />
                     <Border Background="Transparent" CornerRadius="8,8,8,8" MaxWidth="300" HorizontalAlignment="Left">
                         <TextBlock
                         MaxWidth="300"
                         Margin="0,0,0,0"
                         Style="{StaticResource BodyStrongTextBlockStyle}"
-                        Text="A collection of controls, guidelines and samples to build great WPF applications"
+                        Text="This is body text where the description about what this screen facilitates would go."
                         TextAlignment="Left" HorizontalAlignment="Left" Padding="0,8,12,8"/>
                     </Border>
                 </StackPanel>
             </Border>
 
             <!--<controls:TileGallery Grid.Row="1" HorizontalAlignment="Stretch" Margin="0"/>-->
+            
 
             <ItemsControl
             Grid.Row="2"
