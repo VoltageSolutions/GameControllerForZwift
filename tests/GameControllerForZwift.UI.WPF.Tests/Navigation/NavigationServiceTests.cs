@@ -5,20 +5,30 @@ using System;
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using GameControllerForZwift.UI.WPF.Views;
+using System.Windows.Navigation;
+using NavigationService = GameControllerForZwift.UI.WPF.Navigation.NavigationService;
 
 namespace GameControllerForZwift.UI.WPF.Tests.Navigation
 {
     public class NavigationServiceTests
     {
+        private readonly ServiceCollection _serviceCollection;
         private readonly IServiceProvider _serviceProvider;
         private readonly NavigationService _navigationService;
         private readonly Frame _frame;
 
         public NavigationServiceTests()
         {
-            _serviceProvider = Substitute.For<IServiceProvider>();
+            _serviceCollection = new ServiceCollection();
+            _serviceCollection.AddTransient<TestHomePage>();
+            _serviceCollection.AddTransient<TestSettingsPage>();
+            _serviceCollection.AddTransient<TestConfigPage>();
+            _serviceProvider = _serviceCollection.BuildServiceProvider();
+
             _frame = new Frame();
             _navigationService = new NavigationService(_serviceProvider);
+            // In current app, navigating back will cause actions where view subscribes to this event
+            _navigationService.Navigating += _navigationService_Navigating;
             _navigationService.SetFrame(_frame);
         }
 
@@ -35,145 +45,118 @@ namespace GameControllerForZwift.UI.WPF.Tests.Navigation
             Assert.NotNull(newFrame);
         }
 
-        //[WpfFact]
-        //public void Navigate_ShouldNavigateToPage()
-        //{
-        //    // Arrange
-        //    var pageType = typeof(Page);
-        //    var pageInstance = new Page();
-        //    _serviceProvider.GetRequiredService(pageType).Returns(pageInstance);
+        [WpfFact]
+        public void Navigate_ShouldNavigateToDifferentPages()
+        {
+            // Arrange
+            var pageType1 = typeof(TestHomePage);
+            var pageType2 = typeof(TestSettingsPage);
 
-        //    // Act
-        //    _navigationService.Navigate(pageType);
+            // Act
+            _navigationService.Navigate(pageType1);
+            _navigationService.Navigate(pageType2);
 
-        //    // Assert
-        //    Assert.Equal(pageInstance, _frame.Content);
-        //}
+            // Assert
+            // Verify the current page type
+            Assert.Equal(pageType2, _navigationService.CurrentPageType); // Assuming CurrentPageType is public or accessible for testing
+                                                                         // Verify the navigation history
+            Assert.Equal(2, _navigationService.History.Count);
+        }
 
-        //[WpfFact]
-        //public void Navigate_ShouldNavigateToDifferentPages()
-        //{
-        //    // Arrange
-        //    var pageType1 = typeof(HomePage);
-        //    var pageInstance1 = new HomePage();
-        //    var pageType2 = typeof(SettingsPage);
-        //    var pageInstance2 = new SettingsPage();
+        [WpfFact]
+        public void Navigate_ShouldPushCurrentPageToHistory()
+        {
+            // Arrange
+            var pageType1 = typeof(TestHomePage);
+            var pageType2 = typeof(TestSettingsPage);
 
-        //    _serviceProvider.GetRequiredService(pageType1).Returns(pageInstance1);
-        //    _serviceProvider.GetRequiredService(pageType2).Returns(pageInstance2);
+            // Act
+            _navigationService.Navigate(pageType1);
+            _navigationService.Navigate(pageType2);
 
-        //    // Act
-        //    _navigationService.Navigate(pageType1);
-        //    var firstNavigationContent = _frame.Content;
+            // Assert
+            _navigationService.NavigateBack();
+            // Go back one in history
+            //_navigationService.History.Pop();
+            // Original page should be here.
+            Assert.Equal(pageType1, _navigationService.History.Peek());
+        }
 
-        //    _navigationService.Navigate(pageType2);
-        //    var secondNavigationContent = _frame.Content;
+        private void _navigationService_Navigating(object? sender, NavigatingEventArgs e)
+        {
+            _navigationService.Navigate(e.PageType);
+        }
 
-        //    // Assert
-        //    Assert.Equal(pageInstance1, firstNavigationContent);
-        //    Assert.Equal(pageInstance2, secondNavigationContent);
-        //}
+        [WpfFact]
+        public void NavigateBack_ShouldNavigateToPreviousPage()
+        {
+            // Arrange
+            var pageType1 = typeof(TestHomePage);
+            var pageType2 = typeof(TestSettingsPage);
 
-        //[WpfFact]
-        //public void Navigate_ShouldPushCurrentPageToHistory()
-        //{
-        //    // Arrange
-        //    var pageType1 = typeof(Page);
-        //    var pageType2 = typeof(UserControl);
-        //    var pageInstance1 = new Page();
-        //    var pageInstance2 = new UserControl();
-        //    _serviceProvider.GetRequiredService(pageType1).Returns(pageInstance1);
-        //    _serviceProvider.GetRequiredService(pageType2).Returns(pageInstance2);
+            _navigationService.Navigate(pageType1);
+            _navigationService.Navigate(pageType2);
 
-        //    // Act
-        //    _navigationService.Navigate(pageType1);
-        //    _navigationService.Navigate(pageType2);
+            // Act
+            _navigationService.NavigateBack();
 
-        //    // Assert
-        //    _navigationService.NavigateBack();
-        //    Assert.Equal(pageInstance1, _frame.Content);
-        //}
+            // Assert
+            // Verify the current page type
+            Assert.Equal(pageType1, _navigationService.CurrentPageType);
+            // Verify the future stack
+            Assert.Single(_navigationService.Future);
+            Assert.Equal(pageType2, _navigationService.Future.Peek());
+        }
 
-        //[WpfFact]
-        //public void NavigateBack_ShouldNavigateToPreviousPageInHistory()
-        //{
-        //    // Arrange
-        //    var pageType1 = typeof(Page);
-        //    var pageType2 = typeof(UserControl);
-        //    var pageInstance1 = new Page();
-        //    var pageInstance2 = new UserControl();
-        //    _serviceProvider.GetRequiredService(pageType1).Returns(pageInstance1);
-        //    _serviceProvider.GetRequiredService(pageType2).Returns(pageInstance2);
+        [WpfFact]
+        public void NavigateForward_ShouldNavigateToNextPageInFuture()
+        {
+            // Arrange
+            var pageType1 = typeof(TestHomePage);
+            var pageType2 = typeof(TestSettingsPage);
 
-        //    // Act
-        //    _navigationService.Navigate(pageType1);
-        //    _navigationService.Navigate(pageType2);
-        //    _navigationService.NavigateBack();
+            // Act
+            _navigationService.Navigate(pageType1);
+            _navigationService.Navigate(pageType2);
+            _navigationService.NavigateBack();
+            _navigationService.NavigateForward();
 
-        //    // Assert
-        //    Assert.Equal(pageInstance1, _frame.Content);
-        //}
+            // Assert
+            Assert.Equal(pageType2, _navigationService.CurrentPageType);
+        }
 
-        //[WpfFact]
-        //public void NavigateForward_ShouldNavigateToNextPageInFuture()
-        //{
-        //    // Arrange
-        //    var pageType1 = typeof(Page);
-        //    var pageType2 = typeof(UserControl);
-        //    var pageInstance1 = new Page();
-        //    var pageInstance2 = new UserControl();
-        //    _serviceProvider.GetRequiredService(pageType1).Returns(pageInstance1);
-        //    _serviceProvider.GetRequiredService(pageType2).Returns(pageInstance2);
+        [WpfFact]
+        public void Navigate_ShouldResolvePageFromServiceProvider()
+        {
+            // Arrange
+            var pageType = typeof(TestHomePage);
 
-        //    // Act
-        //    _navigationService.Navigate(pageType1);
-        //    _navigationService.Navigate(pageType2);
-        //    _navigationService.NavigateBack();
-        //    _navigationService.NavigateForward();
+            // Act
+            _navigationService.Navigate(pageType);
 
-        //    // Assert
-        //    Assert.Equal(pageInstance2, _frame.Content);
-        //}
+            // Assert
+            var resolvedPage = _serviceProvider.GetRequiredService(pageType);
+            Assert.IsType<TestHomePage>(resolvedPage);
+        }
 
-        //[WpfFact]
-        //public void RaiseNavigatingEvent_ShouldTriggerNavigatingEvent()
-        //{
-        //    // Arrange
-        //    var wasRaised = false;
-        //    var pageType = typeof(Page);
+        [WpfFact]
+        public void IsBackHistoryNonEmpty_ShouldReturnTrue_WhenHistoryIsNotEmpty()
+        {
+            // Arrange
+            var pageType = typeof(TestHomePage);
 
-        //    _navigationService.Navigating += (_, args) =>
-        //    {
-        //        wasRaised = args.PageType == pageType;
-        //    };
+            // Act
+            _navigationService.Navigate(pageType);
 
-        //    // Act
-        //    _navigationService.RaiseNavigatingEvent(pageType);
+            // Assert
+            Assert.True(_navigationService.IsBackHistoryNonEmpty());
+        }
 
-        //    // Assert
-        //    Assert.True(wasRaised);
-        //}
-
-        //[WpfFact]
-        //public void IsBackHistoryNonEmpty_ShouldReturnTrue_WhenHistoryIsNotEmpty()
-        //{
-        //    // Arrange
-        //    var pageType = typeof(Page);
-        //    var pageInstance = new Page();
-        //    _serviceProvider.GetRequiredService(pageType).Returns(pageInstance);
-
-        //    // Act
-        //    _navigationService.Navigate(pageType);
-
-        //    // Assert
-        //    Assert.True(_navigationService.IsBackHistoryNonEmpty());
-        //}
-
-        //[WpfFact]
-        //public void IsBackHistoryNonEmpty_ShouldReturnFalse_WhenHistoryIsEmpty()
-        //{
-        //    // Assert
-        //    Assert.False(_navigationService.IsBackHistoryNonEmpty());
-        //}
+        [WpfFact]
+        public void IsBackHistoryNonEmpty_ShouldReturnFalse_WhenHistoryIsEmpty()
+        {
+            // Assert
+            Assert.False(_navigationService.IsBackHistoryNonEmpty());
+        }
     }
 }

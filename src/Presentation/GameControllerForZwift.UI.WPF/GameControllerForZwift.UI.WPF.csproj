@@ -26,4 +26,16 @@
     <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Keyboard\GameControllerForZwift.Keyboard.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Views\AnotherPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="Views\AnotherPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
 </Project>

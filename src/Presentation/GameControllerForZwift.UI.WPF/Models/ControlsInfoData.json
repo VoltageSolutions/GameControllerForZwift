@@ -4,5 +4,11 @@
     "Title": "Home",
     "PageName": "HomePage",
     "IconGlyph": "\uE80F"
+  },
+  {
+    "UniqueId": "Another",
+    "Title": "Another",
+    "PageName": "AnotherPage",
+    "IconGlyph": "\uE80F"
   }
 ]
