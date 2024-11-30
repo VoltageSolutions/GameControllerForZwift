@@ -1,11 +1,6 @@
-﻿using Xunit;
-using NSubstitute;
-using GameControllerForZwift.UI.WPF.Navigation;
-using System;
-using System.Windows.Controls;
+﻿using GameControllerForZwift.UI.WPF.Navigation;
 using Microsoft.Extensions.DependencyInjection;
-using GameControllerForZwift.UI.WPF.Views;
-using System.Windows.Navigation;
+using System.Windows.Controls;
 using NavigationService = GameControllerForZwift.UI.WPF.Navigation.NavigationService;
 
 namespace GameControllerForZwift.UI.WPF.Tests.Navigation

@@ -1,5 +1,4 @@
-﻿using GameControllerForZwift.UI.WPF.Models;
-using GameControllerForZwift.UI.WPF.Navigation;
+﻿using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
