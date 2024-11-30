@@ -9,11 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Models\ControlsInfoData.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Models\ControlsInfoData.json" />
+    <EmbeddedResource Include="Navigation\PagesInfoData.json" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +32,10 @@
     <Page Update="Views\AnotherPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\" />
   </ItemGroup>
 
 </Project>

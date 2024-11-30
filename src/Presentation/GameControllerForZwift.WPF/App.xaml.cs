@@ -10,6 +10,7 @@ using SharpDX.DirectInput;
 using GameControllerForZwift.WPF.Logging;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.Views;
+using GameControllerForZwift.UI.WPF;
 
 namespace GameControllerForZwift
 {
@@ -55,7 +56,7 @@ namespace GameControllerForZwift
 
             var inputService = new DirectInputService(inputLogger, deviceLookup, joystickFactory);
             var dataIntegrator = new DataIntegrator(inputService);
-            var mainWindowViewModel = new MainWindowViewModel(navigationService, mainWindowlogger, dataIntegrator, inputService);
+            var mainWindowViewModel = new MainWindowViewModel(navigationService, mainWindowlogger);
 
 
             
@@ -81,9 +82,9 @@ namespace GameControllerForZwift
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IDeviceLookup, DeviceLookup>();
             services.AddSingleton<INavigationService, NavigationService>();
-            services.AddTransient<HomePage>();
-            services.AddTransient<SettingsPage>();
-            services.AddTransient<AnotherPage>();
+            services.AddSingleton<HomePage>();
+            services.AddSingleton<SettingsPage>();
+            services.AddSingleton<AnotherPage>();
 
             // Register the delegate
             //services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>
@@ -101,10 +102,10 @@ namespace GameControllerForZwift
 
             // GameControllerForZwift.UI.WPF
             // ViewModels
-            services.AddSingleton<MainWindowViewModel>();
+            //services.AddSingleton<MainWindowViewModel>();
 
             // Register MainWindow with DI so it can receive MainWindowViewModel
-            services.AddTransient<MainWindow>();
+            //services.AddTransient<MainWindow>();
         }
     }
 

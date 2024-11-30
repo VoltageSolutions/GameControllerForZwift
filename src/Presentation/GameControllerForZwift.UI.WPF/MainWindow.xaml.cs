@@ -1,18 +1,16 @@
-﻿using GameControllerForZwift.UI.WPF.ViewModels;
+﻿using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Win32;
 using System.Windows;
-using System.Windows.Automation.Peers;
 using System.Windows.Automation;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Shell;
-using GameControllerForZwift.UI.WPF.Navigation;
-using GameControllerForZwift.UI.WPF.Views;
-using GameControllerForZwift.UI.WPF.Models;
 
-namespace GameControllerForZwift
+namespace GameControllerForZwift.UI.WPF
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -49,7 +47,7 @@ namespace GameControllerForZwift
                 ResizeBorderThickness = ResizeMode == ResizeMode.NoResize ? default : new Thickness(4),
                 UseAeroCaptionButtons = true
             }
-        );
+            );
 
             SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
             this.StateChanged += MainWindow_StateChanged;
@@ -129,12 +127,12 @@ namespace GameControllerForZwift
             }
         }
 
-        private void ControlsList_SelectedItemChanged()
+        private void PagesTreeView_SelectedItemChanged()
         {
-            if (ControlsList.SelectedItem is ControlInfoDataItem navItem)
+            if (PagesTreeView.SelectedItem is PagesInfoDataItem navItem)
             {
                 _navigationService.Navigate(navItem.PageType);
-                var tvi = ControlsList.ItemContainerGenerator.ContainerFromItem(navItem) as TreeViewItem;
+                var tvi = PagesTreeView.ItemContainerGenerator.ContainerFromItem(navItem) as TreeViewItem;
                 if (tvi != null)
                 {
                     tvi.BringIntoView();
@@ -142,21 +140,21 @@ namespace GameControllerForZwift
             }
         }
 
-        private void ControlsList_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void PagesTreeView_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                SelectedItemChanged(ControlsList.ItemContainerGenerator.ContainerFromItem((sender as TreeView).SelectedItem) as TreeViewItem);
+                SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem((sender as TreeView).SelectedItem) as TreeViewItem);
             }
         }
 
-        private void ControlsList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        private void PagesTreeView_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (e.OriginalSource is ToggleButton)
             {
                 return;
             }
-            SelectedItemChanged(ControlsList.ItemContainerGenerator.ContainerFromItem((sender as TreeView).SelectedItem) as TreeViewItem);
+            SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem((sender as TreeView).SelectedItem) as TreeViewItem);
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -170,11 +168,11 @@ namespace GameControllerForZwift
             );
         }
 
-        private void ControlsList_Loaded(object sender, RoutedEventArgs e)
+        private void PagesTreeView_Loaded(object sender, RoutedEventArgs e)
         {
-            if (ControlsList.Items.Count > 0)
+            if (PagesTreeView.Items.Count > 0)
             {
-                TreeViewItem firstItem = (TreeViewItem)ControlsList.ItemContainerGenerator.ContainerFromItem(ControlsList.Items[0]);
+                TreeViewItem firstItem = (TreeViewItem)PagesTreeView.ItemContainerGenerator.ContainerFromItem(PagesTreeView.Items[0]);
                 if (firstItem != null)
                 {
                     firstItem.IsSelected = true;
@@ -208,7 +206,7 @@ namespace GameControllerForZwift
 
         private void SelectedItemChanged(TreeViewItem? tvi)
         {
-            ControlsList_SelectedItemChanged();
+            PagesTreeView_SelectedItemChanged();
             if (tvi != null)
             {
                 tvi.IsExpanded = !tvi.IsExpanded;
@@ -222,13 +220,13 @@ namespace GameControllerForZwift
 
         private void OnNavigating(object? sender, NavigatingEventArgs e)
         {
-            List<ControlInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromPageType(e.PageType);
+            List<PagesInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromPageType(e.PageType);
 
             if (list.Count > 0)
             {
                 TreeViewItem selectedTreeViewItem = null;
-                ItemsControl itemsControl = ControlsList;
-                foreach (ControlInfoDataItem item in list)
+                ItemsControl itemsControl = PagesTreeView;
+                foreach (PagesInfoDataItem item in list)
                 {
                     var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
                     if (tvi != null)
@@ -243,7 +241,7 @@ namespace GameControllerForZwift
                 if (selectedTreeViewItem != null)
                 {
                     selectedTreeViewItem.IsSelected = true;
-                    ControlsList_SelectedItemChanged();
+                    PagesTreeView_SelectedItemChanged();
                 }
             }
         }

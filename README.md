@@ -2,6 +2,11 @@
 
 The goal of this project is to enable using standard Game Controllers to interact with Zwift, much like the capabilities of the [Zwift Play Controllers](https://us.zwift.com/products/zwift-play?variant=43737779896576) or the [Wahoo Kickr Bike Shift](https://www.wahoofitness.com/devices/indoor-cycling/smart-bikes/kickr-bike-shift-buy).
 
+## Known Bugs
+
+- Navigation can blow up and crash the app when going backwards if Settings has been selected.
+- When first picking a navigation item on the tree, it will not show up as selected. Future selections will highlight the item properly.
+
 ## Project Organization
 
 The project follows a Clean Architecture Layout.

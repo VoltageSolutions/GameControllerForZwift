@@ -3,29 +3,13 @@ using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core;
 using GameControllerForZwift.Keyboard;
 using GameControllerForZwift.Logic;
-using GameControllerForZwift.UI.WPF;
-using GameControllerForZwift.UI.WPF.Models;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
 {
-    public partial class MainWindowViewModel : ObservableObject //ViewModelBase
+    public partial class MainWindowViewModel2 : ObservableObject //ViewModelBase
     {
         #region Fields
         //private readonly Dispatcher _dispatcher;
@@ -35,9 +19,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private IController _selectedController;
 
         [ObservableProperty]
-        private ICollection<ControlInfoDataItem> _controls;
+        private ICollection<PagesInfoDataItem> _controls;
         [ObservableProperty]
-        private ControlInfoDataItem? _selectedControl;
+        private PagesInfoDataItem? _selectedControl;
         private readonly INavigationService _navigationService;
         [ObservableProperty]
         private bool _canNavigateback;
@@ -55,9 +39,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Constructor
 
-        public MainWindowViewModel(INavigationService navigationService, ILogger<MainWindowViewModel> logger, DataIntegrator dataIntegrator, IInputService inputService)
+        public MainWindowViewModel2(INavigationService navigationService, ILogger<MainWindowViewModel> logger, DataIntegrator dataIntegrator, IInputService inputService)
         {
-            _controls = ControlsInfoDataSource.Instance.ControlsInfo;
+            _controls = PagesInfoDataSource.Instance.PagesInfo;
             _navigationService = navigationService;
             _logger = logger;
             //_dispatcher = Dispatcher.CurrentDispatcher;
@@ -229,11 +213,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _navigationService.NavigateForward();
         }
 
-        public List<ControlInfoDataItem> GetNavigationItemHierarchyFromPageType(Type? pageType)
+        public List<PagesInfoDataItem> GetNavigationItemHierarchyFromPageType(Type? pageType)
         {
-            List<ControlInfoDataItem> list = new List<ControlInfoDataItem>();
-            Stack<ControlInfoDataItem> _stack = new Stack<ControlInfoDataItem>();
-            Stack<ControlInfoDataItem> _revStack = new Stack<ControlInfoDataItem>();
+            List<PagesInfoDataItem> list = new List<PagesInfoDataItem>();
+            Stack<PagesInfoDataItem> _stack = new Stack<PagesInfoDataItem>();
+            Stack<PagesInfoDataItem> _revStack = new Stack<PagesInfoDataItem>();
 
             if (pageType == null)
             {
@@ -265,7 +249,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             return list;
         }
 
-        private bool FindNavigationItemsHierarchyFromPageType(Type pageType, ICollection<ControlInfoDataItem> pages, ref Stack<ControlInfoDataItem> stack)
+        private bool FindNavigationItemsHierarchyFromPageType(Type pageType, ICollection<PagesInfoDataItem> pages, ref Stack<PagesInfoDataItem> stack)
         {
             var item = stack.Peek();
             bool found = false;
