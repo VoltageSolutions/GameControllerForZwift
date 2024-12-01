@@ -10,8 +10,9 @@
     d:DesignWidth="1000"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d"
-    MinWidth="780"
-    MinHeight="450">
+    MinWidth="400"
+    MinHeight="450"
+        Width="1200" Height="600">
     <Window.Resources>
         <helpers:EmptyToVisibilityConverter x:Key="EmptyToVisibilityConverter"/>
 

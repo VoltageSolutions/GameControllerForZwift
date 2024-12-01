@@ -11,32 +11,125 @@
     <Page.Resources>
         <helpers:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
     </Page.Resources>
+    <ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <StackPanel Grid.Row="0" VerticalAlignment="Center">
-            <TextBlock
+            <StackPanel Grid.Row="0" VerticalAlignment="Center">
+                <TextBlock
                 Style="{StaticResource TitleTextBlockStyle}"
                 Text="{Binding ViewModel.Title}"
                 AutomationProperties.HeadingLevel="Level1"/>
-            <TextBlock
+                <TextBlock
                 x:Name="DescriptionTextBlock"
                 Text="{Binding ViewModel.Description}"
                 AutomationProperties.HeadingLevel="Level2"
                 Visibility="{Binding ViewModel.Description, Converter={StaticResource NullToVisibilityConverter}}"
                 />
-        </StackPanel>
-
-        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
-            <StackPanel>
-                <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Margin="0 0 0 12">
-                    Accent colors as SystemColors
-                </TextBlock>
             </StackPanel>
-        </ScrollViewer>
-    </Grid>
+
+
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <WrapPanel Grid.Row="0" Orientation="Horizontal">
+                    <Grid MinWidth="300" Margin="4">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0"
+                            x:Name="TitleText"
+                            FontSize="18"
+                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Text="Controller"
+                            Margin="8,8,8,4"/>
+
+                        <Grid Grid.Row="1" MinWidth="300">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Margin="8,4,4,4"/>
+                            <Button Grid.Column="1" Content="Refresh List" Margin="4,4,8,4"/>
+                        </Grid>
+
+                        <Border CornerRadius="6" Grid.RowSpan="2" Background="Gray" Opacity="0.1"/>
+                    </Grid>
+                    
+
+                    <!--<GroupBox Header="Controller">
+                        <Grid MinWidth="300">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            --><!--<ComboBox MinWidth="200" HorizontalAlignment="Left" ItemsSource="{Binding FontFamilies}" SelectedIndex="0" />--><!--
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0"/>
+                            <Button Grid.Column="1" Content="Refresh List"/>
+                        </Grid>
+                    </GroupBox>-->
+                    <GroupBox Header="Reset">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="To Default Values"/>
+                            <Button Content="Clear Values"/>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Header="Profile">
+                        <Grid MinWidth="300">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!--<ComboBox MinWidth="200" HorizontalAlignment="Left" ItemsSource="{Binding FontFamilies}" SelectedIndex="0" />-->
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0"/>
+                            <Button Grid.Column="1" Content="Load"/>
+                            <Button Grid.Column="2" Content="Save"/>
+                        </Grid>
+                    </GroupBox>
+                </WrapPanel>
+
+                <GroupBox Header="Controller Mapping" Grid.Row="1">
+
+                    <WrapPanel>
+                        <Grid MinWidth="200">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height=".5*"/>
+                                <RowDefinition Height=".5*"/>
+                            </Grid.RowDefinitions>
+
+                            <GroupBox Header="Buttons" Grid.Row="0" MinHeight="200">
+                            
+                            </GroupBox>
+
+                            <GroupBox Header="D-Pad" Grid.Row="1" MinHeight="200">
+
+                            </GroupBox>
+                        </Grid>
+
+                        <GroupBox Header="Left Stick" MinWidth="200" MinHeight="400">
+                        </GroupBox>
+
+                        <GroupBox Header="Right Stick" MinWidth="200" MinHeight="400">
+                        </GroupBox>
+
+                        <GroupBox Header="Triggers" MinWidth="200" MinHeight="400">
+                        </GroupBox>
+                    </WrapPanel>
+                </GroupBox>
+
+            </Grid>
+        </Grid>
+    </ScrollViewer>
 </Page>

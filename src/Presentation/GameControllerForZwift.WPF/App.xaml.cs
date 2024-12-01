@@ -66,6 +66,7 @@ namespace GameControllerForZwift
 
 
             mainWindow.Show();
+            Current.ThemeMode = ThemeMode.System;
         }
 
         private void ConfigureServices(IServiceCollection services)

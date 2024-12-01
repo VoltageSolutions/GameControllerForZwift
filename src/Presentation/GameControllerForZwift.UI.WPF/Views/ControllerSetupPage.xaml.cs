@@ -1,4 +1,5 @@
 ﻿using GameControllerForZwift.UI.WPF.ViewModels;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace GameControllerForZwift.UI.WPF.Views
@@ -16,9 +17,9 @@ namespace GameControllerForZwift.UI.WPF.Views
 
         #region Constructor
 
-        public ControllerSetupPage(ControllerSetupViewModel controllerSetupViewModel)
+        public ControllerSetupPage(ControllerSetupViewModel viewModel)
         {
-            ViewModel = controllerSetupViewModel;
+            ViewModel = viewModel;
             DataContext = this;
 
             InitializeComponent();
