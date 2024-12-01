@@ -6,9 +6,9 @@
     "IconGlyph": "\uE80F"
   },
   {
-    "UniqueId": "Another",
-    "Title": "Another",
-    "PageName": "AnotherPage",
-    "IconGlyph": "\uEB3C"
+    "UniqueId": "ControllerSetup",
+    "Title": "Controller Setup",
+    "PageName": "ControllerSetupPage",
+    "IconGlyph": "\uE7FC"
   }
 ]

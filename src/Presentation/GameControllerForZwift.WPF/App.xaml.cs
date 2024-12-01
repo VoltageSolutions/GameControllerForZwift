@@ -84,7 +84,9 @@ namespace GameControllerForZwift
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<HomePage>();
             services.AddSingleton<SettingsPage>();
-            services.AddSingleton<AnotherPage>();
+            //services.AddSingleton<AnotherPage>();
+            services.AddSingleton<ControllerSetupViewModel>();
+            services.AddSingleton<ControllerSetupPage>();
 
             // Register the delegate
             //services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>
