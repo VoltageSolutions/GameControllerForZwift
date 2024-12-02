@@ -9,6 +9,7 @@
 
                 <ResourceDictionary Source="pack://application:,,,/GameControllerForZwift.UI.WPF;component/Resources/Templates.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/GameControllerForZwift.UI.WPF;component/Resources/PageStyles.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/GameControllerForZwift.UI.WPF;component/Resources/CardStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

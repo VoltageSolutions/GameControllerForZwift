@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:GameControllerForZwift.UI.WPF.Views"
       xmlns:helpers="clr-namespace:GameControllerForZwift.UI.WPF.Helpers"
+      xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ControllerSetupPage">
@@ -39,7 +40,17 @@
                 </Grid.RowDefinitions>
 
                 <WrapPanel Grid.Row="0" Orientation="Horizontal">
-                    <Grid MinWidth="300" Margin="4">
+                    <controls:Card MinWidth="300" Title="Controller" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Margin="8,4,4,4"/>
+                            <Button Grid.Column="1" Content="Refresh List" Margin="4,4,8,4"/>
+                        </Grid>
+                    </controls:Card>
+                    <!--<Grid MinWidth="300">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
@@ -63,7 +74,7 @@
                         </Grid>
 
                         <Border CornerRadius="6" Grid.RowSpan="2" Background="Gray" Opacity="0.1"/>
-                    </Grid>
+                    </Grid>-->
                     
 
                     <!--<GroupBox Header="Controller">
@@ -78,13 +89,14 @@
                             <Button Grid.Column="1" Content="Refresh List"/>
                         </Grid>
                     </GroupBox>-->
-                    <GroupBox Header="Reset">
+                    
+                    <controls:Card MinWidth="300" Title="Reset" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Horizontal">
                             <Button Content="To Default Values"/>
                             <Button Content="Clear Values"/>
                         </StackPanel>
-                    </GroupBox>
-                    <GroupBox Header="Profile">
+                    </controls:Card>
+                    <!--<GroupBox Header="Profile">
                         <Grid MinWidth="300">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -92,12 +104,26 @@
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
-                            <!--<ComboBox MinWidth="200" HorizontalAlignment="Left" ItemsSource="{Binding FontFamilies}" SelectedIndex="0" />-->
+                            --><!--<ComboBox MinWidth="200" HorizontalAlignment="Left" ItemsSource="{Binding FontFamilies}" SelectedIndex="0" />--><!--
                             <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0"/>
                             <Button Grid.Column="1" Content="Load"/>
                             <Button Grid.Column="2" Content="Save"/>
                         </Grid>
-                    </GroupBox>
+                    </GroupBox>-->
+                    <controls:Card MinWidth="300" Title="Profile" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <Grid MinWidth="300">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0"/>
+                            <Button Grid.Column="1" Content="Load"/>
+                            <Button Grid.Column="2" Content="Save"/>
+                        </Grid> 
+                    </controls:Card>
                 </WrapPanel>
 
                 <GroupBox Header="Controller Mapping" Grid.Row="1">
@@ -109,8 +135,8 @@
                                 <RowDefinition Height=".5*"/>
                             </Grid.RowDefinitions>
 
-                            <GroupBox Header="Buttons" Grid.Row="0" MinHeight="200">
-                            
+                            <GroupBox Header="Buttons" Grid.Row="0" MinHeight="200" BorderThickness="1">
+
                             </GroupBox>
 
                             <GroupBox Header="D-Pad" Grid.Row="1" MinHeight="200">
