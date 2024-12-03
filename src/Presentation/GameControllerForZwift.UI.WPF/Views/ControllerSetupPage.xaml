@@ -21,12 +21,14 @@
 
             <StackPanel Grid.Row="0" VerticalAlignment="Center">
                 <TextBlock
-                Style="{StaticResource TitleTextBlockStyle}"
-                Text="{Binding ViewModel.Title}"
-                AutomationProperties.HeadingLevel="Level1"/>
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="{Binding ViewModel.Title}"
+                    d:Text="Controller Setup"
+                    AutomationProperties.HeadingLevel="Level1"/>
                 <TextBlock
                 x:Name="DescriptionTextBlock"
-                Text="{Binding ViewModel.Description}"
+                Text="{Binding ViewModel.Description}" 
+                    d:Text="Select a game controller and configure"
                 AutomationProperties.HeadingLevel="Level2"
                 Visibility="{Binding ViewModel.Description, Converter={StaticResource NullToVisibilityConverter}}"
                 />
@@ -46,70 +48,18 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Margin="8,4,4,4"/>
-                            <Button Grid.Column="1" Content="Refresh List" Margin="4,4,8,4"/>
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Margin="0,0,6,0" Height="32"/>
+                            <Button Grid.Column="1" Content="Refresh List" Margin="6,0,0,0" Height="32"/>
                         </Grid>
                     </controls:Card>
-                    <!--<Grid MinWidth="300">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
 
-                        <TextBlock Grid.Row="0"
-                            x:Name="TitleText"
-                            FontSize="18"
-                            Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-                            Style="{StaticResource BodyTextBlockStyle}"
-                            Text="Controller"
-                            Margin="8,8,8,4"/>
-
-                        <Grid Grid.Row="1" MinWidth="300">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Margin="8,4,4,4"/>
-                            <Button Grid.Column="1" Content="Refresh List" Margin="4,4,8,4"/>
-                        </Grid>
-
-                        <Border CornerRadius="6" Grid.RowSpan="2" Background="Gray" Opacity="0.1"/>
-                    </Grid>-->
-                    
-
-                    <!--<GroupBox Header="Controller">
-                        <Grid MinWidth="300">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            --><!--<ComboBox MinWidth="200" HorizontalAlignment="Left" ItemsSource="{Binding FontFamilies}" SelectedIndex="0" />--><!--
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0"/>
-                            <Button Grid.Column="1" Content="Refresh List"/>
-                        </Grid>
-                    </GroupBox>-->
-                    
                     <controls:Card MinWidth="300" Title="Reset" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="To Default Values"/>
-                            <Button Content="Clear Values"/>
+                            <Button Content="To Default Values" Margin="0,0,6,0" Height="32"/>
+                            <Button Content="Clear Values" Margin="6,0,0,0" Height="32"/>
                         </StackPanel>
                     </controls:Card>
-                    <!--<GroupBox Header="Profile">
-                        <Grid MinWidth="300">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            --><!--<ComboBox MinWidth="200" HorizontalAlignment="Left" ItemsSource="{Binding FontFamilies}" SelectedIndex="0" />--><!--
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0"/>
-                            <Button Grid.Column="1" Content="Load"/>
-                            <Button Grid.Column="2" Content="Save"/>
-                        </Grid>
-                    </GroupBox>-->
+                    
                     <controls:Card MinWidth="300" Title="Profile" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <Grid MinWidth="300">
                             <Grid.ColumnDefinitions>
@@ -119,41 +69,64 @@
                             </Grid.ColumnDefinitions>
 
 
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0"/>
-                            <Button Grid.Column="1" Content="Load"/>
-                            <Button Grid.Column="2" Content="Save"/>
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Height="32" Margin="0,0,6,0"/>
+                            <Button Grid.Column="1" Content="Load" Height="32" Margin="6,0,6,0"/>
+                            <Button Grid.Column="2" Content="Save" Height="32" Margin="6,0,6,0"/>
                         </Grid> 
                     </controls:Card>
                 </WrapPanel>
 
-                <GroupBox Header="Controller Mapping" Grid.Row="1">
 
-                    <WrapPanel>
-                        <Grid MinWidth="200">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height=".5*"/>
-                                <RowDefinition Height=".5*"/>
-                            </Grid.RowDefinitions>
 
-                            <GroupBox Header="Buttons" Grid.Row="0" MinHeight="200" BorderThickness="1">
+                <WrapPanel Grid.Row="1">
+                    <Grid MinWidth="200">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height=".5*"/>
+                            <RowDefinition Height=".5*"/>
+                        </Grid.RowDefinitions>
 
-                            </GroupBox>
+                        <controls:Card Grid.Row="0" MinHeight="200" Title="Buttons" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
 
-                            <GroupBox Header="D-Pad" Grid.Row="1" MinHeight="200">
+                            <StackPanel Orientation="Vertical">
+                                <controls:InputMapper 
+                                    InputName="A"
+                                    DataContext="{Binding ViewModel.SelectorViewModel}"
+                                    />
 
-                            </GroupBox>
+                                <controls:InputMapper 
+                                    InputName="B"
+                                    
+                                    />
+
+                            </StackPanel>
+                        </controls:Card>
+
+                        <controls:Card Grid.Row="1" MinHeight="200" Title="D-Pad" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                            <Grid>
+
+                            </Grid>
+                        </controls:Card>
+                    </Grid>
+
+                    <controls:Card MinWidth="200" MinHeight="400" Title="Left Stick" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <Grid>
+
                         </Grid>
+                    </controls:Card>
 
-                        <GroupBox Header="Left Stick" MinWidth="200" MinHeight="400">
-                        </GroupBox>
+                    <controls:Card MinWidth="200" MinHeight="400" Title="Right Stick" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <Grid>
 
-                        <GroupBox Header="Right Stick" MinWidth="200" MinHeight="400">
-                        </GroupBox>
+                        </Grid>
+                    </controls:Card>
 
-                        <GroupBox Header="Triggers" MinWidth="200" MinHeight="400">
-                        </GroupBox>
-                    </WrapPanel>
-                </GroupBox>
+                    <controls:Card MinWidth="200" MinHeight="400" Title="Triggers" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <Grid>
+
+                        </Grid>
+                    </controls:Card>
+                </WrapPanel>
+
 
             </Grid>
         </Grid>

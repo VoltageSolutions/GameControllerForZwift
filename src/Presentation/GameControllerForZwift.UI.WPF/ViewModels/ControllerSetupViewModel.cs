@@ -17,6 +17,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [ObservableProperty]
         private string _description = "Select a game controller and configure its button mapping to Zwift functions.";
 
+        [ObservableProperty]
+        ZwiftFunctionSelectorViewModel _selectorViewModel;
+
+        public ControllerSetupViewModel()
+        {
+            _selectorViewModel = new ZwiftFunctionSelectorViewModel();
+        }
+
         #endregion
     }
 }

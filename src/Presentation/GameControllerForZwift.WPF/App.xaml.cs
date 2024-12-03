@@ -11,6 +11,7 @@ using GameControllerForZwift.WPF.Logging;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.Views;
 using GameControllerForZwift.UI.WPF;
+using GameControllerForZwift.UI.WPF.Controls;
 
 namespace GameControllerForZwift
 {
@@ -88,6 +89,8 @@ namespace GameControllerForZwift
             //services.AddSingleton<AnotherPage>();
             services.AddSingleton<ControllerSetupViewModel>();
             services.AddSingleton<ControllerSetupPage>();
+            services.AddTransient<ZwiftFunctionSelectorViewModel>();
+            services.AddTransient<InputMapper>();
 
             // Register the delegate
             //services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>

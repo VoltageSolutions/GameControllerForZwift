@@ -19,11 +19,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
 {
     public partial class Card : UserControl
     {
-        static Card()
-        {
-
-        }
-
         public CornerRadius TileRadius
         {
             get { return (CornerRadius)GetValue(TileRadiusProperty); }
