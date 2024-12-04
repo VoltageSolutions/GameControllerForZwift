@@ -1,9 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Input;
+using GameControllerForZwift.Core;
+using GameControllerForZwift.Logic;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
 {
@@ -20,11 +18,59 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [ObservableProperty]
         ZwiftFunctionSelectorViewModel _selectorViewModel;
 
-        public ControllerSetupViewModel()
+        private DataIntegrator _dataIntegrator;
+        private IInputService _inputService;
+        [ObservableProperty]
+        private List<IController> _controllers;
+        [ObservableProperty]
+        private IController _selectedController;
+        [ObservableProperty]
+        private ControllerData _currentControllerValues;
+
+        #endregion
+
+        #region Constructor
+
+        // todo - this should take an interface for the dataintegrator and should need need the input service
+        public ControllerSetupViewModel(DataIntegrator dataIntegrator, IInputService inputService)
         {
+            _dataIntegrator = dataIntegrator;
+            _inputService = inputService;
             _selectorViewModel = new ZwiftFunctionSelectorViewModel();
         }
 
+        #endregion
+
+        #region Commands
+        [RelayCommand]
+        public void RefreshControllerList()
+        {
+            Controllers = _inputService.GetControllers().ToList();
+        }
+
+        [RelayCommand]
+        public void ResetMappingsToDefault()
+        {
+
+        }
+
+        [RelayCommand]
+        public void ClearAllMappings()
+        {
+            
+        }
+
+        [RelayCommand]
+        public void TestReadData()
+        {
+            if (null != SelectedController)
+                CurrentControllerValues = _dataIntegrator.ReadData(SelectedController);
+
+            //teset
+            //CurrentControllerValues = new ControllerData { A = true };
+            SelectorViewModel.ControllerData = CurrentControllerValues;
+
+        }
         #endregion
     }
 }

@@ -4,13 +4,20 @@ namespace GameControllerForZwift.Gamepad.USB
 {
     public class DeviceLookup : IDeviceLookup
     {
+        #region Fields
         private const string UnknownDevice = "Unknown Device";
         private Dictionary<string, string> _deviceMap;
+        #endregion
 
+        #region Constructors
         public DeviceLookup(string jsonContent)
         {
             _deviceMap = LoadDeviceMap(jsonContent ?? string.Empty);
         }
+        public DeviceLookup(IFileService fileService, string filePath) : this(fileService.ReadFileContent(filePath)) { }
+        #endregion
+
+        #region Methods
 
         public Dictionary<string, string> LoadDeviceMap(string jsonContent)
         {
@@ -52,5 +59,6 @@ namespace GameControllerForZwift.Gamepad.USB
             // Look up the device name from the dictionary
             return _deviceMap.TryGetValue(key, out var name) ? name : UnknownDevice;
         }
+        #endregion
     }
 }

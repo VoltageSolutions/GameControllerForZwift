@@ -19,6 +19,7 @@
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
+            <!--Title section-->
             <StackPanel Grid.Row="0" VerticalAlignment="Center">
                 <TextBlock
                     Style="{StaticResource TitleTextBlockStyle}"
@@ -34,32 +35,40 @@
                 />
             </StackPanel>
 
-
             <Grid Grid.Row="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
+                <!--Controller and Profile Row-->
                 <WrapPanel Grid.Row="0" Orientation="Horizontal">
+
+                    <!--Controller Selection Card-->
                     <controls:Card MinWidth="300" Title="Controller" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Margin="0,0,6,0" Height="32"/>
-                            <Button Grid.Column="1" Content="Refresh List" Margin="6,0,0,0" Height="32"/>
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" 
+                                ItemsSource="{Binding ViewModel.Controllers}" 
+                                SelectedItem="{Binding ViewModel.SelectedController}"
+                                DisplayMemberPath="Name" 
+                                Margin="0,0,6,0" Height="37"/>
+                            <Button Grid.Column="1" Content="Refresh List" Margin="6,0,0,0" Height="37" Command="{Binding ViewModel.RefreshControllerListCommand}"/>
                         </Grid>
                     </controls:Card>
 
+                    <!--Reset Card-->
                     <controls:Card MinWidth="300" Title="Reset" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="To Default Values" Margin="0,0,6,0" Height="32"/>
-                            <Button Content="Clear Values" Margin="6,0,0,0" Height="32"/>
+                            <Button Content="To Default Values" Margin="0,0,6,0" Height="37"/>
+                            <Button Content="Clear Values" Margin="6,0,0,0" Height="37"/>
                         </StackPanel>
                     </controls:Card>
-                    
+
+                    <!--Profile Card-->
                     <controls:Card MinWidth="300" Title="Profile" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <Grid MinWidth="300">
                             <Grid.ColumnDefinitions>
@@ -69,15 +78,16 @@
                             </Grid.ColumnDefinitions>
 
 
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Height="32" Margin="0,0,6,0"/>
-                            <Button Grid.Column="1" Content="Load" Height="32" Margin="6,0,6,0"/>
-                            <Button Grid.Column="2" Content="Save" Height="32" Margin="6,0,6,0"/>
-                        </Grid> 
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" SelectedIndex="0" Height="37" Margin="0,0,6,0"/>
+                            <Button Grid.Column="1" Content="Load" Height="37" Margin="6,0,6,0"/>
+                            <Button Grid.Column="2" Content="Save" Height="37" Margin="6,0,6,0"/>
+                        </Grid>
                     </controls:Card>
+
+                    <Button Content="Read Data" Height="37" Command="{Binding ViewModel.TestReadDataCommand}"/>
                 </WrapPanel>
 
-
-
+                <!--Mapper Row-->
                 <WrapPanel Grid.Row="1">
                     <Grid MinWidth="200">
                         <Grid.RowDefinitions>
@@ -90,13 +100,14 @@
                             <StackPanel Orientation="Vertical">
                                 <controls:InputMapper 
                                     InputName="A"
+                                    InputPressed="{Binding ControllerData.A}"
                                     DataContext="{Binding ViewModel.SelectorViewModel}"
                                     />
 
-                                <controls:InputMapper 
+                                <!--<controls:InputMapper 
                                     InputName="B"
                                     
-                                    />
+                                    />-->
 
                             </StackPanel>
                         </controls:Card>

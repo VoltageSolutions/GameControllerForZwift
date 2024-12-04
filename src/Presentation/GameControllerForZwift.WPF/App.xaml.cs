@@ -1,17 +1,16 @@
 ﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Gamepad.DirectInput;
-using GameControllerForZwift.Logic;
-using GameControllerForZwift.UI.WPF.ViewModels;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using System.Windows;
 using GameControllerForZwift.Gamepad.USB;
-using SharpDX.DirectInput;
-using GameControllerForZwift.WPF.Logging;
-using GameControllerForZwift.UI.WPF.Navigation;
-using GameControllerForZwift.UI.WPF.Views;
+using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
+using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.ViewModels;
+using GameControllerForZwift.UI.WPF.Views;
+using GameControllerForZwift.WPF.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using SharpDX.DirectInput;
+using System.Windows;
 
 namespace GameControllerForZwift
 {
@@ -34,70 +33,41 @@ namespace GameControllerForZwift
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
             // Show the main window
-            //var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
-
-            // temp changes because i broke DI
-
-            var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.ClearProviders();
-                builder.AddProvider(new CustomMessageEventLogLoggerProvider());
-            });
-            var mainWindowlogger = loggerFactory.CreateLogger<MainWindowViewModel>();
-            ILogger<DirectInputService> inputLogger = loggerFactory.CreateLogger<DirectInputService>();
-            
-
-            var fileService = new FileService();
-            string json = fileService.ReadFileContent("./DeviceMap.json");
-            var deviceLookup = new DeviceLookup(json);
-            Func<DeviceInstance, IJoystick> joystickFactory = (device) => new JoystickWrapper(new DirectInput(), device.InstanceGuid);
-
-
-            INavigationService navigationService = new NavigationService(ServiceProvider);
-
-            var inputService = new DirectInputService(inputLogger, deviceLookup, joystickFactory);
-            var dataIntegrator = new DataIntegrator(inputService);
-            var mainWindowViewModel = new MainWindowViewModel(navigationService, mainWindowlogger);
-
-
-            
-            
-            var mainWindow = new MainWindow(mainWindowViewModel, navigationService);
-
-
-
+            var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             Current.ThemeMode = ThemeMode.System;
         }
 
         private void ConfigureServices(IServiceCollection services)
         {
+            // Standard .NET Event Logging
             //services.AddLogging(configure =>
             //{
             //    configure.AddDebug();
             //    configure.AddEventLog();
             //});
 
-            // Register other services as needed
-            
-            // GameControllerForZwift.Gamepad
+            // Register custom event logging
+            services.AddLogging(configure =>
+            {
+                //configure.ClearProviders(); // Optional: Removes default logging providers if you only want your custom one.
+                configure.AddCustomEventLogProvider(); // Add your custom provider
+            });
+
+            // Register DeviceLookup
             services.AddSingleton<IFileService, FileService>();
-            services.AddSingleton<IDeviceLookup, DeviceLookup>();
-            services.AddSingleton<INavigationService, NavigationService>();
-            services.AddSingleton<HomePage>();
-            services.AddSingleton<SettingsPage>();
-            //services.AddSingleton<AnotherPage>();
-            services.AddSingleton<ControllerSetupViewModel>();
-            services.AddSingleton<ControllerSetupPage>();
-            services.AddTransient<ZwiftFunctionSelectorViewModel>();
-            services.AddTransient<InputMapper>();
+            services.AddSingleton<IDeviceLookup>(provider =>
+            {
+                var fileService = provider.GetRequiredService<IFileService>();
+                string filePath = "./DeviceMap.json"; // Or fetch this from configuration
+                return new DeviceLookup(fileService, filePath);
+            });
 
             // Register the delegate
-            //services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>
-            //{
-            //    return (device) => new JoystickWrapper(new DirectInput(), device.InstanceGuid);
-            //});
-
+            services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>
+            {
+                return (device) => new JoystickWrapper(new DirectInput(), device.InstanceGuid);
+            });
             services.AddSingleton<IInputService, DirectInputService>();
 
             // GameControllerForZwift.Keyboard
@@ -106,12 +76,20 @@ namespace GameControllerForZwift
             services.AddSingleton<DataIntegrator>(); // this should have an interface so we can unit test it later
 
 
+            services.AddSingleton<INavigationService, NavigationService>();
+
             // GameControllerForZwift.UI.WPF
             // ViewModels
-            //services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<ControllerSetupViewModel>();
+            services.AddTransient<ZwiftFunctionSelectorViewModel>();
 
             // Register MainWindow with DI so it can receive MainWindowViewModel
-            //services.AddTransient<MainWindow>();
+            services.AddTransient<InputMapper>();
+            services.AddSingleton<HomePage>();
+            services.AddSingleton<SettingsPage>();
+            services.AddSingleton<ControllerSetupPage>();
+            services.AddTransient<MainWindow>();
         }
     }
 

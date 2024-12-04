@@ -36,13 +36,13 @@ namespace GameControllerForZwift.UI.WPF.Controls
         public static readonly DependencyProperty InputNameProperty =
             DependencyProperty.Register("InputName", typeof(string), typeof(InputMapper), new PropertyMetadata(""));
 
-        //public bool InputEnabled
-        //{
-        //    get { return (bool)GetValue(InputEnabledProperty); }
-        //    set { SetValue(InputEnabledProperty, value); }
-        //}
-        //public static readonly DependencyProperty InputEnabledProperty =
-        //    DependencyProperty.Register("InputEnabled", typeof(bool), typeof(InputMapper), new PropertyMetadata(""));
+        public bool InputPressed
+        {
+            get { return (bool)GetValue(InputPressedProperty); }
+            set { SetValue(InputPressedProperty, value); }
+        }
+        public static readonly DependencyProperty InputPressedProperty =
+            DependencyProperty.Register("InputPressed", typeof(bool), typeof(InputMapper), new PropertyMetadata(false));
 
         // Dependency property for ZwiftFunction selection
         public ZwiftFunction SelectedFunction

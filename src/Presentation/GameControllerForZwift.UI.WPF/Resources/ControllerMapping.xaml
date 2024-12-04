@@ -11,49 +11,60 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type controls:InputMapper}">
-                    <StackPanel>
-                        <!-- Display InputName -->
-                        <TextBlock Text="{Binding InputName, RelativeSource={RelativeSource TemplatedParent}}" 
-                                   Margin="0,0,6,0" />
+                    <Border CornerRadius="8">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding InputPressed, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource AccentFillColorSelectedTextBackgroundBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <StackPanel>
+                            <!-- Display InputName -->
+                            <TextBlock Text="{Binding InputName, RelativeSource={RelativeSource TemplatedParent}}" 
+                                       Margin="0,0,6,0" />
 
-                        <!-- Main Function ComboBox -->
-                        <ComboBox ItemsSource="{Binding DataContext.ZwiftFunctions, RelativeSource={RelativeSource TemplatedParent}}"
-                                  SelectedItem="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}}" 
-                                  Margin="6,0,6,0" >
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
+                            <!-- Main Function ComboBox -->
+                            <ComboBox ItemsSource="{Binding DataContext.ZwiftFunctions, RelativeSource={RelativeSource TemplatedParent}}"
+                                      SelectedItem="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}}" 
+                                      Margin="6,0,6,0" Height="37">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
 
-                        <!-- Conditional Player View ComboBox -->
-                        <ComboBox ItemsSource="{Binding DataContext.ZwiftPlayerViews, RelativeSource={RelativeSource TemplatedParent}}"
-                                  SelectedItem="{Binding DataContext.SelectedZwiftPlayerView, RelativeSource={RelativeSource TemplatedParent}}"
-                                  Visibility="{Binding DataContext.SelectedFunction, RelativeSource={RelativeSource TemplatedParent}, 
-                                    Converter={StaticResource ZwiftFunctionToVisibilityConverter}, 
-                                    ConverterParameter=AdjustCameraAngle}" 
-                                  Margin="6,0,6,0" >
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
+                            <!-- Conditional Player View ComboBox -->
+                            <ComboBox ItemsSource="{Binding DataContext.ZwiftPlayerViews, RelativeSource={RelativeSource TemplatedParent}}"
+                                      SelectedItem="{Binding DataContext.SelectedZwiftPlayerView, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Visibility="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}, 
+                                        Converter={StaticResource ZwiftFunctionToVisibilityConverter}, 
+                                        ConverterParameter=AdjustCameraAngle}" 
+                                      Margin="6,0,6,0" Height="37">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
 
-                        <!-- Conditional Rider Action ComboBox -->
-                        <ComboBox ItemsSource="{Binding DataContext.ZwiftRiderActions, RelativeSource={RelativeSource TemplatedParent}}"
-                                  SelectedItem="{Binding DataContext.SelectedZwiftRiderAction, RelativeSource={RelativeSource TemplatedParent}}"
-                                  Visibility="{Binding DataContext.SelectedFunction, RelativeSource={RelativeSource TemplatedParent}, 
-                                    Converter={StaticResource ZwiftFunctionToVisibilityConverter},
-                                    ConverterParameter=RiderAction}">
-                            <ComboBox.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
-                                </DataTemplate>
-                            </ComboBox.ItemTemplate>
-                        </ComboBox>
-                    </StackPanel>
+                            <!-- Conditional Rider Action ComboBox -->
+                            <ComboBox ItemsSource="{Binding DataContext.ZwiftRiderActions, RelativeSource={RelativeSource TemplatedParent}}"
+                                      SelectedItem="{Binding DataContext.SelectedZwiftRiderAction, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Visibility="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}, 
+                                        Converter={StaticResource ZwiftFunctionToVisibilityConverter},
+                                        ConverterParameter=RiderAction}" Height="37">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </Border>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
