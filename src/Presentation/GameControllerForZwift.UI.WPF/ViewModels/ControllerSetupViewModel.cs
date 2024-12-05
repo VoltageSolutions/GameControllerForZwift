@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core;
 using GameControllerForZwift.Logic;
+using System.Windows;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
 {
@@ -37,6 +38,19 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _dataIntegrator = dataIntegrator;
             _inputService = inputService;
             _selectorViewModel = new ZwiftFunctionSelectorViewModel();
+
+
+            _dataIntegrator.InputChanged += _dataIntegrator_InputChanged;
+        }
+
+        private void _dataIntegrator_InputChanged(object? sender, InputStateChangedEventArgs e)
+        {
+            // Ensure that UI updates happen on the UI thread
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                CurrentControllerValues = e.Data;
+                SelectorViewModel.ControllerData = CurrentControllerValues;
+            });
         }
 
         #endregion
@@ -45,7 +59,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [RelayCommand]
         public void RefreshControllerList()
         {
-            Controllers = _inputService.GetControllers().ToList();
+            Controllers = _dataIntegrator.GetControllers().ToList();
         }
 
         [RelayCommand]
@@ -60,17 +74,23 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             
         }
 
-        [RelayCommand]
-        public void TestReadData()
+        
+        #endregion
+
+        #region Methods
+
+        partial void OnSelectedControllerChanged(IController oldValue, IController newValue)
         {
-            if (null != SelectedController)
-                CurrentControllerValues = _dataIntegrator.ReadData(SelectedController);
+            // Stop the previous processing, if any
+            _dataIntegrator.StopProcessing();
 
-            //teset
-            //CurrentControllerValues = new ControllerData { A = true };
-            SelectorViewModel.ControllerData = CurrentControllerValues;
-
+            // Start processing the new controller if it's not null
+            if (newValue != null)
+            {
+                _dataIntegrator.StartProcessing(newValue);
+            }
         }
+
         #endregion
     }
 }

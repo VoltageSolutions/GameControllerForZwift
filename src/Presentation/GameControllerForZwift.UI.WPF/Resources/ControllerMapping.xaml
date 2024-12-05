@@ -21,13 +21,20 @@
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
-                        <StackPanel>
+                        <Grid Margin="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
                             <!-- Display InputName -->
-                            <TextBlock Text="{Binding InputName, RelativeSource={RelativeSource TemplatedParent}}" 
+                            <TextBlock Grid.Column="0" Text="{Binding InputName, RelativeSource={RelativeSource TemplatedParent}}" 
+                                       Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center"
+                                       Width="80"
                                        Margin="0,0,6,0" />
 
                             <!-- Main Function ComboBox -->
-                            <ComboBox ItemsSource="{Binding DataContext.ZwiftFunctions, RelativeSource={RelativeSource TemplatedParent}}"
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding DataContext.ZwiftFunctions, RelativeSource={RelativeSource TemplatedParent}}"
                                       SelectedItem="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}}" 
                                       Margin="6,0,6,0" Height="37">
                                 <ComboBox.ItemTemplate>
@@ -38,7 +45,7 @@
                             </ComboBox>
 
                             <!-- Conditional Player View ComboBox -->
-                            <ComboBox ItemsSource="{Binding DataContext.ZwiftPlayerViews, RelativeSource={RelativeSource TemplatedParent}}"
+                            <ComboBox Grid.Column="2" ItemsSource="{Binding DataContext.ZwiftPlayerViews, RelativeSource={RelativeSource TemplatedParent}}"
                                       SelectedItem="{Binding DataContext.SelectedZwiftPlayerView, RelativeSource={RelativeSource TemplatedParent}}"
                                       Visibility="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}, 
                                         Converter={StaticResource ZwiftFunctionToVisibilityConverter}, 
@@ -52,7 +59,7 @@
                             </ComboBox>
 
                             <!-- Conditional Rider Action ComboBox -->
-                            <ComboBox ItemsSource="{Binding DataContext.ZwiftRiderActions, RelativeSource={RelativeSource TemplatedParent}}"
+                            <ComboBox Grid.Column="2" ItemsSource="{Binding DataContext.ZwiftRiderActions, RelativeSource={RelativeSource TemplatedParent}}"
                                       SelectedItem="{Binding DataContext.SelectedZwiftRiderAction, RelativeSource={RelativeSource TemplatedParent}}"
                                       Visibility="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}, 
                                         Converter={StaticResource ZwiftFunctionToVisibilityConverter},
@@ -63,7 +70,7 @@
                                     </DataTemplate>
                                 </ComboBox.ItemTemplate>
                             </ComboBox>
-                        </StackPanel>
+                        </Grid>
                     </Border>
                 </ControlTemplate>
             </Setter.Value>

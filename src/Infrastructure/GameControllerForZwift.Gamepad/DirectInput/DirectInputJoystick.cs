@@ -1,5 +1,4 @@
 ﻿using GameControllerForZwift.Core;
-using GameControllerForZwift.Gamepad.USB;
 
 namespace GameControllerForZwift.Gamepad.DirectInput
 {

@@ -1,71 +1,101 @@
 ﻿using GameControllerForZwift.Core;
 using System.Collections.Concurrent;
 using System.Reflection.Metadata;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GameControllerForZwift.Logic
 {
     public class DataIntegrator
     {
+        #region Fields
         private IInputService _inputService;
+        public ConcurrentQueue<ControllerData> DataQueue => _dataQueue;
         private readonly ConcurrentQueue<ControllerData> _dataQueue = new ConcurrentQueue<ControllerData>();
         private readonly int _maxQueueSize;
-        private readonly CancellationTokenSource _cts = new CancellationTokenSource();
+        private CancellationTokenSource _cts;// = new CancellationTokenSource();
+        public event EventHandler<InputStateChangedEventArgs> InputChanged;
+        private ControllerData? _lastDataState;
+        #endregion
 
+        #region Constructor
         // todo - pass in required interfaces for reader and writer
         public DataIntegrator(IInputService inputService, int maxQueueSize = 100)
         {
             _inputService = inputService;
             _maxQueueSize = maxQueueSize;
         }
+        #endregion
+        
 
-        public ConcurrentQueue<ControllerData> DataQueue => _dataQueue;
+        #region Methods
 
-        public void StartProcessing()
+        public IEnumerable<IController> GetControllers() => _inputService.GetControllers();
+
+        public void StartProcessing(IController controller)
         {
-            //ReadDataAsync(_cts.Token);
-            _ = Task.Run(() => ReadDataAsync(_cts.Token));
+            if (null != _cts)
+                _cts.Dispose();
+            _cts = new CancellationTokenSource();
+
+            _ = Task.Run(() => ReadDataAsync(controller, _cts.Token));
+            //StartPolling(controller, _cts.Token);
             //_ = Task.Run(() => WriteDataAsync(_cts.Token));
         }
 
-        public void StopProcessing() => _cts.Cancel();
-
-        // this is a test method to help get things going
-        public ControllerData ReadData(IController controller)
+        public void StopProcessing()
         {
-            //// for testing only
-            //var controllers = _inputService.GetControllers();
-            //IController controller = controllers.First();
-
-            return controller.ReadData();
+            if (null != _cts)
+                _cts.Cancel();
         }
 
-        private async Task ReadDataAsync(CancellationToken cancellationToken)
+        private async Task ReadDataAsync(IController controller, CancellationToken cancellationToken)
         {
-            // for testing only
-            var controllers = _inputService.GetControllers();
-
-            if (controllers.Any())
+            if (controller != null)
             {
-                IController controller = controllers.First();
-
-                if (controller != null)
+                while (!cancellationToken.IsCancellationRequested)
                 {
+                    var controllerData = controller.ReadData();
+                    ProcessControllerData(controllerData);
 
-                    while (!cancellationToken.IsCancellationRequested)
+                    await Task.Delay(50, cancellationToken);
+                }
+            }
+        }
+
+        public void ProcessControllerData(ControllerData controllerData)
+        {
+            // Add data to the queue, discarding the oldest if the queue is full
+            //if (_dataQueue.Count >= _maxQueueSize)
+            //{
+            //    _dataQueue.TryDequeue(out _); // Remove the oldest data
+            //}
+            //_dataQueue.Enqueue(controllerData);
+
+            if (controllerData.TryGetSingleChange(_lastDataState, out var singleChange))
+            {
+                InputChanged?.Invoke(this, new InputStateChangedEventArgs(singleChange, controllerData));
+            }
+            else
+            {
+                // Multiple changes: Fire the ButtonPressed event for all changes
+                foreach (var input in Enum.GetValues<ControllerInput>())
+                {
+                    bool currentStatePressed = controllerData.IsPressed(input);
+                    bool previousStatePressed = _lastDataState?.IsPressed(input) ?? false;
+
+                    if (currentStatePressed != previousStatePressed)
                     {
-                        var data = controller.ReadData();
-
-                        // Add data to the queue, discarding the oldest if the queue is full
-                        if (_dataQueue.Count >= _maxQueueSize)
-                        {
-                            _dataQueue.TryDequeue(out _); // Remove the oldest data
-                        }
-                        _dataQueue.Enqueue(data);
-
-                        await Task.Delay(500, cancellationToken);
+                        InputChanged?.Invoke(this, new InputStateChangedEventArgs(input, controllerData));
                     }
                 }
             }
+
+            _lastDataState = controllerData;
+        }
+
+        protected virtual void OnButtonChanged(InputStateChangedEventArgs e)
+        {
+            InputChanged?.Invoke(this, e);
         }
 
         private async Task WriteDataAsync(CancellationToken cancellationToken)
@@ -79,5 +109,6 @@ namespace GameControllerForZwift.Logic
             //    await Task.Delay(500, cancellationToken); // Adjust delay based on needs
             //}
         }
+        #endregion
     }
 }
