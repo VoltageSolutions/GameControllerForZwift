@@ -1,4 +1,5 @@
 ﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Gamepad.DirectInput.ControllerMapping;
 using GameControllerForZwift.Gamepad.USB;
 using SharpDX.DirectInput;
 
@@ -11,17 +12,26 @@ namespace GameControllerForZwift.Gamepad.DirectInput
         public static IEnumerable<IController> AsControllers(
             this IList<DeviceInstance> gamepads,
             Func<DeviceInstance, IJoystick> joystickFactory,
-            IDeviceLookup deviceLookup)
+            IDeviceLookup deviceLookup,
+            IControllerMapping controllerMapping)
         {
             if (gamepads == null) throw new ArgumentNullException(nameof(gamepads));
             if (joystickFactory == null) throw new ArgumentNullException(nameof(joystickFactory));
             if (deviceLookup == null) throw new ArgumentNullException(nameof(deviceLookup));
 
-            return gamepads.Select(gamepad =>
+            return gamepads.Select(device =>
             {
-                var joystick = joystickFactory(gamepad);
-                var name = deviceLookup.GetDeviceName(gamepad.ProductGuid);
-                return new DirectInputJoystick(joystick, name);
+                // Get the device name using the DeviceLookup
+                string deviceName = deviceLookup.GetDeviceName(device.ProductGuid);
+
+                // Get the ControllerMap for this device
+                ControllerMap controllerMap = controllerMapping.GetControllerMap(deviceName);
+
+                // Create and return the DirectInputJoystick with the required parameters
+                return new DirectInputJoystick(
+                    joystickFactory(device),
+                    deviceName,
+                    controllerMap);
             });
         }
 
@@ -30,52 +40,106 @@ namespace GameControllerForZwift.Gamepad.DirectInput
         /// </summary>
         /// <param name="state">The JoystickState to convert.</param>
         /// <returns>A populated ControllerData instance.</returns>
-        public static ControllerData AsControllerData(this IJoystickState state)
+        public static ControllerData AsControllerData(this IJoystickState state, ControllerMap controllerMap)
         {
             if (state == null) throw new ArgumentNullException(nameof(state));
-
-            var timestamp = DateTime.Now;
+            if (controllerMap == null) throw new ArgumentNullException(nameof(controllerMap));
 
             return new ControllerData
             {
-                A = GetButtonState(state, 0),
-                B = GetButtonState(state, 1),
-                X = GetButtonState(state, 2),
-                Y = GetButtonState(state, 3),
-                LeftBumper = GetButtonState(state, 4),
-                RightBumper = GetButtonState(state, 5),
-                LeftTrigger = GetTriggerValue(state, 6),
-                RightTrigger = GetTriggerValue(state, 7),
-                View = GetButtonState(state, 8),
-                Menu = GetButtonState(state, 9),
-                LeftThumbstick = GetButtonState(state, 10),
-                RightThumbstick = GetButtonState(state, 11),
-                DPadUp = GetDPadDirection(state, 0),
-                DPadRight = GetDPadDirection(state, 9000),
-                DPadDown = GetDPadDirection(state, 18000),
-                DPadLeft = GetDPadDirection(state, 27000),
-                LeftThumbstickX = state.X,
-                LeftThumbstickY = state.Y,
-                RightThumbstickX = state.RotationX,
-                RightThumbstickY = state.RotationY,
-                Timestamp = timestamp
+                // Button mappings
+                A = controllerMap.GetButtonIndex("A").HasValue && state.Buttons[controllerMap.GetButtonIndex("A").Value],
+                B = controllerMap.GetButtonIndex("B").HasValue && state.Buttons[controllerMap.GetButtonIndex("B").Value],
+                X = controllerMap.GetButtonIndex("X").HasValue && state.Buttons[controllerMap.GetButtonIndex("X").Value],
+                Y = controllerMap.GetButtonIndex("Y").HasValue && state.Buttons[controllerMap.GetButtonIndex("Y").Value],
+                LeftBumper = controllerMap.GetButtonIndex("LeftBumper").HasValue && state.Buttons[controllerMap.GetButtonIndex("LeftBumper").Value],
+                RightBumper = controllerMap.GetButtonIndex("RightBumper").HasValue && state.Buttons[controllerMap.GetButtonIndex("RightBumper").Value],
+                View = controllerMap.GetButtonIndex("View").HasValue && state.Buttons[controllerMap.GetButtonIndex("View").Value],
+                Menu = controllerMap.GetButtonIndex("Menu").HasValue && state.Buttons[controllerMap.GetButtonIndex("Menu").Value],
+                LeftThumbstick = controllerMap.GetButtonIndex("LeftThumbstick").HasValue && state.Buttons[controllerMap.GetButtonIndex("LeftThumbstick").Value],
+                RightThumbstick = controllerMap.GetButtonIndex("RightThumbstick").HasValue && state.Buttons[controllerMap.GetButtonIndex("RightThumbstick").Value],
+
+                // Point of View (D-Pad) mappings
+                DPadUp = controllerMap.GetPointOfViewIndex("DPadUp").HasValue &&
+                 state.PointOfViewControllers.Contains(controllerMap.GetPointOfViewIndex("DPadUp").Value),
+                DPadRight = controllerMap.GetPointOfViewIndex("DPadRight").HasValue &&
+                    state.PointOfViewControllers.Contains(controllerMap.GetPointOfViewIndex("DPadRight").Value),
+                DPadDown = controllerMap.GetPointOfViewIndex("DPadDown").HasValue &&
+                   state.PointOfViewControllers.Contains(controllerMap.GetPointOfViewIndex("DPadDown").Value),
+                DPadLeft = controllerMap.GetPointOfViewIndex("DPadLeft").HasValue &&
+                   state.PointOfViewControllers.Contains(controllerMap.GetPointOfViewIndex("DPadLeft").Value),
+
+                // Axis mappings
+                LeftThumbstickX = state.GetAxisValue(controllerMap.GetAxisMapping("LeftThumbstickX")),
+                LeftThumbstickY = state.GetAxisValue(controllerMap.GetAxisMapping("LeftThumbstickY")),
+                RightThumbstickX = state.GetAxisValue(controllerMap.GetAxisMapping("RightThumbstickX")),
+                RightThumbstickY = state.GetAxisValue(controllerMap.GetAxisMapping("RightThumbstickY")),
+                LeftTrigger = state.GetAxisValue(controllerMap.GetAxisMapping("LeftTrigger")),
+                RightTrigger = state.GetAxisValue(controllerMap.GetAxisMapping("RightTrigger")),
+
+                // Timestamp for when this data was captured
+                Timestamp = DateTime.Now
                 //RotationX for right trigger
             };
+
+            //var data =  new ControllerData
+            //{
+            //    // Button mappings
+            //    A = controllerMap.GetButtonIndex("A").HasValue && state.Buttons[controllerMap.GetButtonIndex("A").Value],
+            //    B = controllerMap.GetButtonIndex("B").HasValue && state.Buttons[controllerMap.GetButtonIndex("B").Value],
+            //    X = controllerMap.GetButtonIndex("X").HasValue && state.Buttons[controllerMap.GetButtonIndex("X").Value],
+            //    Y = controllerMap.GetButtonIndex("Y").HasValue && state.Buttons[controllerMap.GetButtonIndex("Y").Value],
+            //    LeftBumper = controllerMap.GetButtonIndex("LeftBumper").HasValue && state.Buttons[controllerMap.GetButtonIndex("LeftBumper").Value],
+            //    RightBumper = controllerMap.GetButtonIndex("RightBumper").HasValue && state.Buttons[controllerMap.GetButtonIndex("RightBumper").Value],
+            //    View = controllerMap.GetButtonIndex("View").HasValue && state.Buttons[controllerMap.GetButtonIndex("View").Value],
+            //    Menu = controllerMap.GetButtonIndex("Menu").HasValue && state.Buttons[controllerMap.GetButtonIndex("Menu").Value],
+            //    LeftThumbstick = controllerMap.GetButtonIndex("LeftThumbstick").HasValue && state.Buttons[controllerMap.GetButtonIndex("LeftThumbstick").Value],
+            //    RightThumbstick = controllerMap.GetButtonIndex("RightThumbstick").HasValue && state.Buttons[controllerMap.GetButtonIndex("RightThumbstick").Value],
+
+            //    // Point of View (D-Pad) mappings
+            //    DPadUp = controllerMap.GetPointOfViewIndex("DPadUp").HasValue &&
+            //     state.PointOfViewControllers.Contains(controllerMap.GetPointOfViewIndex("DPadUp").Value),
+            //    DPadRight = controllerMap.GetPointOfViewIndex("DPadRight").HasValue &&
+            //        state.PointOfViewControllers.Contains(controllerMap.GetPointOfViewIndex("DPadRight").Value),
+            //    DPadDown = controllerMap.GetPointOfViewIndex("DPadDown").HasValue &&
+            //       state.PointOfViewControllers.Contains(controllerMap.GetPointOfViewIndex("DPadDown").Value),
+            //    DPadLeft = controllerMap.GetPointOfViewIndex("DPadLeft").HasValue &&
+            //       state.PointOfViewControllers.Contains(controllerMap.GetPointOfViewIndex("DPadLeft").Value),
+
+            //    // Axis mappings
+            //    LeftThumbstickX = state.GetAxisValue(controllerMap.GetAxisMapping("LeftThumbstickX")),
+            //    LeftThumbstickY = state.GetAxisValue(controllerMap.GetAxisMapping("LeftThumbstickY")),
+            //    RightThumbstickX = state.GetAxisValue(controllerMap.GetAxisMapping("RightThumbstickX")),
+            //    RightThumbstickY = state.GetAxisValue(controllerMap.GetAxisMapping("RightThumbstickY")),
+            //    LeftTrigger = state.GetAxisValue(controllerMap.GetAxisMapping("LeftTrigger")),
+            //    RightTrigger = state.GetAxisValue(controllerMap.GetAxisMapping("RightTrigger")),
+
+            //    // Timestamp for when this data was captured
+            //    Timestamp = DateTime.Now
+            //    //RotationX for right trigger
+            //};
+
+            //if (state.Buttons[0] || state.Buttons[1] || state.Buttons[2] || state.Buttons[3])
+            //{
+            //    Console.WriteLine("true"!);
+            //}
+
+
+            //return data;
         }
 
-        public static bool GetButtonState(IJoystickState state, int index)
+        private static int GetAxisValue(this IJoystickState state, string axisMapping)
         {
-            return index < state.Buttons.Length && state.Buttons[index];
-        }
-
-        public static int GetTriggerValue(IJoystickState state, int index)
-        {
-            return GetButtonState(state, index) ? TriggerMaxValue : 0;
-        }
-
-        public static bool GetDPadDirection(IJoystickState state, int angle)
-        {
-            return state.PointOfViewControllers.Length > 0 && state.PointOfViewControllers[0] == angle;
+            return axisMapping switch
+            {
+                "X" => state.X,
+                "Y" => state.Y,
+                "RotationX" => state.RotationX,
+                "RotationY" => state.RotationY,
+                "LeftTrigger" => state.Z,
+                "RightTrigger" => state.RotationZ,
+                _ => 0
+            };
         }
     }
 }

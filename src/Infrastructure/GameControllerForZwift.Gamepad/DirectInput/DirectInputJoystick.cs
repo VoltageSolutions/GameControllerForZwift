@@ -1,4 +1,5 @@
 ﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Gamepad.DirectInput.ControllerMapping;
 
 namespace GameControllerForZwift.Gamepad.DirectInput
 {
@@ -6,13 +7,15 @@ namespace GameControllerForZwift.Gamepad.DirectInput
     {
         #region Fields
         private readonly IJoystick _joystick;
+        private readonly ControllerMap _controllerMap;
         private bool _isAcquired;
         #endregion
 
         #region Constructor
-        public DirectInputJoystick(IJoystick joystick, string deviceName)
+        public DirectInputJoystick(IJoystick joystick, string deviceName, ControllerMap controllerMap)
         {
             _joystick = joystick;
+            _controllerMap = controllerMap;
             Name = deviceName;
         }
         #endregion
@@ -28,7 +31,7 @@ namespace GameControllerForZwift.Gamepad.DirectInput
             _joystick.Poll();
             IJoystickState state = _joystick.GetCurrentState();
 
-            return state.AsControllerData();
+            return state.AsControllerData(_controllerMap);
         }
 
         public void Initialize()

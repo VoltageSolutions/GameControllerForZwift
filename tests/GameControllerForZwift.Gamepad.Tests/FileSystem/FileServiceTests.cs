@@ -1,11 +1,6 @@
-﻿using GameControllerForZwift.Gamepad.USB;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using GameControllerForZwift.Gamepad.FileSystem;
 
-namespace GameControllerForZwift.Gamepad.Tests.USB
+namespace GameControllerForZwift.Gamepad.Tests.FileSystem
 {
     public class FileServiceTests
     {

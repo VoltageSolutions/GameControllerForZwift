@@ -145,28 +145,28 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         //temp async test stuff
         private async Task ReadTheData(CancellationToken cancellationToken)
         {
-            if (null != SelectedController)
-                CurrentControllerValues = _dataIntegrator.ReadData(SelectedController);
-            //_dataIntegrator.StartProcessing();
+            //if (null != SelectedController)
+            //    CurrentControllerValues = _dataIntegrator.ReadData(SelectedController);
+            ////_dataIntegrator.StartProcessing();
 
-            if (CurrentControllerValues.A)
-                _keySimulator.PerformAction(ZwiftFunction.Select);
-            if (CurrentControllerValues.B)
-                _keySimulator.PerformAction(ZwiftFunction.GoBack);
-            if (CurrentControllerValues.Y)
-                _keySimulator.PerformAction(ZwiftFunction.HideHUD);
-            if (CurrentControllerValues.DPadUp)
-                _keySimulator.PerformAction(ZwiftFunction.ShowMenu);
-            if (CurrentControllerValues.DPadDown)
-                _keySimulator.PerformAction(ZwiftFunction.Uturn);
-            if (CurrentControllerValues.DPadLeft)
-                _keySimulator.PerformAction(ZwiftFunction.NavigateLeft);
-            if (CurrentControllerValues.DPadRight)
-                _keySimulator.PerformAction(ZwiftFunction.NavigateRight);
-            if (CurrentControllerValues.LeftBumper)
-                _keySimulator.PerformAction(ZwiftFunction.FTPBiasDown);
-            if (CurrentControllerValues.RightBumper)
-                _keySimulator.PerformAction(ZwiftFunction.FTPBiasUp);
+            //if (CurrentControllerValues.A)
+            //    _keySimulator.PerformAction(ZwiftFunction.Select);
+            //if (CurrentControllerValues.B)
+            //    _keySimulator.PerformAction(ZwiftFunction.GoBack);
+            //if (CurrentControllerValues.Y)
+            //    _keySimulator.PerformAction(ZwiftFunction.HideHUD);
+            //if (CurrentControllerValues.DPadUp)
+            //    _keySimulator.PerformAction(ZwiftFunction.ShowMenu);
+            //if (CurrentControllerValues.DPadDown)
+            //    _keySimulator.PerformAction(ZwiftFunction.Uturn);
+            //if (CurrentControllerValues.DPadLeft)
+            //    _keySimulator.PerformAction(ZwiftFunction.NavigateLeft);
+            //if (CurrentControllerValues.DPadRight)
+            //    _keySimulator.PerformAction(ZwiftFunction.NavigateRight);
+            //if (CurrentControllerValues.LeftBumper)
+            //    _keySimulator.PerformAction(ZwiftFunction.FTPBiasDown);
+            //if (CurrentControllerValues.RightBumper)
+            //    _keySimulator.PerformAction(ZwiftFunction.FTPBiasUp);
         }
 
 

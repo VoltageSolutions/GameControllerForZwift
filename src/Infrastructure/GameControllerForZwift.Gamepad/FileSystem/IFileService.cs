@@ -1,4 +1,4 @@
-﻿namespace GameControllerForZwift.Gamepad.USB
+﻿namespace GameControllerForZwift.Gamepad.FileSystem
 {
     public interface IFileService
     {

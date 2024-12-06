@@ -1,5 +1,7 @@
 ﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Gamepad.DirectInput;
+using GameControllerForZwift.Gamepad.DirectInput.ControllerMapping;
+using GameControllerForZwift.Gamepad.FileSystem;
 using GameControllerForZwift.Gamepad.USB;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF;
@@ -61,6 +63,12 @@ namespace GameControllerForZwift
                 var fileService = provider.GetRequiredService<IFileService>();
                 string filePath = "./DeviceMap.json"; // Or fetch this from configuration
                 return new DeviceLookup(fileService, filePath);
+            });
+            services.AddSingleton<IControllerMapping>(provider =>
+            {
+                var fileService = provider.GetRequiredService<IFileService>();
+                string filePath = "./DeviceButtonMap.json"; // Or fetch this from configuration
+                return new ControllerMapper(fileService, filePath);
             });
 
             // Register the delegate

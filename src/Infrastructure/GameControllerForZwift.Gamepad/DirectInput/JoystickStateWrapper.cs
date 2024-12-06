@@ -15,8 +15,10 @@ namespace GameControllerForZwift.Gamepad.DirectInput
         public int[] PointOfViewControllers => _state.PointOfViewControllers;
         public int X => _state.X;
         public int Y => _state.Y;
+        public int Z => _state.Z;
         public int RotationX => _state.RotationX;
         public int RotationY => _state.RotationY;
+        public int RotationZ => _state.RotationZ;
         #endregion
     }
 }
