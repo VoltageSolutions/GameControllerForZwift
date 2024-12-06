@@ -76,42 +76,13 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type controls:ThumbstickGraph}">
+        <Setter Property="MinX" Value="-1" />
+        <Setter Property="MaxX" Value="1" />
+        <Setter Property="MinY" Value="-1" />
+        <Setter Property="MaxY" Value="1" />
+        <Setter Property="Width" Value="300" />
+        <Setter Property="Height" Value="300" />
+    </Style>
 </ResourceDictionary>
-
-<!--<UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="btvConverter" />
-        <local:EnumDescriptionConverter x:Key="enumDescConverter"/>
-    </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width=".5*"/>
-            <ColumnDefinition Width=".5*"/>
-        </Grid.ColumnDefinitions>
-
-        <ComboBox Grid.Column="0" Margin="0,0,6,0" ItemsSource="{Binding ZwiftFunctions}" SelectedItem="{Binding SelectedZwiftFunction}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Converter={StaticResource enumDescConverter}}"/>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-
-        <ComboBox Grid.Column="1" Margin="6,0,6,0" ItemsSource="{Binding ZwiftPlayerViews}" SelectedItem="{Binding SelectedPlayerView}" Visibility="{Binding ShowPlayerView, Converter={StaticResource btvConverter}}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Converter={StaticResource enumDescConverter}}"/>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-
-        <ComboBox Grid.Column="1" ItemsSource="{Binding ZwiftRiderActions}" SelectedItem="{Binding SelectedRiderAction}" Visibility="{Binding ShowRiderAction, Converter={StaticResource btvConverter}}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Converter={StaticResource enumDescConverter}}"/>
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-    </Grid>-->
-
-
-

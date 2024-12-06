@@ -6,11 +6,13 @@
       xmlns:local="clr-namespace:GameControllerForZwift.UI.WPF.Views"
       xmlns:helpers="clr-namespace:GameControllerForZwift.UI.WPF.Helpers"
       xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
+      xmlns:converters="clr-namespace:GameControllerForZwift.UI.WPF.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ControllerSetupPage">
     <Page.Resources>
         <helpers:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <converters:DoubleToPointConverter x:Key="DoubleToPointConverter"/>
     </Page.Resources>
     <ScrollViewer>
         <Grid>
@@ -166,6 +168,16 @@
                                 InputPressed="{Binding ControllerData.LeftThumbstick}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
+                            <controls:ThumbstickGraph Grid.Row="0" 
+                               MinX="0" MaxX="65534"
+                               MinY="0" MaxY="65534" DataContext="{Binding ViewModel.SelectorViewModel}">
+                                <controls:ThumbstickGraph.Position>
+                                    <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
+                                        <Binding Path="ControllerData.LeftThumbstickX" />
+                                        <Binding Path="ControllerData.LeftThumbstickY"/>
+                                    </MultiBinding>
+                                </controls:ThumbstickGraph.Position>
+                            </controls:ThumbstickGraph>
                             <TextBlock>
                                 X: <Run Text="{Binding ControllerData.LeftThumbstickX}" DataContext="{Binding ViewModel.SelectorViewModel}"/>
                             </TextBlock>
