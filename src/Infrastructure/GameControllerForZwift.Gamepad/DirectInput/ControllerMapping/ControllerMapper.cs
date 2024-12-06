@@ -38,7 +38,12 @@ namespace GameControllerForZwift.Gamepad.DirectInput.ControllerMapping
 
         public ControllerMap GetControllerMap(string controllerName)
         {
-            return new ControllerMap(_controllersList.Controllers[controllerName]);
+            _controllersList.Controllers.TryGetValue(controllerName, out var controllerMapData);
+
+            if (controllerMapData == null)
+                controllerMapData = _controllersList.Controllers["Default"];
+
+            return new ControllerMap(controllerMapData);
         }
 
         #endregion

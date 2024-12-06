@@ -27,19 +27,19 @@
       },
       {
         "Name": "View",
-        "Index": 8
+        "Index": 6
       },
       {
         "Name": "Menu",
-        "Index": 9
+        "Index": 7
       },
       {
         "Name": "LeftThumbstick",
-        "Index": 10
+        "Index": 8
       },
       {
         "Name": "RightThumbstick",
-        "Index": 11
+        "Index": 9
       }
     ],
     "PointOfViewControllers": [
