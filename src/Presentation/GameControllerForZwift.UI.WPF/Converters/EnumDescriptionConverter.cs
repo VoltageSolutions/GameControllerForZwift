@@ -9,18 +9,25 @@ namespace GameControllerForZwift.UI.WPF.Converters
     {
         private string GetEnumDescription(Enum enumObj)
         {
-            FieldInfo fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
-
-            object[] attribArray = fieldInfo.GetCustomAttributes(false);
-
-            if (attribArray.Length == 0)
+            if (null != enumObj)
             {
-                return enumObj.ToString();
+                FieldInfo fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
+
+                object[] attribArray = fieldInfo.GetCustomAttributes(false);
+
+                if (attribArray.Length == 0)
+                {
+                    return enumObj.ToString();
+                }
+                else
+                {
+                    DescriptionAttribute attrib = attribArray[0] as DescriptionAttribute;
+                    return attrib.Description;
+                }
             }
             else
             {
-                DescriptionAttribute attrib = attribArray[0] as DescriptionAttribute;
-                return attrib.Description;
+                return string.Empty;
             }
         }
 

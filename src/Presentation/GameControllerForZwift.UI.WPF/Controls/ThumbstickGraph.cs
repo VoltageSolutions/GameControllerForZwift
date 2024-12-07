@@ -14,7 +14,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
     public class ThumbstickGraph : UserControl
     {
         private Canvas _chartCanvas;
-        private Polygon _octagon;
+        private Ellipse _circle;
         private Ellipse _plotPoint;
 
         public static readonly DependencyProperty PositionProperty = DependencyProperty.Register(
@@ -79,7 +79,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
         {
             if (d is ThumbstickGraph graph)
             {
-                graph.UpdateOctagonAndBounds();
+                graph.UpdateCircleAndBounds();
             }
         }
 
@@ -88,85 +88,134 @@ namespace GameControllerForZwift.UI.WPF.Controls
             _chartCanvas = new Canvas();
             Content = _chartCanvas;
 
-            _octagon = new Polygon
+            _circle = new Ellipse
             {
-                Stroke = Brushes.Black,
-                Fill = Brushes.Gray,
-                StrokeThickness = 1
+                StrokeThickness = 1,
+                StrokeDashArray = new DoubleCollection { 2, 2 },
+                Stroke = Brushes.Black
             };
-            _chartCanvas.Children.Add(_octagon);
+            _chartCanvas.Children.Add(_circle);
 
             _plotPoint = new Ellipse
             {
                 Width = 10,
                 Height = 10,
-                Fill = Brushes.Red
             };
             _chartCanvas.Children.Add(_plotPoint);
 
-            Loaded += (s, e) => UpdateOctagonAndBounds();
-            SizeChanged += (s, e) => UpdateOctagonAndBounds();
+            Loaded += (s, e) => UpdateCircleAndBounds();
+            SizeChanged += (s, e) => UpdateCircleAndBounds();
         }
 
-        private void UpdateOctagonAndBounds()
+        private void UpdateCircleAndBounds()
         {
-            if (_chartCanvas == null || _octagon == null) return;
+            if (_chartCanvas == null || _circle == null) return;
 
-            double canvasWidth = _chartCanvas.ActualWidth;
-            double canvasHeight = _chartCanvas.ActualHeight;
+            //double canvasWidth = _chartCanvas.ActualWidth;
+            //double canvasHeight = _chartCanvas.ActualHeight;
+            double canvasSquareLength = _chartCanvas.ActualWidth;
 
-            if (canvasWidth <= 0 || canvasHeight <= 0) return;
+            if (canvasSquareLength <= 0) return;
 
-            double scaleX = canvasWidth / (MaxX - MinX);
-            double scaleY = canvasHeight / (MaxY - MinY);
+            double scaleX = canvasSquareLength / (MaxX - MinX);
+            double scaleY = canvasSquareLength / (MaxY - MinY);
             double scale = Math.Min(scaleX, scaleY);
 
-            double centerX = canvasWidth / 2;
-            double centerY = canvasHeight / 2;
+            double centerX = canvasSquareLength / 2;
+            double centerY = centerX;
 
-            double radius = scale * (MaxX - MinX) / 2;
+            double radius = scale * (Math.Min(MaxX - MinX, MaxY - MinY)) / 2;
 
-            _octagon.Points = new PointCollection
-            {
-                new Point(centerX, centerY - radius),                         // Top
-                new Point(centerX + radius * 0.707, centerY - radius * 0.707), // Top-right
-                new Point(centerX + radius, centerY),                         // Right
-                new Point(centerX + radius * 0.707, centerY + radius * 0.707), // Bottom-right
-                new Point(centerX, centerY + radius),                         // Bottom
-                new Point(centerX - radius * 0.707, centerY + radius * 0.707), // Bottom-left
-                new Point(centerX - radius, centerY),                         // Left
-                new Point(centerX - radius * 0.707, centerY - radius * 0.707)  // Top-left
-            };
+            _circle.Width = radius * 2;
+            _circle.Height = radius * 2;
+
+            Canvas.SetLeft(_circle, centerX - radius);
+            Canvas.SetTop(_circle, centerY - radius);
+
+            _circle.Fill = (Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
+            _circle.Stroke = Brushes.Black;
 
             UpdatePlotPosition();
         }
+
+        //private void UpdatePlotPosition()
+        //{
+        //    if (_chartCanvas == null || _plotPoint == null) return;
+
+        //    double canvasWidth = _chartCanvas.ActualWidth;
+        //    double canvasHeight = _chartCanvas.ActualHeight;
+
+        //    if (canvasWidth <= 0 || canvasHeight <= 0) return;
+
+        //    // Clamp position values within the bounds
+        //    double clampedX = Math.Max(MinX, Math.Min(MaxX, Position.X));
+        //    double clampedY = Math.Max(MinY, Math.Min(MaxY, Position.Y));
+
+        //    // Scale position values to canvas coordinates
+        //    double scaleX = canvasWidth / (MaxX - MinX);
+        //    double scaleY = canvasHeight / (MaxY - MinY);
+
+        //    // X-coordinate on the canvas
+        //    double canvasX = (clampedX - MinX) * scaleX;
+
+        //    // Y-coordinate on the canvas (invert Y-axis logic)
+        //    double canvasY = canvasHeight - (clampedY - MinY) * scaleY;
+
+        //    // Update plot point position
+        //    Canvas.SetLeft(_plotPoint, canvasX - _plotPoint.Width / 2);
+        //    Canvas.SetBottom(_plotPoint, canvasY - _plotPoint.Height / 2);
+        //}
 
         private void UpdatePlotPosition()
         {
             if (_chartCanvas == null || _plotPoint == null) return;
 
-            double canvasWidth = _chartCanvas.ActualWidth;
-            double canvasHeight = _chartCanvas.ActualHeight;
+            //double canvasWidth = _chartCanvas.ActualWidth;
+            //double canvasHeight = _chartCanvas.ActualHeight;
+            double canvasSquareLength = _chartCanvas.ActualWidth;
 
-            if (canvasWidth <= 0 || canvasHeight <= 0) return;
+            if (canvasSquareLength <= 0) return;
 
-            // Clamp position values within the bounds
+            double originX = MaxX / 2;
+            double originY = MaxY / 2;
+
+            // Clamp position values within the bounds - graphed position will not exceed these bounds
             double clampedX = Math.Max(MinX, Math.Min(MaxX, Position.X));
             double clampedY = Math.Max(MinY, Math.Min(MaxY, Position.Y));
 
-            // Scale position values to canvas coordinates
-            double scaleX = canvasWidth / (MaxX - MinX);
-            double scaleY = canvasHeight / (MaxY - MinY);
+            double scaleX = canvasSquareLength / (MaxX - MinX);
+            double scaleY = canvasSquareLength / (MaxY - MinY);
+            //double scale = Math.Min(scaleX, scaleY);
 
             // X-coordinate on the canvas
             double canvasX = (clampedX - MinX) * scaleX;
 
             // Y-coordinate on the canvas (invert Y-axis logic)
-            double canvasY = canvasHeight - (clampedY - MinY) * scaleY;
+            double canvasY = (clampedY - MinY) * scaleY;
 
             // Update plot point position
             Canvas.SetLeft(_plotPoint, canvasX - _plotPoint.Width / 2);
-            Canvas.SetBottom(_plotPoint, canvasY - _plotPoint.Height / 2);
+            Canvas.SetTop(_plotPoint, canvasY - _plotPoint.Height / 2);
+
+            // Update plot point color
+            if (IsOutsideOrigin(originX, Position.X) || IsOutsideOrigin(originY, Position.Y))
+            {
+                _plotPoint.Fill = (Brush)Application.Current.Resources["AccentTextFillColorTertiaryBrush"];
+            }
+            else
+            {
+                
+                _plotPoint.Fill = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"];
+            }
+        }
+
+        public bool IsOutsideOrigin(double origin, double position)
+        {
+            double factor = .1;
+            if ((Math.Abs(origin - position) / origin) > factor)
+                return true;
+            else 
+                return false;
         }
 
 

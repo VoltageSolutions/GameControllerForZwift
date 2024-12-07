@@ -168,7 +168,7 @@
                                 InputPressed="{Binding ControllerData.LeftThumbstick}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
-                            <controls:ThumbstickGraph Grid.Row="0" 
+                            <controls:ThumbstickGraph Width="100" Height="100"
                                MinX="0" MaxX="65534"
                                MinY="0" MaxY="65534" DataContext="{Binding ViewModel.SelectorViewModel}">
                                 <controls:ThumbstickGraph.Position>
@@ -194,6 +194,16 @@
                                 InputPressed="{Binding ControllerData.RightThumbstick}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
+                            <controls:ThumbstickGraph Width="100" Height="100"
+                                MinX="0" MaxX="65534"
+                                MinY="0" MaxY="65534" DataContext="{Binding ViewModel.SelectorViewModel}">
+                                <controls:ThumbstickGraph.Position>
+                                    <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
+                                        <Binding Path="ControllerData.RightThumbstickX" />
+                                        <Binding Path="ControllerData.RightThumbstickY"/>
+                                    </MultiBinding>
+                                </controls:ThumbstickGraph.Position>
+                            </controls:ThumbstickGraph>
                             <TextBlock>
                                 RotationX: <Run Text="{Binding ControllerData.RightThumbstickX}" DataContext="{Binding ViewModel.SelectorViewModel}"/>
                             </TextBlock>

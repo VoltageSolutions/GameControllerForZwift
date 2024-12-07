@@ -83,6 +83,5 @@
         <Setter Property="MinY" Value="-1" />
         <Setter Property="MaxY" Value="1" />
         <Setter Property="Width" Value="300" />
-        <Setter Property="Height" Value="300" />
     </Style>
 </ResourceDictionary>
