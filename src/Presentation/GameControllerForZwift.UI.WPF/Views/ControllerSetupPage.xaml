@@ -178,12 +178,26 @@
                                     </MultiBinding>
                                 </controls:ThumbstickGraph.Position>
                             </controls:ThumbstickGraph>
-                            <TextBlock>
-                                X: <Run Text="{Binding ControllerData.LeftThumbstickX}" DataContext="{Binding ViewModel.SelectorViewModel}"/>
-                            </TextBlock>
-                            <TextBlock>
-                                Y: <Run Text="{Binding ControllerData.LeftThumbstickY}" DataContext="{Binding ViewModel.SelectorViewModel}"/>
-                            </TextBlock>
+                            <controls:InputMapper 
+                                InputName="Up"
+                                InputPressed="False"
+                                DataContext="{Binding ViewModel.SelectorViewModel}"
+                                />
+                            <controls:InputMapper 
+                                InputName="Down"
+                                InputPressed="False"
+                                DataContext="{Binding ViewModel.SelectorViewModel}"
+                                />
+                            <controls:InputMapper 
+                                InputName="Left"
+                                InputPressed="False"
+                                DataContext="{Binding ViewModel.SelectorViewModel}"
+                                />
+                            <controls:InputMapper 
+                                InputName="Right"
+                                InputPressed="False"
+                                DataContext="{Binding ViewModel.SelectorViewModel}"
+                                />      
                         </StackPanel>
                     </controls:Card>
 
@@ -204,12 +218,26 @@
                                     </MultiBinding>
                                 </controls:ThumbstickGraph.Position>
                             </controls:ThumbstickGraph>
-                            <TextBlock>
-                                RotationX: <Run Text="{Binding ControllerData.RightThumbstickX}" DataContext="{Binding ViewModel.SelectorViewModel}"/>
-                            </TextBlock>
-                            <TextBlock>
-                                RotationY: <Run Text="{Binding ControllerData.RightThumbstickY}" DataContext="{Binding ViewModel.SelectorViewModel}"/>
-                            </TextBlock>
+                            <controls:InputMapper 
+                                InputName="Up"
+                                InputPressed="False"
+                                DataContext="{Binding ViewModel.SelectorViewModel}"
+                                />
+                            <controls:InputMapper 
+                                InputName="Down"
+                                InputPressed="False"
+                                DataContext="{Binding ViewModel.SelectorViewModel}"
+                                />
+                            <controls:InputMapper 
+                                InputName="Left"
+                                InputPressed="False"
+                                DataContext="{Binding ViewModel.SelectorViewModel}"
+                                />
+                            <controls:InputMapper 
+                                InputName="Right"
+                                InputPressed="False"
+                                DataContext="{Binding ViewModel.SelectorViewModel}"
+                                />
                         </StackPanel>
                     </controls:Card>
 
@@ -225,12 +253,21 @@
                                 InputPressed="{Binding ControllerData.RightBumper}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
-                            <TextBlock>
-                                Left Trigger: <Run Text="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}"/>
-                            </TextBlock>
-                            <TextBlock>
-                                RightTrigger: <Run Text="{Binding ControllerData.RightTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}"/>
-                            </TextBlock>
+                            <TextBlock Text="Triggers"/>
+                            <!--<controls:GaugeControl Margin="20"
+                                                   Value="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}" MaxValue="65535"/>-->
+                            <Slider x:Name="ValueSlider"
+                                Minimum="0"
+                                Maximum="65535"
+                                Width="300"
+                                Height="30"
+                                TickFrequency="8192"
+                                IsSnapToTickEnabled="True"
+                                IsEnabled="False"
+                                Value="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}"
+                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
+                                Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}"
+                                />
                         </StackPanel>
                     </controls:Card>
                 </WrapPanel>

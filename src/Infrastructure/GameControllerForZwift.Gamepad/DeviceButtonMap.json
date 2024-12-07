@@ -236,6 +236,14 @@
       {
         "Name": "RightThumbstickY",
         "Mapping": "RotationY"
+      },
+      {
+        "Name": "LeftTrigger",
+        "Mapping": "Z"
+      },
+      {
+        "Name": "RightTrigger",
+        "Mapping": "RotationZ"
       }
     ]
   }

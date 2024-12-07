@@ -14,7 +14,8 @@ namespace GameControllerForZwift.UI.WPF.Controls
     public class ThumbstickGraph : UserControl
     {
         private Canvas _chartCanvas;
-        private Ellipse _circle;
+        //private Ellipse _circle;
+        private List<Ellipse> _circles;
         private Ellipse _plotPoint;
 
         public static readonly DependencyProperty PositionProperty = DependencyProperty.Register(
@@ -88,13 +89,19 @@ namespace GameControllerForZwift.UI.WPF.Controls
             _chartCanvas = new Canvas();
             Content = _chartCanvas;
 
-            _circle = new Ellipse
+            _circles = new List<Ellipse>();
+
+            for (int i = 0; i < 4; i++)
             {
-                StrokeThickness = 1,
-                StrokeDashArray = new DoubleCollection { 2, 2 },
-                Stroke = Brushes.Black
-            };
-            _chartCanvas.Children.Add(_circle);
+                var circle = new Ellipse
+                {
+                    StrokeThickness = 1,
+                    StrokeDashArray = new DoubleCollection { 2, 2 },
+                    Stroke = Brushes.Black
+                };
+                _circles.Add(circle);
+                _chartCanvas.Children.Add(circle);
+            }
 
             _plotPoint = new Ellipse
             {
@@ -109,31 +116,31 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
         private void UpdateCircleAndBounds()
         {
-            if (_chartCanvas == null || _circle == null) return;
+            if (_chartCanvas == null || _circles == null) return;
 
-            //double canvasWidth = _chartCanvas.ActualWidth;
-            //double canvasHeight = _chartCanvas.ActualHeight;
             double canvasSquareLength = _chartCanvas.ActualWidth;
 
             if (canvasSquareLength <= 0) return;
 
-            double scaleX = canvasSquareLength / (MaxX - MinX);
-            double scaleY = canvasSquareLength / (MaxY - MinY);
-            double scale = Math.Min(scaleX, scaleY);
-
             double centerX = canvasSquareLength / 2;
             double centerY = centerX;
 
-            double radius = scale * (Math.Min(MaxX - MinX, MaxY - MinY)) / 2;
+            double maxRadius = canvasSquareLength / 2 - 8; // Maximum radius within bounds
 
-            _circle.Width = radius * 2;
-            _circle.Height = radius * 2;
+            for (int i = 0; i < _circles.Count; i++)
+            {
+                double radius = maxRadius * (1 - (i * 0.25)); // Each circle is 25% smaller than the previous one
 
-            Canvas.SetLeft(_circle, centerX - radius);
-            Canvas.SetTop(_circle, centerY - radius);
+                var circle = _circles[i];
+                circle.Width = radius * 2;
+                circle.Height = radius * 2;
 
-            _circle.Fill = (Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
-            _circle.Stroke = Brushes.Black;
+                Canvas.SetLeft(circle, centerX - radius);
+                Canvas.SetTop(circle, centerY - radius);
+
+                circle.Fill = (Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
+                circle.Stroke = Brushes.Black;
+            }
 
             UpdatePlotPosition();
         }
