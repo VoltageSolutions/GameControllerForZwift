@@ -89,6 +89,8 @@
 
                 <!--Mapper Row-->
                 <WrapPanel Grid.Row="1">
+
+                    <!--Buttons Column-->
                     <Grid MinWidth="200">
                         <Grid.RowDefinitions>
                             <RowDefinition Height=".5*"/>
@@ -161,6 +163,7 @@
                         </controls:Card>
                     </Grid>
 
+                    <!--Left Stick-->
                     <controls:Card MinWidth="200" MinHeight="400" Title="Left Stick" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Vertical">
                             <controls:InputMapper 
@@ -201,6 +204,7 @@
                         </StackPanel>
                     </controls:Card>
 
+                    <!--Right Stick-->
                     <controls:Card MinWidth="200" MinHeight="400" Title="Right Stick" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Vertical">
                             <controls:InputMapper 
@@ -241,7 +245,8 @@
                         </StackPanel>
                     </controls:Card>
 
-                    <controls:Card MinWidth="200" MinHeight="400" Title="Triggers" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                    <!--Shoulder Buttons-->
+                    <controls:Card MinWidth="200" MinHeight="400" Title="Shoulder Buttons" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Vertical">
                             <controls:InputMapper 
                                 InputName="Left Bumper (L1)"
@@ -253,23 +258,12 @@
                                 InputPressed="{Binding ControllerData.RightBumper}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
-                            <TextBlock Text="Triggers"/>
+                            <TextBlock Text="Left Trigger (L2)" Style="{StaticResource BaseTextBlockStyle}"/>
                             <controls:GaugeControl Margin="20"
                                                    Value="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}" MaxValue="32767"/>
+                            <TextBlock Text="Right Trigger (R2)" Style="{StaticResource BaseTextBlockStyle}"/>
                             <controls:GaugeControl Margin="20"
                                 Value="{Binding ControllerData.RightTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}" MaxValue="32767"/>
-                            <!--<Slider x:Name="ValueSlider"
-                                Minimum="0"
-                                Maximum="32767"
-                                Width="300"
-                                Height="30"
-                                TickFrequency="8192"
-                                IsSnapToTickEnabled="True"
-                                IsEnabled="False"
-                                Value="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}"
-                                Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-                                Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}"
-                                />-->
                         </StackPanel>
                     </controls:Card>
                 </WrapPanel>
