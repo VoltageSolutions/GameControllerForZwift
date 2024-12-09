@@ -183,22 +183,22 @@
                             </controls:ThumbstickGraph>
                             <controls:InputMapper 
                                 InputName="Up"
-                                InputPressed="False"
+                                InputPressed="{Binding ControllerData.LeftStickUp}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <controls:InputMapper 
                                 InputName="Down"
-                                InputPressed="False"
+                                InputPressed="{Binding ControllerData.LeftStickDown}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <controls:InputMapper 
                                 InputName="Left"
-                                InputPressed="False"
+                                InputPressed="{Binding ControllerData.LeftStickLeft}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <controls:InputMapper 
                                 InputName="Right"
-                                InputPressed="False"
+                                InputPressed="{Binding ControllerData.LeftStickRight}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />      
                         </StackPanel>
@@ -224,22 +224,22 @@
                             </controls:ThumbstickGraph>
                             <controls:InputMapper 
                                 InputName="Up"
-                                InputPressed="False"
+                                InputPressed="{Binding ControllerData.RightStickUp}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <controls:InputMapper 
                                 InputName="Down"
-                                InputPressed="False"
+                                InputPressed="{Binding ControllerData.RightStickDown}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <controls:InputMapper 
                                 InputName="Left"
-                                InputPressed="False"
+                                InputPressed="{Binding ControllerData.RightStickLeft}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <controls:InputMapper 
                                 InputName="Right"
-                                InputPressed="False"
+                                InputPressed="{Binding ControllerData.RightStickRight}"
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                         </StackPanel>

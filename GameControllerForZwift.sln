@@ -39,6 +39,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Keyb
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Gamepad.Tests", "tests\GameControllerForZwift.Gamepad.Tests\GameControllerForZwift.Gamepad.Tests.csproj", "{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{F43A297B-8852-46F0-8FEF-EA6B5B83FD20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Core.Tests", "tests\GameControllerForZwift.Core.Tests\GameControllerForZwift.Core.Tests.csproj", "{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,10 @@ Global
 		{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +110,8 @@ Global
 		{95003E82-1C12-4CB3-90EF-8E31DDE32038} = {D2D79B52-88D9-4EC0-97E4-991A34015403}
 		{33614972-B93F-4DC9-8A75-152DCE9B7286} = {A4B699F3-1B47-4622-A16B-B87D0980157D}
 		{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
+		{F43A297B-8852-46F0-8FEF-EA6B5B83FD20} = {E2346F87-81E2-49F2-BE60-F7205F5BE468}
+		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9} = {F43A297B-8852-46F0-8FEF-EA6B5B83FD20}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF0E7AD0-FDA6-4F93-B78A-B07984BD96C9}
