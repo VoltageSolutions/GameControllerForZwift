@@ -9,6 +9,8 @@ namespace GameControllerForZwift.Core
 {
     public enum ZwiftFunction
     {
+        [Description("No Action Configured")]
+        None,
         [Description("Show the menu")]
         ShowMenu,
         [Description("Navigate left")]

@@ -169,8 +169,8 @@
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <controls:ThumbstickGraph Width="100" Height="100"
-                               MinX="0" MaxX="65534"
-                               MinY="0" MaxY="65534" DataContext="{Binding ViewModel.SelectorViewModel}">
+                               MinX="-32768" MaxX="32767"
+                                MinY="-32768" MaxY="32676" DataContext="{Binding ViewModel.SelectorViewModel}">
                                 <controls:ThumbstickGraph.Position>
                                     <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
                                         <Binding Path="ControllerData.LeftThumbstickX" />
@@ -209,8 +209,8 @@
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <controls:ThumbstickGraph Width="100" Height="100"
-                                MinX="0" MaxX="65534"
-                                MinY="0" MaxY="65534" DataContext="{Binding ViewModel.SelectorViewModel}">
+                                MinX="-32768" MaxX="32767"
+                                MinY="-32768" MaxY="32676" DataContext="{Binding ViewModel.SelectorViewModel}">
                                 <controls:ThumbstickGraph.Position>
                                     <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
                                         <Binding Path="ControllerData.RightThumbstickX" />
@@ -254,11 +254,13 @@
                                 DataContext="{Binding ViewModel.SelectorViewModel}"
                                 />
                             <TextBlock Text="Triggers"/>
-                            <!--<controls:GaugeControl Margin="20"
-                                                   Value="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}" MaxValue="65535"/>-->
-                            <Slider x:Name="ValueSlider"
+                            <controls:GaugeControl Margin="20"
+                                                   Value="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}" MaxValue="32767"/>
+                            <controls:GaugeControl Margin="20"
+                                Value="{Binding ControllerData.RightTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}" MaxValue="32767"/>
+                            <!--<Slider x:Name="ValueSlider"
                                 Minimum="0"
-                                Maximum="65535"
+                                Maximum="32767"
                                 Width="300"
                                 Height="30"
                                 TickFrequency="8192"
@@ -267,7 +269,7 @@
                                 Value="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}"
                                 Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
                                 Foreground="{DynamicResource AccentTextFillColorTertiaryBrush}"
-                                />
+                                />-->
                         </StackPanel>
                     </controls:Card>
                 </WrapPanel>
