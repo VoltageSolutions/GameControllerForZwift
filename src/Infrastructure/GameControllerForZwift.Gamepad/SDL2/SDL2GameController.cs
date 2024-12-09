@@ -1,109 +1,140 @@
 ﻿using GameControllerForZwift.Core;
-using GameControllerForZwift.Gamepad.DirectInput.ControllerMapping;
 using static SDL2.SDL;
 
 namespace GameControllerForZwift.Gamepad.SDL2
 {
-    public class SDL2GameController : IController
+    public class SDL2GameController : IController, IDisposable
     {
         #region Fields
 
         private readonly IntPtr _handle;
         private readonly string _vendorProduct;
+        private bool _isDisposed;
 
         #endregion
 
         #region Constructor
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SDL2GameController"/> class.
+        /// </summary>
+        /// <param name="handle">The SDL2 game controller handle.</param>
         public SDL2GameController(IntPtr handle)
         {
+            if (handle == IntPtr.Zero)
+            {
+                throw new ArgumentException("Invalid SDL2 controller handle.", nameof(handle));
+            }
+
             _handle = handle;
 
             ushort vendor = SDL_GameControllerGetVendor(handle);
             ushort product = SDL_GameControllerGetProduct(handle);
             _vendorProduct = $"{vendor:X4}-{product:X4}";
 
-            // still need to consider device lookup to confirm name - maybe not a big a deal
-            Name = SDL_GameControllerName(handle);
+            Name = SDL_GameControllerName(handle) ?? "Unknown Controller";
         }
 
-        // destructor to close?
-
         #endregion
-        
+
         #region Properties
+
+        /// <summary>
+        /// Gets the name of the game controller.
+        /// </summary>
         public string Name { get; }
+
         #endregion
 
+        #region Public Methods
+
+        /// <summary>
+        /// Reads the current state of the game controller and returns a <see cref="ControllerData"/> object.
+        /// </summary>
+        /// <returns>A <see cref="ControllerData"/> object containing the current controller state.</returns>
         public ControllerData ReadData()
         {
+            if (_isDisposed)
+            {
+                return null;
+            }
+
             SDL_GameControllerUpdate();
-
-            byte aButton = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_A);
-            byte bButton = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_B);
-            byte xButton = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_X);
-            byte yButton = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_Y);
-
-            byte dpadup = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP);
-            byte dpaddown = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN);
-            byte dpadleft = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT);
-            byte dpadright = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT);
-
-            byte startButton = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_START);
-            byte selectButton = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_BACK);
-            byte leftBumper = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSHOULDER);
-            byte rightBumper = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER);
-
-            byte leftThumbstick = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK);
-            byte rightThumbstick = SDL_GameControllerGetButton(_handle, SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK);
-
-            //double leftStickX = Math.Round(SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX) / 32767.0, 2);
-            //double leftStickY = Math.Round(SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTY) / 32767.0, 2);
-            //double rightStickX = Math.Round(SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTX) / 32767.0, 2);
-            //double rightStickY = Math.Round(SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTY) / 32767.0, 2);
-
-            int leftStickX = SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX);
-            int leftStickY = SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTY);
-            int rightStickX = SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTX);
-            int rightStickY = SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTY);
-
-
-            int leftTrigger = SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERLEFT);
-            int rightTrigger = SDL_GameControllerGetAxis(_handle, SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERRIGHT);
 
             return new ControllerData
             {
-                // Button mappings
-                A = (aButton == 1) ? true : false,
-                B = (bButton == 1) ? true : false,
-                X = (xButton == 1) ? true : false,
-                Y = (yButton == 1) ? true : false,
+                A = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_A),
+                B = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_B),
+                X = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_X),
+                Y = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_Y),
 
-                LeftBumper = (leftBumper == 1) ? true : false,
-                RightBumper = (rightBumper == 1) ? true : false,
-                View = (selectButton == 1) ? true : false,
-                Menu = (startButton == 1) ? true : false,
+                LeftBumper = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSHOULDER),
+                RightBumper = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER),
+                View = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_BACK),
+                Menu = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_START),
 
-                LeftThumbstick = (leftThumbstick == 1) ? true : false,
-                RightThumbstick = (rightThumbstick == 1) ? true : false,
+                LeftThumbstick = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK),
+                RightThumbstick = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK),
 
-                // Point of View (D-Pad) mappings
-                DPadUp = (dpadup == 1) ? true : false,
-                DPadRight = (dpaddown == 1) ? true : false,
-                DPadDown = (dpadleft == 1) ? true : false,
-                DPadLeft = (dpadright == 1) ? true : false,
+                DPadUp = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP),
+                DPadDown = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN),
+                DPadLeft = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT),
+                DPadRight = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT),
 
-                // Axis mappings
-                LeftThumbstickX = leftStickX,
-                LeftThumbstickY = leftStickY,
-                RightThumbstickX = rightStickX,
-                RightThumbstickY = rightStickY,
-                LeftTrigger = leftTrigger,
-                RightTrigger = rightTrigger,
+                LeftThumbstickX = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX),
+                LeftThumbstickY = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTY),
+                RightThumbstickX = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTX),
+                RightThumbstickY = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_RIGHTY),
+                LeftTrigger = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERLEFT),
+                RightTrigger = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERRIGHT),
 
-                // Timestamp for when this data was captured
                 Timestamp = DateTime.Now
             };
         }
+
+        #endregion
+
+        #region Private Methods
+
+        /// <summary>
+        /// Gets the state of a specified button.
+        /// </summary>
+        /// <param name="button">The button to check.</param>
+        /// <returns><c>true</c> if the button is pressed; otherwise, <c>false</c>.</returns>
+        private bool GetButtonState(SDL_GameControllerButton button)
+        {
+            return SDL_GameControllerGetButton(_handle, button) == 1;
+        }
+
+        /// <summary>
+        /// Gets the value of a specified axis.
+        /// </summary>
+        /// <param name="axis">The axis to check.</param>
+        /// <returns>The axis value.</returns>
+        private int GetAxisValue(SDL_GameControllerAxis axis)
+        {
+            return SDL_GameControllerGetAxis(_handle, axis);
+        }
+
+        #endregion
+
+        #region IDisposable Implementation
+
+        /// <summary>
+        /// Releases unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                if (_handle != IntPtr.Zero)
+                {
+                    SDL_GameControllerClose(_handle);
+                }
+                _isDisposed = true;
+            }
+        }
+
+        #endregion
     }
 }

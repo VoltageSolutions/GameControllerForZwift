@@ -1,6 +1,4 @@
 ﻿using GameControllerForZwift.Core;
-using GameControllerForZwift.Gamepad.DirectInput;
-using GameControllerForZwift.Gamepad.DirectInput.ControllerMapping;
 using GameControllerForZwift.Gamepad.FileSystem;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Gamepad.USB;
