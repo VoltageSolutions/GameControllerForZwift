@@ -57,7 +57,7 @@ namespace GameControllerForZwift.Logic
                     var controllerData = controller.ReadData();
                     ProcessControllerData(controllerData);
 
-                    await Task.Delay(10, cancellationToken);
+                    await Task.Delay(25, cancellationToken);
                 }
             }
         }

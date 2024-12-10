@@ -7,7 +7,7 @@
         /// </summary>
         private static class Thresholds
         {
-            public const int Deadzone = 1500;
+            public const int Deadzone = 5000;
             public const int TriggerMaxValue = 32727;
         }
 
