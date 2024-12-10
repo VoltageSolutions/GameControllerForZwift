@@ -2,6 +2,7 @@
 using GameControllerForZwift.Gamepad.FileSystem;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Gamepad.USB;
+using GameControllerForZwift.Keyboard;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
@@ -81,6 +82,7 @@ namespace GameControllerForZwift
             services.AddSingleton<IInputService, SDL2InputService>();
 
             // GameControllerForZwift.Keyboard
+            services.AddSingleton<IOutputService, KeyboardNavigator>();
 
             // GameControllerForZwift.Logic
             services.AddSingleton<DataIntegrator>(); // this should have an interface so we can unit test it later

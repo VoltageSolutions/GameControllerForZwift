@@ -1,20 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using System.Windows;
 
 namespace GameControllerForZwift.UI.WPF.Controls
 {
     public class ThumbstickGraph : UserControl
     {
         private Canvas _chartCanvas;
-        //private Ellipse _circle;
         private List<Ellipse> _circles;
         private Ellipse _plotPoint;
 
@@ -145,40 +138,10 @@ namespace GameControllerForZwift.UI.WPF.Controls
             UpdatePlotPosition();
         }
 
-        //private void UpdatePlotPosition()
-        //{
-        //    if (_chartCanvas == null || _plotPoint == null) return;
-
-        //    double canvasWidth = _chartCanvas.ActualWidth;
-        //    double canvasHeight = _chartCanvas.ActualHeight;
-
-        //    if (canvasWidth <= 0 || canvasHeight <= 0) return;
-
-        //    // Clamp position values within the bounds
-        //    double clampedX = Math.Max(MinX, Math.Min(MaxX, Position.X));
-        //    double clampedY = Math.Max(MinY, Math.Min(MaxY, Position.Y));
-
-        //    // Scale position values to canvas coordinates
-        //    double scaleX = canvasWidth / (MaxX - MinX);
-        //    double scaleY = canvasHeight / (MaxY - MinY);
-
-        //    // X-coordinate on the canvas
-        //    double canvasX = (clampedX - MinX) * scaleX;
-
-        //    // Y-coordinate on the canvas (invert Y-axis logic)
-        //    double canvasY = canvasHeight - (clampedY - MinY) * scaleY;
-
-        //    // Update plot point position
-        //    Canvas.SetLeft(_plotPoint, canvasX - _plotPoint.Width / 2);
-        //    Canvas.SetBottom(_plotPoint, canvasY - _plotPoint.Height / 2);
-        //}
-
         private void UpdatePlotPosition()
         {
             if (_chartCanvas == null || _plotPoint == null) return;
 
-            //double canvasWidth = _chartCanvas.ActualWidth;
-            //double canvasHeight = _chartCanvas.ActualHeight;
             double canvasSquareLength = _chartCanvas.ActualWidth;
 
             if (canvasSquareLength <= 0) return;
@@ -192,7 +155,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
             double scaleX = canvasSquareLength / (MaxX - MinX);
             double scaleY = canvasSquareLength / (MaxY - MinY);
-            //double scale = Math.Min(scaleX, scaleY);
 
             // X-coordinate on the canvas
             double canvasX = (clampedX - MinX) * scaleX;
@@ -211,7 +173,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
             }
             else
             {
-                
                 _plotPoint.Fill = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"];
             }
         }
@@ -224,9 +185,5 @@ namespace GameControllerForZwift.UI.WPF.Controls
             else 
                 return false;
         }
-
-
-
     }
-
 }

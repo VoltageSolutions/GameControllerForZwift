@@ -40,8 +40,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _inputService = inputService;
             _selectorViewModel = new ZwiftFunctionSelectorViewModel();
 
-            //InitializeTimer();
-            //_dataIntegrator.InputChanged += _dataIntegrator_InputChanged;
+            _dataIntegrator.InputPolled += _dataIntegrator_InputChanged;
         }
 
         private void _dataIntegrator_InputChanged(object? sender, InputStateChangedEventArgs e)
@@ -69,17 +68,17 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             Controllers = _dataIntegrator.GetControllers().ToList();
         }
 
-        [RelayCommand]
-        public void ResetMappingsToDefault()
-        {
+        //[RelayCommand]
+        //public void ResetMappingsToDefault()
+        //{
 
-        }
+        //}
 
-        [RelayCommand]
-        public void ClearAllMappings()
-        {
+        //[RelayCommand]
+        //public void ClearAllMappings()
+        //{
             
-        }
+        //}
 
         
         #endregion
@@ -91,40 +90,18 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             // Stop the previous processing, if any
             _dataIntegrator.StopProcessing();
             //_stopProcessingTask = Task.Run(() => StopProcessingAsync());
-            StopProcessingAsync();
+            //StopProcessingAsync();
 
             // Start processing the new controller if it's not null
             if (newValue != null)
             {
                 _dataIntegrator.StartProcessing(newValue);
                 // local
-                StartProcessing();
+                //StartProcessing();
             }
         }
 
         #endregion
-
-        private ControllerData _latestData;
-        private DispatcherTimer _updateTimer;
-
-        public void InitializeTimer()
-        {
-            _updateTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromMilliseconds(16) // ~60 FPS
-            };
-            _updateTimer.Tick += (s, e) => UpdateUI();
-            _updateTimer.Start();
-        }
-
-        private void UpdateUI()
-        {
-            if (_dataIntegrator.DataQueue.TryDequeue(out ControllerData controllerData))
-            {
-                CurrentControllerValues = controllerData;
-                SelectorViewModel.ControllerData = CurrentControllerValues;
-            }
-        }
 
 
         private Task _processingTask;
@@ -165,11 +142,18 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             {
                 if (_dataIntegrator.DataQueue.TryDequeue(out ControllerData controllerData))
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
+                    var app = Application.Current;
+
+                    // may be null if app is closing
+                    if (app != null)
                     {
-                        CurrentControllerValues = controllerData;
-                        SelectorViewModel.ControllerData = CurrentControllerValues;
-                    });
+                        // Ensure that UI updates happen on the UI thread
+                        app.Dispatcher.Invoke(() =>
+                        {
+                            CurrentControllerValues = controllerData;
+                            SelectorViewModel.ControllerData = CurrentControllerValues;
+                        });
+                    }
                 }
 
                 // Wait, but don't wait longer than the dataIntegrator

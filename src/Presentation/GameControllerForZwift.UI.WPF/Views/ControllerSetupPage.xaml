@@ -63,15 +63,15 @@
                     </controls:Card>
 
                     <!--Reset Card-->
-                    <controls:Card MinWidth="300" Title="Reset" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                    <!--<controls:Card MinWidth="300" Title="Reset" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Horizontal">
                             <Button Content="To Default Values" Margin="0,0,6,0" Height="37"/>
                             <Button Content="Clear Values" Margin="6,0,0,0" Height="37"/>
                         </StackPanel>
-                    </controls:Card>
+                    </controls:Card>-->
 
                     <!--Profile Card-->
-                    <controls:Card MinWidth="300" Title="Profile" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                    <!--<controls:Card MinWidth="300" Title="Profile" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <Grid MinWidth="300">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -84,7 +84,7 @@
                             <Button Grid.Column="1" Content="Load" Height="37" Margin="6,0,6,0"/>
                             <Button Grid.Column="2" Content="Save" Height="37" Margin="6,0,6,0"/>
                         </Grid>
-                    </controls:Card>
+                    </controls:Card>-->
                 </WrapPanel>
 
                 <!--Mapper Row-->

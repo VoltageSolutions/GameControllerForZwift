@@ -4,7 +4,7 @@ using InputSimulatorEx.Native;
 
 namespace GameControllerForZwift.Keyboard
 {
-    public class KeyboardNavigator : IUINavigator
+    public class KeyboardNavigator : IOutputService
     {
         private readonly InputSimulator _simulator = new InputSimulator();
 
