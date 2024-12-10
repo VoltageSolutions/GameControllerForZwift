@@ -1,12 +1,9 @@
 ﻿using GameControllerForZwift.Core;
 using System.Collections.Concurrent;
-using System.Reflection.Metadata;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GameControllerForZwift.Logic
 {
-    public class DataIntegrator
+    public class DataIntegrator : IDataIntegrator
     {
         #region Fields
         private readonly IInputService _inputService;
@@ -20,7 +17,6 @@ namespace GameControllerForZwift.Logic
         #endregion
 
         #region Constructor
-        // todo - pass in required interfaces for reader and writer
         public DataIntegrator(IInputService inputService, IOutputService outputService, int maxQueueSize = 10)
         {
             _inputService = inputService;
@@ -73,7 +69,6 @@ namespace GameControllerForZwift.Logic
             }
 
             _dataQueue.Enqueue(controllerData);
-            //InputChanged?.Invoke(this, new InputStateChangedEventArgs(ControllerInput.LeftThumbstickX, controllerData));
         }
 
         protected virtual void OnInputPulled(InputStateChangedEventArgs e)
@@ -91,23 +86,31 @@ namespace GameControllerForZwift.Logic
 
                     // call the interface
                     if (controllerData.A)
-                        _outputService.PerformAction(ZwiftFunction.Select, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.Select, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                     if (controllerData.B)
-                        _outputService.PerformAction(ZwiftFunction.GoBack, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.GoBack, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                     if (controllerData.Y)
-                        _outputService.PerformAction(ZwiftFunction.HideHUD, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.HideHUD, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                     if (controllerData.DPadUp)
-                        _outputService.PerformAction(ZwiftFunction.ShowMenu, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.ShowMenu, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                     if (controllerData.DPadDown)
-                        _outputService.PerformAction(ZwiftFunction.Uturn, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.Uturn, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                     if (controllerData.DPadLeft)
-                        _outputService.PerformAction(ZwiftFunction.NavigateLeft, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.NavigateLeft, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                     if (controllerData.DPadRight)
-                        _outputService.PerformAction(ZwiftFunction.NavigateRight, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.NavigateRight, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                    if (controllerData.LeftStickUp)
+                        await _outputService.PerformActionAsync(ZwiftFunction.ShowMenu, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                    if (controllerData.LeftStickDown)
+                        await _outputService.PerformActionAsync(ZwiftFunction.Uturn, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                    if (controllerData.LeftStickLeft)
+                        await _outputService.PerformActionAsync(ZwiftFunction.NavigateLeft, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                    if (controllerData.LeftStickRight)
+                        await _outputService.PerformActionAsync(ZwiftFunction.NavigateRight, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                     if (controllerData.LeftBumper)
-                        _outputService.PerformAction(ZwiftFunction.FTPBiasDown, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.FTPBiasDown, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                     if (controllerData.RightBumper)
-                        _outputService.PerformAction(ZwiftFunction.FTPBiasUp, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await _outputService.PerformActionAsync(ZwiftFunction.FTPBiasUp, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
                 }
                 await Task.Delay(10, cancellationToken); // Adjust delay based on needs
             }

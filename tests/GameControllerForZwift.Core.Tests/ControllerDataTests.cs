@@ -6,14 +6,14 @@ namespace GameControllerForZwift.Core.Tests
 {
     public class ControllerDataTests
     {
-        private const int DeadzoneThreshold = 1500;
+        private const int DeadzoneThreshold = 2000;
         private const int TriggerMaxValue = 32727;
 
         #region Left Thumbstick Direction Tests
 
         [Theory]
-        [InlineData(0, -2000, true)]   // Up
-        [InlineData(0, 2000, false)]   // Not Up
+        [InlineData(0, -6000, true)]   // Up
+        [InlineData(0, 6000, false)]   // Not Up
         public void LeftStickUp_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
@@ -21,8 +21,8 @@ namespace GameControllerForZwift.Core.Tests
         }
 
         [Theory]
-        [InlineData(0, 2000, true)]    // Down
-        [InlineData(0, -2000, false)]  // Not Down
+        [InlineData(0, 6000, true)]    // Down
+        [InlineData(0, -6000, false)]  // Not Down
         public void LeftStickDown_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
@@ -30,8 +30,8 @@ namespace GameControllerForZwift.Core.Tests
         }
 
         [Theory]
-        [InlineData(-2000, 0, true)]   // Left
-        [InlineData(2000, 0, false)]   // Not Left
+        [InlineData(-6000, 0, true)]   // Left
+        [InlineData(6000, 0, false)]   // Not Left
         public void LeftStickLeft_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
@@ -39,8 +39,8 @@ namespace GameControllerForZwift.Core.Tests
         }
 
         [Theory]
-        [InlineData(2000, 0, true)]    // Right
-        [InlineData(-2000, 0, false)]  // Not Right
+        [InlineData(6000, 0, true)]    // Right
+        [InlineData(-6000, 0, false)]  // Not Right
         public void LeftStickRight_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
@@ -52,8 +52,8 @@ namespace GameControllerForZwift.Core.Tests
         #region Right Thumbstick Direction Tests
 
         [Theory]
-        [InlineData(0, -2000, true)]   // Up
-        [InlineData(0, 2000, false)]   // Not Up
+        [InlineData(0, -6000, true)]   // Up
+        [InlineData(0, 6000, false)]   // Not Up
         public void RightStickUp_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
@@ -61,8 +61,8 @@ namespace GameControllerForZwift.Core.Tests
         }
 
         [Theory]
-        [InlineData(0, 2000, true)]    // Down
-        [InlineData(0, -2000, false)]  // Not Down
+        [InlineData(0, 6000, true)]    // Down
+        [InlineData(0, -6000, false)]  // Not Down
         public void RightStickDown_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
@@ -70,8 +70,8 @@ namespace GameControllerForZwift.Core.Tests
         }
 
         [Theory]
-        [InlineData(-2000, 0, true)]   // Left
-        [InlineData(2000, 0, false)]   // Not Left
+        [InlineData(-6000, 0, true)]   // Left
+        [InlineData(6000, 0, false)]   // Not Left
         public void RightStickLeft_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
@@ -79,8 +79,8 @@ namespace GameControllerForZwift.Core.Tests
         }
 
         [Theory]
-        [InlineData(2000, 0, true)]    // Right
-        [InlineData(-2000, 0, false)]  // Not Right
+        [InlineData(6000, 0, true)]    // Right
+        [InlineData(-6000, 0, false)]  // Not Right
         public void RightStickRight_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };

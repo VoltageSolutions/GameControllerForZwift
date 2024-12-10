@@ -82,10 +82,10 @@ namespace GameControllerForZwift
             services.AddSingleton<IInputService, SDL2InputService>();
 
             // GameControllerForZwift.Keyboard
-            services.AddSingleton<IOutputService, KeyboardNavigator>();
+            services.AddSingleton<IOutputService, KeyboardService>();
 
             // GameControllerForZwift.Logic
-            services.AddSingleton<DataIntegrator>(); // this should have an interface so we can unit test it later
+            services.AddSingleton<IDataIntegrator, DataIntegrator>(); // this should have an interface so we can unit test it later
 
 
             services.AddSingleton<INavigationService, NavigationService>();

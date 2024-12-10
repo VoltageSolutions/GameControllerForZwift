@@ -20,8 +20,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [ObservableProperty]
         ZwiftFunctionSelectorViewModel _selectorViewModel;
 
-        private DataIntegrator _dataIntegrator;
-        private IInputService _inputService;
+        private readonly IDataIntegrator _dataIntegrator;
         [ObservableProperty]
         private List<IController> _controllers;
         [ObservableProperty]
@@ -34,10 +33,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #region Constructor
 
         // todo - this should take an interface for the dataintegrator and should need need the input service
-        public ControllerSetupViewModel(DataIntegrator dataIntegrator, IInputService inputService)
+        public ControllerSetupViewModel(IDataIntegrator dataIntegrator)
         {
             _dataIntegrator = dataIntegrator;
-            _inputService = inputService;
             _selectorViewModel = new ZwiftFunctionSelectorViewModel();
 
             _dataIntegrator.InputPolled += _dataIntegrator_InputChanged;
