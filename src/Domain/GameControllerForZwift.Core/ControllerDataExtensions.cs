@@ -20,15 +20,17 @@
                 ControllerInput.RightBumper => controllerData.RightBumper,
                 ControllerInput.LeftThumbstick => controllerData.LeftThumbstick,
                 ControllerInput.RightThumbstick => controllerData.RightThumbstick,
-                ControllerInput.LeftThumbstickX => controllerData.LeftThumbstickX > 0,
-                ControllerInput.LeftThumbstickY => controllerData.LeftThumbstickY > 0,
-                ControllerInput.LeftTrigger => controllerData.LeftTrigger > 0,
-                ControllerInput.RightThumbstickX => controllerData.RightThumbstickX > 0,
-                ControllerInput.RightThumbstickY => controllerData.RightThumbstickY > 0,
-                ControllerInput.RightTrigger => controllerData.RightTrigger > 0,
+                ControllerInput.LeftThumbstickX => controllerData.LeftThumbstickX != 0,
+                ControllerInput.LeftThumbstickY => controllerData.LeftThumbstickY != 0,
+                ControllerInput.LeftTrigger => controllerData.LeftTrigger != 0,
+                ControllerInput.RightThumbstickX => controllerData.RightThumbstickX != 0,
+                ControllerInput.RightThumbstickY => controllerData.RightThumbstickY != 0,
+                ControllerInput.RightTrigger => controllerData.RightTrigger != 0,
                 _ => throw new ArgumentOutOfRangeException(nameof(input), $"Unknown input: {input}")
             };
         }
+
+        const float AnalogTolerance = 0.05f; // Tolerance for detecting changes in analog inputs
 
         public static bool TryGetSingleChange(this ControllerData current, ControllerData? previous, out ControllerInput singleChange)
         {
@@ -37,15 +39,24 @@
 
             foreach (var input in Enum.GetValues<ControllerInput>())
             {
-                bool currentState = current.IsPressed(input);
-                bool previousState = previous?.IsPressed(input) ?? false; // Treat null as "nothing was pressed"
+                bool hasChanged;
 
-                if (currentState != previousState)
+                if (IsAnalogInput(input))
+                {
+                    hasChanged = previous == null || current.HasAnalogValueChanged(previous, input, AnalogTolerance);
+                }
+                else
+                {
+                    bool currentState = current.IsPressed(input);
+                    bool previousState = previous?.IsPressed(input) ?? false;
+                    hasChanged = currentState != previousState;
+                }
+
+                if (hasChanged)
                 {
                     changeCount++;
                     singleChange = input;
 
-                    // If more than one change is found, return false
                     if (changeCount > 1)
                     {
                         singleChange = default;
@@ -54,8 +65,28 @@
                 }
             }
 
-            // Return true if exactly one change is detected
             return changeCount == 1;
+        }
+
+        // Helper to check if the input is an analog input
+        private static bool IsAnalogInput(ControllerInput input) =>
+            input is ControllerInput.LeftThumbstickX or ControllerInput.LeftThumbstickY
+                    or ControllerInput.RightThumbstickX or ControllerInput.RightThumbstickY
+                    or ControllerInput.LeftTrigger or ControllerInput.RightTrigger;
+
+        // Extension method to check if the analog value has changed beyond a tolerance
+        public static bool HasAnalogValueChanged(this ControllerData current, ControllerData previous, ControllerInput input, float tolerance)
+        {
+            return input switch
+            {
+                ControllerInput.LeftThumbstickX => Math.Abs(current.LeftThumbstickX - previous.LeftThumbstickX) > tolerance,
+                ControllerInput.LeftThumbstickY => Math.Abs(current.LeftThumbstickY - previous.LeftThumbstickY) > tolerance,
+                ControllerInput.RightThumbstickX => Math.Abs(current.RightThumbstickX - previous.RightThumbstickX) > tolerance,
+                ControllerInput.RightThumbstickY => Math.Abs(current.RightThumbstickY - previous.RightThumbstickY) > tolerance,
+                ControllerInput.LeftTrigger => Math.Abs(current.LeftTrigger - previous.LeftTrigger) > tolerance,
+                ControllerInput.RightTrigger => Math.Abs(current.RightTrigger - previous.RightTrigger) > tolerance,
+                _ => throw new ArgumentOutOfRangeException(nameof(input), $"Unknown analog input: {input}")
+            };
         }
     }
 

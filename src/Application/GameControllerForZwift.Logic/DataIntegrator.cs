@@ -19,7 +19,7 @@ namespace GameControllerForZwift.Logic
 
         #region Constructor
         // todo - pass in required interfaces for reader and writer
-        public DataIntegrator(IInputService inputService, int maxQueueSize = 100)
+        public DataIntegrator(IInputService inputService, int maxQueueSize = 10000)
         {
             _inputService = inputService;
             _maxQueueSize = maxQueueSize;
@@ -57,7 +57,7 @@ namespace GameControllerForZwift.Logic
                     var controllerData = controller.ReadData();
                     ProcessControllerData(controllerData);
 
-                    await Task.Delay(50, cancellationToken);
+                    await Task.Delay(10, cancellationToken);
                 }
             }
         }
@@ -69,28 +69,32 @@ namespace GameControllerForZwift.Logic
             //{
             //    _dataQueue.TryDequeue(out _); // Remove the oldest data
             //}
-            //_dataQueue.Enqueue(controllerData);
 
-            if (controllerData.TryGetSingleChange(_lastDataState, out var singleChange))
-            {
-                InputChanged?.Invoke(this, new InputStateChangedEventArgs(singleChange, controllerData));
-            }
-            else
-            {
-                // Multiple changes: Fire the ButtonPressed event for all changes
-                foreach (var input in Enum.GetValues<ControllerInput>())
-                {
-                    bool currentStatePressed = controllerData.IsPressed(input);
-                    bool previousStatePressed = _lastDataState?.IsPressed(input) ?? false;
+            //if (controllerData.TryGetSingleChange(_lastDataState, out var singleChange))
+            //{
+            //    InputChanged?.Invoke(this, new InputStateChangedEventArgs(singleChange, controllerData));
+            //    //_dataQueue.Enqueue(controllerData);
+            //}
+            //else
+            //{
+            //    // Multiple changes: Fire the ButtonPressed event for all changes
+            //    foreach (var input in Enum.GetValues<ControllerInput>())
+            //    {
+            //        bool currentStatePressed = controllerData.IsPressed(input);
+            //        bool previousStatePressed = _lastDataState?.IsPressed(input) ?? false;
 
-                    if (currentStatePressed != previousStatePressed)
-                    {
-                        InputChanged?.Invoke(this, new InputStateChangedEventArgs(input, controllerData));
-                    }
-                }
-            }
+            //        if (currentStatePressed != previousStatePressed)
+            //        {
+            //            InputChanged?.Invoke(this, new InputStateChangedEventArgs(input, controllerData));
+            //            //_dataQueue.Enqueue(controllerData);
+            //        }
+            //    }
+            //}
 
-            _lastDataState = controllerData;
+            //_lastDataState = controllerData;
+
+
+            InputChanged?.Invoke(this, new InputStateChangedEventArgs(ControllerInput.LeftThumbstickX, controllerData));
         }
 
         protected virtual void OnButtonChanged(InputStateChangedEventArgs e)
