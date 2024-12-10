@@ -41,7 +41,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _selectorViewModel = new ZwiftFunctionSelectorViewModel();
 
             //InitializeTimer();
-            _dataIntegrator.InputChanged += _dataIntegrator_InputChanged;
+            //_dataIntegrator.InputChanged += _dataIntegrator_InputChanged;
         }
 
         private void _dataIntegrator_InputChanged(object? sender, InputStateChangedEventArgs e)
@@ -91,14 +91,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             // Stop the previous processing, if any
             _dataIntegrator.StopProcessing();
             //_stopProcessingTask = Task.Run(() => StopProcessingAsync());
-            //StopProcessingAsync();
+            StopProcessingAsync();
 
             // Start processing the new controller if it's not null
             if (newValue != null)
             {
                 _dataIntegrator.StartProcessing(newValue);
                 // local
-                //StartProcessing();
+                StartProcessing();
             }
         }
 
@@ -180,7 +180,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 }
 
                 // Avoid busy-waiting by delaying briefly
-                await Task.Delay(50, cancellationToken);
+                await Task.Delay(10, cancellationToken);
             }
         }
     }

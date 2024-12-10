@@ -65,35 +65,12 @@ namespace GameControllerForZwift.Logic
         public void ProcessControllerData(ControllerData controllerData)
         {
             // Add data to the queue, discarding the oldest if the queue is full
-            //if (_dataQueue.Count >= _maxQueueSize)
-            //{
-            //    _dataQueue.TryDequeue(out _); // Remove the oldest data
-            //}
+            if (_dataQueue.Count >= _maxQueueSize)
+            {
+                _dataQueue.TryDequeue(out _); // Remove the oldest data
+            }
 
-            //if (controllerData.TryGetSingleChange(_lastDataState, out var singleChange))
-            //{
-            //    InputChanged?.Invoke(this, new InputStateChangedEventArgs(singleChange, controllerData));
-            //    //_dataQueue.Enqueue(controllerData);
-            //}
-            //else
-            //{
-            //    // Multiple changes: Fire the ButtonPressed event for all changes
-            //    foreach (var input in Enum.GetValues<ControllerInput>())
-            //    {
-            //        bool currentStatePressed = controllerData.IsPressed(input);
-            //        bool previousStatePressed = _lastDataState?.IsPressed(input) ?? false;
-
-            //        if (currentStatePressed != previousStatePressed)
-            //        {
-            //            InputChanged?.Invoke(this, new InputStateChangedEventArgs(input, controllerData));
-            //            //_dataQueue.Enqueue(controllerData);
-            //        }
-            //    }
-            //}
-
-            //_lastDataState = controllerData;
-
-
+            _dataQueue.Enqueue(controllerData);
             InputChanged?.Invoke(this, new InputStateChangedEventArgs(ControllerInput.LeftThumbstickX, controllerData));
         }
 
