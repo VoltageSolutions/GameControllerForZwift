@@ -169,17 +169,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                     {
                         CurrentControllerValues = controllerData;
                         SelectorViewModel.ControllerData = CurrentControllerValues;
-                    }, System.Windows.Threading.DispatcherPriority.Render);
-                    //CurrentControllerValues = controllerData;
-                    //SelectorViewModel.ControllerData = CurrentControllerValues;
-                    //System.Diagnostics.Debug.WriteLine($"Dequeued: {controllerData}");
-                    //System.Diagnostics.Debug.WriteLine($"Current Timestamp: " + DateTime.Now.ToString("HH:mm:ss.fff"));
-                    //System.Diagnostics.Debug.WriteLine($"Controller Timestamp: " + controllerData.Timestamp.ToString("HH:mm:ss.fff"));
-                    //System.Diagnostics.Debug.WriteLine($"Left Stick X: {controllerData.LeftThumbstickX.ToString()}");
-                    //System.Diagnostics.Debug.WriteLine($"Left Stick Y: {controllerData.LeftThumbstickY.ToString()}");
+                    });
                 }
 
-                // Avoid busy-waiting by delaying briefly
+                // Wait, but don't wait longer than the dataIntegrator
                 await Task.Delay(10, cancellationToken);
             }
         }
