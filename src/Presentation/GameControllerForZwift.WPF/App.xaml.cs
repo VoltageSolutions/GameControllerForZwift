@@ -1,4 +1,5 @@
 ﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Gamepad.FileSystem;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Gamepad.USB;
@@ -82,6 +83,7 @@ namespace GameControllerForZwift
 
             // GameControllerForZwift.Keyboard
             services.AddSingleton<IOutputService, KeyboardService>();
+            services.AddSingleton<ControllerProfileManager>();
 
             // GameControllerForZwift.Logic
             services.AddSingleton<IDataIntegrator, DataIntegrator>(); // this should have an interface so we can unit test it later

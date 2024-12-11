@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Logic;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -22,6 +23,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         //ZwiftFunctionSelectorViewModel _selectorViewModel;
 
         private readonly IDataIntegrator _dataIntegrator;
+
+        private readonly ControllerProfileManager _profileManager;
+
         [ObservableProperty]
         private List<IController> _controllers;
         [ObservableProperty]
@@ -49,14 +53,20 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #region Constructor
 
         // todo - this should take an interface for the dataintegrator and should need need the input service
-        public ControllerSetupViewModel(IDataIntegrator dataIntegrator)
+        public ControllerSetupViewModel(IDataIntegrator dataIntegrator, ControllerProfileManager profileManager)
         {
             _dataIntegrator = dataIntegrator;
+            _profileManager = profileManager;
+
+            // Create initial mappings
             _buttonFunctionMappings = CreateButtonMappings();
             _dpadFunctionMappings = CreateDPadMappings();
             _leftStickFunctionMappings = CreateLeftStickMappings();
             _rightStickFunctionMappings = CreateRightStickMappings();
             _shoulderFunctionMappings = CreateShoulderMappings();
+
+            // Load default profile and apply it
+            LoadDefaultProfile();
 
             _dataIntegrator.InputPolled += _dataIntegrator_InputChanged;
         }
@@ -106,6 +116,40 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         }
 
         #endregion
+
+        private void LoadDefaultProfile()
+        {
+            var profilePath = System.IO.Path.Combine(AppContext.BaseDirectory, "defaultprofile.json");
+
+            if (!System.IO.File.Exists(profilePath))
+            {
+                return;
+            }
+
+            var profile = _profileManager.LoadProfile(profilePath);
+
+            ApplyProfileToMappings(profile, _buttonFunctionMappings);
+            ApplyProfileToMappings(profile, _dpadFunctionMappings);
+            ApplyProfileToMappings(profile, _leftStickFunctionMappings);
+            ApplyProfileToMappings(profile, _rightStickFunctionMappings);
+            ApplyProfileToMappings(profile, _shoulderFunctionMappings);
+        }
+
+
+        private void ApplyProfileToMappings(ControllerProfile profile, List<ZwiftFunctionSelectorViewModel> mappings)
+        {
+            foreach (var mapping in mappings)
+            {
+                if (Enum.TryParse<ControllerInput>(mapping.InputName, out var input) && profile.Mappings.TryGetValue(input, out var inputMapping))
+                {
+                    mapping.SelectedZwiftFunction = inputMapping.Function;
+                    mapping.SelectedZwiftPlayerView = inputMapping.PlayerView ?? ZwiftPlayerView.Default;
+                    mapping.SelectedZwiftRiderAction = inputMapping.RiderAction ?? ZwiftRiderAction.RideOn;
+                }
+            }
+        }
+
+
 
         partial void OnCurrentControllerValuesChanged(ControllerData oldValue, ControllerData newValue)
         {
