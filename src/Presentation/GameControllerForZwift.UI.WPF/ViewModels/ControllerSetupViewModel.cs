@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core;
 using GameControllerForZwift.Logic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -17,8 +18,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [ObservableProperty]
         private string _description = "Select a game controller and configure its button mapping to Zwift functions.";
 
-        [ObservableProperty]
-        ZwiftFunctionSelectorViewModel _selectorViewModel;
+        //[ObservableProperty]
+        //ZwiftFunctionSelectorViewModel _selectorViewModel;
 
         private readonly IDataIntegrator _dataIntegrator;
         [ObservableProperty]
@@ -28,6 +29,21 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [ObservableProperty]
         private ControllerData _currentControllerValues;
 
+        [ObservableProperty]
+        private List<ZwiftFunctionSelectorViewModel> _buttonFunctionMappings;
+
+        [ObservableProperty]
+        private List<ZwiftFunctionSelectorViewModel> _dpadFunctionMappings;
+
+        [ObservableProperty]
+        private List<ZwiftFunctionSelectorViewModel> _leftStickFunctionMappings;
+
+        [ObservableProperty]
+        private List<ZwiftFunctionSelectorViewModel> _rightStickFunctionMappings;
+
+        [ObservableProperty]
+        private List<ZwiftFunctionSelectorViewModel> _shoulderFunctionMappings;
+
         #endregion
 
         #region Constructor
@@ -36,26 +52,16 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         public ControllerSetupViewModel(IDataIntegrator dataIntegrator)
         {
             _dataIntegrator = dataIntegrator;
-            _selectorViewModel = new ZwiftFunctionSelectorViewModel();
+            _buttonFunctionMappings = CreateButtonMappings();
+            _dpadFunctionMappings = CreateDPadMappings();
+            _leftStickFunctionMappings = CreateLeftStickMappings();
+            _rightStickFunctionMappings = CreateRightStickMappings();
+            _shoulderFunctionMappings = CreateShoulderMappings();
 
             _dataIntegrator.InputPolled += _dataIntegrator_InputChanged;
         }
 
-        private void _dataIntegrator_InputChanged(object? sender, InputStateChangedEventArgs e)
-        {
-            var app = Application.Current;
-
-            // may be null if app is closing
-            if (app != null)
-            {
-                // Ensure that UI updates happen on the UI thread
-                app.Dispatcher.Invoke(() =>
-                {
-                    CurrentControllerValues = e.Data;
-                    SelectorViewModel.ControllerData = CurrentControllerValues;
-                });
-            }
-        }
+        
 
         #endregion
 
@@ -101,9 +107,165 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #endregion
 
+        partial void OnCurrentControllerValuesChanged(ControllerData oldValue, ControllerData newValue)
+        {
+            foreach (ZwiftFunctionSelectorViewModel vm in ButtonFunctionMappings)
+                vm.ControllerData = newValue;
+
+            foreach (ZwiftFunctionSelectorViewModel vm in DpadFunctionMappings)
+                vm.ControllerData = newValue;
+
+            foreach (ZwiftFunctionSelectorViewModel vm in LeftStickFunctionMappings)
+                vm.ControllerData = newValue;
+
+            foreach (ZwiftFunctionSelectorViewModel vm in RightStickFunctionMappings)
+                vm.ControllerData = newValue;
+
+            foreach (ZwiftFunctionSelectorViewModel vm in ShoulderFunctionMappings)
+                vm.ControllerData = newValue;
+        }
+
+        public List<ZwiftFunctionSelectorViewModel> CreateButtonMappings()
+        {
+            var inputMappings = new List<ZwiftFunctionSelectorViewModel>();
+
+            var inputMappingsData = new Dictionary<string, ControllerInput>
+            {
+                { "A", ControllerInput.A },
+                { "B", ControllerInput.B },
+                { "X", ControllerInput.X },
+                { "Y", ControllerInput.Y },
+                { "Menu", ControllerInput.Menu },
+                { "View", ControllerInput.View }
+            };
+
+            foreach (var kvp in inputMappingsData)
+            {
+                inputMappings.Add(new ZwiftFunctionSelectorViewModel
+                {
+                    InputName = kvp.Key,
+                    SelectedInput = kvp.Value
+                });
+            }
+
+            return inputMappings;
+        }
+
+        public List<ZwiftFunctionSelectorViewModel> CreateDPadMappings()
+        {
+            var inputMappings = new List<ZwiftFunctionSelectorViewModel>();
+
+            var inputMappingsData = new Dictionary<string, ControllerInput>
+            {
+                { "Up", ControllerInput.DPadUp },
+                { "Left", ControllerInput.DPadLeft },
+                { "Down", ControllerInput.DPadDown },
+                { "Right", ControllerInput.DPadRight }
+            };
+
+            foreach (var kvp in inputMappingsData)
+            {
+                inputMappings.Add(new ZwiftFunctionSelectorViewModel
+                {
+                    InputName = kvp.Key,
+                    SelectedInput = kvp.Value
+                });
+            }
+
+            return inputMappings;
+        }
+
+        public List<ZwiftFunctionSelectorViewModel> CreateLeftStickMappings()
+        {
+            var inputMappings = new List<ZwiftFunctionSelectorViewModel>();
+
+            var inputMappingsData = new Dictionary<string, ControllerInput>
+            {
+                { "Left Stick (L3)", ControllerInput.LeftThumbstick },
+                { "Up", ControllerInput.LeftThumbstickUp},
+                { "Left", ControllerInput.LeftThumbstickLeft },
+                { "Down", ControllerInput.LeftThumbstickDown },
+                { "Right", ControllerInput.LeftThumbstickRight }
+            };
+
+            foreach (var kvp in inputMappingsData)
+            {
+                inputMappings.Add(new ZwiftFunctionSelectorViewModel
+                {
+                    InputName = kvp.Key,
+                    SelectedInput = kvp.Value
+                });
+            }
+
+            return inputMappings;
+        }
+
+        public List<ZwiftFunctionSelectorViewModel> CreateRightStickMappings()
+        {
+            var inputMappings = new List<ZwiftFunctionSelectorViewModel>();
+
+            var inputMappingsData = new Dictionary<string, ControllerInput>
+            {
+                { "Right Stick (R3)", ControllerInput.RightThumbstick },
+                { "Up", ControllerInput.RightThumbstickUp },
+                { "Left", ControllerInput.RightThumbstickLeft },
+                { "Down", ControllerInput.RightThumbstickDown },
+                { "Right", ControllerInput.RightThumbstickRight }
+            };
+
+            foreach (var kvp in inputMappingsData)
+            {
+                inputMappings.Add(new ZwiftFunctionSelectorViewModel
+                {
+                    InputName = kvp.Key,
+                    SelectedInput = kvp.Value
+                });
+            }
+
+            return inputMappings;
+        }
+
+        public List<ZwiftFunctionSelectorViewModel> CreateShoulderMappings()
+        {
+            var inputMappings = new List<ZwiftFunctionSelectorViewModel>();
+
+            var inputMappingsData = new Dictionary<string, ControllerInput>
+            {
+                { "Left Bumper (L1)", ControllerInput.LeftBumper },
+                { "Right Bumper (R1)", ControllerInput.RightBumper }
+            };
+
+            foreach (var kvp in inputMappingsData)
+            {
+                inputMappings.Add(new ZwiftFunctionSelectorViewModel
+                {
+                    InputName = kvp.Key,
+                    SelectedInput = kvp.Value
+                });
+            }
+
+            return inputMappings;
+        }
+
+
+        private void _dataIntegrator_InputChanged(object? sender, InputStateChangedEventArgs e)
+        {
+            var app = Application.Current;
+
+            // may be null if app is closing
+            if (app != null)
+            {
+                // Ensure that UI updates happen on the UI thread
+                app.Dispatcher.Invoke(() =>
+                {
+                    CurrentControllerValues = e.Data;
+                    //SelectorViewModel.ControllerData = CurrentControllerValues;
+                });
+            }
+        }
 
         private Task _processingTask;
-        private Task _stopProcessingTask;
+        //private Task _stopProcessingTask;
         private CancellationTokenSource _cancellationTokenSource;
         public void StartProcessing()
         {
@@ -149,7 +311,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                         app.Dispatcher.Invoke(() =>
                         {
                             CurrentControllerValues = controllerData;
-                            SelectorViewModel.ControllerData = CurrentControllerValues;
+                            //SelectorViewModel.ControllerData = CurrentControllerValues;
                         });
                     }
                 }

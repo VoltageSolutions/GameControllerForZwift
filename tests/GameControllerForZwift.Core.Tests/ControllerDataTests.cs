@@ -1,12 +1,7 @@
-﻿using System;
-using Xunit;
-using GameControllerForZwift.Core;
-
-namespace GameControllerForZwift.Core.Tests
+﻿namespace GameControllerForZwift.Core.Tests
 {
     public class ControllerDataTests
     {
-        private const int DeadzoneThreshold = 2000;
         private const int TriggerMaxValue = 32727;
 
         #region Left Thumbstick Direction Tests

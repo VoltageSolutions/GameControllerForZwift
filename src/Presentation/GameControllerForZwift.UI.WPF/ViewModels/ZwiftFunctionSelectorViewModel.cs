@@ -5,71 +5,83 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 {
     public partial class ZwiftFunctionSelectorViewModel : ObservableObject
     {
-        #region Fields
+        #region Properties
+
+        [ObservableProperty]
+        private string _inputName = string.Empty;
+
+        /*
+         * ControllerData includes the current button-press states.
+         * SelectedInput is the input this ViewModel will use.
+         * IsPressed highlights the View to show the status
+         */
+
+        [ObservableProperty]
+        private ControllerData _controllerData;
+
+        [ObservableProperty]
+        private ControllerInput _selectedInput;
 
         [ObservableProperty]
         private ZwiftFunction _selectedZwiftFunction;
 
-        partial void OnSelectedZwiftFunctionChanged(ZwiftFunction value)
-        {
-            if (ZwiftFunction.AdjustCameraAngle == value)
-                EnablePlayerView();
-            else if (ZwiftFunction.RiderAction == value)
-                EnableRiderAction();
-            else
-                HideSecondarySelections();
-        }
-
-        public IEnumerable<ZwiftFunction> ZwiftFunctions
-        {
-            get
-            {
-                return Enum.GetValues(typeof(ZwiftFunction))
-                    .Cast<ZwiftFunction>();
-            }
-        }
-
         [ObservableProperty]
         private bool _showPlayerView;
-
 
         [ObservableProperty]
         private ZwiftPlayerView _selectedZwiftPlayerView;
 
-
-        public IEnumerable<ZwiftPlayerView> ZwiftPlayerViews
-        {
-            get
-            {
-                return Enum.GetValues(typeof(ZwiftPlayerView))
-                    .Cast<ZwiftPlayerView>();
-            }
-        }
-
         [ObservableProperty]
         private bool _showRiderAction;
-
 
         [ObservableProperty]
         private ZwiftRiderAction _selectedZwiftRiderAction;
 
+        public IEnumerable<ZwiftFunction> ZwiftFunctions => GetEnumValues<ZwiftFunction>();
+        public IEnumerable<ZwiftPlayerView> ZwiftPlayerViews => GetEnumValues<ZwiftPlayerView>();
+        public IEnumerable<ZwiftRiderAction> ZwiftRiderActions => GetEnumValues<ZwiftRiderAction>();
 
-        public IEnumerable<ZwiftRiderAction> ZwiftRiderActions
+        #endregion
+
+        #region Constructor
+
+        public ZwiftFunctionSelectorViewModel()
         {
-            get
-            {
-                return Enum.GetValues(typeof(ZwiftRiderAction))
-                    .Cast<ZwiftRiderAction>();
-            }
+            ControllerData = new ControllerData();
         }
-
-        // test
-        [ObservableProperty]
-        private ControllerData _controllerData;
 
         #endregion
 
         #region Methods
+
+        public bool IsPressed => ControllerData.IsPressed(SelectedInput);
+
+        partial void OnControllerDataChanged(ControllerData oldValue, ControllerData newValue)
+        {
+            OnPropertyChanged(nameof(IsPressed));
+        }
+
+        public IEnumerable<T> GetEnumValues<T>() where T : Enum
+        {
+            return Enum.GetValues(typeof(T)).Cast<T>();
+        }
+
+        partial void OnSelectedZwiftFunctionChanged(ZwiftFunction value)
+        {
+            switch (value)
+            {
+                case ZwiftFunction.AdjustCameraAngle:
+                    EnablePlayerView();
+                    break;
+                case ZwiftFunction.RiderAction:
+                    EnableRiderAction();
+                    break;
+                default:
+                    HideSecondarySelections();
+                    break;
+            }
+        }
+
         public void EnablePlayerView()
         {
             ShowPlayerView = true;
@@ -87,6 +99,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             ShowPlayerView = false;
             ShowRiderAction = false;
         }
+
         #endregion
     }
 }

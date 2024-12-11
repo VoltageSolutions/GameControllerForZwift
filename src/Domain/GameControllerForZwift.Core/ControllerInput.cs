@@ -16,11 +16,15 @@
         RightBumper,
         LeftThumbstick,
         RightThumbstick,
-        LeftThumbstickX,
-        LeftThumbstickY,
+        LeftThumbstickLeft,
+        LeftThumbstickRight,
+        LeftThumbstickUp,
+        LeftThumbstickDown,
         LeftTrigger,
-        RightThumbstickX,
-        RightThumbstickY,
+        RightThumbstickLeft,
+        RightThumbstickRight,
+        RightThumbstickUp,
+        RightThumbstickDown,
         RightTrigger
     }
 }

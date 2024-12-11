@@ -13,6 +13,7 @@
     <Page.Resources>
         <helpers:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         <converters:DoubleToPointConverter x:Key="DoubleToPointConverter"/>
+        <converters:DynamicControllerBindingConverter x:Key="DynamicControllerBindingConverter"/>
     </Page.Resources>
     <ScrollViewer>
         <Grid>
@@ -100,64 +101,31 @@
                         <controls:Card Grid.Row="0" MinHeight="200" MinWidth="250" Title="Buttons" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
 
                             <StackPanel Orientation="Vertical">
-                                <controls:InputMapper 
-                                    InputName="A"
-                                    InputPressed="{Binding ControllerData.A}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
-                                <controls:InputMapper 
-                                    InputName="B"
-                                    InputPressed="{Binding ControllerData.B}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
-
-                                <controls:InputMapper 
-                                    InputName="X"
-                                    InputPressed="{Binding ControllerData.X}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
-                                <controls:InputMapper 
-                                    InputName="Y"
-                                    InputPressed="{Binding ControllerData.Y}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
-
-                                <controls:InputMapper 
-                                    InputName="Menu"
-                                    InputPressed="{Binding ControllerData.Menu}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
-
-                                <controls:InputMapper 
-                                    InputName="View"
-                                    InputPressed="{Binding ControllerData.View}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
+                                <ItemsControl ItemsSource="{Binding ViewModel.ButtonFunctionMappings}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <controls:InputMapper 
+                                                InputName="{Binding InputName}"
+                                                InputPressed="{Binding IsPressed}" 
+                                                />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </StackPanel>
                         </controls:Card>
 
                         <controls:Card Grid.Row="1" MinHeight="200" Title="D-Pad" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                             <StackPanel Orientation="Vertical">
-                                <controls:InputMapper 
-                                    InputName="Up"
-                                    InputPressed="{Binding ControllerData.DPadUp}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
-                                <controls:InputMapper 
-                                    InputName="Left"
-                                    InputPressed="{Binding ControllerData.DPadLeft}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
-                                <controls:InputMapper 
-                                    InputName="Down"
-                                    InputPressed="{Binding ControllerData.DPadDown}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
-                                <controls:InputMapper 
-                                    InputName="Right"
-                                    InputPressed="{Binding ControllerData.DPadRight}"
-                                    DataContext="{Binding ViewModel.SelectorViewModel}"
-                                    />
+                                <ItemsControl ItemsSource="{Binding ViewModel.DpadFunctionMappings}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <controls:InputMapper 
+                                                InputName="{Binding InputName}"
+                                                InputPressed="{Binding IsPressed}" 
+                                                />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
                             </StackPanel>
                         </controls:Card>
                     </Grid>
@@ -165,105 +133,75 @@
                     <!--Left Stick-->
                     <controls:Card MinWidth="200" MinHeight="400" Title="Left Stick" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Vertical">
-                            <controls:InputMapper 
-                                InputName="Left Stick (L3)"
-                                InputPressed="{Binding ControllerData.LeftThumbstick}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
                             <controls:ThumbstickGraph Width="100" Height="100"
                                MinX="-32768" MaxX="32767"
-                                MinY="-32768" MaxY="32676" DataContext="{Binding ViewModel.SelectorViewModel}">
+                                MinY="-32768" MaxY="32676">
                                 <controls:ThumbstickGraph.Position>
                                     <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
-                                        <Binding Path="ControllerData.LeftThumbstickX" />
-                                        <Binding Path="ControllerData.LeftThumbstickY"/>
+                                        <Binding Path="ViewModel.CurrentControllerValues.LeftThumbstickX" />
+                                        <Binding Path="ViewModel.CurrentControllerValues.LeftThumbstickY"/>
                                     </MultiBinding>
                                 </controls:ThumbstickGraph.Position>
                             </controls:ThumbstickGraph>
-                            <controls:InputMapper 
-                                InputName="Up"
-                                InputPressed="{Binding ControllerData.LeftStickUp}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
-                            <controls:InputMapper 
-                                InputName="Left"
-                                InputPressed="{Binding ControllerData.LeftStickLeft}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
-                            <controls:InputMapper 
-                                InputName="Down"
-                                InputPressed="{Binding ControllerData.LeftStickDown}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
-                            <controls:InputMapper 
-                                InputName="Right"
-                                InputPressed="{Binding ControllerData.LeftStickRight}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />      
+                            <ItemsControl ItemsSource="{Binding ViewModel.LeftStickFunctionMappings}" >
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:InputMapper 
+                                            InputName="{Binding InputName}"
+                                            InputPressed="{Binding IsPressed}" 
+                                            />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </controls:Card>
 
                     <!--Right Stick-->
                     <controls:Card MinWidth="200" MinHeight="400" Title="Right Stick" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Vertical">
-                            <controls:InputMapper 
-                                InputName="Right Stick (R3)"
-                                InputPressed="{Binding ControllerData.RightThumbstick}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
                             <controls:ThumbstickGraph Width="100" Height="100"
                                 MinX="-32768" MaxX="32767"
-                                MinY="-32768" MaxY="32676" DataContext="{Binding ViewModel.SelectorViewModel}">
+                                MinY="-32768" MaxY="32676">
                                 <controls:ThumbstickGraph.Position>
                                     <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
-                                        <Binding Path="ControllerData.RightThumbstickX" />
-                                        <Binding Path="ControllerData.RightThumbstickY"/>
+                                        <Binding Path="ViewModel.CurrentControllerValues.RightThumbstickX" />
+                                        <Binding Path="ViewModel.CurrentControllerValues.RightThumbstickY"/>
                                     </MultiBinding>
                                 </controls:ThumbstickGraph.Position>
                             </controls:ThumbstickGraph>
-                            <controls:InputMapper 
-                                InputName="Up"
-                                InputPressed="{Binding ControllerData.RightStickUp}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
-                            <controls:InputMapper 
-                                InputName="Left"
-                                InputPressed="{Binding ControllerData.RightStickLeft}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
-                            <controls:InputMapper 
-                                InputName="Down"
-                                InputPressed="{Binding ControllerData.RightStickDown}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
-                            <controls:InputMapper 
-                                InputName="Right"
-                                InputPressed="{Binding ControllerData.RightStickRight}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
+                            <ItemsControl ItemsSource="{Binding ViewModel.RightStickFunctionMappings}" >
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:InputMapper 
+                                            InputName="{Binding InputName}"
+                                            InputPressed="{Binding IsPressed}" 
+                                            />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                         </StackPanel>
                     </controls:Card>
 
                     <!--Shoulder Buttons-->
                     <controls:Card MinWidth="200" MinHeight="400" Title="Shoulder Buttons" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Vertical">
-                            <controls:InputMapper 
-                                InputName="Left Bumper (L1)"
-                                InputPressed="{Binding ControllerData.LeftBumper}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
-                            <controls:InputMapper 
-                                InputName="Right Bumper (R1)"
-                                InputPressed="{Binding ControllerData.RightBumper}"
-                                DataContext="{Binding ViewModel.SelectorViewModel}"
-                                />
+                            <ItemsControl ItemsSource="{Binding ViewModel.ShoulderFunctionMappings}" >
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <controls:InputMapper 
+                                            InputName="{Binding InputName}"
+                                            InputPressed="{Binding IsPressed}" 
+                                            />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
                             <TextBlock Text="Left Trigger (L2)" Style="{StaticResource BaseTextBlockStyle}"/>
                             <controls:GaugeControl Margin="20"
-                                                   Value="{Binding ControllerData.LeftTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}" MaxValue="32767"/>
+                                                   Value="{Binding ViewModel.CurrentControllerValues.LeftTrigger}" MaxValue="32767"/>
 
                             <TextBlock Text="Right Trigger (R2)" Style="{StaticResource BaseTextBlockStyle}"/>
                             <controls:GaugeControl Margin="20"
-                                Value="{Binding ControllerData.RightTrigger}" DataContext="{Binding ViewModel.SelectorViewModel}" MaxValue="32767"/>
+                                Value="{Binding ViewModel.CurrentControllerValues.RightTrigger}" MaxValue="32767"/>
                         </StackPanel>
                     </controls:Card>
                 </WrapPanel>
