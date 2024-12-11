@@ -157,10 +157,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
             var inputMappingsData = new Dictionary<string, ControllerInput>
             {
-                { "Up", ControllerInput.DPadUp },
-                { "Left", ControllerInput.DPadLeft },
-                { "Down", ControllerInput.DPadDown },
-                { "Right", ControllerInput.DPadRight }
+                { "Up", ControllerInput.DPad_Up },
+                { "Left", ControllerInput.DPad_Left },
+                { "Down", ControllerInput.DPad_Down },
+                { "Right", ControllerInput.DPad_Right }
             };
 
             foreach (var kvp in inputMappingsData)
@@ -181,11 +181,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
             var inputMappingsData = new Dictionary<string, ControllerInput>
             {
-                { "Left Stick (L3)", ControllerInput.LeftThumbstick },
-                { "Up", ControllerInput.LeftThumbstickUp},
-                { "Left", ControllerInput.LeftThumbstickLeft },
-                { "Down", ControllerInput.LeftThumbstickDown },
-                { "Right", ControllerInput.LeftThumbstickRight }
+                { "Left Stick (L3)", ControllerInput.LeftThumbstick_Click },
+                { "Up", ControllerInput.LeftThumbstick_TiltUp},
+                { "Left", ControllerInput.LeftThumbstick_TiltLeft },
+                { "Down", ControllerInput.LeftThumbstick_TiltDown },
+                { "Right", ControllerInput.LeftThumbstick_TiltRight }
             };
 
             foreach (var kvp in inputMappingsData)
@@ -206,11 +206,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
             var inputMappingsData = new Dictionary<string, ControllerInput>
             {
-                { "Right Stick (R3)", ControllerInput.RightThumbstick },
-                { "Up", ControllerInput.RightThumbstickUp },
-                { "Left", ControllerInput.RightThumbstickLeft },
-                { "Down", ControllerInput.RightThumbstickDown },
-                { "Right", ControllerInput.RightThumbstickRight }
+                { "Right Stick (R3)", ControllerInput.RightThumbstick_Click },
+                { "Up", ControllerInput.RightThumbstick_TiltUp },
+                { "Left", ControllerInput.RightThumbstick_TiltLeft },
+                { "Down", ControllerInput.RightThumbstick_TiltDown },
+                { "Right", ControllerInput.RightThumbstick_TiltRight }
             };
 
             foreach (var kvp in inputMappingsData)
