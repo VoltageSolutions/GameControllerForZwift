@@ -9,6 +9,10 @@
 	<AssemblyName>GameControllerForZwift</AssemblyName>
 	<Version>0.0.5</Version>
 	<NoWarn>$(NoWarn);WPF0001</NoWarn>
+	<RepositoryUrl>https://github.com/VoltageSolutions/GameControllerForZwift</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +30,13 @@
 
   <ItemGroup>
     <Folder Include="Assets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

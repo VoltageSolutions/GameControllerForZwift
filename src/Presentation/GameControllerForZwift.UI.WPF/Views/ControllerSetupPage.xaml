@@ -89,14 +89,14 @@
                 </WrapPanel>
 
                 <!--Mapper Row-->
-                <WrapPanel Grid.Row="1">
+                <WrapPanel Grid.Row="1" ItemHeight="Auto">
 
                     <!--Buttons Column-->
-                    <Grid MinWidth="200">
+                    <!--<Grid MinWidth="200">
                         <Grid.RowDefinitions>
                             <RowDefinition Height=".5*"/>
                             <RowDefinition Height=".5*"/>
-                        </Grid.RowDefinitions>
+                        </Grid.RowDefinitions>-->
 
                         <controls:Card Grid.Row="0" MinHeight="200" MinWidth="250" Title="Buttons" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
 
@@ -128,10 +128,10 @@
                                 </ItemsControl>
                             </StackPanel>
                         </controls:Card>
-                    </Grid>
+                    <!--</Grid>-->
 
                     <!--Left Stick-->
-                    <controls:Card MinWidth="200" MinHeight="400" Title="Left Stick" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                    <controls:Card MinWidth="200" Title="Left Stick" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Vertical">
                             <controls:ThumbstickGraph Width="100" Height="100"
                                MinX="-32768" MaxX="32767"

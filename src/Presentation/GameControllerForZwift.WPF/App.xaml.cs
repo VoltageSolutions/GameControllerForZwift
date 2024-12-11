@@ -11,7 +11,6 @@ using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using GameControllerForZwift.WPF.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using SharpDX.DirectInput;
 using System.Windows;
 
 namespace GameControllerForZwift

@@ -40,7 +40,17 @@ Screen or wizard for selecting a controller and mapping its inputs
 way to save and recall profiles/configurations
 settings to configure app
 	run at startup
-	check for updates
+	check for updates?
 log
 debug - visualize controller button presses like
 https://ds4-windows.com/wp-content/uploads/2021/09/GamepadTesterDoubleInput.gif
+
+
+make controllersetup main screen
+add an about screen
+	include acknowledgements, link to github
+in settings, block the darkmode option in W10
+
+make controller list auto-populate
+
+In w10 clicking in navigation pane highlights the whole window
