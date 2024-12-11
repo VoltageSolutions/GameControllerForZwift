@@ -2,23 +2,29 @@
 {
     public class ControllerProfile
     {
-        private readonly Dictionary<ControllerInput, InputMapping> _mappings = new();
-
-        public IReadOnlyDictionary<ControllerInput, InputMapping> Mappings => _mappings;
+        public string Name { get; set; }
+        public List<InputMapping> Mappings { get; set; }
 
         public ControllerProfile()
         {
+            Name = string.Empty;
+            Mappings = new List<InputMapping>();
+
+            // Initialize Mappings with default values for each ControllerInput
             foreach (ControllerInput input in Enum.GetValues(typeof(ControllerInput)))
             {
-                _mappings[input] = new InputMapping(input, ZwiftFunction.None);
+                Mappings.Add(new InputMapping(input, ZwiftFunction.None, ZwiftPlayerView.Default, null));
             }
         }
 
         public void UpdateMapping(ControllerInput input, ZwiftFunction function, ZwiftPlayerView? playerView = null, ZwiftRiderAction? riderAction = null)
         {
-            if (_mappings.ContainsKey(input))
+            var mapping = Mappings.FirstOrDefault(m => m.Input == input);
+            if (mapping != null)
             {
-                _mappings[input] = new InputMapping(input, function, playerView, riderAction);
+                mapping.Function = function;
+                mapping.PlayerView = playerView ?? ZwiftPlayerView.Default;
+                mapping.RiderAction = riderAction ?? ZwiftRiderAction.RideOn;
             }
             else
             {
@@ -26,5 +32,4 @@
             }
         }
     }
-
 }

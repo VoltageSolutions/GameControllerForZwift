@@ -83,7 +83,7 @@ namespace GameControllerForZwift
 
             // GameControllerForZwift.Keyboard
             services.AddSingleton<IOutputService, KeyboardService>();
-            services.AddSingleton<ControllerProfileManager>();
+            services.AddSingleton<IControllerProfileService, ControllerProfileService>();
 
             // GameControllerForZwift.Logic
             services.AddSingleton<IDataIntegrator, DataIntegrator>(); // this should have an interface so we can unit test it later

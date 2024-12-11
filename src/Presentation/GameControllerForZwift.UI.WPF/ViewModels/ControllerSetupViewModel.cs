@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Logic;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
@@ -24,7 +25,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         private readonly IDataIntegrator _dataIntegrator;
 
-        private readonly ControllerProfileManager _profileManager;
+        private readonly IControllerProfileService _profileService;
 
         [ObservableProperty]
         private List<IController> _controllers;
@@ -53,10 +54,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #region Constructor
 
         // todo - this should take an interface for the dataintegrator and should need need the input service
-        public ControllerSetupViewModel(IDataIntegrator dataIntegrator, ControllerProfileManager profileManager)
+        public ControllerSetupViewModel(IDataIntegrator dataIntegrator, IControllerProfileService profileManager)
         {
             _dataIntegrator = dataIntegrator;
-            _profileManager = profileManager;
+            _profileService = profileManager;
 
             // Create initial mappings
             _buttonFunctionMappings = CreateButtonMappings();
@@ -126,7 +127,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 return;
             }
 
-            var profile = _profileManager.LoadProfile(profilePath);
+            var profile = _profileService.LoadDefaultProfile(profilePath);
 
             ApplyProfileToMappings(profile, _buttonFunctionMappings);
             ApplyProfileToMappings(profile, _dpadFunctionMappings);
@@ -135,21 +136,20 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             ApplyProfileToMappings(profile, _shoulderFunctionMappings);
         }
 
-
-        private void ApplyProfileToMappings(ControllerProfile profile, List<ZwiftFunctionSelectorViewModel> mappings)
+        private void ApplyProfileToMappings(ControllerProfile profile, List<ZwiftFunctionSelectorViewModel> viewMappings)
         {
-            foreach (var mapping in mappings)
+            foreach (var vm in viewMappings)
             {
-                if (Enum.TryParse<ControllerInput>(mapping.InputName, out var input) && profile.Mappings.TryGetValue(input, out var inputMapping))
+                //if (Enum.TryParse<ControllerInput>(vm.InputName, out var input) &&
+
+                if(profile.Mappings.Where(m => m.Input == vm.SelectedInput).FirstOrDefault() is InputMapping inputMap)
                 {
-                    mapping.SelectedZwiftFunction = inputMapping.Function;
-                    mapping.SelectedZwiftPlayerView = inputMapping.PlayerView ?? ZwiftPlayerView.Default;
-                    mapping.SelectedZwiftRiderAction = inputMapping.RiderAction ?? ZwiftRiderAction.RideOn;
+                    vm.SelectedZwiftFunction = inputMap.Function;
+                    vm.SelectedZwiftPlayerView = inputMap.PlayerView ?? ZwiftPlayerView.Default;
+                    vm.SelectedZwiftRiderAction = inputMap.RiderAction ?? ZwiftRiderAction.RideOn;
                 }
             }
         }
-
-
 
         partial void OnCurrentControllerValuesChanged(ControllerData oldValue, ControllerData newValue)
         {

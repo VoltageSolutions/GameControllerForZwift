@@ -16,7 +16,6 @@ namespace GameControllerForZwift.Core.Mapping
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ZwiftRiderAction? RiderAction { get; set; }
 
-        // Parameterless constructor for deserialization
         public InputMapping() { }
 
         public InputMapping(ControllerInput input, ZwiftFunction function, ZwiftPlayerView? playerView = null, ZwiftRiderAction? riderAction = null)

@@ -1,84 +1,87 @@
 ﻿{
-  "Default Profile": {
-    "Mappings": {
-      "A": {
-        "Input": "A",
-        "Function": "Select",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "B": {
-        "Input": "B",
-        "Function": "GoBack",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "Y": {
-        "Input": "Y",
-        "Function": "HideHUD",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "DPad_Up": {
-        "Input": "DPad_Up",
-        "Function": "ShowMenu",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "DPad_Down": {
-        "Input": "DPad_Down",
-        "Function": "Uturn",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "DPad_Left": {
-        "Input": "DPad_Left",
-        "Function": "NavigateLeft",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "DPad_Right": {
-        "Input": "DPad_Right",
-        "Function": "NavigateRight",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "LeftThumbstick_TiltUp": {
-        "Input": "LeftThumbstick_TiltUp",
-        "Function": "ShowMenu",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "LeftThumbstick_TiltDown": {
-        "Input": "LeftThumbstick_TiltDown",
-        "Function": "Uturn",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "LeftThumbstick_TiltLeft": {
-        "Input": "LeftThumbstick_TiltLeft",
-        "Function": "NavigateLeft",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "LeftThumbstick_TiltRight": {
-        "Input": "LeftThumbstick_TiltRight",
-        "Function": "NavigateRight",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "LeftBumper": {
-        "Input": "LeftBumper",
-        "Function": "FTPBiasDown",
-        "PlayerView": null,
-        "RiderAction": null
-      },
-      "RightBumper": {
-        "Input": "RightBumper",
-        "Function": "FTPBiasUp",
-        "PlayerView": null,
-        "RiderAction": null
-      }
+  "Profiles": [
+    {
+      "Name": "Default Profile",
+      "Mappings": [
+        {
+          "Input": "A",
+          "Function": "Select",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "B",
+          "Function": "GoBack",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "Y",
+          "Function": "HideHUD",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "DPad_Up",
+          "Function": "ShowMenu",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "DPad_Down",
+          "Function": "Uturn",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "DPad_Left",
+          "Function": "NavigateLeft",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "DPad_Right",
+          "Function": "NavigateRight",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftThumbstick_TiltUp",
+          "Function": "ShowMenu",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftThumbstick_TiltDown",
+          "Function": "Uturn",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftThumbstick_TiltLeft",
+          "Function": "NavigateLeft",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftThumbstick_TiltRight",
+          "Function": "NavigateRight",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftBumper",
+          "Function": "FTPBiasDown",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "RightBumper",
+          "Function": "FTPBiasUp",
+          "PlayerView": null,
+          "RiderAction": null
+        }
+      ]
     }
-  }
+  ]
 }
