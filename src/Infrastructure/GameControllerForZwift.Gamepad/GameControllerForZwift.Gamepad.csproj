@@ -7,11 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="defaultprofile.json" />
     <None Remove="DeviceButtonMap.json" />
     <None Remove="DeviceMap.json" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="defaultprofile.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="DeviceButtonMap.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

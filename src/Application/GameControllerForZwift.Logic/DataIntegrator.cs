@@ -1,4 +1,5 @@
 ﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Mapping;
 using System.Collections.Concurrent;
 
 namespace GameControllerForZwift.Logic
@@ -8,6 +9,7 @@ namespace GameControllerForZwift.Logic
         #region Fields
         private readonly IInputService _inputService;
         private readonly IOutputService _outputService;
+        private readonly IControllerProfileService _controllerProfileService;
         public ConcurrentQueue<ControllerData> DataQueue => _dataQueue;
         private readonly ConcurrentQueue<ControllerData> _dataQueue = new ConcurrentQueue<ControllerData>();
         private readonly int _maxQueueSize;
@@ -17,10 +19,11 @@ namespace GameControllerForZwift.Logic
         #endregion
 
         #region Constructor
-        public DataIntegrator(IInputService inputService, IOutputService outputService, int maxQueueSize = 10)
+        public DataIntegrator(IInputService inputService, IOutputService outputService, IControllerProfileService controllerProfileService, int maxQueueSize = 10)
         {
             _inputService = inputService;
             _outputService = outputService;
+            _controllerProfileService = controllerProfileService;
             _maxQueueSize = maxQueueSize;
         }
         #endregion

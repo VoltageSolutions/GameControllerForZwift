@@ -120,14 +120,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         private void LoadDefaultProfile()
         {
-            var profilePath = System.IO.Path.Combine(AppContext.BaseDirectory, "defaultprofile.json");
-
-            if (!System.IO.File.Exists(profilePath))
-            {
-                return;
-            }
-
-            var profile = _profileService.LoadDefaultProfile(profilePath);
+            var profile = _profileService.GetDefaultProfile();
 
             ApplyProfileToMappings(profile, _buttonFunctionMappings);
             ApplyProfileToMappings(profile, _dpadFunctionMappings);

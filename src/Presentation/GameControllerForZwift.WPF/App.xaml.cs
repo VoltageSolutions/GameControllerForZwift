@@ -1,8 +1,8 @@
 ﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Gamepad.FileSystem;
+using GameControllerForZwift.Gamepad.Mapping;
 using GameControllerForZwift.Gamepad.SDL2;
-using GameControllerForZwift.Gamepad.USB;
 using GameControllerForZwift.Keyboard;
 using GameControllerForZwift.Logic;
 using GameControllerForZwift.UI.WPF;
@@ -56,34 +56,18 @@ namespace GameControllerForZwift
                 configure.AddCustomEventLogProvider(); // Add your custom provider
             });
 
-            // Register DeviceLookup
             services.AddSingleton<IFileService, FileService>();
-            //services.AddSingleton<IDeviceLookup>(provider =>
-            //{
-            //    var fileService = provider.GetRequiredService<IFileService>();
-            //    string filePath = "./DeviceMap.json"; // Or fetch this from configuration
-            //    return new DeviceLookup(fileService, filePath);
-            //});
-            //services.AddSingleton<IControllerMapping>(provider =>
-            //{
-            //    var fileService = provider.GetRequiredService<IFileService>();
-            //    string filePath = "./DeviceButtonMap.json"; // Or fetch this from configuration
-            //    return new ControllerMapper(fileService, filePath);
-            //});
-
-            //// Register the delegate
-            //services.AddSingleton<Func<DeviceInstance, IJoystick>>(serviceProvider =>
-            //{
-            //    return (device) => new JoystickWrapper(new DirectInput(), device.InstanceGuid);
-            //});
-            //services.AddSingleton<IInputService, DirectInputService>();
-
-
             services.AddSingleton<IInputService, SDL2InputService>();
 
             // GameControllerForZwift.Keyboard
             services.AddSingleton<IOutputService, KeyboardService>();
-            services.AddSingleton<IControllerProfileService, ControllerProfileService>();
+            services.AddSingleton<IControllerProfileService>(provider =>
+            {
+                var fileService = provider.GetRequiredService<IFileService>();
+                string filePath = "./defaultprofile.json"; // Or fetch this from configuration
+                return new ControllerProfileService(fileService, filePath);
+            });
+
 
             // GameControllerForZwift.Logic
             services.AddSingleton<IDataIntegrator, DataIntegrator>(); // this should have an interface so we can unit test it later

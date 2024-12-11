@@ -4,14 +4,12 @@
     {
         ControllerProfiles Profiles { get; }
 
-        ControllerProfile LoadDefaultProfile(string filePath);
+        public ControllerProfile GetDefaultProfile();
 
-        void AddProfile(string profileName, ControllerProfile profile);
+        void AddProfile(ControllerProfile profile);
 
         ControllerProfile GetProfile(string profileName);
 
         void RemoveProfile(string profileName);
-
-        string ToJson();
     }
 }
