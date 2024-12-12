@@ -70,9 +70,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             LoadDefaultProfile();
 
             _dataIntegrator.InputPolled += _dataIntegrator_InputChanged;
-        }
 
-        
+            // Auto setup the first controller
+            RefreshControllerList();
+            if (Controllers.Any())
+            {
+                SelectedController = Controllers.First();
+            }
+        }
 
         #endregion
 
@@ -104,19 +109,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         {
             // Stop the previous processing, if any
             _dataIntegrator.StopProcessing();
-            //_stopProcessingTask = Task.Run(() => StopProcessingAsync());
-            //StopProcessingAsync();
 
-            // Start processing the new controller if it's not null
             if (newValue != null)
             {
                 _dataIntegrator.StartProcessing(newValue);
-                // local
-                //StartProcessing();
             }
         }
 
-        #endregion
+        #region Support Child ViewModels
 
         private void LoadDefaultProfile()
         {
@@ -284,6 +284,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             return inputMappings;
         }
 
+        #endregion
+
 
         private void _dataIntegrator_InputChanged(object? sender, InputStateChangedEventArgs e)
         {
@@ -301,61 +303,62 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             }
         }
 
-        private Task _processingTask;
-        //private Task _stopProcessingTask;
-        private CancellationTokenSource _cancellationTokenSource;
-        public void StartProcessing()
-        {
-            _cancellationTokenSource = new CancellationTokenSource();
-            _processingTask = Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token));
-        }
+        //private Task _processingTask;
+        //private CancellationTokenSource _cancellationTokenSource;
+        //public void StartProcessing()
+        //{
+        //    _cancellationTokenSource = new CancellationTokenSource();
+        //    //_processingTask = Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token));
+        //}
 
         // Function to stop the processing task
-        public async Task StopProcessingAsync()
-        {
-            if (_cancellationTokenSource != null)
-            {
-                _cancellationTokenSource.Cancel();
-                try
-                {
-                    await _processingTask;
-                }
-                catch (OperationCanceledException)
-                {
-                    // Task was canceled, safe to ignore
-                }
-                finally
-                {
-                    _cancellationTokenSource.Dispose();
-                    _cancellationTokenSource = null;
-                }
-            }
-        }
+        //public async Task StopProcessingAsync()
+        //{
+        //    if (_cancellationTokenSource != null)
+        //    {
+        //        _cancellationTokenSource.Cancel();
+        //        try
+        //        {
+        //            await _processingTask;
+        //        }
+        //        catch (OperationCanceledException)
+        //        {
+        //            // Task was canceled, safe to ignore
+        //        }
+        //        finally
+        //        {
+        //            _cancellationTokenSource.Dispose();
+        //            _cancellationTokenSource = null;
+        //        }
+        //    }
+        //}
 
         // The async function to process the queue in a continuous loop
-        private async Task ProcessQueueAsync(CancellationToken cancellationToken)
-        {
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                if (_dataIntegrator.DataQueue.TryDequeue(out ControllerData controllerData))
-                {
-                    var app = Application.Current;
+        //private async Task ProcessQueueAsync(CancellationToken cancellationToken)
+        //{
+        //    while (!cancellationToken.IsCancellationRequested)
+        //    {
+        //        if (_dataIntegrator.DataQueue.TryDequeue(out ControllerData controllerData))
+        //        {
+        //            var app = Application.Current;
 
-                    // may be null if app is closing
-                    if (app != null)
-                    {
-                        // Ensure that UI updates happen on the UI thread
-                        app.Dispatcher.Invoke(() =>
-                        {
-                            CurrentControllerValues = controllerData;
-                            //SelectorViewModel.ControllerData = CurrentControllerValues;
-                        });
-                    }
-                }
+        //            // may be null if app is closing
+        //            if (app != null)
+        //            {
+        //                // Ensure that UI updates happen on the UI thread
+        //                app.Dispatcher.Invoke(() =>
+        //                {
+        //                    CurrentControllerValues = controllerData;
+        //                    //SelectorViewModel.ControllerData = CurrentControllerValues;
+        //                });
+        //            }
+        //        }
 
-                // Wait, but don't wait longer than the dataIntegrator
-                await Task.Delay(10, cancellationToken);
-            }
-        }
+        //        // Wait, but don't wait longer than the dataIntegrator
+        //        await Task.Delay(10, cancellationToken);
+        //    }
+        //}
+
+        #endregion
     }
 }
