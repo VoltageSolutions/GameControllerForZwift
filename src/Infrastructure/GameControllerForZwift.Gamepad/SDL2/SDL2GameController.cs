@@ -73,13 +73,13 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 View = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_BACK),
                 Menu = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_START),
 
-                LeftThumbstick = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK),
-                RightThumbstick = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK),
+                LeftThumbstick_Click = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK),
+                RightThumbstick_Click = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK),
 
-                DPadUp = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP),
-                DPadDown = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN),
-                DPadLeft = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT),
-                DPadRight = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT),
+                DPad_Up = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP),
+                DPad_Down = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN),
+                DPad_Left = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT),
+                DPad_Right = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT),
 
                 LeftThumbstickX = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX),
                 LeftThumbstickY = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTY),

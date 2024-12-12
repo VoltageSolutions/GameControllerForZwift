@@ -12,7 +12,7 @@
         public void LeftStickUp_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
-            Assert.Equal(expected, controller.LeftStickUp);
+            Assert.Equal(expected, controller.LeftStick_TiltUp);
         }
 
         [Theory]
@@ -21,7 +21,7 @@
         public void LeftStickDown_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
-            Assert.Equal(expected, controller.LeftStickDown);
+            Assert.Equal(expected, controller.LeftStick_TiltDown);
         }
 
         [Theory]
@@ -30,7 +30,7 @@
         public void LeftStickLeft_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
-            Assert.Equal(expected, controller.LeftStickLeft);
+            Assert.Equal(expected, controller.LeftStick_TiltLeft);
         }
 
         [Theory]
@@ -39,7 +39,7 @@
         public void LeftStickRight_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
-            Assert.Equal(expected, controller.LeftStickRight);
+            Assert.Equal(expected, controller.LeftStick_TiltRight);
         }
 
         #endregion
@@ -52,7 +52,7 @@
         public void RightStickUp_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
-            Assert.Equal(expected, controller.RightStickUp);
+            Assert.Equal(expected, controller.RightStick_TiltUp);
         }
 
         [Theory]
@@ -61,7 +61,7 @@
         public void RightStickDown_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
-            Assert.Equal(expected, controller.RightStickDown);
+            Assert.Equal(expected, controller.RightStick_TiltDown);
         }
 
         [Theory]
@@ -70,7 +70,7 @@
         public void RightStickLeft_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
-            Assert.Equal(expected, controller.RightStickLeft);
+            Assert.Equal(expected, controller.RightStick_TiltLeft);
         }
 
         [Theory]
@@ -79,7 +79,7 @@
         public void RightStickRight_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
-            Assert.Equal(expected, controller.RightStickRight);
+            Assert.Equal(expected, controller.RightStick_TiltRight);
         }
 
         #endregion

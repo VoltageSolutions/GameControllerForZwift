@@ -7,6 +7,7 @@ using Xunit;
 using NSubstitute;
 using GameControllerForZwift.Core;
 using GameControllerForZwift.Logic;
+using GameControllerForZwift.Core.Mapping;
 
 namespace GameControllerForZwift.App.Tests
 {
@@ -14,6 +15,7 @@ namespace GameControllerForZwift.App.Tests
     {
         private readonly IInputService _inputService;
         private readonly IOutputService _outputService;
+        private readonly IControllerProfileService _controllerProfileService;
         private readonly DataIntegrator _dataIntegrator;
         private readonly IController _controller;
 
@@ -21,8 +23,9 @@ namespace GameControllerForZwift.App.Tests
         {
             _inputService = Substitute.For<IInputService>();
             _outputService = Substitute.For<IOutputService>();
+            _controllerProfileService = Substitute.For<IControllerProfileService>();
             _controller = Substitute.For<IController>();
-            _dataIntegrator = new DataIntegrator(_inputService, _outputService, maxQueueSize: 5);
+            _dataIntegrator = new DataIntegrator(_inputService, _outputService, _controllerProfileService, maxQueueSize: 5);
         }
 
         [Fact]
@@ -77,6 +80,16 @@ namespace GameControllerForZwift.App.Tests
             // Arrange
             var controllerData = new ControllerData { A = true };
             _controller.ReadData().Returns(controllerData);
+
+            var controllerProfiles = new ControllerProfiles();
+            var controllerProfile = new ControllerProfile();
+            controllerProfiles.Profiles.Add(controllerProfile);
+            var mapping = controllerProfile.Mappings.Where(m => m.Input == ControllerInput.A).FirstOrDefault();
+            mapping.Function = ZwiftFunction.Select;
+            mapping.PlayerView = ZwiftPlayerView.Default;
+            mapping.RiderAction = ZwiftRiderAction.RideOn;
+
+            _controllerProfileService.Profiles.Returns(controllerProfiles);
 
             var cancellationTokenSource = new CancellationTokenSource();
             _dataIntegrator.StartProcessing(_controller);

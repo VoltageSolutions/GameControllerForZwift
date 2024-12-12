@@ -19,14 +19,14 @@
         public bool Y { get; set; }
         public bool Menu { get; set; }
         public bool View { get; set; }
-        public bool DPadUp { get; set; }
-        public bool DPadDown { get; set; }
-        public bool DPadLeft { get; set; }
-        public bool DPadRight { get; set; }
+        public bool DPad_Up { get; set; }
+        public bool DPad_Down { get; set; }
+        public bool DPad_Left { get; set; }
+        public bool DPad_Right { get; set; }
         public bool LeftBumper { get; set; }
         public bool RightBumper { get; set; }
-        public bool LeftThumbstick { get; set; }
-        public bool RightThumbstick { get; set; }
+        public bool LeftThumbstick_Click { get; set; }
+        public bool RightThumbstick_Click { get; set; }
 
         #endregion
 
@@ -44,19 +44,19 @@
 
         #region Left Thumbstick Directions
 
-        public bool LeftStickUp => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Up);
-        public bool LeftStickDown => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Down);
-        public bool LeftStickLeft => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Left);
-        public bool LeftStickRight => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Right);
+        public bool LeftStick_TiltUp => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Up);
+        public bool LeftStick_TiltDown => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Down);
+        public bool LeftStick_TiltLeft => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Left);
+        public bool LeftStick_TiltRight => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Right);
 
         #endregion
 
         #region Right Thumbstick Directions
 
-        public bool RightStickUp => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Up);
-        public bool RightStickDown => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Down);
-        public bool RightStickLeft => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Left);
-        public bool RightStickRight => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Right);
+        public bool RightStick_TiltUp => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Up);
+        public bool RightStick_TiltDown => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Down);
+        public bool RightStick_TiltLeft => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Left);
+        public bool RightStick_TiltRight => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Right);
 
         #endregion
 

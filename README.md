@@ -54,3 +54,13 @@ in settings, block the darkmode option in W10
 make controller list auto-populate
 
 In w10 clicking in navigation pane highlights the whole window
+
+
+
+todo
+
+how to debug? use windows event viewer
+
+how to donate
+
+how to contribute

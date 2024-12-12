@@ -26,8 +26,7 @@ namespace GameControllerForZwift.Logic
             _controllerProfileService = controllerProfileService;
             _maxQueueSize = maxQueueSize;
         }
-        #endregion
-        
+        #endregion      
 
         #region Methods
 
@@ -49,7 +48,7 @@ namespace GameControllerForZwift.Logic
                 _cts.Cancel();
         }
 
-        private async Task ReadDataAsync(IController controller, CancellationToken cancellationToken)
+        public async Task ReadDataAsync(IController controller, CancellationToken cancellationToken)
         {
             if (controller != null)
             {
@@ -79,7 +78,16 @@ namespace GameControllerForZwift.Logic
             InputPolled?.Invoke(this, e);
         }
 
-        private async Task WriteDataAsync(CancellationToken cancellationToken)
+        public async Task PerformActionAsync(ControllerInput controllerInput)
+        {
+            // this is not a good long-term way to get a profile.
+            var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
+            var mapping = profile.Mappings.Where(m => m.Input == controllerInput).FirstOrDefault();
+
+            await _outputService.PerformActionAsync(mapping.Function, mapping.PlayerView ?? ZwiftPlayerView.Default, mapping.RiderAction ?? ZwiftRiderAction.RideOn);
+        }
+
+        public async Task WriteDataAsync(CancellationToken cancellationToken)
         {
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -87,33 +95,35 @@ namespace GameControllerForZwift.Logic
                 {
                     InputPolled?.Invoke(this, new InputStateChangedEventArgs(controllerData));
 
-                    // call the interface
+                    // this is not a good long-term way to get a profile, but it's a start
+                    var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
+
                     if (controllerData.A)
-                        await _outputService.PerformActionAsync(ZwiftFunction.Select, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await PerformActionAsync(ControllerInput.A);
                     if (controllerData.B)
-                        await _outputService.PerformActionAsync(ZwiftFunction.GoBack, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await PerformActionAsync(ControllerInput.B);
                     if (controllerData.Y)
-                        await _outputService.PerformActionAsync(ZwiftFunction.HideHUD, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
-                    if (controllerData.DPadUp)
-                        await _outputService.PerformActionAsync(ZwiftFunction.ShowMenu, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
-                    if (controllerData.DPadDown)
-                        await _outputService.PerformActionAsync(ZwiftFunction.Uturn, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
-                    if (controllerData.DPadLeft)
-                        await _outputService.PerformActionAsync(ZwiftFunction.NavigateLeft, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
-                    if (controllerData.DPadRight)
-                        await _outputService.PerformActionAsync(ZwiftFunction.NavigateRight, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
-                    if (controllerData.LeftStickUp)
-                        await _outputService.PerformActionAsync(ZwiftFunction.ShowMenu, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
-                    if (controllerData.LeftStickDown)
-                        await _outputService.PerformActionAsync(ZwiftFunction.Uturn, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
-                    if (controllerData.LeftStickLeft)
-                        await _outputService.PerformActionAsync(ZwiftFunction.NavigateLeft, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
-                    if (controllerData.LeftStickRight)
-                        await _outputService.PerformActionAsync(ZwiftFunction.NavigateRight, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await PerformActionAsync(ControllerInput.Y);
+                    if (controllerData.DPad_Up)
+                        await PerformActionAsync(ControllerInput.DPad_Up);
+                    if (controllerData.DPad_Down)
+                        await PerformActionAsync(ControllerInput.DPad_Down);
+                    if (controllerData.DPad_Left)
+                        await PerformActionAsync(ControllerInput.DPad_Left);
+                    if (controllerData.DPad_Right)
+                        await PerformActionAsync(ControllerInput.DPad_Right);
+                    if (controllerData.LeftStick_TiltUp)
+                        await PerformActionAsync(ControllerInput.LeftThumbstick_TiltUp);
+                    if (controllerData.LeftStick_TiltDown)
+                        await PerformActionAsync(ControllerInput.LeftThumbstick_TiltDown);
+                    if (controllerData.LeftStick_TiltLeft)
+                        await PerformActionAsync(ControllerInput.LeftThumbstick_TiltLeft);
+                    if (controllerData.LeftStick_TiltRight)
+                        await PerformActionAsync(ControllerInput.LeftThumbstick_TiltRight);
                     if (controllerData.LeftBumper)
-                        await _outputService.PerformActionAsync(ZwiftFunction.FTPBiasDown, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await PerformActionAsync(ControllerInput.LeftBumper);
                     if (controllerData.RightBumper)
-                        await _outputService.PerformActionAsync(ZwiftFunction.FTPBiasUp, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+                        await PerformActionAsync(ControllerInput.RightBumper);
                 }
                 await Task.Delay(10, cancellationToken); // Adjust delay based on needs
             }
