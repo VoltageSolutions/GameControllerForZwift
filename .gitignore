@@ -41,6 +41,7 @@ bld/
 Generated\ Files/
 
 # MSTest test Results
+[Cc]overage[Rr]eport*/
 [Tt]est[Rr]esult*/
 [Bb]uild[Ll]og.*
 

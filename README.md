@@ -41,6 +41,9 @@ Support this project on [ko-fi](https://ko-fi.com/waveguide)!
 
 ### Coming soon
 
+- Improved code readability and maintainability.
+- Improved code coverage.
+- App icons and graphics.
 - Acknowledgements and links to this GitHub repo.
 - Save and reload custom button-mapping configuration profiles.
 - Log to a text file for easy debugging support.
@@ -50,6 +53,11 @@ Support this project on [ko-fi](https://ko-fi.com/waveguide)!
 
 - Use Bluetooth or WiFi to integrate with Zwift on the Device Pairing screen.
 - Steering and braking support.
+  - This would make it possible to do something useful with the analog inputs like thumbsticks and triggers.
+
+### Ultra long-term goals
+
+macOS and Linux support.
 
 ## Known Bugs
 

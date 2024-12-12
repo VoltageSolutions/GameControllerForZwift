@@ -38,11 +38,20 @@ jobs:
         $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
         echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-    - name: Publish artifacts 
-      run: | 
-        mkdir ./artifacts 
-        Copy-Item -Recurse -Path src/Presentation/GameControllerForZwift.WPF/bin/Release/net8.0-windows10.0.17763.0/* -Destination ./artifacts/ 
-        Compress-Archive -Path ./artifacts/* -DestinationPath ./artifacts/artifacts.zip
+    # Framework-Dependent Build
+    - name: Publish Framework-Dependent Build
+      run: |
+        mkdir ./artifacts/framework-dependent
+        dotnet publish src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -c Release -o ./artifacts/framework-dependent
+        Compress-Archive -Path ./artifacts/framework-dependent/* -DestinationPath ./artifacts/gamecontrollerforzwift.zip
+
+    # Self-Contained Build
+    - name: Publish Self-Contained Build
+      run: |
+        mkdir ./artifacts/self-contained
+        dotnet publish src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -c Release -r win-x64 --self-contained true -o ./artifacts/self-contained
+        Compress-Archive -Path ./artifacts/self-contained/* -DestinationPath ./artifacts/gamecontrollerforzwift_with_runtime.zip
+
         
     - name: Create GitHub Release
       id: create_release
@@ -61,6 +70,28 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/artifacts.zip
-        asset_name: artifacts.zip
+        asset_path: ./artifacts/gamecontrollerforzwift.zip
+        asset_name: gamecontrollerforzwift.zip
+        asset_content_type: application/zip
+    
+        # Upload Framework-Dependent Build
+    - name: Upload Framework-Dependent Build
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/gamecontrollerforzwift.zip
+        asset_name: gamecontrollerforzwift.zip
+        asset_content_type: application/zip
+
+    # Upload Self-Contained Build
+    - name: Upload Self-Contained Build
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./artifacts/gamecontrollerforzwift_with_runtime.zip
+        asset_name: gamecontrollerforzwift_with_runtime.zip
         asset_content_type: application/zip

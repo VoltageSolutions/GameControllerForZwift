@@ -1,14 +1,14 @@
 [
   {
-    "UniqueId": "Home",
-    "Title": "Home",
-    "PageName": "HomePage",
-    "IconGlyph": "\uE946"
-  },
-  {
     "UniqueId": "ControllerSetup",
     "Title": "Controller Setup",
     "PageName": "ControllerSetupPage",
     "IconGlyph": "\uE7FC"
+  },
+  {
+    "UniqueId": "Home",
+    "Title": "Home",
+    "PageName": "HomePage",
+    "IconGlyph": "\uE946"
   }
 ]

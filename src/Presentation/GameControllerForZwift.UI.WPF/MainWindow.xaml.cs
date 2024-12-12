@@ -35,7 +35,8 @@ namespace GameControllerForZwift.UI.WPF
             _navigationService = navigationService;
             _navigationService.Navigating += OnNavigating;
             _navigationService.SetFrame(this.RootContentFrame);
-            _navigationService.Navigate(typeof(HomePage));
+            //_navigationService.Navigate(typeof(HomePage));
+            _navigationService.Navigate(typeof(ControllerSetupPage));
 
             WindowChrome.SetWindowChrome(
             this,
