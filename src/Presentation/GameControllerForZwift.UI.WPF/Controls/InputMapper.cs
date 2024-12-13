@@ -1,10 +1,4 @@
 ﻿using GameControllerForZwift.Core;
-using GameControllerForZwift.UI.WPF.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -12,22 +6,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
 {
     public class InputMapper : UserControl
     {
-        //#region Fields
-        //public ZwiftFunctionSelectorViewModel ViewModel { get; }
-
-        //#endregion
-
-        //#region Constructor
-
-        //public InputMapper(ZwiftFunctionSelectorViewModel viewModel)
-        //{
-        //    ViewModel = viewModel;
-        //    DataContext = this;
-        //}
-
-        //#endregion
-
-
         public string InputName
         {
             get { return (string)GetValue(InputNameProperty); }

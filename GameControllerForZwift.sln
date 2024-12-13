@@ -43,6 +43,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{F43A29
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Core.Tests", "tests\GameControllerForZwift.Core.Tests\GameControllerForZwift.Core.Tests.csproj", "{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Keyboard.Tests", "tests\GameControllerForZwift.Keyboard.Tests\GameControllerForZwift.Keyboard.Tests.csproj", "{F40082C9-C618-41D2-900D-3E4E6BE82080}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,10 @@ Global
 		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F40082C9-C618-41D2-900D-3E4E6BE82080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F40082C9-C618-41D2-900D-3E4E6BE82080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F40082C9-C618-41D2-900D-3E4E6BE82080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F40082C9-C618-41D2-900D-3E4E6BE82080}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -112,6 +118,7 @@ Global
 		{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
 		{F43A297B-8852-46F0-8FEF-EA6B5B83FD20} = {E2346F87-81E2-49F2-BE60-F7205F5BE468}
 		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9} = {F43A297B-8852-46F0-8FEF-EA6B5B83FD20}
+		{F40082C9-C618-41D2-900D-3E4E6BE82080} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF0E7AD0-FDA6-4F93-B78A-B07984BD96C9}

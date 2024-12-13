@@ -2,10 +2,7 @@
 using InputSimulatorEx;
 using InputSimulatorEx.Native;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Concurrent;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace GameControllerForZwift.Keyboard
 {
@@ -15,7 +12,7 @@ namespace GameControllerForZwift.Keyboard
         private readonly InputSimulator _simulator = new InputSimulator();
         private readonly ILogger<KeyboardService> _logger;
         private readonly ConcurrentDictionary<ZwiftFunction, DateTime> _lastExecutionTimes = new ConcurrentDictionary<ZwiftFunction, DateTime>();
-        private readonly TimeSpan _actionTimeout = TimeSpan.FromMilliseconds(250); // 500 ms timeout window
+        private readonly TimeSpan _actionTimeout = TimeSpan.FromMilliseconds(250);
         private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1); // To handle async thread safety
         #endregion
 
@@ -30,12 +27,6 @@ namespace GameControllerForZwift.Keyboard
 
         #region Methods
 
-        //ActionResult IOutputService.PerformAction(ZwiftFunction zwiftFunction, ZwiftPlayerView playerView, ZwiftRiderAction riderAction)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        // rename this to be async
         public async Task<ActionResult> PerformActionAsync(ZwiftFunction zwiftFunction, ZwiftPlayerView playerView = ZwiftPlayerView.Default, ZwiftRiderAction riderAction = ZwiftRiderAction.WaveHand)
         {
             // Check if the action should be skipped due to timeout
@@ -113,8 +104,6 @@ namespace GameControllerForZwift.Keyboard
             }
             return false;
         }
-
-        
 
         /// <summary>
         /// Updates the last execution time for the given function.
