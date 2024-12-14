@@ -4,6 +4,7 @@
     {
         public static bool IsPressed(this ControllerData controllerData, ControllerInput input)
         {
+            if (controllerData == null) return false;
             return input switch
             {
                 ControllerInput.A => controllerData.A,
