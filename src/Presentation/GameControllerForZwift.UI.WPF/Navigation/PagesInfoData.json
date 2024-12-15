@@ -6,9 +6,9 @@
     "IconGlyph": "\uE7FC"
   },
   {
-    "UniqueId": "Home",
-    "Title": "Home",
-    "PageName": "HomePage",
+    "UniqueId": "About",
+    "Title": "About",
+    "PageName": "AboutPage",
     "IconGlyph": "\uE946"
   }
 ]

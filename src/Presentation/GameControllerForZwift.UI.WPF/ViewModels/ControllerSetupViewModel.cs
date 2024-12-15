@@ -2,11 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Mapping;
-using GameControllerForZwift.Logic;
-using System;
-using System.Collections.ObjectModel;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
 {
@@ -53,7 +49,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Constructor
 
-        // todo - this should take an interface for the dataintegrator and should need need the input service
         public ControllerSetupViewModel(IDataIntegrator dataIntegrator, IControllerProfileService profileManager)
         {
             _dataIntegrator = dataIntegrator;

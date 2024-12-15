@@ -78,12 +78,13 @@ namespace GameControllerForZwift
             // GameControllerForZwift.UI.WPF
             // ViewModels
             services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<AboutPageViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();
             services.AddTransient<ZwiftFunctionSelectorViewModel>();
 
             // Register MainWindow with DI so it can receive MainWindowViewModel
             services.AddTransient<InputMapper>();
-            services.AddSingleton<HomePage>();
+            services.AddSingleton<AboutPage>();
             services.AddSingleton<SettingsPage>();
             services.AddSingleton<ControllerSetupPage>();
             services.AddTransient<MainWindow>();

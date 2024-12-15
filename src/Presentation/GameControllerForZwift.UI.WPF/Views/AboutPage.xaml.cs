@@ -4,19 +4,15 @@ using System.Windows.Controls;
 namespace GameControllerForZwift.UI.WPF.Views
 {
     /// <summary>
-    /// Interaction logic for ControllerSetupPage.xaml
+    /// Interaction logic for AboutPage.xaml
     /// </summary>
-    public partial class ControllerSetupPage : Page
+    public partial class AboutPage : Page
     {
         #region Fields
-
-        public ControllerSetupViewModel ViewModel { get; }
-
+        public AboutPageViewModel ViewModel { get; }
         #endregion
-
         #region Constructor
-
-        public ControllerSetupPage(ControllerSetupViewModel viewModel)
+        public AboutPage(AboutPageViewModel viewModel)
         {
             ViewModel = viewModel;
             DataContext = this;

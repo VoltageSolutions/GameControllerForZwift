@@ -116,7 +116,7 @@ namespace GameControllerForZwift.UI.WPF.Tests
             _viewModel.Pages = new List<PagesInfoDataItem> { item };
 
             // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(HomePage));
+            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(AboutPage));
 
             // Assert
             Assert.Empty(result);

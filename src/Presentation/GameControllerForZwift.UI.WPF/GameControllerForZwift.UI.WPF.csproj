@@ -9,21 +9,31 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\acknowledgements.md" />
+    <None Remove="Assets\kofi_logo.svg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\acknowledgements.md" />
+    <Resource Include="Assets\kofi_logo.svg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Navigation\PagesInfoData.json" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="DotNetProjects.SVGImage" Version="5.2.2" />
+    <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Application\GameControllerForZwift.Logic\GameControllerForZwift.Logic.csproj" />
     <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Keyboard\GameControllerForZwift.Keyboard.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Assets\" />
   </ItemGroup>
 
 </Project>
