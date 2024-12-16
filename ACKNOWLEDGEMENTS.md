@@ -1,16 +1,21 @@
+## This application
+
+GameControllerForZwift is an open source application. Voltage Solutions provides this application under [GNU GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html). If you derive new work from the source code of this project, you must also use the GNU GPLv3 license. You must reference this original project and point out the changes that you have made.
+
 ## Acknowledgements
 
 This application is made possible through the use of open source libraries. The following are the libraries and their licenses
 
 ### Libraries
 
-- CommnityToolkit.Mvvm - *MIT License*
-- DotNetProjects.SVGImage - Copyright (c) 2023 PropertyTools and DotNetProjects contributors - *MIT License*
-- InputSimulatorEX - Copyright (c) 2023 radj307 - *MIT License*
-- Markdig - Copyright (c) 2018-2019, Alexandre Mutel - *BSD-2-Clause*
-- markdig.WPF - Copyright (c) 2016-2021 Nicolas Musset - *MIT License*
-- Sayers.SDL2.Core
-- SDL2 - *zlib*
+- [CommnityToolkit.Mvvm](https://github.com/CommunityToolkit/dotnet) - *MIT License*
+- [DotNetProjects.SVGImage](https://github.com/dotnetprojects/SVGImage) - Copyright (c) 2023 PropertyTools and DotNetProjects contributors - *MIT License*
+- [InputSimulatorEX](https://github.com/radj307/inputsimulator) - Copyright (c) 2023 radj307 - *MIT License*
+- [Markdig](https://github.com/xoofx/markdig) - Copyright (c) 2018-2019, Alexandre Mutel - *BSD-2-Clause*
+- [markdig.WPF](https://github.com/Logikgate/markdig-wpf) - Copyright (c) 2016-2021 Nicolas Musset - *MIT License*
+- [Sayers.SDL2.Core](https://github.com/JeremySayers/Sayers.SDL2.Core)
+- [SDL2-CS](https://github.com/flibitijibibo/SDL2-CS) - Copyright (c) 2013-2024 Ethan Lee.
+- [SDL2](https://www.libsdl.org/) - *zlib*
 
 ### Licenses
 

@@ -1,6 +1,6 @@
 ﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Mapping;
-using GameControllerForZwift.Gamepad.FileSystem;
+using GameControllerForZwift.Logic.FileSystem;
 using GameControllerForZwift.Gamepad.Mapping;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Keyboard;
@@ -79,6 +79,12 @@ namespace GameControllerForZwift
             // ViewModels
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<AboutPageViewModel>();
+            services.AddSingleton<AboutPageViewModel>(provider =>
+            {
+                var fileService = provider.GetRequiredService<IFileService>();
+                string filePath = "./ACKNOWLEDGEMENTS.md"; // Or fetch this from configuration
+                return new AboutPageViewModel(fileService, filePath);
+            });
             services.AddSingleton<ControllerSetupViewModel>();
             services.AddTransient<ZwiftFunctionSelectorViewModel>();
 

@@ -1,4 +1,6 @@
 ﻿using GameControllerForZwift.UI.WPF.ViewModels;
+using System.Diagnostics;
+using System.Security.Policy;
 using System.Windows.Controls;
 
 namespace GameControllerForZwift.UI.WPF.Views
@@ -20,5 +22,11 @@ namespace GameControllerForZwift.UI.WPF.Views
             InitializeComponent();
         }
         #endregion
+
+        private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {e.Parameter.ToString()}") { CreateNoWindow = true });
+            e.Handled = true;
+        }
     }
 }

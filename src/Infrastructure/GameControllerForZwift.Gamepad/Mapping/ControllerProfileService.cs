@@ -1,5 +1,5 @@
 ﻿using GameControllerForZwift.Core.Mapping;
-using GameControllerForZwift.Gamepad.FileSystem;
+using GameControllerForZwift.Logic.FileSystem;
 using System.Text.Json;
 
 namespace GameControllerForZwift.Gamepad.Mapping

@@ -9,12 +9,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Assets\acknowledgements.md" />
     <None Remove="Assets\kofi_logo.svg" />
   </ItemGroup>
 
+	<ItemGroup>
+		<None Include="..\..\..\ACKNOWLEDGEMENTS.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
   <ItemGroup>
-    <Resource Include="Assets\acknowledgements.md" />
     <Resource Include="Assets\kofi_logo.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

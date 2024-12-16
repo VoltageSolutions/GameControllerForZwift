@@ -33,13 +33,13 @@
                     Text="{Binding ViewModel.Title}"
                     d:Text="About"
                     AutomationProperties.HeadingLevel="Level1"/>
-                <TextBlock
+                <!--<TextBlock
                     x:Name="DescriptionTextBlock"
                     Text="{Binding ViewModel.Description}" 
-                        d:Text="Information about this application"
+                        d:Text="Information about this application" TextWrapping="Wrap"
                     AutomationProperties.HeadingLevel="Level2"
                     Visibility="{Binding ViewModel.Description, Converter={StaticResource NullToVisibilityConverter}}"
-                    />
+                    />-->
             </StackPanel>
 
             <Grid Grid.Row="1">
@@ -74,7 +74,13 @@
                         </Grid>
                     </Button>
                 </StackPanel>
-                <FlowDocumentScrollViewer Grid.Row="1" Document="{Binding ViewModel.Acknowledgments}"/>
+                <FlowDocumentReader Grid.Row="1" ViewingMode="Page"  Margin="-19,0,0,0" Document="{Binding ViewModel.Acknowledgments}">
+                    <FlowDocumentReader.CommandBindings>
+                        
+                        <CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
+                    
+                    </FlowDocumentReader.CommandBindings>
+                </FlowDocumentReader>
             </Grid>
         </Grid>
     </ScrollViewer>

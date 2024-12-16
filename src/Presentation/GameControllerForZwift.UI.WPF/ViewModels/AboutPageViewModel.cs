@@ -1,23 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GameControllerForZwift.Core;
+using GameControllerForZwift.Logic.FileSystem;
+using Markdig;
 using Markdig.Wpf;
-using XamlReader = System.Windows.Markup.XamlReader;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Documents;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using Markdown = Markdig.Markdown;
-using Markdig;
-using System.Xaml;
 using System.Reflection;
+using System.Text;
+using System.Windows.Documents;
+using System.Xaml;
+using XamlReader = System.Windows.Markup.XamlReader;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
 {
@@ -37,14 +29,12 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Constructor
 
-        public AboutPageViewModel()
+        public AboutPageViewModel(string acknowledgementsContent)
         {
-            //var markdown = 
-            //KoFiLogo = new BitmapImage(new Uri("pack://application:,,,/GameControllerForZwift.UI.WPF;component/Assets/ko-fi.png"));
-            //KoFiLogo = new BitmapImage(new Uri("https://cdn.prod.website-files.com/5c14e387dab576fe667689cf/670f5a0172b90570b1c21dab_kofi_logo-p-500.png"));
-
-            LoadMarkdown();
+            LoadMarkdown(acknowledgementsContent);
         }
+
+        public AboutPageViewModel(IFileService fileService, string filePath) : this(fileService.ReadFileContent(filePath)) { }
 
         private static MarkdownPipeline BuildPipeline()
         {
@@ -52,36 +42,20 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 .UseSupportedExtensions()
                 .Build();
         }
-        public void LoadMarkdown()
+        public void LoadMarkdown(string acknowledgementsContent)
         {
-            var markdown = ReadAcknowledgementsResource();
-            var xaml = Markdig.Wpf.Markdown.ToXaml(markdown, BuildPipeline());
+            var xaml = Markdig.Wpf.Markdown.ToXaml(acknowledgementsContent, BuildPipeline());
             using (var stream = new MemoryStream(Encoding.UTF8.GetBytes(xaml)))
             {
                 using (var reader = new XamlXmlReader(stream, new MyXamlSchemaContext()))
                 {
                     if (XamlReader.Load(reader) is FlowDocument document)
                     {
+                        document.ColumnWidth = 999999;
                         Acknowledgments = document;
                     }
                 }
             }
-        }
-
-        // Viewmodel should not do this.
-        public string ReadAcknowledgementsResource()
-        {
-            //var uri = new Uri("/GameControllerForZwift.UI.WPF;component/Assets/acknowledgements.md");
-            var uri = new Uri("pack://application:,,,/GameControllerForZwift.UI.WPF;component/Assets/acknowledgements.md");
-
-            using Stream stream = Application.GetResourceStream(uri)?.Stream;
-            if (stream == null)
-            {
-                throw new FileNotFoundException("Resource not found", "acknowledgements.md");
-            }
-
-            using StreamReader reader = new StreamReader(stream);
-            return reader.ReadToEnd();
         }
 
         #endregion
