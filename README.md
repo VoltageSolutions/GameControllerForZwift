@@ -43,6 +43,7 @@ Support this project on [ko-fi](https://ko-fi.com/waveguide)!
 
 - Improved code readability and maintainability.
 - Improved code coverage.
+- User-configurable threshold/deadzone thumbsticks to reduce accidental inputs.
 - App icons and graphics.
 - Acknowledgements and links to this GitHub repo.
 - Save and reload custom button-mapping configuration profiles.
@@ -54,6 +55,8 @@ Support this project on [ko-fi](https://ko-fi.com/waveguide)!
 - Use Bluetooth or WiFi to integrate with Zwift on the Device Pairing screen.
 - Steering and braking support.
   - This would make it possible to do something useful with the analog inputs like thumbsticks and triggers.
+- Enable switching mapping profiles on-the-fly.
+- Navigate Windows with profiles to help bridge any usage gaps.
 
 ### Ultra long-term goals
 
@@ -61,7 +64,8 @@ macOS and Linux support.
 
 ## Known Bugs
 
-- Navigation is flaky. I've disabled the backstack until I can work it out.
+- "Down arrow" navigates down in the UI properly but does not initiate a U-turn as it should - you have to use the menu to U-turn instead.
+- Navigation within GameControllerForZwift is flaky. I've disabled the backstack until I can work it out.
 - Windows 10 issues
   - Clicking around the app can highlight the entire window.
   - Dark-mode does not apply the intended color selections correctly.
@@ -76,12 +80,12 @@ This project's organization loosely follows a Clean Architecture Layout.
 
 ### Application
 
-`GameControllerForZwift.App` is the main functionality of the application.
+`GameControllerForZwift.Logic` is the main functionality of the application. This has turned out to be simple enough that I will combine the Domain and Application projects in the future.
 
 ### Infrastructure
 
-`GameControllerForZwift.GamepadWinRT` leverages Windows Runtime APIs to capture XInput controllers.
-`GameControllerForZwift.ZwiftNetwork` presents this project as a network-based controller for Zwift to talk to.
+`GameControllerForZwift.Gamepad` leverages SDL2 to capture game controller input.
+`GameControllerForZwift.Keyboard` translate Zwift functions to key-presses that Zwift understands.
 
 ### Presentation
 
