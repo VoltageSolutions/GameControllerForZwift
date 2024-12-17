@@ -42,15 +42,15 @@ jobs:
     - name: Publish Framework-Dependent Build
       run: |
         mkdir ./artifacts/framework-dependent
-        dotnet publish src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -c Release -o ./artifacts/framework-dependent
-        Compress-Archive -Path ./artifacts/framework-dependent/* -DestinationPath ./artifacts/gamecontrollerforzwift.zip
+        dotnet publish GameControllerForZwift_TestsExcluded.slnf -c Release -o ./artifacts/framework-dependent
+        Get-ChildItem ./artifacts/framework-dependent -Recurse | Where-Object { $_.Extension -ne ".pdb" } | Compress-Archive -DestinationPath ./artifacts/gamecontrollerforzwift.zip
 
     # Self-Contained Build
-    - name: Publish Self-Contained Build
-      run: |
-        mkdir ./artifacts/self-contained
-        dotnet publish src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -c Release -r win-x64 --self-contained true -o ./artifacts/self-contained
-        Compress-Archive -Path ./artifacts/self-contained/* -DestinationPath ./artifacts/gamecontrollerforzwift_with_runtime.zip
+    # - name: Publish Self-Contained Build
+    #   run: |
+    #     mkdir ./artifacts/self-contained
+    #     dotnet publish GameControllerForZwift_TestsExcluded.slnf -c Release -r win-x64 --self-contained true -o ./artifacts/self-contained
+    #     Compress-Archive -Path ./artifacts/self-contained/* -DestinationPath ./artifacts/gamecontrollerforzwift_with_runtime.zip
 
         
     - name: Create GitHub Release
@@ -63,18 +63,8 @@ jobs:
         release_name: 'Release v${{ env.VERSION }}' 
         draft: false 
         prerelease: false
-
-    - name: Upload Release Assets
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/gamecontrollerforzwift.zip
-        asset_name: gamecontrollerforzwift.zip
-        asset_content_type: application/zip
     
-        # Upload Framework-Dependent Build
+    # Upload Framework-Dependent Build
     - name: Upload Framework-Dependent Build
       uses: actions/upload-release-asset@v1
       env:
@@ -86,12 +76,12 @@ jobs:
         asset_content_type: application/zip
 
     # Upload Self-Contained Build
-    - name: Upload Self-Contained Build
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./artifacts/gamecontrollerforzwift_with_runtime.zip
-        asset_name: gamecontrollerforzwift_with_runtime.zip
-        asset_content_type: application/zip
+    # - name: Upload Self-Contained Build
+    #   uses: actions/upload-release-asset@v1
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #   with:
+    #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+    #     asset_path: ./artifacts/gamecontrollerforzwift_with_runtime.zip
+    #     asset_name: gamecontrollerforzwift_with_runtime.zip
+    #     asset_content_type: application/zip

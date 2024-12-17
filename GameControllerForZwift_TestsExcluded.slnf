@@ -1,0 +1,13 @@
+{
+  "solution": {
+    "path": "GameControllerForZwift.sln",
+    "projects": [
+      "src\\Application\\GameControllerForZwift.Logic\\GameControllerForZwift.Logic.csproj",
+      "src\\Domain\\GameControllerForZwift.Core\\GameControllerForZwift.Core.csproj",
+      "src\\Infrastructure\\GameControllerForZwift.Gamepad\\GameControllerForZwift.Gamepad.csproj",
+      "src\\Infrastructure\\GameControllerForZwift.Keyboard\\GameControllerForZwift.Keyboard.csproj",
+      "src\\Presentation\\GameControllerForZwift.UI.WPF\\GameControllerForZwift.UI.WPF.csproj",
+      "src\\Presentation\\GameControllerForZwift.WPF\\GameControllerForZwift.WPF.csproj"
+    ]
+  }
+}
