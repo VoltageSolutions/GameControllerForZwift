@@ -42,15 +42,19 @@ jobs:
         name: code-coverage
         path: TestResults/coverage.cobertura.xml
 
-    # Generate and post coverage summary (alternative to irongut)
+    # Generate and post coverage summary
     - name: Generate Coverage Summary
       id: generate-summary
       run: |
-        # Generate a simple text summary using ReportGenerator
         dotnet tool install --global dotnet-reportgenerator-globaltool
         reportgenerator -reports:TestResults/coverage.cobertura.xml -reporttypes:Summary -targetdir:coverage-summary
-        coverage_summary=$(cat coverage-summary/coverage-summary.txt)
-        echo "coverage_summary=$coverage_summary" >> $GITHUB_ENV
+        # Check if the report file was generated
+        if (Test-Path "coverage-summary/coverage-summary.txt") {
+          $coverage_summary = Get-Content "coverage-summary/coverage-summary.txt" -Raw
+          echo "coverage_summary=$coverage_summary" >> $env:GITHUB_ENV
+        } else {
+          echo "No coverage summary generated" >> $env:GITHUB_ENV
+        }
 
     # Post Coverage Summary to the PR
     - name: Post Coverage Summary to PR
