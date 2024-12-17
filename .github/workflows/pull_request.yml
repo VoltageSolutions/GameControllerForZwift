@@ -33,7 +33,6 @@ jobs:
     - name: Run tests with coverage
       run: dotnet test --configuration Release --no-build --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=TestResults/coverage.cobertura.xml
 
-
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
 
@@ -43,9 +42,28 @@ jobs:
         name: code-coverage
         path: TestResults/coverage.cobertura.xml
 
-    - name: Generate and Post Coverage Summary
-      uses: irongut/CodeCoverageSummary@v1.3.0
+    # Generate and post coverage summary (alternative to irongut)
+    - name: Generate Coverage Summary
+      id: generate-summary
+      run: |
+        # Generate a simple text summary using ReportGenerator
+        dotnet tool install --global dotnet-reportgenerator-globaltool
+        reportgenerator -reports:TestResults/coverage.cobertura.xml -reporttypes:Summary -targetdir:coverage-summary
+        coverage_summary=$(cat coverage-summary/coverage-summary.txt)
+        echo "coverage_summary=$coverage_summary" >> $GITHUB_ENV
+
+    # Post Coverage Summary to the PR
+    - name: Post Coverage Summary to PR
+      uses: actions/github-script@v6
       with:
-        filename: TestResults/coverage.cobertura.xml
-        format: markdown
-        output: both
+        script: |
+          const coverageSummary = process.env.coverage_summary;
+          const prNumber = github.context.payload.pull_request.number;
+          const commentBody = `### Code Coverage Summary:\n\n\`\`\`\n${coverageSummary}\n\`\`\``;
+
+          await github.rest.issues.createComment({
+            issue_number: prNumber,
+            owner: github.context.repo.owner,
+            repo: github.context.repo.repo,
+            body: commentBody
+          });
