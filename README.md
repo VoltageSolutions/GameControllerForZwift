@@ -12,6 +12,10 @@
 
 This project enables using standard video game controllers to interact with Zwift. The long-term goal is to replicate the flexibility and functionality of Zwift-compatible controllers like the [Zwift Play Controllers](https://us.zwift.com/products/zwift-play?variant=43737779896576) or the [Wahoo Kickr Bike Shift](https://www.wahoofitness.com/devices/indoor-cycling/smart-bikes/kickr-bike-shift-buy).
 
+<a href="https://www.youtube.com/watch?v=mYImJKFE6OI">
+    <img src="./docs/thumbnail_preview.png" width="400">
+</a>
+
 ## Getting start with the app
 
 1. Download the latest release, available as a `.zip` archive.
@@ -89,7 +93,8 @@ This project's organization loosely follows a Clean Architecture Layout.
 ### Infrastructure
 
 `GameControllerForZwift.Gamepad` leverages SDL2 to capture game controller input.
-`GameControllerForZwift.Keyboard` translate Zwift functions to key-presses that Zwift understands.
+
+`GameControllerForZwift.Keyboard` translate Zwift functions to key-presses that Zwift understands. The goal in the future is to augment or replace this implementation with a Bluetooth or WiFi compatible option instead.
 
 ### Presentation
 
