@@ -3,7 +3,7 @@ name: Build and Test
 on:
   pull_request:
     branches:
-      - '*'
+      - '*'  # Run on PRs to any branch
 
 jobs:
   build-and-test:
@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '9.0.x' 
+        dotnet-version: '9.0.x'
 
     - name: Restore dependencies
       run: dotnet restore
@@ -31,28 +31,29 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests with coverage
-      run: dotnet test --configuration Release --no-build --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=TestResults/coverage.cobertura.xml
+      run: dotnet test --configuration Release --no-build --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=./TestResults/coverage.cobertura.xml
 
-    - name: List files in TestResults directory
-      run: dir TestResults
+    - name: List files in the workspace
+      run: dir
 
-
+    # Perform CodeQL Analysis
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
 
+    # Upload coverage report as artifact
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
       with:
         name: code-coverage
-        path: TestResults/coverage.cobertura.xml
+        path: ./TestResults/coverage.cobertura.xml
 
-    # Generate and post coverage summary
+    # Generate and Post Coverage Summary
     - name: Generate Coverage Summary
       id: generate-summary
       run: |
         dotnet tool install --global dotnet-reportgenerator-globaltool
-        reportgenerator -reports:TestResults/coverage.cobertura.xml -reporttypes:TextSummary -targetdir:coverage-summary
-        
+        reportgenerator -reports:./TestResults/coverage.cobertura.xml -reporttypes:TextSummary -targetdir:coverage-summary
+        # Check if the report file was generated
         if (Test-Path "coverage-summary/coverage-summary.txt") {
           $coverage_summary = Get-Content "coverage-summary/coverage-summary.txt" -Raw
           echo "coverage_summary=$coverage_summary" >> $env:GITHUB_ENV
@@ -60,18 +61,11 @@ jobs:
           echo "No coverage summary generated" >> $env:GITHUB_ENV
         }
 
-    # Post Coverage Summary to the PR
+    # Post coverage summary to PR as a comment
     - name: Post Coverage Summary to PR
-      uses: actions/github-script@v6
+      uses: peter-evans/create-or-update-comment@v3
       with:
-        script: |
-          const coverageSummary = process.env.coverage_summary;
-          const prNumber = github.context.payload.pull_request.number;
-          const commentBody = `### Code Coverage Summary:\n\n\`\`\`\n${coverageSummary}\n\`\`\``;
-
-          await github.rest.issues.createComment({
-            issue_number: prNumber,
-            owner: github.context.repo.owner,
-            repo: github.context.repo.repo,
-            body: commentBody
-          });
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          ## Coverage Summary
+          ${{ env.coverage_summary }}
