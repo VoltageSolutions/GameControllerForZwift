@@ -31,10 +31,8 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests with coverage
-      run: dotnet test --configuration Release --no-build --verbosity normal \
-        /p:CollectCoverage=true \
-        /p:CoverletOutputFormat=cobertura \
-        /p:CoverletOutput=TestResults/coverage.cobertura.xml
+      run: dotnet test --configuration Release --no-build --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=TestResults/coverage.cobertura.xml
+
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
