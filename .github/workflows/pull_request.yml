@@ -33,6 +33,10 @@ jobs:
     - name: Run tests with coverage
       run: dotnet test --configuration Release --no-build --verbosity normal -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:CoverletOutput=TestResults/coverage.cobertura.xml
 
+    - name: List files in TestResults directory
+      run: dir TestResults
+
+
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v2
 
@@ -47,8 +51,8 @@ jobs:
       id: generate-summary
       run: |
         dotnet tool install --global dotnet-reportgenerator-globaltool
-        reportgenerator -reports:TestResults/coverage.cobertura.xml -reporttypes:Summary -targetdir:coverage-summary
-        # Check if the report file was generated
+        reportgenerator -reports:TestResults/coverage.cobertura.xml -reporttypes:TextSummary -targetdir:coverage-summary
+        
         if (Test-Path "coverage-summary/coverage-summary.txt") {
           $coverage_summary = Get-Content "coverage-summary/coverage-summary.txt" -Raw
           echo "coverage_summary=$coverage_summary" >> $env:GITHUB_ENV
