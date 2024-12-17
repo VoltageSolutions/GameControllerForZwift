@@ -27,12 +27,14 @@
             </Grid.RowDefinitions>
 
             <!--Title section-->
-            <StackPanel Grid.Row="0" VerticalAlignment="Center">
+            <StackPanel Grid.Row="0" VerticalAlignment="Center" Orientation="Horizontal">
                 <TextBlock
                     Style="{StaticResource TitleTextBlockStyle}"
                     Text="{Binding ViewModel.Title}"
                     d:Text="About"
                     AutomationProperties.HeadingLevel="Level1"/>
+                <Image Source="pack://application:,,,/Assets/logo_transparent.png"
+                    Width="32" Height="32" Margin="8,0,0,0"/>
                 <!--<TextBlock
                     x:Name="DescriptionTextBlock"
                     Text="{Binding ViewModel.Description}" 

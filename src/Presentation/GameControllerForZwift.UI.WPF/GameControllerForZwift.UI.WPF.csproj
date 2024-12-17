@@ -10,6 +10,9 @@
 
   <ItemGroup>
     <None Remove="Assets\kofi_logo.svg" />
+    <None Remove="Assets\logo.ico" />
+    <None Remove="Assets\logo.png" />
+    <None Remove="Assets\logo_transparent.png" />
   </ItemGroup>
 
 	<ItemGroup>
@@ -22,6 +25,9 @@
     <Resource Include="Assets\kofi_logo.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\logo.ico" />
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\logo_transparent.png" />
   </ItemGroup>
 
   <ItemGroup>

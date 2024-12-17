@@ -1,3 +1,6 @@
+<p align="center">
+  <img width="128" align="center" src="docs/logo.png">
+</p>
 <h1 align="center">
   GameControllerForZwift
 </h1>
@@ -61,11 +64,12 @@ Support this project on [ko-fi](https://ko-fi.com/waveguide)!
 
 macOS and Linux support.
 
-## Known Bugs
+## Known Bugs and Issues
 
 - "Down arrow" navigates down in the UI properly but does not initiate a U-turn as it should - you have to use the menu to U-turn instead.
   - The current implementation uses a `KeyPress` instead of holding a `KeyDown`. We need to build functionality to permit holding a controller button as a continuous `KeyDown` action followed by a `KeyUp`.
 - Navigation within GameControllerForZwift is flaky. I've disabled the backstack until I can work it out.
+- The trigger gauges do not show up when not in use - it may look like they aren't there at all.
 - Windows 10 issues
   - Clicking around the app can highlight the entire window.
   - Dark-mode does not apply the intended color selections correctly.
