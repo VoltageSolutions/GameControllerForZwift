@@ -128,13 +128,12 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         {
             foreach (var vm in viewMappings)
             {
-                //if (Enum.TryParse<ControllerInput>(vm.InputName, out var input) &&
-
                 if(profile.Mappings.Where(m => m.Input == vm.SelectedInput).FirstOrDefault() is InputMapping inputMap)
                 {
-                    vm.SelectedZwiftFunction = inputMap.Function;
-                    vm.SelectedZwiftPlayerView = inputMap.PlayerView ?? ZwiftPlayerView.Default;
-                    vm.SelectedZwiftRiderAction = inputMap.RiderAction ?? ZwiftRiderAction.RideOn;
+                    //vm.SelectedZwiftFunction = inputMap.Function;
+                    //vm.SelectedZwiftPlayerView = inputMap.PlayerView ?? ZwiftPlayerView.Default;
+                    //vm.SelectedZwiftRiderAction = inputMap.RiderAction ?? ZwiftRiderAction.RideOn;
+                    vm.SetInputMapping(inputMap);
                 }
             }
         }
@@ -180,7 +179,18 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 });
             }
 
+            foreach (var vm in inputMappings)
+                vm.MappingChanged += InputMappingChanged;
+
             return inputMappings;
+        }
+
+        private void InputMappingChanged(object? sender, EventArgs e)
+        {
+            if ((null != sender) && (sender.GetType() == typeof(ZwiftFunctionSelectorViewModel)))
+            {
+                _dataIntegrator.UpdateMapping((sender as ZwiftFunctionSelectorViewModel).GetInputMapping());
+            }
         }
 
         public List<ZwiftFunctionSelectorViewModel> CreateDPadMappings()
@@ -293,66 +303,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 app.Dispatcher.Invoke(() =>
                 {
                     CurrentControllerValues = e.Data;
-                    //SelectorViewModel.ControllerData = CurrentControllerValues;
                 });
             }
         }
-
-        //private Task _processingTask;
-        //private CancellationTokenSource _cancellationTokenSource;
-        //public void StartProcessing()
-        //{
-        //    _cancellationTokenSource = new CancellationTokenSource();
-        //    //_processingTask = Task.Run(() => ProcessQueueAsync(_cancellationTokenSource.Token));
-        //}
-
-        // Function to stop the processing task
-        //public async Task StopProcessingAsync()
-        //{
-        //    if (_cancellationTokenSource != null)
-        //    {
-        //        _cancellationTokenSource.Cancel();
-        //        try
-        //        {
-        //            await _processingTask;
-        //        }
-        //        catch (OperationCanceledException)
-        //        {
-        //            // Task was canceled, safe to ignore
-        //        }
-        //        finally
-        //        {
-        //            _cancellationTokenSource.Dispose();
-        //            _cancellationTokenSource = null;
-        //        }
-        //    }
-        //}
-
-        // The async function to process the queue in a continuous loop
-        //private async Task ProcessQueueAsync(CancellationToken cancellationToken)
-        //{
-        //    while (!cancellationToken.IsCancellationRequested)
-        //    {
-        //        if (_dataIntegrator.DataQueue.TryDequeue(out ControllerData controllerData))
-        //        {
-        //            var app = Application.Current;
-
-        //            // may be null if app is closing
-        //            if (app != null)
-        //            {
-        //                // Ensure that UI updates happen on the UI thread
-        //                app.Dispatcher.Invoke(() =>
-        //                {
-        //                    CurrentControllerValues = controllerData;
-        //                    //SelectorViewModel.ControllerData = CurrentControllerValues;
-        //                });
-        //            }
-        //        }
-
-        //        // Wait, but don't wait longer than the dataIntegrator
-        //        await Task.Delay(10, cancellationToken);
-        //    }
-        //}
 
         #endregion
     }

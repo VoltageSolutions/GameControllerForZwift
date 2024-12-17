@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Mapping;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
 {
@@ -41,6 +42,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         public IEnumerable<ZwiftPlayerView> ZwiftPlayerViews => GetEnumValues<ZwiftPlayerView>();
         public IEnumerable<ZwiftRiderAction> ZwiftRiderActions => GetEnumValues<ZwiftRiderAction>();
 
+        public event EventHandler<EventArgs> MappingChanged;
+
         #endregion
 
         #region Constructor
@@ -80,6 +83,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                     HideSecondarySelections();
                     break;
             }
+            MappingChanged?.Invoke(this, new EventArgs());
         }
 
         public void EnablePlayerView()
@@ -98,6 +102,33 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         {
             ShowPlayerView = false;
             ShowRiderAction = false;
+        }
+
+        partial void OnSelectedZwiftPlayerViewChanged(ZwiftPlayerView value)
+        {
+            MappingChanged?.Invoke(this, new EventArgs());
+        }
+
+        partial void OnSelectedZwiftRiderActionChanged(ZwiftRiderAction value)
+        {
+            MappingChanged?.Invoke(this, new EventArgs());
+        }
+
+        protected virtual void OnMappingChanged(EventArgs e)
+        {
+            MappingChanged.Invoke(this, e);
+        }
+
+        public void SetInputMapping(InputMapping inputMap)
+        {
+            SelectedZwiftFunction = inputMap.Function;
+            SelectedZwiftPlayerView = inputMap.PlayerView ?? ZwiftPlayerView.Default;
+            SelectedZwiftRiderAction = inputMap.RiderAction ?? ZwiftRiderAction.RideOn;
+        }
+
+        public InputMapping GetInputMapping()
+        {
+            return new InputMapping(SelectedInput, SelectedZwiftFunction, SelectedZwiftPlayerView, SelectedZwiftRiderAction);
         }
 
         #endregion

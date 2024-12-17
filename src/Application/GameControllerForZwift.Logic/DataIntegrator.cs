@@ -73,9 +73,25 @@ namespace GameControllerForZwift.Logic
             _dataQueue.Enqueue(controllerData);
         }
 
-        protected virtual void OnInputPulled(InputStateChangedEventArgs e)
+        protected virtual void OnInputPolled(InputStateChangedEventArgs e)
         {
             InputPolled?.Invoke(this, e);
+        }
+
+        public void UpdateMapping(InputMapping mapping)
+        {
+            var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
+            var originalMapping = profile.Mappings.Where(m => m.Input == mapping.Input).FirstOrDefault();
+            if (originalMapping != null)
+            {
+                originalMapping.Function = mapping.Function;
+                originalMapping.PlayerView = mapping.PlayerView;
+                originalMapping.RiderAction = mapping.RiderAction;
+            }
+            else
+            {
+                profile.Mappings.Add(mapping);
+            }
         }
 
         public async Task PerformActionAsync(ControllerInput controllerInput)
@@ -83,8 +99,10 @@ namespace GameControllerForZwift.Logic
             // this is not a good long-term way to get a profile.
             var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
             var mapping = profile.Mappings.Where(m => m.Input == controllerInput).FirstOrDefault();
-
-            await _outputService.PerformActionAsync(mapping.Function, mapping.PlayerView ?? ZwiftPlayerView.Default, mapping.RiderAction ?? ZwiftRiderAction.RideOn);
+            if (null != mapping)
+            {
+                await _outputService.PerformActionAsync(mapping.Function, mapping.PlayerView ?? ZwiftPlayerView.Default, mapping.RiderAction ?? ZwiftRiderAction.RideOn);
+            }
         }
 
         public async Task WriteDataAsync(CancellationToken cancellationToken)
@@ -96,14 +114,20 @@ namespace GameControllerForZwift.Logic
                     InputPolled?.Invoke(this, new InputStateChangedEventArgs(controllerData));
 
                     // this is not a good long-term way to get a profile, but it's a start
-                    var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
+                    //var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
 
                     if (controllerData.A)
                         await PerformActionAsync(ControllerInput.A);
                     if (controllerData.B)
                         await PerformActionAsync(ControllerInput.B);
+                    if (controllerData.X)
+                        await PerformActionAsync(ControllerInput.X);
                     if (controllerData.Y)
                         await PerformActionAsync(ControllerInput.Y);
+                    if (controllerData.Menu)
+                        await PerformActionAsync(ControllerInput.Menu);
+                    if (controllerData.View)
+                        await PerformActionAsync(ControllerInput.View);
                     if (controllerData.DPad_Up)
                         await PerformActionAsync(ControllerInput.DPad_Up);
                     if (controllerData.DPad_Down)
@@ -112,12 +136,16 @@ namespace GameControllerForZwift.Logic
                         await PerformActionAsync(ControllerInput.DPad_Left);
                     if (controllerData.DPad_Right)
                         await PerformActionAsync(ControllerInput.DPad_Right);
+                    if (controllerData.LeftThumbstick_Click)
+                        await PerformActionAsync(ControllerInput.LeftThumbstick_Click);
                     if (controllerData.LeftStick_TiltUp)
                         await PerformActionAsync(ControllerInput.LeftThumbstick_TiltUp);
                     if (controllerData.LeftStick_TiltDown)
                         await PerformActionAsync(ControllerInput.LeftThumbstick_TiltDown);
                     if (controllerData.LeftStick_TiltLeft)
                         await PerformActionAsync(ControllerInput.LeftThumbstick_TiltLeft);
+                    if (controllerData.RightThumbstick_Click)
+                        await PerformActionAsync(ControllerInput.RightThumbstick_Click);
                     if (controllerData.LeftStick_TiltRight)
                         await PerformActionAsync(ControllerInput.LeftThumbstick_TiltRight);
                     if (controllerData.LeftBumper)

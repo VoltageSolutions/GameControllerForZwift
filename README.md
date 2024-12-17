@@ -45,10 +45,9 @@ Support this project on [ko-fi](https://ko-fi.com/waveguide)!
 - Improved code coverage.
 - User-configurable threshold/deadzone thumbsticks to reduce accidental inputs.
 - App icons and graphics.
-- Acknowledgements and links to this GitHub repo.
+- Combine `Core` and `Logic` projects together.
 - Save and reload custom button-mapping configuration profiles.
 - Log to a text file for easy debugging support.
-- Multiple-controller support
 
 ### Long-term stretch goals
 
@@ -65,6 +64,7 @@ macOS and Linux support.
 ## Known Bugs
 
 - "Down arrow" navigates down in the UI properly but does not initiate a U-turn as it should - you have to use the menu to U-turn instead.
+  - The current implementation uses a `KeyPress` instead of holding a `KeyDown`. We need to build functionality to permit holding a controller button as a continuous `KeyDown` action followed by a `KeyUp`.
 - Navigation within GameControllerForZwift is flaky. I've disabled the backstack until I can work it out.
 - Windows 10 issues
   - Clicking around the app can highlight the entire window.

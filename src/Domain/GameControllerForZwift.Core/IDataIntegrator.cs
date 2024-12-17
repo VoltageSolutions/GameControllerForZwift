@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using GameControllerForZwift.Core.Mapping;
+using System.Collections.Concurrent;
 
 namespace GameControllerForZwift.Core
 {
@@ -35,5 +36,7 @@ namespace GameControllerForZwift.Core
         /// </summary>
         /// <param name="controllerData">The controller data to process.</param>
         void ProcessControllerData(ControllerData controllerData);
+
+        public void UpdateMapping(InputMapping mapping);
     }
 }
