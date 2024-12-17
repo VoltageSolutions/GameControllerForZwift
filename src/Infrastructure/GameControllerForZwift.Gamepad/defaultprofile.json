@@ -1,0 +1,87 @@
+{
+  "Profiles": [
+    {
+      "Name": "Default Profile",
+      "Mappings": [
+        {
+          "Input": "A",
+          "Function": "Select",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "B",
+          "Function": "GoBack",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "Y",
+          "Function": "HideHUD",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "DPad_Up",
+          "Function": "ShowMenu",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "DPad_Down",
+          "Function": "Uturn",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "DPad_Left",
+          "Function": "NavigateLeft",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "DPad_Right",
+          "Function": "NavigateRight",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftThumbstick_TiltUp",
+          "Function": "ShowMenu",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftThumbstick_TiltDown",
+          "Function": "Uturn",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftThumbstick_TiltLeft",
+          "Function": "NavigateLeft",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftThumbstick_TiltRight",
+          "Function": "NavigateRight",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "LeftBumper",
+          "Function": "FTPBiasDown",
+          "PlayerView": null,
+          "RiderAction": null
+        },
+        {
+          "Input": "RightBumper",
+          "Function": "FTPBiasUp",
+          "PlayerView": null,
+          "RiderAction": null
+        }
+      ]
+    }
+  ]
+}

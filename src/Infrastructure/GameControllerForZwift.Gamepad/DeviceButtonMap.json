@@ -1,0 +1,250 @@
+{
+  "Default": {
+    "Buttons": [
+      {
+        "Name": "A",
+        "Index": 0
+      },
+      {
+        "Name": "B",
+        "Index": 1
+      },
+      {
+        "Name": "X",
+        "Index": 2
+      },
+      {
+        "Name": "Y",
+        "Index": 3
+      },
+      {
+        "Name": "LeftBumper",
+        "Index": 4
+      },
+      {
+        "Name": "RightBumper",
+        "Index": 5
+      },
+      {
+        "Name": "View",
+        "Index": 6
+      },
+      {
+        "Name": "Menu",
+        "Index": 7
+      },
+      {
+        "Name": "LeftThumbstick",
+        "Index": 8
+      },
+      {
+        "Name": "RightThumbstick",
+        "Index": 9
+      }
+    ],
+    "PointOfViewControllers": [
+      {
+        "Name": "DPadUp",
+        "Index": 0
+      },
+      {
+        "Name": "DPadRight",
+        "Index": 9000
+      },
+      {
+        "Name": "DPadDown",
+        "Index": 18000
+      },
+      {
+        "Name": "DPadLeft",
+        "Index": 27000
+      }
+    ],
+    "Axes": [
+      {
+        "Name": "LeftThumbstickX",
+        "Mapping": "X"
+      },
+      {
+        "Name": "LeftThumbstickY",
+        "Mapping": "Y"
+      },
+      {
+        "Name": "RightThumbstickX",
+        "Mapping": "RotationX"
+      },
+      {
+        "Name": "RightThumbstickY",
+        "Mapping": "RotationY"
+      }
+    ]
+  },
+  "Xbox 360 Controller": {
+    "Buttons": [
+      {
+        "Name": "A",
+        "Index": 0
+      },
+      {
+        "Name": "B",
+        "Index": 1
+      },
+      {
+        "Name": "X",
+        "Index": 2
+      },
+      {
+        "Name": "Y",
+        "Index": 3
+      },
+      {
+        "Name": "LeftBumper",
+        "Index": 4
+      },
+      {
+        "Name": "RightBumper",
+        "Index": 5
+      },
+      {
+        "Name": "View",
+        "Index": 6
+      },
+      {
+        "Name": "Menu",
+        "Index": 7
+      },
+      {
+        "Name": "LeftThumbstick",
+        "Index": 8
+      },
+      {
+        "Name": "RightThumbstick",
+        "Index": 9
+      }
+    ],
+    "PointOfViewControllers": [
+      {
+        "Name": "DPadUp",
+        "Index": 0
+      },
+      {
+        "Name": "DPadRight",
+        "Index": 9000
+      },
+      {
+        "Name": "DPadDown",
+        "Index": 18000
+      },
+      {
+        "Name": "DPadLeft",
+        "Index": 27000
+      }
+    ],
+    "Axes": [
+      {
+        "Name": "LeftThumbstickX",
+        "Mapping": "X"
+      },
+      {
+        "Name": "LeftThumbstickY",
+        "Mapping": "Y"
+      },
+      {
+        "Name": "RightThumbstickX",
+        "Mapping": "RotationX"
+      },
+      {
+        "Name": "RightThumbstickY",
+        "Mapping": "RotationY"
+      }
+    ]
+  },
+  "8BitDo SN30 Pro+ Controller": {
+    "Buttons": [
+      {
+        "Name": "A",
+        "Index": 1
+      },
+      {
+        "Name": "B",
+        "Index": 0
+      },
+      {
+        "Name": "X",
+        "Index": 3
+      },
+      {
+        "Name": "Y",
+        "Index": 2
+      },
+      {
+        "Name": "LeftBumper",
+        "Index": 4
+      },
+      {
+        "Name": "RightBumper",
+        "Index": 5
+      },
+      {
+        "Name": "View",
+        "Index": 6
+      },
+      {
+        "Name": "Menu",
+        "Index": 7
+      },
+      {
+        "Name": "LeftThumbstick",
+        "Index": 8
+      },
+      {
+        "Name": "RightThumbstick",
+        "Index": 9
+      }
+    ],
+    "PointOfViewControllers": [
+      {
+        "Name": "DPadUp",
+        "Index": 0
+      },
+      {
+        "Name": "DPadRight",
+        "Index": 9000
+      },
+      {
+        "Name": "DPadDown",
+        "Index": 18000
+      },
+      {
+        "Name": "DPadLeft",
+        "Index": 27000
+      }
+    ],
+    "Axes": [
+      {
+        "Name": "LeftThumbstickX",
+        "Mapping": "X"
+      },
+      {
+        "Name": "LeftThumbstickY",
+        "Mapping": "Y"
+      },
+      {
+        "Name": "RightThumbstickX",
+        "Mapping": "RotationX"
+      },
+      {
+        "Name": "RightThumbstickY",
+        "Mapping": "RotationY"
+      },
+      {
+        "Name": "LeftTrigger",
+        "Mapping": "Z"
+      },
+      {
+        "Name": "RightTrigger",
+        "Mapping": "RotationZ"
+      }
+    ]
+  }
+}

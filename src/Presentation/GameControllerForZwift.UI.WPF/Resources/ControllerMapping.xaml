@@ -1,0 +1,87 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
+                    xmlns:converters="clr-namespace:GameControllerForZwift.UI.WPF.Converters"
+                    xmlns:core="clr-namespace:GameControllerForZwift.Core;assembly=GameControllerForZwift.Core">
+
+    <converters:EnumDescriptionConverter x:Key="EnumDescriptionConverter"/>
+    <converters:ZwiftFunctionToVisibilityConverter x:Key="ZwiftFunctionToVisibilityConverter" />
+
+    <Style TargetType="{x:Type controls:InputMapper}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type controls:InputMapper}">
+                    <Border CornerRadius="8">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding InputPressed, RelativeSource={RelativeSource TemplatedParent}}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource AccentFillColorSelectedTextBackgroundBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid Margin="6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <!-- Display InputName -->
+                            <TextBlock Grid.Column="0" Text="{Binding InputName, RelativeSource={RelativeSource TemplatedParent}}" 
+                                       Style="{StaticResource BaseTextBlockStyle}" VerticalAlignment="Center"
+                                       Width="80"
+                                       Margin="0,0,6,0" />
+
+                            <!-- Main Function ComboBox -->
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding DataContext.ZwiftFunctions, RelativeSource={RelativeSource TemplatedParent}}"
+                                      SelectedItem="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}}" 
+                                      Margin="6,0,6,0" Height="37">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <!-- Conditional Player View ComboBox -->
+                            <ComboBox Grid.Column="2" ItemsSource="{Binding DataContext.ZwiftPlayerViews, RelativeSource={RelativeSource TemplatedParent}}"
+                                      SelectedItem="{Binding DataContext.SelectedZwiftPlayerView, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Visibility="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}, 
+                                        Converter={StaticResource ZwiftFunctionToVisibilityConverter}, 
+                                        ConverterParameter=AdjustCameraAngle}" 
+                                      Margin="6,0,6,0" Height="37">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+
+                            <!-- Conditional Rider Action ComboBox -->
+                            <ComboBox Grid.Column="2" ItemsSource="{Binding DataContext.ZwiftRiderActions, RelativeSource={RelativeSource TemplatedParent}}"
+                                      SelectedItem="{Binding DataContext.SelectedZwiftRiderAction, RelativeSource={RelativeSource TemplatedParent}}"
+                                      Visibility="{Binding DataContext.SelectedZwiftFunction, RelativeSource={RelativeSource TemplatedParent}, 
+                                        Converter={StaticResource ZwiftFunctionToVisibilityConverter},
+                                        ConverterParameter=RiderAction}" Height="37">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Converter={StaticResource EnumDescriptionConverter}}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type controls:ThumbstickGraph}">
+        <Setter Property="MinX" Value="-1" />
+        <Setter Property="MaxX" Value="1" />
+        <Setter Property="MinY" Value="-1" />
+        <Setter Property="MaxY" Value="1" />
+        <Setter Property="Width" Value="300" />
+    </Style>
+</ResourceDictionary>
