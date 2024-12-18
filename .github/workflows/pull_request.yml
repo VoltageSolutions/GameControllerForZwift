@@ -59,17 +59,11 @@ jobs:
     - name: Run tests with XPlat Code Coverage
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
 
-    - name: Install ReportGenerator
-      run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-    - name: Generate Coverage Report
-      run: reportgenerator -reports:${{ github.workspace }}\TestResults\*\*\coverage.cobertura.xml -targetdir:${{ github.workspace }}\TestResults\coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
-
-    - name: Upload Coverage Report
+    - name: Upload Test Results as Artifact
       uses: actions/upload-artifact@v3
       with:
-        name: coverage-report
-        path: ${{ github.workspace }}\TestResults\coverage-report
+        name: test-artifacts
+        path: TestResults
 
   # ------------------------
   # 3. CodeQL Analysis Job
@@ -108,15 +102,30 @@ jobs:
       uses: github/codeql-action/analyze@v3
 
   # ------------------------
-  # 4. Report Job
+  # 4. Report Job (Ubuntu Runner)
   # ------------------------
   report:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: [test]  # Wait for the test job to complete
 
     steps:
-    - name: Download Coverage Report
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Download Test Artifacts
       uses: actions/download-artifact@v3
+      with:
+        name: test-artifacts
+        path: TestResults
+
+    - name: Install ReportGenerator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
+
+    - name: Generate Coverage Report
+      run: reportgenerator -reports:${{ github.workspace }}/TestResults/**/coverage.cobertura.xml -targetdir:${{ github.workspace }}/TestResults/coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+
+    - name: Upload Coverage Report
+      uses: actions/upload-artifact@v3
       with:
         name: coverage-report
         path: TestResults/coverage-report
