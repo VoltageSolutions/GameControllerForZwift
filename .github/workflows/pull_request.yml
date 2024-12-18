@@ -63,13 +63,16 @@ jobs:
       run: dotnet restore
 
     - name: Run tests with XPlat Code Coverage
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
+      #run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
+      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
+
 
     - name: Upload Test Results as Artifact
       uses: actions/upload-artifact@v3
       with:
         name: test-artifacts
-        path: ${{ github.workspace }}\TestResults\**\*
+        #path: ${{ github.workspace }}\TestResults\**\*
+        path: "**/TestResults.trx"
 
   # ------------------------
   # 3. CodeQL Analysis Job
@@ -127,12 +130,13 @@ jobs:
         name: test-artifacts
         path: TestResults
 
-    - name: Report Coverage Results
-      uses: dorny/test-reporter@v1
-      with:
-        name: Code Coverage Report
-        path: TestResults/**/coverage.cobertura.xml
-        reporter: cobertura
+  # Report test results using dorny/test-reporter with dotnet-trx
+  - name: Report Test Results
+    uses: dorny/test-reporter@v1
+    with:
+      name: Test Results
+      path: TestResults/**/TestResults.trx
+      reporter: dotnet-trx
 
     # Upload coverage data (cobertura.xml files) to be processed by GitHub
     # - name: Upload coverage data as artifact
