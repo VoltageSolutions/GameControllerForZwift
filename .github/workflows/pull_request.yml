@@ -131,12 +131,12 @@ jobs:
         path: TestResults
 
   # Report test results using dorny/test-reporter with dotnet-trx
-  - name: Report Test Results
-    uses: dorny/test-reporter@v1
-    with:
-      name: Test Results
-      path: TestResults/**/TestResults.trx
-      reporter: dotnet-trx
+    - name: Report Test Results
+      uses: dorny/test-reporter@v1
+      with:
+        name: Test Results
+        path: TestResults/**/TestResults.trx
+        reporter: dotnet-trx
 
     # Upload coverage data (cobertura.xml files) to be processed by GitHub
     # - name: Upload coverage data as artifact
