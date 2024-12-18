@@ -66,7 +66,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: test-artifacts
-        path: ${{ github.workspace }}\TestResults
+        path: ${{ github.workspace }}\TestResults\**\*
 
   # ------------------------
   # 3. CodeQL Analysis Job
