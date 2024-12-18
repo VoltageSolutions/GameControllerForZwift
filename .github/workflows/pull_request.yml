@@ -62,6 +62,9 @@ jobs:
     - name: List TestResults directory
       run: dir ${{ github.workspace }}\TestResults
 
+    - name: List coverage files
+      run: dir ${{ github.workspace }}\TestResults\**\coverage.cobertura.xml
+
     - name: Upload Test Results as Artifact
       uses: actions/upload-artifact@v3
       with:
