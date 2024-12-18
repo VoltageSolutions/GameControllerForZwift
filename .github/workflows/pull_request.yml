@@ -56,27 +56,20 @@ jobs:
         name: build-artifacts
         path: .
 
-    # creating folder manually in-case dotnet test cannot do so itself
-    #- name: Create TestResults directory
-      #run: mkdir TestResults
-
     - name: Run tests with XPlat Code Coverage
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
-
-    - name: List TestResults directory
-      run: dir ${{ github.workspace }}\TestResults
 
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: Generate Coverage Report
-      run: reportgenerator -reports:${{ github.workspace }}/TestResults/*/*/coverage.cobertura.xml -targetdir:${{ github.workspace }}/TestResults/coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+      run: reportgenerator -reports:${{ github.workspace }}\TestResults\**\coverage.cobertura.xml -targetdir:${{ github.workspace }}\TestResults\coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v3
       with:
         name: coverage-report
-        path: ${{ github.workspace }}/TestResults/coverage-report
+        path: ${{ github.workspace }}\TestResults\coverage-report
 
   # ------------------------
   # 3. CodeQL Analysis Job
