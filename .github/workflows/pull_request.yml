@@ -32,7 +32,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: build-artifacts
         path: |
@@ -62,17 +62,11 @@ jobs:
     - name: Run tests with XPlat Code Coverage
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
 
-    - name: List TestResults directory
-      run: dir ${{ github.workspace }}\TestResults
-
-    - name: List coverage files
-      run: dir ${{ github.workspace }}\TestResults\**\coverage.cobertura.xml
-
     - name: Upload Test Results as Artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-artifacts
-        path: ${{ github.workspace }}\TestResults\**\*
+        path: \TestResults\**\*
 
   # ------------------------
   # 3. CodeQL Analysis Job
@@ -104,6 +98,7 @@ jobs:
       with:
         languages: 'csharp'
 
+    # This seems redundant, maybe we can improve and eliminate this step
     - name: Build solution for CodeQL
       run: dotnet build --configuration Release --no-restore
 
@@ -118,8 +113,8 @@ jobs:
     needs: [test]  # Wait for the test job to complete
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+    # - name: Checkout code
+    #   uses: actions/checkout@v3
 
     - name: Download Test Artifacts
       uses: actions/download-artifact@v3
@@ -127,14 +122,22 @@ jobs:
         name: test-artifacts
         path: TestResults
 
+    # Upload coverage data (cobertura.xml files) to be processed by GitHub
+    - name: Upload coverage data as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-data
+        path: TestResults/**/coverage.cobertura.xml
+
+    # Prepare a human-readable report and upload it
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: Generate Coverage Report
-      run: reportgenerator -reports:${{ github.workspace }}/TestResults/**/coverage.cobertura.xml -targetdir:${{ github.workspace }}/TestResults/coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+      run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: TestResults/coverage-report
