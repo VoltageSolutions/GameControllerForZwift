@@ -32,7 +32,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: build-artifacts
         path: |
@@ -63,7 +63,7 @@ jobs:
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
 
     - name: Upload Test Results as Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: test-artifacts
         path: \TestResults\**\*
@@ -124,7 +124,7 @@ jobs:
 
     # Upload coverage data (cobertura.xml files) to be processed by GitHub
     - name: Upload coverage data as artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: coverage-data
         path: TestResults/**/coverage.cobertura.xml
@@ -137,7 +137,7 @@ jobs:
       run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
     - name: Upload Coverage Report
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v3
       with:
         name: coverage-report
         path: TestResults/coverage-report
