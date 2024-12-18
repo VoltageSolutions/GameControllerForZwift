@@ -58,18 +58,14 @@ jobs:
 
     - name: Run tests with XPlat Code Coverage
       run: |
-        dotnet test --configuration Release --no-build --verbosity normal \
-          --collect:"XPlat Code Coverage" \
-          --results-directory:TestResults
+        dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
 
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: Generate Coverage Report
       run: |
-        reportgenerator -reports:TestResults/**/coverage.cobertura.xml \
-                        -targetdir:TestResults/coverage-report \
-                        -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+        reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
     - name: Upload Coverage Report
       uses: actions/upload-artifact@v3
@@ -92,6 +88,12 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '9.0.x'
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: build-artifacts
+        path: .
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
