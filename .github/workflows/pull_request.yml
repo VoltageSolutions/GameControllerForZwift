@@ -57,13 +57,16 @@ jobs:
         path: .
 
     - name: Run tests with XPlat Code Coverage
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
+      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:${{ github.workspace }}\TestResults
+
+    - name: List TestResults directory
+      run: dir ${{ github.workspace }}\TestResults
 
     - name: Upload Test Results as Artifact
       uses: actions/upload-artifact@v3
       with:
         name: test-artifacts
-        path: TestResults
+        path: ${{ github.workspace }}\TestResults
 
   # ------------------------
   # 3. CodeQL Analysis Job
