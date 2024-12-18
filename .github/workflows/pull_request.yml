@@ -56,11 +56,15 @@ jobs:
         name: build-artifacts
         path: .
 
+    # creating folder manually in-case dotnet test cannot do so itself
+    - name: Create TestResults directory
+      run: mkdir TestResults
+
     - name: Run tests with XPlat Code Coverage
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
 
     - name: List TestResults directory
-      run: dir /s TestResults
+      run: dir ${{ github.workspace }}\TestResults
 
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
@@ -100,7 +104,7 @@ jobs:
         path: .
 
     - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
+      uses: github/codeql-action/init@v3
       with:
         languages: 'csharp'
 
@@ -108,7 +112,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
+      uses: github/codeql-action/analyze@v3
 
   # ------------------------
   # 4. Report Job
