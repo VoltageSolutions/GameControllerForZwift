@@ -35,6 +35,7 @@ jobs:
         languages: 'csharp'
 
     - name: Build solution
+      id: build
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests, collect as TRX to support dorny test reporter
@@ -47,9 +48,11 @@ jobs:
         name: Test Results
         path: "**/TestResults.trx"
         reporter: dotnet-trx
+        fail-on-error: 'false'
 
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      if: always()
 
     - name: Run tests, collect with XPlat Code Coverage to support CodeCov
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
