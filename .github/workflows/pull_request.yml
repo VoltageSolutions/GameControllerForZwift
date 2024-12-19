@@ -48,11 +48,12 @@ jobs:
       uses: dorny/test-reporter@v1
       with:
         name: Test Results
-        path: ${{ github.workspace }}\TestResults\**\TestResults.trx
+        path: "**/TestResults.trx"
         reporter: dotnet-trx
 
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
+      if: always()
 
     - name: Generate Coverage Report
       run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
@@ -66,3 +67,4 @@ jobs:
 
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
+      if: always()
