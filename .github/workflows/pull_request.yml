@@ -48,7 +48,7 @@ jobs:
       uses: dorny/test-reporter@v1
       with:
         name: Test Results
-        path: {{ github.workspace }}\TestResults\**\TestResults.trx
+        path: ${{ github.workspace }}\TestResults\**\TestResults.trx
         reporter: dotnet-trx
 
     - name: Install ReportGenerator
@@ -60,7 +60,7 @@ jobs:
     - name: Upload coverage to CodeCov
       uses: codecov/codecov-action@v5
       with:
-        files: {{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml
+        files: ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml
         fail_ci_if_error: true
         token: ${{ secrets.CODECOV_TOKEN }}
 
