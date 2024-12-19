@@ -1,4 +1,4 @@
-name: pr
+name: CI Workflow
 
 on:
   pull_request:
@@ -63,35 +63,16 @@ jobs:
       run: dotnet restore
 
     - name: Run tests with XPlat Code Coverage
-      #run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
-      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
+      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
+      # run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
 
 
     - name: Upload Test Results as Artifact
       uses: actions/upload-artifact@v3
       with:
         name: test-artifacts
-        #path: ${{ github.workspace }}\TestResults\**\*
-        path: "**/TestResults.trx"
-
-    - name: Report custom test check result
-      if: always()  # Ensure this runs even if tests fail
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const conclusion = (process.env.TEST_SUCCESS === 'true') ? 'success' : 'failure';
-          await github.rest.checks.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            name: 'Tests on GitHub Actions',
-            head_sha: context.sha,
-            status: 'completed',
-            conclusion: conclusion,
-            output: {
-              title: conclusion === 'success' ? 'Tests Passed' : 'Tests Failed',
-              summary: conclusion === 'success' ? 'All tests passed successfully.' : 'Some tests failed. Check the test logs for details.'
-            }
-          })
+        path: ${{ github.workspace }}\TestResults\**\*
+        #path: "**/TestResults.trx"
 
   # ------------------------
   # 3. CodeQL Analysis Job
@@ -142,6 +123,8 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Fetch the full Git history
 
     - name: Download Test Artifacts
       uses: actions/download-artifact@v3
@@ -150,12 +133,12 @@ jobs:
         path: TestResults
 
   # Report test results using dorny/test-reporter with dotnet-trx
-    - name: Report Test Results
-      uses: dorny/test-reporter@v1
-      with:
-        name: Test Results
-        path: TestResults/**/TestResults.trx
-        reporter: dotnet-trx
+    # - name: Report Test Results
+    #   uses: dorny/test-reporter@v1
+    #   with:
+    #     name: Test Results
+    #     path: TestResults/**/TestResults.trx
+    #     reporter: dotnet-trx
 
     # Upload coverage data (cobertura.xml files) to be processed by GitHub
     # - name: Upload coverage data as artifact
@@ -165,11 +148,17 @@ jobs:
     #     path: TestResults/**/coverage.cobertura.xml
 
     # Prepare a human-readable report and upload it
-    # - name: Install ReportGenerator
-    #   run: dotnet tool install --global dotnet-reportgenerator-globaltool
+    - name: Install ReportGenerator
+      run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-    # - name: Generate Coverage Report
-    #   run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/coverage-report -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+    - name: Generate Coverage Report
+      run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+
+    - name: Upload coverage to CodeCov
+      uses: codecov/codecov-action@v4
+      with:
+        files: TestResults/CoverageReport/Cobertura.xml
+        fail_ci_if_error: true
 
     # - name: Upload Coverage Report
     #   uses: actions/upload-artifact@v3
