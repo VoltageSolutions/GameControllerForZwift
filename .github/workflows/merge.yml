@@ -1,4 +1,4 @@
-name: Build, Test, and Deploy Release
+name: CD Workflow
 
 on:
   push:
@@ -10,62 +10,11 @@ permissions:
 
 jobs:
   # -------------------------
-  # 1. Build Job
-  # -------------------------
-  build:
-    runs-on: windows-latest
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '9.0.x'
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build solution
-      run: dotnet build --configuration Release
-
-    - name: Extract version from .csproj
-      id: get_version
-      shell: pwsh
-      run: |
-        $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
-        echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-
-  # -------------------------
-  # 2. Test Job
-  # -------------------------
-  test:
-    runs-on: windows-latest
-    needs: build  # Ensure the build job completes before running tests
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '9.0.x'
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Run tests
-      run: dotnet test --configuration Release --no-build --verbosity normal
-
-  # -------------------------
-  # 3. Publish Job (Framework-Dependent Build)
+  # 1. Publish Job (Framework-Dependent Build)
   # -------------------------
   publish-framework:
+    name: Publish Release
     runs-on: windows-latest
-    needs: test  # Ensure tests pass before publishing
 
     steps:
     - name: Checkout code
@@ -74,7 +23,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: '9.0.x'
 
     - name: Publish Framework-Dependent Build
       run: |
@@ -90,9 +39,10 @@ jobs:
     #     Compress-Archive -Path ./artifacts/self-contained/* -DestinationPath ./artifacts/gamecontrollerforzwift_with_runtime.zip
 
   # -------------------------
-  # 4. Create Release and Upload Artifacts
+  # 2. Create Release and Upload Artifacts
   # -------------------------
   release:
+    name: Deploy Release to GitHub
     runs-on: windows-latest
     needs: publish-framework  # Ensure the publish job completes before creating release
 
