@@ -49,7 +49,7 @@ jobs:
         name: Test Results
         path: "**/TestResults.trx"
         reporter: dotnet-trx
-        fail-on-error: 'false'
+        fail-on-error: 'true'
 
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
