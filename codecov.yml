@@ -1,0 +1,36 @@
+coverage:
+  # Set a minimum coverage threshold for PRs
+  status:
+    project:
+      default:
+        target: 40%
+        threshold: 0%
+    patch:
+      default:
+        target: 60%
+
+  # Ignore specific files or directories
+  ignore:
+    - "**/Generated/*"
+    - "**/Migrations/*"
+
+# comment:
+#   # Customize PR comment settings
+#   layout: "diff, files"
+#   behavior: default
+
+# flags:
+#   application_tests:
+#     paths:
+#       - "tests/GameControllerForZwift.App.Tests"
+#       - "tests/GameControllerForZwift.Core.Tests"
+
+#   infrastructure_tests:
+#     paths:
+#       - "tests/GameControllerForZwift.Gamepad.Tests"
+#       - "tests/GameControllerForZwift.Keyboard.Tests"
+
+#   ui_tests:
+#     paths:
+#       - "tests/GameControllerForZwift.UI.WPF.Tests"
+
