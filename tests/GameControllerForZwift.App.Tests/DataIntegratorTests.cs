@@ -29,6 +29,12 @@ namespace GameControllerForZwift.App.Tests
         }
 
         [Fact]
+        public void FailTest()
+        {
+            Assert.True(false);
+        }
+
+        [Fact]
         public void GetControllers_ReturnsControllers()
         {
             // Arrange
