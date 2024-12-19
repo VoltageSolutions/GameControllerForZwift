@@ -19,7 +19,7 @@ namespace GameControllerForZwift
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    public partial class App : Application
+    public partial  App : Application
     {
         public IServiceProvider? ServiceProvider { get; private set; }
 

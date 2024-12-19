@@ -43,7 +43,6 @@ jobs:
     - name: Run tests, collect with XPlat Code Coverage to support CodeCov
       run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
     
-     # Report test results using dorny/test-reporter with dotnet-trx
     - name: Report Test Results
       uses: dorny/test-reporter@v1
       with:
