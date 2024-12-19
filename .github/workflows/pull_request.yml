@@ -155,7 +155,7 @@ jobs:
       run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
     - name: Upload coverage to CodeCov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         files: TestResults/CoverageReport/Cobertura.xml
         fail_ci_if_error: true
