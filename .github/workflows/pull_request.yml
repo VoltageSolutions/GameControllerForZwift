@@ -74,6 +74,25 @@ jobs:
         #path: ${{ github.workspace }}\TestResults\**\*
         path: "**/TestResults.trx"
 
+    - name: Report custom test check result
+      if: always()  # Ensure this runs even if tests fail
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const conclusion = (process.env.TEST_SUCCESS === 'true') ? 'success' : 'failure';
+          await github.rest.checks.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: 'Tests on GitHub Actions',
+            head_sha: context.sha,
+            status: 'completed',
+            conclusion: conclusion,
+            output: {
+              title: conclusion === 'success' ? 'Tests Passed' : 'Tests Failed',
+              summary: conclusion === 'success' ? 'All tests passed successfully.' : 'Some tests failed. Check the test logs for details.'
+            }
+          })
+
   # ------------------------
   # 3. CodeQL Analysis Job
   # ------------------------
