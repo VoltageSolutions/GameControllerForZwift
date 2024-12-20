@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="128" align="center" src="docs/logo.png">
+  <img width="128" align="center" src="docs/assets/images/logo.png">
 </p>
 <h1 align="center">
   GameControllerForZwift
@@ -13,7 +13,7 @@
 This project enables using standard video game controllers to interact with Zwift. The long-term goal is to replicate the flexibility and functionality of Zwift-compatible controllers like the [Zwift Play Controllers](https://us.zwift.com/products/zwift-play?variant=43737779896576) or the [Wahoo Kickr Bike Shift](https://www.wahoofitness.com/devices/indoor-cycling/smart-bikes/kickr-bike-shift-buy).
 
 <a href="https://www.youtube.com/watch?v=mYImJKFE6OI">
-    <img src="./docs/thumbnail_preview.png" width="400">
+    <img src="./docs/assets/images/thumbnail_preview.png" width="400">
 </a>
 
 ## Getting start with the app
