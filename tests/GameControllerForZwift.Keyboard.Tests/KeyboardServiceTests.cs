@@ -89,4 +89,3 @@ namespace GameControllerForZwift.Keyboard
         }
     }
 }
-mag
