@@ -79,8 +79,8 @@
                     </Border>
                 </Grid>
 
-                <TextBlock Text="About" FontWeight="SemiBold" Margin="10" FontSize="14"/>
-                <Expander AutomationProperties.Name="WPF Gallery Preview">
+                <!-- <TextBlock Text="About" FontWeight="SemiBold" Margin="10" FontSize="14"/>
+                <Expander AutomationProperties.Name="Game Controller For Zwift">
                     <Expander.Header>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -89,20 +89,20 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <!--<Image
+                            <Image
                                 Grid.Column="0"
                                 Width="20"
                                 Height="20"
                                 Margin="10,5,10,5"
                                 VerticalAlignment="Center"
-                                Source="pack://application:,,,/Assets/WPFGalleryPreviewIcon.png" />-->
+                                Source="pack://application:,,,/Assets/WPFGalleryPreviewIcon.png" />
 
                             <StackPanel
                                 Grid.Column="1"
                                 Margin="12"
                                 Orientation="Vertical">
-                                <TextBlock Text="WPF Gallery Preview" />
-                                <TextBlock Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}">© 2024 Microsoft. All rights reserved.</TextBlock>
+                                <TextBlock Text="Game Controller For Zwift" />
+                                <TextBlock Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}">Voltage Solutions</TextBlock>
                             </StackPanel>
                         </Grid>
                     </Expander.Header>
@@ -123,7 +123,7 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="To clone this repository" />
-                                    <!--<TextBox Grid.Column="2" Style="{StaticResource SelectionTextBox}" Text="git clone https://github.com/microsoft/WPF-Samples.git" Focusable="False"/>-->
+                                    <TextBox Grid.Column="2" Style="{StaticResource SelectionTextBox}" Text="git clone https://github.com/microsoft/WPF-Samples.git" Focusable="False"/>
                                 </Grid>
                             </Border>
 
@@ -176,7 +176,7 @@
                             </GroupBox>
                         </Grid>
                     </Expander.Content>
-                </Expander>
+                </Expander> -->
             </StackPanel>
         </ScrollViewer>
     </Grid>

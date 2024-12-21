@@ -1,0 +1,55 @@
+
+# Project information
+site_name: Game Controller For Zwift
+site_url: https://VoltageSolutions.github.io/GameControllerForZwift
+site_author: Eric Lauber
+site_description: >-
+  Windows WPF application that allows you to control your Zwift game with a game controller.
+
+# Repository
+repo_name: VoltageSolutions/GameControllerForZwift
+repo_url: https://github.com/VoltageSolutions/GameControllerForZwift
+
+# Configuration
+theme:
+  name: material
+  highlightjs: true
+  hljs_languages:
+    - yaml
+  palette: 
+    # Palette toggle for light mode
+    - scheme: default
+      primary: deep orange
+      toggle:
+        icon: material/brightness-7 
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    
+    - navigation.indexes
+    # - navigation.instant
+    # - navigation.instant.prefetch
+    # - navigation.instant.progress
+    # - navigation.prune
+    - navigation.sections
+    
+    # - navigation.tabs.sticky
+
+    - toc.follow
+
+# Extensions
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  
+# Page Tree
+nav:
+  - Home: index.md
