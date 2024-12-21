@@ -14,10 +14,10 @@ coverage:
     - "**/Generated/*"
     - "**/Migrations/*"
 
-# comment:
+comment:
 #   # Customize PR comment settings
 #   layout: "diff, files"
-#   behavior: default
+  behavior: off
 
 # flags:
 #   application_tests:
