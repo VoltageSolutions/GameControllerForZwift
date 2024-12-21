@@ -30,7 +30,7 @@ jobs:
       run:  | 
         $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
         Write-Output $version
-        echo "version=$version" >> "$GITHUB_OUTPUT"
+        echo "version=$version" >> $GITHUB_OUTPUT
 
     - name: Debug Job Output
       run: |
