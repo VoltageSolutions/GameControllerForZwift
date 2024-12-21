@@ -44,7 +44,7 @@ jobs:
       shell: pwsh 
       run:  | 
         $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
-        echo "version=$version" >> "$GITHUB_OUTPUT"
+        echo "version=$version" >> $env:GITHUB_OUTPUT
 
     # Self-Contained Build
     # - name: Publish Self-Contained Build
@@ -75,8 +75,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: v${{ needs.publish-framework.outputs.version }}
-        release_name: Release v${{ needs.publish-framework.outputs.version }}
+        tag_name: "v${{ needs.publish-framework.outputs.version }}"
+        release_name: "Release v${{ needs.publish-framework.outputs.version }}"
         draft: false
         prerelease: false
 
