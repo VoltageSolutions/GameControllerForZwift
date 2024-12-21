@@ -31,6 +31,19 @@ jobs:
         dotnet publish GameControllerForZwift_TestsExcluded.slnf -c Release -o ./artifacts/framework-dependent
         Get-ChildItem ./artifacts/framework-dependent -Recurse | Where-Object { $_.Extension -ne ".pdb" } | Compress-Archive -DestinationPath ./artifacts/gamecontrollerforzwift.zip
 
+    - name: Save Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: framework-dependent-build
+        path: ./artifacts/gamecontrollerforzwift.zip
+
+    - name: Extract version from .csproj 
+      id: get_version 
+      shell: pwsh 
+      run:  | 
+        $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
+        echo "::set-output name=version::$version"
+
     # Self-Contained Build
     # - name: Publish Self-Contained Build
     #   run: |
@@ -47,8 +60,12 @@ jobs:
     needs: publish-framework  # Ensure the publish job completes before creating release
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: framework-dependent-build
+        path: ./artifacts
 
     - name: Create GitHub Release
       id: create_release
@@ -56,8 +73,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: 'v${{ env.VERSION }}'
-        release_name: 'Release v${{ env.VERSION }}'
+        tag_name: 'v${{ needs.publish-framework.outputs.version }}'
+        release_name: 'Release v${{ needs.publish-framework.outputs.version }}'
         draft: false
         prerelease: false
 
