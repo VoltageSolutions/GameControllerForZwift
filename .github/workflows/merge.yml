@@ -75,8 +75,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: 'v${{ needs.publish-framework.outputs.version }}'
-        release_name: 'Release v${{ needs.publish-framework.outputs.version }}'
+        tag_name: v${{ needs.publish-framework.outputs.version }}
+        release_name: Release v${{ needs.publish-framework.outputs.version }}
         draft: false
         prerelease: false
 

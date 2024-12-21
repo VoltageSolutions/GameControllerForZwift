@@ -72,7 +72,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [RelayCommand]
         public void Openkofi()
         {
-            string url = "https://ko-fi.com/waveguide";
+            string url = "https://ko-fi.com/voltagesolutions";
             Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
         }
 
