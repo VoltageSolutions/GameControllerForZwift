@@ -44,7 +44,7 @@ jobs:
       shell: pwsh 
       run:  | 
         $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
-        echo "version=$version" >> $GITHUB_OUTPUT
+        echo "version=$version" >> "$GITHUB_OUTPUT"
 
     # Self-Contained Build
     # - name: Publish Self-Contained Build
