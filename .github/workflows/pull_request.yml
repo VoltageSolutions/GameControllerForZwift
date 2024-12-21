@@ -7,67 +7,45 @@ on:
 
 permissions:
   contents: read
-  checks: write
-  security-events: write
 
 jobs:
-  test:
-    name: Run Tests with Coverage
+  get-the-version:
+    name: Publish Release
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0 
+      uses: actions/checkout@v2
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '9.0.x'
 
-    - name: Restore dependencies
-      run: dotnet restore
+    - name: Extract version from .csproj 
+      id: get_version 
+      shell: pwsh 
+      run:  | 
+        $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
+        Write-Output $version
+        echo "version=$version" >> "$GITHUB_OUTPUT"
 
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: 'csharp'
+    - name: Debug Job Output
+      run: |
+        echo "Version is: ${{ steps.get_version.outputs.version }}"
 
-    - name: Build solution
-      id: build
-      run: dotnet build --configuration Release --no-restore
+  read-the-version:
+    name: Deploy Release to GitHub
+    runs-on: ubuntu-latest
+    needs: get-the-version
 
-    - name: Run tests, collect as TRX to support dorny test reporter
-      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
-      continue-on-error: true
-
-    - name: Report Test Results
-      uses: dorny/test-reporter@v1
-      continue-on-error: true
-      with:
-        name: Test Results
-        path: "**/TestResults.trx"
-        reporter: dotnet-trx
-        fail-on-error: 'true'
-
-    - name: Install ReportGenerator
-      run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-    - name: Run tests, collect with XPlat Code Coverage to support CodeCov
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
-      continue-on-error: true
-
-    - name: Generate Coverage Report
-      run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
-
-    - name: Upload coverage to CodeCov
-      uses: codecov/codecov-action@v5
-      with:
-        files: ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml
-        fail_ci_if_error: false
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      if: steps.build.outcome == 'success'
+    steps:
+    - name: Read version - no quotes
+      run: |
+        echo "Version from publish-framework: ${{ needs.publish-framework.outputs.version }}"
+    
+    - name: Read version - use quotes
+      run: |
+        echo Version from publish-framework: ${{ needs.publish-framework.outputs.version }}
