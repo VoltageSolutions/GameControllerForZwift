@@ -15,6 +15,8 @@ jobs:
   publish-framework:
     name: Publish Release
     runs-on: windows-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
 
     steps:
     - name: Checkout code
@@ -42,7 +44,7 @@ jobs:
       shell: pwsh 
       run:  | 
         $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
-        echo "::set-output name=version::$version"
+        echo "version=$version" >> $GITHUB_OUTPUT
 
     # Self-Contained Build
     # - name: Publish Self-Contained Build
@@ -56,7 +58,7 @@ jobs:
   # -------------------------
   release:
     name: Deploy Release to GitHub
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     needs: publish-framework  # Ensure the publish job completes before creating release
 
     steps:
