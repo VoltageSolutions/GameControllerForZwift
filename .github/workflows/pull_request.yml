@@ -12,7 +12,7 @@ jobs:
   get-the-version:
     runs-on: windows-latest
     outputs:
-      version: ${{ steps.get_version.outputs.version }} # Export step output to the job level
+      version: ${{ steps.get_version.outputs.result }} # Export step output to the job level
 
     steps:
     - name: Checkout code
@@ -29,11 +29,11 @@ jobs:
       run:  | 
         $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value 
         echo "Extracted version: $version" # Debugging the extracted value
-        echo $version >> $GITHUB_OUTPUT
+        echo "result=$version" >> "$GITHUB_OUTPUT"
 
     - name: Debug Step Output
       run: |
-        echo "Version is: ${{ steps.get_version.outputs.version }}"
+        echo "Version is: ${{ steps.get_version.outputs.result }}"
 
   read-the-version:
     runs-on: ubuntu-latest
