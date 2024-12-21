@@ -4,9 +4,6 @@
 
 The goal of this project is to enable using standard Game Controllers to interact with Zwift, much like the capabilities of the Zwift Play Controllers or the Wahoo Kickr Bike Shift.
 
-
-
-
 ## Project Organization
 
 This project's organization loosely follows a Clean Architecture Layout.
@@ -30,6 +27,3 @@ This project's organization loosely follows a Clean Architecture Layout.
 `GameControllerForZwift.UI.WPF` contains ViewModels and any custom controls.
 
 `GameControllerForZwift.WPF` is a WPF executable application.
-
-
-
