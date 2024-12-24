@@ -144,10 +144,18 @@ namespace GameControllerForZwift.Logic
                         await PerformActionAsync(ControllerInput.LeftThumbstick_TiltDown);
                     if (controllerData.LeftStick_TiltLeft)
                         await PerformActionAsync(ControllerInput.LeftThumbstick_TiltLeft);
-                    if (controllerData.RightThumbstick_Click)
-                        await PerformActionAsync(ControllerInput.RightThumbstick_Click);
                     if (controllerData.LeftStick_TiltRight)
                         await PerformActionAsync(ControllerInput.LeftThumbstick_TiltRight);
+                    if (controllerData.RightThumbstick_Click)
+                        await PerformActionAsync(ControllerInput.RightThumbstick_Click);
+                    if (controllerData.RightStick_TiltUp)
+                        await PerformActionAsync(ControllerInput.RightThumbstick_TiltUp);
+                    if (controllerData.RightStick_TiltDown)
+                        await PerformActionAsync(ControllerInput.RightThumbstick_TiltDown);
+                    if (controllerData.RightStick_TiltLeft)
+                        await PerformActionAsync(ControllerInput.RightThumbstick_TiltLeft);
+                    if (controllerData.RightStick_TiltRight)
+                        await PerformActionAsync(ControllerInput.RightThumbstick_TiltRight);
                     if (controllerData.LeftBumper)
                         await PerformActionAsync(ControllerInput.LeftBumper);
                     if (controllerData.RightBumper)
