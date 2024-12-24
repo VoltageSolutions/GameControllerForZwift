@@ -6,13 +6,13 @@ namespace GameControllerForZwift.Core
     {
         [Description("No Action Configured")]
         None,
-        [Description("Show the menu")]
+        [Description("Up / Show the in-ride menu")]
         ShowMenu,
-        [Description("Navigate left")]
+        [Description("Left")]
         NavigateLeft,
-        [Description("Navigate right")]
+        [Description("Right")]
         NavigateRight,
-        [Description("Make a U-Turn")]
+        [Description("Down / Make a U-Turn")]
         Uturn,
         [Description("Use a Power-up")]
         Powerup,
@@ -36,7 +36,7 @@ namespace GameControllerForZwift.Core
         ShowGarage,
         [Description("Show the Training Menu")]
         ShowTrainingMenu,
-        [Description("Toggle graphs")]
+        [Description("Hide the watt and HR graphs")]
         ToggleGraphs,
         [Description("Send a group text")]
         SendGroupText,
