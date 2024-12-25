@@ -1,4 +1,4 @@
-﻿namespace GameControllerForZwift.Logic.FileSystem
+﻿namespace GameControllerForZwift.Core.FileSystem
 {
     public interface IFileService
     {

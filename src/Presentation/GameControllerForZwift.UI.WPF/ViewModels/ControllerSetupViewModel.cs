@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using GameControllerForZwift.Core.Controller;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Mapping;

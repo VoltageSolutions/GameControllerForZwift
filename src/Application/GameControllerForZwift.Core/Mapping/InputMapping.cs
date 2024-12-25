@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using GameControllerForZwift.Core.Controller;
+using System.Text.Json.Serialization;
 
 namespace GameControllerForZwift.Core.Mapping
 {

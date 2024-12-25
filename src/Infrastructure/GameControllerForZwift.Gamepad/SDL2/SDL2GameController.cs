@@ -1,4 +1,4 @@
-﻿using GameControllerForZwift.Core;
+﻿using GameControllerForZwift.Core.Controller;
 using static SDL2.SDL;
 
 namespace GameControllerForZwift.Gamepad.SDL2

@@ -1,8 +1,8 @@
-﻿using GameControllerForZwift.Core;
-using GameControllerForZwift.Core.Mapping;
+﻿using GameControllerForZwift.Core.Mapping;
+using GameControllerForZwift.Core.Controller;
 using System.Collections.Concurrent;
 
-namespace GameControllerForZwift.Logic
+namespace GameControllerForZwift.Core
 {
     public class DataIntegrator : IDataIntegrator
     {

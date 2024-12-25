@@ -1,6 +1,6 @@
-﻿using GameControllerForZwift.Logic.FileSystem;
+﻿using GameControllerForZwift.Core.FileSystem;
 
-namespace GameControllerForZwift.Logic.Tests.FileSystem
+namespace GameControllerForZwift.Core.Tests.FileSystem
 {
     public class FileServiceTests
     {

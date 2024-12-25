@@ -1,10 +1,10 @@
 ﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Mapping;
-using GameControllerForZwift.Logic.FileSystem;
+using GameControllerForZwift.Core.FileSystem;
 using GameControllerForZwift.Gamepad.Mapping;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Keyboard;
-using GameControllerForZwift.Logic;
+using GameControllerForZwift.Core;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
 using GameControllerForZwift.UI.WPF.Navigation;

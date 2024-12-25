@@ -1,4 +1,5 @@
 ﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Controller;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using Xunit;
 

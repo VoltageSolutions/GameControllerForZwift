@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using GameControllerForZwift.Logic.FileSystem;
+using GameControllerForZwift.Core.FileSystem;
 using Markdig;
 using Markdig.Wpf;
 using System.Diagnostics;

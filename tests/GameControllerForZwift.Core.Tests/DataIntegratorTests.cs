@@ -1,12 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using Xunit;
 using NSubstitute;
 using GameControllerForZwift.Core;
-using GameControllerForZwift.Logic;
+using GameControllerForZwift.Core.Controller;
 using GameControllerForZwift.Core.Mapping;
 
 namespace GameControllerForZwift.App.Tests

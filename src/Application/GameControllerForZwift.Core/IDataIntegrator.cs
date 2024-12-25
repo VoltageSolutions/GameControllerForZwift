@@ -1,4 +1,5 @@
 ﻿using GameControllerForZwift.Core.Mapping;
+using GameControllerForZwift.Core.Controller;
 using System.Collections.Concurrent;
 
 namespace GameControllerForZwift.Core

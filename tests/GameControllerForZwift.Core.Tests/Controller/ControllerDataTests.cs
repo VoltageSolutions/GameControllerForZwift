@@ -1,4 +1,6 @@
-﻿namespace GameControllerForZwift.Core.Tests
+﻿using GameControllerForZwift.Core.Controller;
+
+namespace GameControllerForZwift.Core.Tests.Controller
 {
     public class ControllerDataTests
     {

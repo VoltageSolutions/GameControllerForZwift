@@ -1,4 +1,5 @@
-﻿using GameControllerForZwift.Core;
+﻿using GameControllerForZwift.Core.Controller;
+using GameControllerForZwift.Core;
 using Microsoft.Extensions.Logging;
 using static SDL2.SDL;
 

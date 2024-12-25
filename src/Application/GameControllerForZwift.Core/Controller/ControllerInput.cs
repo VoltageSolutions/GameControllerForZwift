@@ -1,4 +1,4 @@
-﻿namespace GameControllerForZwift.Core
+﻿namespace GameControllerForZwift.Core.Controller
 {
     public enum ControllerInput
     {

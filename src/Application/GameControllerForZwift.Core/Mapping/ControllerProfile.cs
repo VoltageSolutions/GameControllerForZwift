@@ -1,4 +1,6 @@
-﻿namespace GameControllerForZwift.Core.Mapping
+﻿using GameControllerForZwift.Core.Controller;
+
+namespace GameControllerForZwift.Core.Mapping
 {
     public class ControllerProfile
     {

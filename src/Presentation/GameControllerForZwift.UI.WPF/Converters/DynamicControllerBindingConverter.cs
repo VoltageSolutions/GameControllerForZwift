@@ -1,4 +1,4 @@
-﻿using GameControllerForZwift.Core;
+﻿using GameControllerForZwift.Core.Controller;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;

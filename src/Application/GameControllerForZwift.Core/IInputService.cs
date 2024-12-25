@@ -1,4 +1,6 @@
-﻿namespace GameControllerForZwift.Core
+﻿using GameControllerForZwift.Core.Controller;
+
+namespace GameControllerForZwift.Core
 {
     public interface IInputService
     {
