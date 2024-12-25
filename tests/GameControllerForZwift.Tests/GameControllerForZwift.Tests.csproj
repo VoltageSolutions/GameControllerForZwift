@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Presentation\GameControllerForZwift.WPF\GameControllerForZwift.WPF.csproj" />
+    <ProjectReference Include="..\..\src\Presentation\GameControllerForZwift\GameControllerForZwift.csproj" />
   </ItemGroup>
 
   <ItemGroup>

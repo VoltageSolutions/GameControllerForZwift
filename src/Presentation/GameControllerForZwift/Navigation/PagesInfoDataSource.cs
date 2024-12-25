@@ -37,7 +37,7 @@ namespace GameControllerForZwift.UI.WPF.Navigation
         private string ReadPagesData()
         {
             var assembly = typeof(PagesInfoDataSource).Assembly;
-            var resourceName = "GameControllerForZwift.WPF.Navigation.PagesInfoData.json";
+            var resourceName = "GameControllerForZwift.Navigation.PagesInfoData.json";
 
             using (var stream = assembly.GetManifestResourceStream(resourceName))
             using (var reader = new System.IO.StreamReader(stream))
