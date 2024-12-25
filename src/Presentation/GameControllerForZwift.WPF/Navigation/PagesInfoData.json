@@ -1,0 +1,14 @@
+[
+  {
+    "UniqueId": "ControllerSetup",
+    "Title": "Controller Setup",
+    "PageName": "ControllerSetupPage",
+    "IconGlyph": "\uE7FC"
+  },
+  {
+    "UniqueId": "About",
+    "Title": "About",
+    "PageName": "AboutPage",
+    "IconGlyph": "\uE946"
+  }
+]

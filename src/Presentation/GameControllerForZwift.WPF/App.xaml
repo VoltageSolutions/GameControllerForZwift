@@ -7,10 +7,10 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/PresentationFramework.Fluent;component/Themes/Fluent.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/GameControllerForZwift.UI.WPF;component/Resources/Typography.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/GameControllerForZwift.UI.WPF;component/Resources/Images.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/GameControllerForZwift.UI.WPF;component/Resources/CardStyles.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/GameControllerForZwift.UI.WPF;component/Resources/ControllerMapping.xaml" />
+                <ResourceDictionary Source="Resources/Typography.xaml" />
+                <ResourceDictionary Source="Resources/Images.xaml" />
+                <ResourceDictionary Source="Resources/CardStyles.xaml" />
+                <ResourceDictionary Source="Resources/ControllerMapping.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

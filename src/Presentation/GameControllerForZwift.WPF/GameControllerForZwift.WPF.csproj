@@ -16,16 +16,35 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\kofi_logo.svg" />
     <None Remove="Assets\logo.ico" />
     <None Remove="Assets\logo.png" />
     <None Remove="Assets\logo_transparent.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Assets\logo.ico" />
+		<None Include="..\..\..\ACKNOWLEDGEMENTS.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\kofi_logo.svg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\logo.ico" />
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\logo_transparent.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Navigation\PagesInfoData.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="DotNetProjects.SVGImage" Version="5.2.2" />
+    <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
@@ -35,7 +54,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Application\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
     <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Gamepad\GameControllerForZwift.Gamepad.csproj" />
-    <ProjectReference Include="..\GameControllerForZwift.UI.WPF\GameControllerForZwift.UI.WPF.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Keyboard\GameControllerForZwift.Keyboard.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -43,12 +62,6 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Resource Include="Assets\logo.ico" />
-    <Resource Include="Assets\logo.png" />
-    <Resource Include="Assets\logo_transparent.png" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="AfterBuild">
