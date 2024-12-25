@@ -13,7 +13,7 @@ namespace GameControllerForZwift.Keyboard
         private readonly ILogger<KeyboardService> _logger;
         private readonly ConcurrentDictionary<ZwiftFunction, CancellationTokenSource> _activeKeyPresses = new();
         private readonly TimeSpan _actionTimeout = TimeSpan.FromMilliseconds(100);
-        private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1); // Thread safety around which ZwiftFunction is acted upon
+        //private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1); // Thread safety around which ZwiftFunction is acted upon
         #endregion
 
         #region Constructor
@@ -27,7 +27,7 @@ namespace GameControllerForZwift.Keyboard
 
         public async Task<ActionResult> PerformActionAsync(ZwiftFunction zwiftFunction, ZwiftPlayerView playerView = ZwiftPlayerView.Default, ZwiftRiderAction riderAction = ZwiftRiderAction.WaveHand)
         {
-            await _lock.WaitAsync();
+            //await _lock.WaitAsync();
             try
             {
                 VirtualKeyCode keyCode = GetKeyCode(zwiftFunction, playerView, riderAction);
@@ -71,7 +71,7 @@ namespace GameControllerForZwift.Keyboard
             }
             finally
             {
-                _lock.Release();
+                //_lock.Release();
             }
         }
 
