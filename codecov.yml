@@ -15,8 +15,7 @@ coverage:
     - "**/Migrations/*"
 
 comment:
-#   # Customize PR comment settings
-#   layout: "diff, files"
+  # Disable PR comments
   behavior: off
 
 # flags:
