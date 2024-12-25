@@ -102,9 +102,12 @@ jobs:
           const tagExists = process.env.tag_exists === 'true';
           
           const conclusion = tagExists ? 'failure' : 'success';
+          const summary = tagExists
+            ? `Version v${{ steps.get_version.outputs.version }} already exists.`
+            : `New app version v${{ steps.get_version.outputs.version }}.`;
           const message = tagExists
-            ? `Version v${{ steps.get_version.outputs.version }} already exists. Please update the version number.`
-            : `This is a new app version (v${{ steps.get_version.outputs.version }}).`;
+            ? `There is already a tag and Release for version \`v${{ steps.get_version.outputs.version }}\`. Please update the version number in the application project file.`
+            : `Merging to \`main\` will create a new tag and release for version \`v${{ steps.get_version.outputs.version }}\`.`;
 
           await github.rest.checks.create({
             owner: context.repo.owner,
@@ -114,7 +117,7 @@ jobs:
             status: "completed",
             conclusion: conclusion,
             output: {
-              title: "Version Check",
+              title: summary,
               summary: message,
             },
           });
