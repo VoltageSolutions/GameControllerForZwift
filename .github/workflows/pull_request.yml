@@ -84,7 +84,7 @@ jobs:
       id: check_tag
       shell: pwsh
       run: |
-        $version = '${{ steps.get_version.outputs.version }}'
+        $version = 'v${{ steps.get_version.outputs.version }}'
         $tagExists = git tag --list | Where-Object { $_ -eq $version }
         if ($tagExists) {
           Write-Host "Tag already exists. $version is not a new app version."
@@ -99,13 +99,12 @@ jobs:
       uses: actions/github-script@v6
       with:
         script: |
-          const { context, github } = require("@actions/github");
           const tagExists = process.env.tag_exists === 'true';
           
           const conclusion = tagExists ? 'failure' : 'success';
           const message = tagExists
-            ? `Version ${{ steps.get_version.outputs.version }} already exists. Please update the version number.`
-            : `This is a new app version (${{ steps.get_version.outputs.version }}).`;
+            ? `Version v${{ steps.get_version.outputs.version }} already exists. Please update the version number.`
+            : `This is a new app version (v${{ steps.get_version.outputs.version }}).`;
 
           await github.rest.checks.create({
             owner: context.repo.owner,
@@ -115,7 +114,7 @@ jobs:
             status: "completed",
             conclusion: conclusion,
             output: {
-              title: "Tag Existence Check",
+              title: "Version Check",
               summary: message,
             },
           });
