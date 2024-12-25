@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Domain\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
+    <ProjectReference Include="..\..\Application\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Application\GameControllerForZwift.Logic\GameControllerForZwift.Logic.csproj" />
+    <ProjectReference Include="..\..\Application\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
     <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Gamepad\GameControllerForZwift.Gamepad.csproj" />
     <ProjectReference Include="..\GameControllerForZwift.UI.WPF\GameControllerForZwift.UI.WPF.csproj" />
   </ItemGroup>

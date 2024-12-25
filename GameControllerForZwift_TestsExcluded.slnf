@@ -2,7 +2,7 @@
   "solution": {
     "path": "GameControllerForZwift.sln",
     "projects": [
-      "src\\Application\\GameControllerForZwift.Logic\\GameControllerForZwift.Logic.csproj",
+      "src\\Application\\GameControllerForZwift.Core\\GameControllerForZwift.Core.csproj",
       "src\\Domain\\GameControllerForZwift.Core\\GameControllerForZwift.Core.csproj",
       "src\\Infrastructure\\GameControllerForZwift.Gamepad\\GameControllerForZwift.Gamepad.csproj",
       "src\\Infrastructure\\GameControllerForZwift.Keyboard\\GameControllerForZwift.Keyboard.csproj",
