@@ -1,4 +1,4 @@
-﻿using GameControllerForZwift.Logic.FileSystem;
+﻿using GameControllerForZwift.Core.FileSystem;
 using System.Text.Json;
 
 namespace GameControllerForZwift.Gamepad.USB

@@ -1,4 +1,5 @@
-﻿using GameControllerForZwift.Core.Mapping;
+﻿using GameControllerForZwift.Core.Controller;
+using GameControllerForZwift.Core.Mapping;
 
 namespace GameControllerForZwift.Core.Tests.Mapping
 {

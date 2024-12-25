@@ -76,7 +76,7 @@ jobs:
       id: get_version
       shell: pwsh
       run: |
-        $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value
+        $version = (Select-String -Path src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value
         echo "version=$version" >> $env:GITHUB_OUTPUT
 
     - name: Check if tag for version exists (only for main)

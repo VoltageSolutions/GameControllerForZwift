@@ -12,11 +12,11 @@
 <p align="center">
   <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/merge.yml"><img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/VoltageSolutions/GameControllerForZwift/merge.yml"></a>
   &nbsp;
- <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases">
+  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases">
     <img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"/>
   </a>
   &nbsp;
-  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img title="Docs" src="https://img.shields.io/github/actions/workflow/status/VoltageSolutions/GameControllerForZwift/publish_docs.yml"/></a>
+  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img title="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/publish_docs.yml/badge.svg"/></a>
 </p>
 
 ## Introduction
