@@ -84,13 +84,15 @@ jobs:
       id: check_tag
       shell: pwsh
       run: |
-        $tagExists = git tag --list | Where-Object { $_ -eq "${{ steps.get_version.outputs.version }}" }
+        $version = '${{ steps.get_version.outputs.version }}'
+        $tagExists = git tag --list | Where-Object { $_ -eq $version }
         if ($tagExists) {
-          Write-Host "Tag already exists. ${version} is not a new app version."
+          Write-Host "Tag already exists. $version is not a new app version."
           echo "tag_exists=true" >> $env:GITHUB_ENV
         } else {
-          Write-Host "Tag does not exist. ${version} is a new app version."
+          Write-Host "Tag does not exist. $version is a new app version."
           echo "tag_exists=false" >> $env:GITHUB_ENV
+        }
 
     - name: Report Check as Status
       if: github.event.pull_request.base.ref == 'main'
@@ -102,8 +104,8 @@ jobs:
           
           const conclusion = tagExists ? 'failure' : 'success';
           const message = tagExists
-            ? `Version ${version} already exists. Please update the version number.`
-            : `This is a new app version (${version}).`;
+            ? `Version ${{ steps.get_version.outputs.version }} already exists. Please update the version number.`
+            : `This is a new app version (${{ steps.get_version.outputs.version }}).`;
 
           await github.rest.checks.create({
             owner: context.repo.owner,
