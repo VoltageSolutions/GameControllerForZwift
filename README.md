@@ -16,7 +16,7 @@
     <img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"/>
   </a>
   &nbsp;
-  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img title="Docs" src="https://img.shields.io/github/actions/workflow/status/VoltageSolutions/GameControllerForZwift/publish_docs.yml"/></a>
+  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img title="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/publish_docs.yml/badge.svg"/></a>
 </p>
 
 ## Introduction
