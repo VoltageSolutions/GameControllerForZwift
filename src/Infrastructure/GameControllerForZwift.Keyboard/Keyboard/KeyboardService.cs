@@ -32,7 +32,7 @@ namespace GameControllerForZwift.Keyboard
             {
                 VirtualKeyCode keyCode = GetKeyCode(zwiftFunction, playerView, riderAction);
 
-                if (keyCode == default)
+                if (keyCode == VirtualKeyCode.CANCEL)
                 {
                     return new ActionResult { Success = false, ErrorMessage = "Unhandled Zwift function." };
                 }
@@ -75,7 +75,7 @@ namespace GameControllerForZwift.Keyboard
             }
         }
 
-        private VirtualKeyCode GetKeyCode(ZwiftFunction zwiftFunction, ZwiftPlayerView playerView, ZwiftRiderAction riderAction)
+        public VirtualKeyCode GetKeyCode(ZwiftFunction zwiftFunction, ZwiftPlayerView playerView, ZwiftRiderAction riderAction)
         {
             return zwiftFunction switch
             {
@@ -108,7 +108,7 @@ namespace GameControllerForZwift.Keyboard
                     ZwiftPlayerView.Helicopter => VirtualKeyCode.VK_8,
                     ZwiftPlayerView.BirdsEye => VirtualKeyCode.VK_9,
                     ZwiftPlayerView.Drone => VirtualKeyCode.VK_0,
-                    _ => default
+                    _ => VirtualKeyCode.CANCEL
                 },
                 ZwiftFunction.RiderAction => riderAction switch
                 {
@@ -121,9 +121,9 @@ namespace GameControllerForZwift.Keyboard
                     ZwiftRiderAction.ImToast => VirtualKeyCode.F7,
                     ZwiftRiderAction.BikeBell => VirtualKeyCode.F8,
                     ZwiftRiderAction.ScreenShot => VirtualKeyCode.F10,
-                    _ => default
+                    _ => VirtualKeyCode.CANCEL
                 },
-                _ => default
+                _ => VirtualKeyCode.CANCEL
             };
         }
 
