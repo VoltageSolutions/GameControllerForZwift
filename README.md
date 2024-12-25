@@ -23,6 +23,8 @@
 
 This project enables using standard video game controllers to interact with Zwift. The long-term goal is to replicate the flexibility and functionality of Zwift-compatible controllers like the [Zwift Play Controllers](https://us.zwift.com/products/zwift-play?variant=43737779896576) or the [Wahoo Kickr Bike Shift](https://www.wahoofitness.com/devices/indoor-cycling/smart-bikes/kickr-bike-shift-buy). You can use controllers like Nintendo Switch Joy-Cons, Xbox Controllers, and other popular game controllers you already own.
 
+Game Controller for Zwift typically only lets you use one controller at a time, will interpret a pair of connected Joy-Cons as a single controller.
+
 <p align="center">
   <a href="https://www.youtube.com/watch?v=mYImJKFE6OI">
       <img src="./docs/assets/images/thumbnail_preview.png" width="400">

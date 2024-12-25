@@ -71,3 +71,49 @@ jobs:
     - name: Perform CodeQL Analysis
       uses: github/codeql-action/analyze@v3
       if: steps.build.outcome == 'success'
+
+    - name: Extract version from .csproj
+      id: get_version
+      shell: pwsh
+      run: |
+        $version = (Select-String -Path src/Presentation/GameControllerForZwift.WPF/GameControllerForZwift.WPF.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value
+        echo "version=$version" >> $env:GITHUB_OUTPUT
+
+    - name: Check if tag for version exists (only for main)
+      if: github.event.pull_request.base.ref == 'main'
+      id: check_tag
+      shell: pwsh
+      run: |
+        $tagExists = git tag --list | Where-Object { $_ -eq "${{ steps.get_version.outputs.version }}" }
+        if ($tagExists) {
+          Write-Host "Tag already exists. ${version} is not a new app version."
+          echo "tag_exists=true" >> $env:GITHUB_ENV
+        } else {
+          Write-Host "Tag does not exist. ${version} is a new app version."
+          echo "tag_exists=false" >> $env:GITHUB_ENV
+
+    - name: Report Check as Status
+      if: github.event.pull_request.base.ref == 'main'
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const { context, github } = require("@actions/github");
+          const tagExists = process.env.tag_exists === 'true';
+          
+          const conclusion = tagExists ? 'failure' : 'success';
+          const message = tagExists
+            ? `Version ${version} already exists. Please update the version number.`
+            : `This is a new app version (${version}).`;
+
+          await github.rest.checks.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            name: "Tag Existence Check",
+            head_sha: context.payload.pull_request.head.sha,
+            status: "completed",
+            conclusion: conclusion,
+            output: {
+              title: "Tag Existence Check",
+              summary: message,
+            },
+          });
