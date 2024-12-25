@@ -2,19 +2,32 @@
   <img width="128" align="center" src="docs/assets/images/logo.png">
 </p>
 <h1 align="center">
-  GameControllerForZwift
+  Game Controller For Zwift
 </h1>
+
 <p align="center">
-  Use your existing Game Controllers with Zwift
+  A way to levarge your existing video game controllers with Zwift. Reduce electronic waste with this Windows application that runs locally on your Windows computer.
+</p>
+
+<p align="center">
+  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/merge.yml"><img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/VoltageSolutions/GameControllerForZwift/merge.yml"></a>
+  &nbsp;
+ <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases">
+    <img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"/>
+  </a>
+  &nbsp;
+  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img title="Docs" src="https://img.shields.io/github/actions/workflow/status/VoltageSolutions/GameControllerForZwift/publish_docs.yml"/></a>
 </p>
 
 ## Introduction
 
 This project enables using standard video game controllers to interact with Zwift. The long-term goal is to replicate the flexibility and functionality of Zwift-compatible controllers like the [Zwift Play Controllers](https://us.zwift.com/products/zwift-play?variant=43737779896576) or the [Wahoo Kickr Bike Shift](https://www.wahoofitness.com/devices/indoor-cycling/smart-bikes/kickr-bike-shift-buy). You can use controllers like Nintendo Switch Joy-Cons, Xbox Controllers, and other popular game controllers you already own.
 
-<a href="https://www.youtube.com/watch?v=mYImJKFE6OI">
-    <img src="./docs/assets/images/thumbnail_preview.png" width="400">
-</a>
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=mYImJKFE6OI">
+      <img src="./docs/assets/images/thumbnail_preview.png" width="400">
+  </a>
+</p>
 
 ## Getting start with the app
 
