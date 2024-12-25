@@ -130,9 +130,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             {
                 if(profile.Mappings.Where(m => m.Input == vm.SelectedInput).FirstOrDefault() is InputMapping inputMap)
                 {
-                    //vm.SelectedZwiftFunction = inputMap.Function;
-                    //vm.SelectedZwiftPlayerView = inputMap.PlayerView ?? ZwiftPlayerView.Default;
-                    //vm.SelectedZwiftRiderAction = inputMap.RiderAction ?? ZwiftRiderAction.RideOn;
                     vm.SetInputMapping(inputMap);
                 }
             }
@@ -214,6 +211,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 });
             }
 
+            foreach (var vm in inputMappings)
+                vm.MappingChanged += InputMappingChanged;
+
             return inputMappings;
         }
 
@@ -238,6 +238,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                     SelectedInput = kvp.Value
                 });
             }
+
+            foreach (var vm in inputMappings)
+                vm.MappingChanged += InputMappingChanged;
 
             return inputMappings;
         }
@@ -264,6 +267,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 });
             }
 
+            foreach (var vm in inputMappings)
+                vm.MappingChanged += InputMappingChanged;
+
             return inputMappings;
         }
 
@@ -285,6 +291,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                     SelectedInput = kvp.Value
                 });
             }
+
+            foreach (var vm in inputMappings)
+                vm.MappingChanged += InputMappingChanged;
 
             return inputMappings;
         }
