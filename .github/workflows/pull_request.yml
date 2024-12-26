@@ -15,115 +15,9 @@ jobs:
     name: Run Tests with Coverage
     runs-on: windows-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      with:
-        fetch-depth: 0 
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '9.0.x'
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v3
-      with:
-        languages: 'csharp'
-
-    - name: Build solution
-      id: build
-      run: dotnet build --configuration Release --no-restore
-
-    - name: Run tests, collect as TRX to support dorny test reporter
-      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
-      continue-on-error: true
-
-    - name: Report Test Results
-      uses: dorny/test-reporter@v1
-      continue-on-error: true
-      with:
-        name: Test Results
-        path: "**/TestResults.trx"
-        reporter: dotnet-trx
-        fail-on-error: 'true'
-
-    - name: Install ReportGenerator
-      run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-    - name: Run tests, collect with XPlat Code Coverage to support CodeCov
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
-      continue-on-error: true
-
-    - name: Generate Coverage Report
-      run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
-
-    - name: Upload coverage to CodeCov
-      uses: codecov/codecov-action@v5
-      with:
-        files: ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml
-        fail_ci_if_error: false
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v3
-      if: steps.build.outcome == 'success'
-
-    - name: Extract version from .csproj
-      id: get_version
-      shell: pwsh
-      run: |
-        $version = (Select-String -Path src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value
-        echo "version=$version" >> $env:GITHUB_OUTPUT
-
-    - name: Check if tag for version exists (only for main)
-      if: github.event.pull_request.base.ref == 'main'
-      id: check_tag
-      shell: pwsh
-      run: |
-        $version = 'v${{ steps.get_version.outputs.version }}'
-        $tagExists = git tag --list | Where-Object { $_ -eq $version }
-        if ($tagExists) {
-          Write-Host "Tag already exists. $version is not a new app version."
-          echo "tag_exists=true" >> $env:GITHUB_ENV
-        } else {
-          Write-Host "Tag does not exist. $version is a new app version."
-          echo "tag_exists=false" >> $env:GITHUB_ENV
-        }
-
-    - name: Report Check as Status
-      if: github.event.pull_request.base.ref == 'main'
-      uses: actions/github-script@v6
-      with:
-        script: |
-          const tagExists = process.env.tag_exists === 'true';
-          
-          const conclusion = tagExists ? 'failure' : 'success';
-          const summary = tagExists
-            ? `Version v${{ steps.get_version.outputs.version }} already exists.`
-            : `New app version v${{ steps.get_version.outputs.version }}.`;
-          const message = tagExists
-            ? `There is already a tag and Release for version \`v${{ steps.get_version.outputs.version }}\`. Please update the version number in the application project file.`
-            : `Merging to \`main\` will create a new tag and release for version \`v${{ steps.get_version.outputs.version }}\`.`;
-
-          await github.rest.checks.create({
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            name: "Version Check",
-            head_sha: context.payload.pull_request.head.sha,
-            status: "completed",
-            conclusion: conclusion,
-            output: {
-              title: summary,
-              summary: message,
-            },
-          });
-  
-  another-job:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [group1, group2, group3, group4] # Define the groups to run in parallel
 
     steps:
     - name: Checkout code
@@ -138,3 +32,30 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
+
+    - name: Run Task Groups
+      run: |
+        if [ "${{ matrix.task }}" == "group1" ]; then
+          echo "Running Group 1..."
+          dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx" || true
+          dorny-test-reporter --path "**/TestResults.trx" --reporter dotnet-trx --fail-on-error true
+        elif [ "${{ matrix.task }}" == "group2" ]; then
+          echo "Running Group 2..."
+          dotnet tool install --global dotnet-reportgenerator-globaltool
+          dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults || true
+          reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+          codecov --files ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml --token ${{ secrets.CODECOV_TOKEN }}
+        elif [ "${{ matrix.task }}" == "group3" ]; then
+          echo "Running Group 3..."
+          dotnet codeql analyze --output codeql-results.sarif
+        elif [ "${{ matrix.task }}" == "group4" ]; then
+          echo "Running Group 4..."
+          version=$(Select-String -Path src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value
+          echo "Extracted version: $version"
+          tag_exists=$(git tag --list | grep "v$version" || true)
+          if [ -n "$tag_exists" ]; then
+            echo "Tag already exists."
+          else
+            echo "New version tag."
+          fi
+        fi
