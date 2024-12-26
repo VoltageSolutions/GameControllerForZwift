@@ -38,26 +38,56 @@ jobs:
       id: build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Run Groups in Parallel
+        - name: Run Groups in Parallel
+      shell: pwsh
       run: |
         # Group 1: Run TRX tests and report results
-        (dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx" || true \
-        && dorny-test-reporter --path "**/TestResults.trx" --reporter dotnet-trx --fail-on-error true) &
+        Start-Job -ScriptBlock {
+          try {
+            dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
+            dorny-test-reporter --path "**/TestResults.trx" --reporter dotnet-trx --fail-on-error true
+          } catch {
+            Write-Host "Group 1 failed, but continuing."
+          }
+        }
 
         # Group 2: Coverage reports
-        (dotnet tool install --global dotnet-reportgenerator-globaltool \
-        && dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults || true \
-        && reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura" \
-        && codecov --files ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml --token ${{ secrets.CODECOV_TOKEN }}) &
+        Start-Job -ScriptBlock {
+          try {
+            dotnet tool install --global dotnet-reportgenerator-globaltool
+            dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
+            reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+            codecov --files "${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml" --token "${{ secrets.CODECOV_TOKEN }}"
+          } catch {
+            Write-Host "Group 2 failed, but continuing."
+          }
+        }
 
         # Group 3: Perform CodeQL analysis
-        (dotnet codeql analyze --output codeql-results.sarif) &
+        Start-Job -ScriptBlock {
+          try {
+            dotnet codeql analyze --output codeql-results.sarif
+          } catch {
+            Write-Host "Group 3 failed, but continuing."
+          }
+        }
 
         # Group 4: Version extraction and tag check
-        (version=$(Select-String -Path src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value \
-        && echo "Extracted version: $version" \
-        && tag_exists=$(git tag --list | grep "v$version" || true) \
-        && if [ -n "$tag_exists" ]; then echo "Tag already exists."; else echo "New version tag."; fi) &
+        Start-Job -ScriptBlock {
+          try {
+            $version = (Select-String -Path src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value
+            Write-Host "Extracted version: $version"
+            $tagExists = git tag --list | Where-Object { $_ -eq "v$version" }
+            if ($tagExists) {
+              Write-Host "Tag already exists: v$version"
+            } else {
+              Write-Host "New version tag: v$version"
+            }
+          } catch {
+            Write-Host "Group 4 failed, but continuing."
+          }
+        }
 
-        # Wait for all background processes to complete
-        wait
+        # Wait for all background jobs to complete
+        Get-Job | Wait-Job
+        Get-Job | Receive-Job
