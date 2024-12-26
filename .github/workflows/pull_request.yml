@@ -15,10 +15,6 @@ jobs:
     name: Run Tests with Coverage
     runs-on: windows-latest
 
-    strategy:
-      matrix:
-        task: [group1, group2, group3, group4] # Define the groups to run in parallel
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -33,29 +29,35 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore
 
-    - name: Run Task Groups
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: 'csharp'
+
+    - name: Build solution
+      id: build
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Run Groups in Parallel
       run: |
-        if [ "${{ matrix.task }}" == "group1" ]; then
-          echo "Running Group 1..."
-          dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx" || true
-          dorny-test-reporter --path "**/TestResults.trx" --reporter dotnet-trx --fail-on-error true
-        elif [ "${{ matrix.task }}" == "group2" ]; then
-          echo "Running Group 2..."
-          dotnet tool install --global dotnet-reportgenerator-globaltool
-          dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults || true
-          reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
-          codecov --files ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml --token ${{ secrets.CODECOV_TOKEN }}
-        elif [ "${{ matrix.task }}" == "group3" ]; then
-          echo "Running Group 3..."
-          dotnet codeql analyze --output codeql-results.sarif
-        elif [ "${{ matrix.task }}" == "group4" ]; then
-          echo "Running Group 4..."
-          version=$(Select-String -Path src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value
-          echo "Extracted version: $version"
-          tag_exists=$(git tag --list | grep "v$version" || true)
-          if [ -n "$tag_exists" ]; then
-            echo "Tag already exists."
-          else
-            echo "New version tag."
-          fi
-        fi
+        # Group 1: Run TRX tests and report results
+        (dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx" || true \
+        && dorny-test-reporter --path "**/TestResults.trx" --reporter dotnet-trx --fail-on-error true) &
+
+        # Group 2: Coverage reports
+        (dotnet tool install --global dotnet-reportgenerator-globaltool \
+        && dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults || true \
+        && reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura" \
+        && codecov --files ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml --token ${{ secrets.CODECOV_TOKEN }}) &
+
+        # Group 3: Perform CodeQL analysis
+        (dotnet codeql analyze --output codeql-results.sarif) &
+
+        # Group 4: Version extraction and tag check
+        (version=$(Select-String -Path src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value \
+        && echo "Extracted version: $version" \
+        && tag_exists=$(git tag --list | grep "v$version" || true) \
+        && if [ -n "$tag_exists" ]; then echo "Tag already exists."; else echo "New version tag."; fi) &
+
+        # Wait for all background processes to complete
+        wait
