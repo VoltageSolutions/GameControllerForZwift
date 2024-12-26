@@ -38,7 +38,7 @@ jobs:
       id: build
       run: dotnet build --configuration Release --no-restore
 
-        - name: Run Groups in Parallel
+    - name: Run Groups in Parallel
       shell: pwsh
       run: |
         # Group 1: Run TRX tests and report results
