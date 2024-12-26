@@ -1,0 +1,43 @@
+﻿using OpenQA.Selenium.Appium;
+using OpenQA.Selenium.Appium.Windows;
+using System.Runtime.InteropServices;
+
+namespace GameControllerForZwift.UITests
+{
+    public class AppFixture : IDisposable
+    {
+        private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
+        public WindowsDriver AppSession;
+
+        public AppFixture()
+        {
+            // Set up the Windows Application Driver (WinAppDriver)
+            var appCapabilities = new AppiumOptions
+            {
+                AutomationName = "windows",
+                App = GetApplicationPath(),
+                DeviceName = "WindowsPC",
+                PlatformName = "Windows"
+            };
+            AppSession = new WindowsDriver(new Uri(WindowsApplicationDriverUrl), appCapabilities);
+            
+            // Maximizing the window helps bring it to the foreground more effectively than user32 SetForegroundWindow
+            AppSession.Manage().Window.Maximize();
+            AppSession.Manage().Window.Size = new System.Drawing.Size(1600, 800);
+        }
+
+        private string GetApplicationPath()
+        {
+            // BaseDirectory points to the bin directory of the test project
+            var testDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            // Navigate back to the solution root and then to the app's output directory
+            string relativePathToApp = @"..\..\..\..\..\src\Presentation\GameControllerForZwift\bin\Debug\net9.0-windows10.0.17763.0\GameControllerForZwift.exe";
+            return Path.GetFullPath(Path.Combine(testDirectory, relativePathToApp));
+        }
+
+        public void Dispose()
+        {
+            AppSession.Quit();
+        }
+    }
+}

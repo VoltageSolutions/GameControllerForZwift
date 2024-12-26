@@ -13,6 +13,7 @@ using GameControllerForZwift.UI.WPF.Views;
 using GameControllerForZwift.WPF.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using System.Windows;
+using System.IO;
 
 namespace GameControllerForZwift
 {
@@ -64,7 +65,9 @@ namespace GameControllerForZwift
             services.AddSingleton<IControllerProfileService>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();
-                string filePath = "./defaultprofile.json"; // Or fetch this from configuration
+                string appDirectory = AppContext.BaseDirectory;
+                string filePath = Path.Combine(appDirectory, "defaultprofile.json");
+                //string filePath = "./defaultprofile.json"; // Or fetch this from configuration
                 return new ControllerProfileService(fileService, filePath);
             });
 
@@ -82,7 +85,9 @@ namespace GameControllerForZwift
             services.AddSingleton<AboutPageViewModel>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();
-                string filePath = "./ACKNOWLEDGEMENTS.md"; // Or fetch this from configuration
+                string appDirectory = AppContext.BaseDirectory;
+                string filePath = Path.Combine(appDirectory, "ACKNOWLEDGEMENTS.md");
+                //string filePath = "./ACKNOWLEDGEMENTS.md"; // Or fetch this from configuration
                 return new AboutPageViewModel(fileService, filePath);
             });
             services.AddSingleton<ControllerSetupViewModel>();
