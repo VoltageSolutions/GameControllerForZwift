@@ -122,8 +122,7 @@ jobs:
             },
           });
   
-  thing2:
-    id: does stuff
+  another-job:
     runs-on: ubuntu-latest
 
     steps:
