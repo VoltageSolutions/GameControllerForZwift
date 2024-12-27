@@ -62,15 +62,12 @@ jobs:
       id: build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Run tests, collect as TRX to support dorny test reporter
-      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build --verbosity normal \
+        --logger "trx;LogFileName=TestResults.trx" \
+        --collect:"XPlat Code Coverage" \
+        --results-directory:TestResults
       continue-on-error: true
-
-    - name: "Debug: Upload screenshots"
-      uses: actions/upload-artifact@v3
-      with:
-        name: screenshots
-        path: ./screenshot.png
 
     - name: Report Test Results
       uses: dorny/test-reporter@v1
@@ -83,10 +80,6 @@ jobs:
 
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
-
-    - name: Run tests, collect with XPlat Code Coverage to support CodeCov
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
-      continue-on-error: true
 
     - name: Generate Coverage Report
       run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
