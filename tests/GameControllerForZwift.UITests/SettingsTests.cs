@@ -1,7 +1,4 @@
-﻿using OpenQA.Selenium;
-using OpenQA.Selenium.Appium;
-using OpenQA.Selenium.Appium.Windows;
-using System.Diagnostics;
+﻿using OpenQA.Selenium.Appium;
 
 namespace GameControllerForZwift.UITests
 {
@@ -34,11 +31,8 @@ namespace GameControllerForZwift.UITests
         public void Dispose()
         {
             // Return to default state
-            var treeView = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("PagesTreeView"));
-            //var treeItem = treeView.FindElement(By.XPath(".//TreeViewItem[.//TextBlock[contains(@Text, 'Controller Setup')]]"));
-
-
-
+            var controllerSetupTreeViewItem = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("Controller Setup"));
+            controllerSetupTreeViewItem.Click();
         }
     }
 }
