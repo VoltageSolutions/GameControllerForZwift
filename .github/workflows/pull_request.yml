@@ -30,7 +30,7 @@ jobs:
     - name: Install Appium
       run: |
         npm install -g appium
-        npm install -g appium-windows-driver
+        appium driver install --source=npm appium-windows-driver
 
     - name: Download WinAppDriver
       run: |
@@ -41,9 +41,9 @@ jobs:
     #   run: |
     #     Start-Process -NoNewWindow -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
     - name: Start Appium Server
+      shell: pwsh
       run: |
-        appium --allow-cors &
-      shell: bash
+        appium 
 
     # Prepare for .NET project
     - name: Restore dependencies
