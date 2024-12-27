@@ -62,6 +62,12 @@ jobs:
       run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
       continue-on-error: true
 
+    - name: "Debug: Upload screenshots"
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshots
+          path: ./screenshot.png
+
     - name: Report Test Results
       uses: dorny/test-reporter@v1
       continue-on-error: true
