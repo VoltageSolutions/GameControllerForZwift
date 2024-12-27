@@ -3,7 +3,7 @@
 namespace GameControllerForZwift.UITests
 {
     [Collection("Application collection")]
-    public class SettingsTests : IClassFixture<AppFixture>, IDisposable
+    public class SettingsTests : IDisposable
     {
         private AppFixture _fixture;
 

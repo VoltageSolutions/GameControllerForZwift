@@ -5,8 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>false</IsPackable>
-	<IsTestProject>true</IsTestProject>
-  </PropertyGroup>
+	  <IsTestProject>true</IsTestProject>
+    <DisableParallelTestExecution>true</DisableParallelTestExecution>
+</PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Appium.WebDriver" Version="6.0.1" />
