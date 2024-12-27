@@ -71,6 +71,7 @@ jobs:
           --logger "trx;LogFileName=TestResults_$projectName.trx" `
           --collect:"XPlat Code Coverage" `
           --results-directory "TestResults/$projectName"
+        }
       continue-on-error: true
 
     - name: Report Test Results
