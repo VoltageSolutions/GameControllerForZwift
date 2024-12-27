@@ -41,9 +41,9 @@ jobs:
     #   run: |
     #     Start-Process -NoNewWindow -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
     - name: Start Appium Server
-      shell: pwsh
+      shell: bash  
       run: |
-        appium 
+        appium --allow-cors &
 
     # Prepare for .NET project
     - name: Restore dependencies
