@@ -31,7 +31,11 @@ namespace GameControllerForZwift.UITests
             // BaseDirectory points to the bin directory of the test project
             var testDirectory = AppDomain.CurrentDomain.BaseDirectory;
             // Navigate back to the solution root and then to the app's output directory
+#if DEBUG
             string relativePathToApp = @"..\..\..\..\..\src\Presentation\GameControllerForZwift\bin\Debug\net9.0-windows10.0.17763.0\GameControllerForZwift.exe";
+#else
+            string relativePathToApp = @"..\..\..\..\..\src\Presentation\GameControllerForZwift\bin\Release\net9.0-windows10.0.17763.0\GameControllerForZwift.exe";
+#endif
             return Path.GetFullPath(Path.Combine(testDirectory, relativePathToApp));
         }
 
