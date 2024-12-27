@@ -63,10 +63,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test --configuration Release --no-build --verbosity normal \
-        --logger "trx;LogFileName=TestResults.trx" \
-        --collect:"XPlat Code Coverage" \
-        --results-directory:TestResults
+      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage" --results-directory:TestResults
       continue-on-error: true
 
     - name: Report Test Results
