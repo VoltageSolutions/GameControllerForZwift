@@ -49,7 +49,7 @@
 
         <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
             <StackPanel>
-                <TextBlock Text="Appearance &amp; behavior" FontWeight="SemiBold" Margin="10" FontSize="14"/>
+                <TextBlock x:Name="PageTitle"  Text="Appearance &amp; behavior" FontWeight="SemiBold" Margin="10" FontSize="14"/>
                 <Grid Background="Transparent" Margin="0,0,0,20">
                     <Border Background="{DynamicResource ExpanderHeaderBackground}" BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}" BorderThickness="{StaticResource ExpanderBorderThemeThickness}" Padding="{StaticResource ExpanderPadding}" CornerRadius="{DynamicResource ControlCornerRadius}">
                         <Grid>

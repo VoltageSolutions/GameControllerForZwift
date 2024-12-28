@@ -21,10 +21,32 @@ jobs:
       with:
         fetch-depth: 0 
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+    # These steps enable running Appium UI tests on Windows.
+    # ---------------------------------------------------------
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
       with:
-        dotnet-version: '9.0.x'
+        node-version: '16' # or the version you need
+
+    - name: Install Appium
+      run: |
+        npm install -g appium
+        appium driver install --source=npm appium-windows-driver
+
+    - name: Download WinAppDriver
+      run: |
+        Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile WinAppDriver.msi
+        Start-Process msiexec.exe -ArgumentList '/i WinAppDriver.msi /quiet /norestart' -Wait
+
+    - name: Set runner resolution to modern device size
+      run: |
+        Set-DisplayResolution -Width 1920 -Height 1080 -Force
+
+    - name: Start Appium Server
+      shell: bash  
+      run: |
+        appium --allow-cors &
+    # ---------------------------------------------------------
 
     - name: Restore dependencies
       run: dotnet restore
@@ -38,8 +60,8 @@ jobs:
       id: build
       run: dotnet build --configuration Release --no-restore
 
-    - name: Run tests, collect as TRX to support dorny test reporter
-      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx"
+    - name: Run tests
+      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage"
       continue-on-error: true
 
     - name: Report Test Results
@@ -54,17 +76,14 @@ jobs:
     - name: Install ReportGenerator
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
-    - name: Run tests, collect with XPlat Code Coverage to support CodeCov
-      run: dotnet test --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory:TestResults
-      continue-on-error: true
-
     - name: Generate Coverage Report
-      run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+      run: |
+        reportgenerator -reports:"tests/**/coverage.cobertura.xml" -targetdir:"TestResults/CoverageReport" -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
     - name: Upload coverage to CodeCov
       uses: codecov/codecov-action@v5
       with:
-        files: ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml
+        files: TestResults/CoverageReport/Cobertura.xml
         fail_ci_if_error: false
         token: ${{ secrets.CODECOV_TOKEN }}
 

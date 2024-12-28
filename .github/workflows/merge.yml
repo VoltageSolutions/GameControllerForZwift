@@ -27,11 +27,19 @@ jobs:
       with:
         dotnet-version: '9.0.x'
 
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v3
+      with:
+        languages: 'csharp'
+
     - name: Publish Framework-Dependent Build
       run: |
         mkdir ./artifacts/framework-dependent
         dotnet publish GameControllerForZwift_TestsExcluded.slnf -c Release -o ./artifacts/framework-dependent
         Get-ChildItem ./artifacts/framework-dependent -Recurse | Where-Object { $_.Extension -ne ".pdb" } | Compress-Archive -DestinationPath ./artifacts/gamecontrollerforzwift.zip
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v3
 
     - name: Save Build Artifact
       uses: actions/upload-artifact@v3

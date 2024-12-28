@@ -23,17 +23,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Core
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Gamepad", "src\Infrastructure\GameControllerForZwift.Gamepad\GameControllerForZwift.Gamepad.csproj", "{43D7D855-A246-4DF7-943F-9882FEEE3E18}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Tests", "tests\GameControllerForZwift.Tests\GameControllerForZwift.Tests.csproj", "{7B0C849C-17B4-46D6-9040-CA69E0CA094C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.UnitTests", "tests\GameControllerForZwift.UnitTests\GameControllerForZwift.UnitTests.csproj", "{7B0C849C-17B4-46D6-9040-CA69E0CA094C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Keyboard", "src\Infrastructure\GameControllerForZwift.Keyboard\GameControllerForZwift.Keyboard.csproj", "{33614972-B93F-4DC9-8A75-152DCE9B7286}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Gamepad.Tests", "tests\GameControllerForZwift.Gamepad.Tests\GameControllerForZwift.Gamepad.Tests.csproj", "{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameControllerForZwift.Gamepad.UnitTests", "tests\GameControllerForZwift.Gamepad.UnitTests\GameControllerForZwift.Gamepad.UnitTests.csproj", "{79BA6EC7-5D9D-40FD-80A9-C6F82804B5DC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Application", "Application", "{F43A297B-8852-46F0-8FEF-EA6B5B83FD20}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Core.Tests", "tests\GameControllerForZwift.Core.Tests\GameControllerForZwift.Core.Tests.csproj", "{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Core.UnitTests", "tests\GameControllerForZwift.Core.UnitTests\GameControllerForZwift.Core.UnitTests.csproj", "{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Keyboard.Tests", "tests\GameControllerForZwift.Keyboard.Tests\GameControllerForZwift.Keyboard.Tests.csproj", "{F40082C9-C618-41D2-900D-3E4E6BE82080}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Keyboard.IntegrationTests", "tests\GameControllerForZwift.Keyboard.IntegrationTests\GameControllerForZwift.Keyboard.IntegrationTests.csproj", "{F40082C9-C618-41D2-900D-3E4E6BE82080}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.UITests", "tests\GameControllerForZwift.UITests\GameControllerForZwift.UITests.csproj", "{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{F40082C9-C618-41D2-900D-3E4E6BE82080}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F40082C9-C618-41D2-900D-3E4E6BE82080}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F40082C9-C618-41D2-900D-3E4E6BE82080}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{F43A297B-8852-46F0-8FEF-EA6B5B83FD20} = {E2346F87-81E2-49F2-BE60-F7205F5BE468}
 		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9} = {F43A297B-8852-46F0-8FEF-EA6B5B83FD20}
 		{F40082C9-C618-41D2-900D-3E4E6BE82080} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
+		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94} = {7CBC7254-F8CE-46A5-B9E3-FB536D38BDAC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF0E7AD0-FDA6-4F93-B78A-B07984BD96C9}

@@ -234,7 +234,7 @@
                                 <TextBlock
                                     Grid.Column="2"
                                     VerticalAlignment="Center"
-                                    Text="{Binding Title}" />
+                                    Text="{Binding Title}" AutomationProperties.AutomationId="{Binding Title}" />
                             </Grid>
                         </HierarchicalDataTemplate>
                     </TreeView.ItemTemplate>

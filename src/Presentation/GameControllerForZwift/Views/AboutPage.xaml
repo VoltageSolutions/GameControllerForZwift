@@ -50,7 +50,7 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0" Orientation="Horizontal">
-                    <Button Command="{Binding ViewModel.OpenGitHubCommand}" Margin="6">
+                    <Button Command="{Binding ViewModel.OpenGitHubCommand}" Margin="6" x:Name="OpenGitHubButton">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>
@@ -63,7 +63,7 @@
                             </Viewbox>
                         </Grid>
                     </Button>
-                    <Button Command="{Binding ViewModel.OpenkofiCommand}" Margin="6">
+                    <Button Command="{Binding ViewModel.OpenkofiCommand}" Margin="6" x:Name="OpenkofiButton">
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto"/>

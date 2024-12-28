@@ -1,10 +1,9 @@
 ﻿using GameControllerForZwift.Core;
-using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Core.FileSystem;
+using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Gamepad.Mapping;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Keyboard;
-using GameControllerForZwift.Core;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
 using GameControllerForZwift.UI.WPF.Navigation;
@@ -12,6 +11,7 @@ using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using GameControllerForZwift.WPF.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using System.IO;
 using System.Windows;
 
 namespace GameControllerForZwift
@@ -25,6 +25,11 @@ namespace GameControllerForZwift
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (IsTestEnvironment())
+            {
+                return; // Skip startup logic during tests
+            }
+
             base.OnStartup(e);
 
             // Configure the service collection
@@ -38,6 +43,11 @@ namespace GameControllerForZwift
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             Current.ThemeMode = ThemeMode.System;
+        }
+
+        private bool IsTestEnvironment()
+        {
+            return AppDomain.CurrentDomain.FriendlyName.Contains("testhost", StringComparison.OrdinalIgnoreCase);
         }
 
         private void ConfigureServices(IServiceCollection services)
@@ -64,7 +74,9 @@ namespace GameControllerForZwift
             services.AddSingleton<IControllerProfileService>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();
-                string filePath = "./defaultprofile.json"; // Or fetch this from configuration
+                string appDirectory = AppContext.BaseDirectory;
+                string filePath = Path.Combine(appDirectory, "defaultprofile.json");
+                //string filePath = "./defaultprofile.json"; // Or fetch this from configuration
                 return new ControllerProfileService(fileService, filePath);
             });
 
@@ -82,7 +94,9 @@ namespace GameControllerForZwift
             services.AddSingleton<AboutPageViewModel>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();
-                string filePath = "./ACKNOWLEDGEMENTS.md"; // Or fetch this from configuration
+                string appDirectory = AppContext.BaseDirectory;
+                string filePath = Path.Combine(appDirectory, "ACKNOWLEDGEMENTS.md");
+                //string filePath = "./ACKNOWLEDGEMENTS.md"; // Or fetch this from configuration
                 return new AboutPageViewModel(fileService, filePath);
             });
             services.AddSingleton<ControllerSetupViewModel>();
