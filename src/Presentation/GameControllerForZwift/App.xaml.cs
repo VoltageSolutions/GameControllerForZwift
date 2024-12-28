@@ -1,10 +1,9 @@
 ﻿using GameControllerForZwift.Core;
-using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Core.FileSystem;
+using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Gamepad.Mapping;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Keyboard;
-using GameControllerForZwift.Core;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
 using GameControllerForZwift.UI.WPF.Navigation;
@@ -12,8 +11,8 @@ using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using GameControllerForZwift.WPF.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows;
 using System.IO;
+using System.Windows;
 
 namespace GameControllerForZwift
 {
@@ -26,6 +25,11 @@ namespace GameControllerForZwift
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (IsTestEnvironment())
+            {
+                return; // Skip startup logic during tests
+            }
+
             base.OnStartup(e);
 
             // Configure the service collection
@@ -39,6 +43,11 @@ namespace GameControllerForZwift
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             Current.ThemeMode = ThemeMode.System;
+        }
+
+        private bool IsTestEnvironment()
+        {
+            return AppDomain.CurrentDomain.FriendlyName.Contains("testhost", StringComparison.OrdinalIgnoreCase);
         }
 
         private void ConfigureServices(IServiceCollection services)

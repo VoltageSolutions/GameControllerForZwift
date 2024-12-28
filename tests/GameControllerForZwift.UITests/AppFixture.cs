@@ -1,7 +1,5 @@
 ﻿using OpenQA.Selenium.Appium;
 using OpenQA.Selenium.Appium.Windows;
-using OpenQA.Selenium.Support.UI;
-using System.Runtime.InteropServices;
 
 namespace GameControllerForZwift.UITests
 {
