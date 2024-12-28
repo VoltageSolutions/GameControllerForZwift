@@ -72,6 +72,15 @@ jobs:
         }
       continue-on-error: true
 
+    - name: Add delay to debug flakiness
+      run: Start-Sleep -Seconds 2
+
+    # - name: "Debug: Upload screenshots"
+    #   uses: actions/upload-artifact@v3
+    #   with:
+    #     name: screenshots
+    #     path: ./screenshot.png
+
     - name: Report Test Results
       uses: dorny/test-reporter@v1
       continue-on-error: true
