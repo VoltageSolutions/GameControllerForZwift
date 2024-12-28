@@ -20,6 +20,7 @@ namespace GameControllerForZwift.UITests
                 DeviceName = "WindowsPC",
                 PlatformName = "Windows"
             };
+            appCapabilities.AddAdditionalAppiumOption("ms:waitForAppLaunch", 3);
             System.Console.WriteLine("Starting GameControllerForZwift.exe to run tests against.");
             AppSession = new WindowsDriver(new Uri(WindowsApplicationDriverUrl), appCapabilities);
 
@@ -27,8 +28,6 @@ namespace GameControllerForZwift.UITests
             // Maximizing the window helps bring it to the foreground more effectively than user32 SetForegroundWindow
             AppSession.Manage().Window.Maximize();
             AppSession.Manage().Window.Size = new System.Drawing.Size(1600, 800);
-
-            AppSession.GetScreenshot().SaveAsFile(@"..\..\..\..\..\screenshot.png");
         }
 
         private string GetApplicationPath()
