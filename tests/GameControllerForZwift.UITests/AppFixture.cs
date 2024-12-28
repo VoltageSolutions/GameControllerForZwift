@@ -28,6 +28,8 @@ namespace GameControllerForZwift.UITests
             // Maximizing the window helps bring it to the foreground more effectively than user32 SetForegroundWindow
             AppSession.Manage().Window.Maximize();
             AppSession.Manage().Window.Size = new System.Drawing.Size(1600, 800);
+
+            AppSession.GetScreenshot().SaveAsFile("screenshot.png");
         }
 
         private string GetApplicationPath()

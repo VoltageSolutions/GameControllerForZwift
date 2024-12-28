@@ -31,13 +31,16 @@ jobs:
       run: |
         npm install -g appium
         appium driver install --source=npm appium-windows-driver
+
     - name: Download WinAppDriver
       run: |
         Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile WinAppDriver.msi
         Start-Process msiexec.exe -ArgumentList '/i WinAppDriver.msi /quiet /norestart' -Wait
+
     - name: Set runner resolution to modern device size
       run: |
         Set-DisplayResolution -Width 1920 -Height 1080 -Force
+
     # - name: Start WinAppDriver
     #   run: |
     #     Start-Process -NoNewWindow -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
@@ -45,6 +48,7 @@ jobs:
       shell: bash  
       run: |
         appium --allow-cors &
+
     # Prepare for .NET project
     - name: Restore dependencies
       run: dotnet restore
@@ -59,15 +63,29 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage" --results-directory:TestResults
+      run: |
+        $projects = Get-ChildItem -Recurse -Filter *Tests.csproj
+        foreach ($project in $projects) {
+        $projectName = $project.BaseName
+        dotnet test $project.FullName --configuration Release --no-build --verbosity normal `
+          --logger "trx;LogFileName=TestResults_$projectName.trx" `
+          --collect:"XPlat Code Coverage" `
+          --results-directory "TestResults/$projectName"
+        }
       continue-on-error: true
+
+    - name: "Debug: Upload screenshots"
+      uses: actions/upload-artifact@v3
+      with:
+        name: screenshots
+        path: ./screenshot.png
 
     - name: Report Test Results
       uses: dorny/test-reporter@v1
       continue-on-error: true
       with:
         name: Test Results
-        path: "**/TestResults.trx"
+        path: "**/TestResults/**/*.trx"
         reporter: dotnet-trx
         fail-on-error: 'true'
 
@@ -75,7 +93,8 @@ jobs:
       run: dotnet tool install --global dotnet-reportgenerator-globaltool
 
     - name: Generate Coverage Report
-      run: reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:TestResults/CoverageReport -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+      run: |
+        reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"TestResults/CoverageReport" -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
     - name: Upload coverage to CodeCov
       uses: codecov/codecov-action@v5
@@ -94,6 +113,7 @@ jobs:
       run: |
         $version = (Select-String -Path src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -Pattern '<Version>(.*?)</Version>').Matches.Groups[1].Value
         echo "version=$version" >> $env:GITHUB_OUTPUT
+
     - name: Check if tag for version exists (only for main)
       if: github.event.pull_request.base.ref == 'main'
       id: check_tag
@@ -108,6 +128,7 @@ jobs:
           Write-Host "Tag does not exist. $version is a new app version."
           echo "tag_exists=false" >> $env:GITHUB_ENV
         }
+
     - name: Report Check as Status
       if: github.event.pull_request.base.ref == 'main'
       uses: actions/github-script@v6
@@ -122,6 +143,7 @@ jobs:
           const message = tagExists
             ? `There is already a tag and Release for version \`v${{ steps.get_version.outputs.version }}\`. Please update the version number in the application project file.`
             : `Merging to \`main\` will create a new tag and release for version \`v${{ steps.get_version.outputs.version }}\`.`;
+
           await github.rest.checks.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
