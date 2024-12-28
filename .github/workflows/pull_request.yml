@@ -61,32 +61,15 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests
-      run: |
-        $projects = Get-ChildItem -Recurse -Filter *Tests.csproj
-        foreach ($project in $projects) {
-        $projectName = $project.BaseName
-        dotnet test $project.FullName --configuration Release --no-build --verbosity normal `
-          --logger "trx;LogFileName=TestResults_$projectName.trx" `
-          --collect:"XPlat Code Coverage" `
-          --results-directory "TestResults/$projectName"
-        }
+      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx;append=true" --collect:"XPlat Code Coverage" --results-directory:TestResults
       continue-on-error: true
-
-    - name: Add delay to debug flakiness
-      run: Start-Sleep -Seconds 2
-
-    # - name: "Debug: Upload screenshots"
-    #   uses: actions/upload-artifact@v3
-    #   with:
-    #     name: screenshots
-    #     path: ./screenshot.png
 
     - name: Report Test Results
       uses: dorny/test-reporter@v1
       continue-on-error: true
       with:
         name: Test Results
-        path: "**/TestResults/**/*.trx"
+        path: "**/TestResults.trx"
         reporter: dotnet-trx
         fail-on-error: 'true'
 
