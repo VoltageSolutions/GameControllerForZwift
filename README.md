@@ -12,16 +12,18 @@
 <p align="center">
   <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/merge.yml"><img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/VoltageSolutions/GameControllerForZwift/merge.yml"></a>
   &nbsp;
- <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases">
+  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases">
     <img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"/>
   </a>
   &nbsp;
-  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img title="Docs" src="https://img.shields.io/github/actions/workflow/status/VoltageSolutions/GameControllerForZwift/publish_docs.yml"/></a>
+  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img title="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/publish_docs.yml/badge.svg"/></a>
 </p>
 
 ## Introduction
 
 This project enables using standard video game controllers to interact with Zwift. The long-term goal is to replicate the flexibility and functionality of Zwift-compatible controllers like the [Zwift Play Controllers](https://us.zwift.com/products/zwift-play?variant=43737779896576) or the [Wahoo Kickr Bike Shift](https://www.wahoofitness.com/devices/indoor-cycling/smart-bikes/kickr-bike-shift-buy). You can use controllers like Nintendo Switch Joy-Cons, Xbox Controllers, and other popular game controllers you already own.
+
+Game Controller for Zwift typically only lets you use one controller at a time, will interpret a pair of connected Joy-Cons as a single controller.
 
 <p align="center">
   <a href="https://www.youtube.com/watch?v=mYImJKFE6OI">

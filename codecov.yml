@@ -14,9 +14,7 @@ coverage:
     - "**/Generated/*"
     - "**/Migrations/*"
 
-comment:
-  # Disable PR comments
-  behavior: off
+comment: false
 
 # flags:
 #   application_tests:
