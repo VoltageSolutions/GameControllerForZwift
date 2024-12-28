@@ -64,7 +64,7 @@ jobs:
 
     - name: Run tests
       run: |
-        $projects = Get-ChildItem -Recurse -Filter *.csproj
+        $projects = Get-ChildItem -Recurse -Filter *Tests.csproj
         foreach ($project in $projects) {
         $projectName = $project.BaseName
         dotnet test $project.FullName --configuration Release --no-build --verbosity normal `
