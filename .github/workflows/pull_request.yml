@@ -21,7 +21,8 @@ jobs:
       with:
         fetch-depth: 0 
 
-    # These steps are required to run Appium tests on Windows
+    # These steps enable running Appium UI tests on Windows.
+    # ---------------------------------------------------------
     - name: Setup Node.js
       uses: actions/setup-node@v3
       with:
@@ -41,15 +42,12 @@ jobs:
       run: |
         Set-DisplayResolution -Width 1920 -Height 1080 -Force
 
-    # - name: Start WinAppDriver
-    #   run: |
-    #     Start-Process -NoNewWindow -FilePath "C:\Program Files (x86)\Windows Application Driver\WinAppDriver.exe"
     - name: Start Appium Server
       shell: bash  
       run: |
         appium --allow-cors &
+    # ---------------------------------------------------------
 
-    # Prepare for .NET project
     - name: Restore dependencies
       run: dotnet restore
 
@@ -73,12 +71,6 @@ jobs:
           --results-directory "TestResults/$projectName"
         }
       continue-on-error: true
-
-    - name: "Debug: Upload screenshots"
-      uses: actions/upload-artifact@v3
-      with:
-        name: screenshots
-        path: ./screenshot.png
 
     - name: Report Test Results
       uses: dorny/test-reporter@v1
