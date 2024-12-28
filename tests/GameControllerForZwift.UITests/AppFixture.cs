@@ -20,7 +20,6 @@ namespace GameControllerForZwift.UITests
                 DeviceName = "WindowsPC",
                 PlatformName = "Windows"
             };
-            appCapabilities.AddAdditionalAppiumOption("ms:waitForAppLaunch", 3);
             System.Console.WriteLine("Starting GameControllerForZwift.exe to run tests against.");
             AppSession = new WindowsDriver(new Uri(WindowsApplicationDriverUrl), appCapabilities);
 

@@ -61,7 +61,7 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx;append=true" --collect:"XPlat Code Coverage" --results-directory:TestResults
+      run: dotnet test --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=TestResults.trx" --collect:"XPlat Code Coverage"
       continue-on-error: true
 
     - name: Report Test Results
@@ -78,12 +78,12 @@ jobs:
 
     - name: Generate Coverage Report
       run: |
-        reportgenerator -reports:"TestResults/**/coverage.cobertura.xml" -targetdir:"TestResults/CoverageReport" -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
+        reportgenerator -reports:"tests/**/coverage.cobertura.xml" -targetdir:"TestResults/CoverageReport" -reporttypes:"HtmlInline_AzurePipelines;Cobertura"
 
     - name: Upload coverage to CodeCov
       uses: codecov/codecov-action@v5
       with:
-        files: ${{ github.workspace }}\TestResults\CoverageReport\Cobertura.xml
+        files: TestResults/CoverageReport/Cobertura.xml
         fail_ci_if_error: false
         token: ${{ secrets.CODECOV_TOKEN }}
 
