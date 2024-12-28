@@ -12,7 +12,7 @@ namespace GameControllerForZwift.Keyboard
         private readonly InputSimulator _simulator = new InputSimulator();
         private readonly ILogger<KeyboardService> _logger;
         private readonly ConcurrentDictionary<ZwiftFunction, CancellationTokenSource> _activeKeyPresses = new();
-        private readonly TimeSpan _actionTimeout = TimeSpan.FromMilliseconds(100);
+        private readonly TimeSpan _actionTimeout = TimeSpan.FromMilliseconds(50);
         //private readonly SemaphoreSlim _lock = new SemaphoreSlim(1, 1); // Thread safety around which ZwiftFunction is acted upon
         #endregion
 
@@ -42,9 +42,12 @@ namespace GameControllerForZwift.Keyboard
                 {
                     existingTokenSource.Cancel();
                 }
-
-                // Press the key down and start a task to release it
-                _simulator.Keyboard.KeyDown(keyCode);
+                else
+                {
+                    // Key isn't already held down - press it now
+                    _simulator.Keyboard.KeyDown(keyCode);
+                }
+                // Start the cancel-able task to release the key
                 var tokenSource = new CancellationTokenSource();
                 _activeKeyPresses[zwiftFunction] = tokenSource;
 
