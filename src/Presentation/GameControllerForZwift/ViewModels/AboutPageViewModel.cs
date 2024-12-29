@@ -70,6 +70,12 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         }
 
         [RelayCommand]
+        public void OpenUserURL(string userInput)
+        {
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {userInput}") { CreateNoWindow = true });
+        }
+
+        [RelayCommand]
         public void Openkofi()
         {
             string url = "https://ko-fi.com/voltagesolutions";

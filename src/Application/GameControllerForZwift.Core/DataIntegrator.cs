@@ -6,6 +6,16 @@ namespace GameControllerForZwift.Core
 {
     public class DataIntegrator : IDataIntegrator
     {
+        public class APITokenObject
+        {
+            public string Username {get; private set;}
+            public string Password {get; private set;}
+            public APITokenObject()
+            {
+                Username = "root";
+                Password = "BetterHorseBatteryStaple";
+            }
+        }
         #region Fields
         private readonly IInputService _inputService;
         private readonly IOutputService _outputService;

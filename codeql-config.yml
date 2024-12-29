@@ -1,0 +1,39 @@
+version: 2
+
+queries:
+  # Core Security Issues
+  - uses: codeql/csharp/ql/src/Security/CWE-119/ 
+  - uses: codeql/csharp/ql/src/Security/CWE-20/ 
+  - uses: codeql/csharp/ql/src/Security/CWE-306/ 
+  - uses: codeql/csharp/ql/src/Security/CWE-476/ # Null Pointer Dereference
+  - uses: codeql/csharp/ql/src/Security/CWE-78/ # OS Command Injection
+  - uses: codeql/csharp/ql/src/Security/CWE-665/ # Improper Restriction of Operations within the Bounds of a Memory Buffer
+  - uses: codeql/csharp/ql/src/Security/CWE-125/ # Out-of-bounds Read
+  - uses: codeql/csharp/ql/src/Security/CWE-190/ # Integer Overflow or Wraparound
+  - uses: codeql/csharp/ql/src/Security/CWE-79/ # Cross-Site Scripting (if applicable)
+
+  # Input Handling and Validation
+  - uses: codeql/csharp/ql/src/Security/CWE-200/ # Information Exposure
+  - uses: codeql/csharp/ql/src/Security/CWE-789/ # Improper Limitation of a Resource to a Bound or Range
+  - uses: codeql/csharp/ql/src/Security/CWE-284/ # Improper Access Control (relevant for hardware input handling)
+
+  # Threading and Concurrency Issues
+  - uses: codeql/csharp/ql/src/Security/CWE-362/ # Race Condition 
+  - uses: codeql/csharp/ql/src/Security/CWE-666/ # Incorrect or Missing Synchronization
+  - uses: codeql/csharp/ql/src/Security/CWE-835/ # Improper Synchronization
+
+  # Web Browser Interaction
+  - uses: codeql/csharp/ql/src/Security/CWE-94/ # Code Injection
+  - uses: codeql/csharp/ql/src/Security/CWE-601/ # Binary Format/Encoding Errors
+
+  # General Security
+  - uses: codeql/csharp/ql/src/Security/CWE-787/ # Authentication/Session Management
+  - uses: codeql/csharp/ql/src/Security/CWE-252/ # Cross-Site Request Forgery (CSRF) 
+
+  # External Library Usage
+  - uses: codeql/csharp/ql/src/Security/CWE-399/ # Use of Hardcoded Cryptographic Keys (if applicable)
+  - uses: codeql/csharp/ql/src/Security/CWE-601/ # Binary Format/Encoding Errors (if using external libraries for data exchange)
+
+  # XAML-Specific Considerations
+  - uses: codeql/csharp/ql/src/Security/CWE-611/ # Improper Restriction of Operations within the Bounds of a Memory Buffer (XAML parsing) 
+  - uses: codeql/csharp/ql/src/Security/CWE-690/ # Validation of External Input (XAML data binding)
