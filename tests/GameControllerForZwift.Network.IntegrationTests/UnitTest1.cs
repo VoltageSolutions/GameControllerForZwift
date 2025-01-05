@@ -49,7 +49,7 @@ namespace GameControllerForZwift.Network.IntegrationTests
 
                 foreach (var question in e.Message.Questions)
                 {
-                    if ((question.Name == "_wahoo-fitness-tnp._tcp.local") && (question.Type == DnsType.PTR) && e.RemoteEndPoint.Address.ToString() == "10.0.12.61")
+                    if ((question.Name == "_wahoo-fitness-tnp._tcp.local") && (question.Type == DnsType.PTR))
                     {
                         System.Diagnostics.Debug.WriteLine($"Received query from {e.RemoteEndPoint.Address}")
                         ;
