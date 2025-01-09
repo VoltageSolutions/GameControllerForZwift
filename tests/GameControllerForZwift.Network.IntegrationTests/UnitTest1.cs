@@ -170,8 +170,8 @@ namespace GameControllerForZwift.Network.IntegrationTests
                         //});
                         response.Answers.Add(new PTRRecord
                         {
-                            Name = "_wahoo-fitness-tnp._tcp.local.",
-                            DomainName = "Victory._wahoo-fitness-tnp._tcp.local.",
+                            Name = "_wahoo-fitness-tnp._tcp.local",
+                            DomainName = "Victory._wahoo-fitness-tnp._tcp.local",
                             Class = DnsClass.IN,
                             Type = DnsType.PTR,
                             TTL = TimeSpan.FromSeconds(3600)
@@ -180,7 +180,7 @@ namespace GameControllerForZwift.Network.IntegrationTests
 
                         response.Answers.Add(new SRVRecord
                         {
-                            Name = "Victory._wahoo-fitness-tnp._tcp.local.",
+                            Name = "Victory._wahoo-fitness-tnp._tcp.",
                             Target = "victoryH.local.",
                             Port = 36866,
                             Priority = 0,
@@ -198,7 +198,7 @@ namespace GameControllerForZwift.Network.IntegrationTests
 
                         response.Answers.Add(new TXTRecord
                         {
-                            Name = "Victory._wahoo-fitness-tnp._tcp.local.",
+                            Name = "Victory._wahoo-fitness-tnp._tcp.local",
                             Type = DnsType.TXT,
                             Class = DnsClass.IN,
                             Strings = new List<string>
