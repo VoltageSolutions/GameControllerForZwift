@@ -142,32 +142,15 @@ namespace GameControllerForZwift.Network.IntegrationTests
             // Setup Event handlers for when the service is running.
             _mDNSServiceJetBlack.QueryReceived += (s, e) =>
             {
-                //System.Diagnostics.Debug.WriteLine($"Query Received from Endpoint: {e.RemoteEndPoint.Address}");
-                //var names = e.Message.Questions
-                //    .Select(q => q.Name + " " + q.Type);
-
-                //System.Diagnostics.Debug.WriteLine("Queries received:");
-                //foreach (var name in names)
-                //    System.Diagnostics.Debug.WriteLine(name);
-
                 foreach (var question in e.Message.Questions)
                 {
                     if ((question.Name == "_wahoo-fitness-tnp._tcp.local") && (question.Type == DnsType.PTR))
                     {
-                        //System.Diagnostics.Debug.WriteLine($"Received query from {e.RemoteEndPoint.Address}");
                         _zwiftIPAddress = e.RemoteEndPoint.Address;
                         _zwiftPort = e.RemoteEndPoint.Port;
 
                         // Answer in this order
                         var response = new Message();
-                        //response.Answers.Add(new PTRRecord
-                        //{
-                        //    Name = "_services._dns-sd._udp.local",
-                        //    DomainName = "_wahoo-fitness-tnp._tcp.local",
-                        //    Class = DnsClass.IN,
-                        //    Type = DnsType.PTR,
-                        //    TTL = TimeSpan.FromSeconds(3600)
-                        //});
                         response.Answers.Add(new PTRRecord
                         {
                             Name = "_wahoo-fitness-tnp._tcp.local",
@@ -221,47 +204,16 @@ namespace GameControllerForZwift.Network.IntegrationTests
                         
 
                         _mDNSServiceJetBlack.SendAnswer(response);
-                        //System.Diagnostics.Debug.WriteLine($"Responded to query from {e.RemoteEndPoint.Address}");
                     }
                 }
             };
-            _mDNSServiceJetBlack.AnswerReceived += (s, e) =>
-            {
-                //System.Diagnostics.Debug.WriteLine($"Answer Received from Endpoint: {e.RemoteEndPoint.Address}");
-                //var names = e.Message.Answers
-                //    .Select(q => q.Name + " " + q.Type)
-                //    .Distinct();
-
-                //System.Diagnostics.Debug.WriteLine("Answers received:");
-                //foreach (var name in names)
-                //    System.Diagnostics.Debug.WriteLine(name);
-            };
+            //_mDNSServiceJetBlack.AnswerReceived += (s, e) =>
+            //{
+            //};
 
 
             var serviceDiscovery = new ServiceDiscovery(_mDNSServiceJetBlack);
             _mDNSServiceJetBlack.Start();
-
-            //var requests = new Message();
-            //requests.Questions.Add(new Question
-            //{
-            //    Name = "Victory._wahoo-fitness-tnp._tcp.local",
-            //    Type = DnsType.ANY,
-            //    Class = DnsClass.IN
-            //});
-            //requests.Questions.Add(new Question
-            //{
-            //    Name = "victoryH.local.",
-            //    Type = DnsType.ANY,
-            //    Class = DnsClass.IN
-            //});
-            //requests.Questions.Add(new Question
-            //{
-            //    Name = "victory.local.",
-            //    Type = DnsType.ANY,
-            //    Class = DnsClass.IN
-            //});
-            ////_mDNSServiceJetBlack.SendQuery(requests);
-            //_mDNSServiceJetBlack.SendQuery("Victory._wahoo-fitness-tnp._tcp.local", DnsClass.IN, DnsType.ANY);
 
             var victoryServiceProfile = new ServiceProfile("Victory", "_wahoo-fitness-tnp._tcp.local", 36866);
 
