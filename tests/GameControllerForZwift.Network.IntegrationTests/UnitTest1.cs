@@ -1,6 +1,9 @@
 ﻿using Castle.Components.DictionaryAdapter.Xml;
+using InTheHand.Bluetooth;
 using Makaretu.Dns;
 using System.Net;
+using System.Net.Sockets;
+using System.Text;
 
 namespace GameControllerForZwift.Network.IntegrationTests
 {
@@ -12,15 +15,16 @@ namespace GameControllerForZwift.Network.IntegrationTests
         private int? _zwiftPort;
 
         [Fact]
-        public void Test1()
+        public async Task Test1()
         {
             //RunWahooKICKRmDNS();
             RunJetBlackVictorymDNS();
 
-
             Thread.Sleep(5000);
             System.Diagnostics.Debug.WriteLine($"Zwift IP Address: {_zwiftIPAddress}");
             System.Diagnostics.Debug.WriteLine($"Zwift Port: {_zwiftPort}");
+
+            await WaitForRideOnMessage();
 
             /*
             var client = new TcpClient();
@@ -222,6 +226,87 @@ namespace GameControllerForZwift.Network.IntegrationTests
             {
                 serviceDiscovery.Advertise(victoryServiceProfile);
                 serviceDiscovery.Announce(victoryServiceProfile);
+            }
+        }
+
+        private async Task WaitForRideOnMessage()
+        {
+            Console.WriteLine("Waiting for RideOn handshake...");
+
+            // Set up a TCP listener to wait for a connection
+            var listener = new TcpListener(IPAddress.Any, 36866);
+            listener.Start();
+
+            try
+            {
+                using var client = await listener.AcceptTcpClientAsync();
+                System.Diagnostics.Debug.WriteLine("Connection accepted.");
+
+                using var stream = client.GetStream();
+                byte[] buffer = new byte[1024];
+                int bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length);
+
+                string receivedMessage = Encoding.ASCII.GetString(buffer, 0, bytesRead);
+                System.Diagnostics.Debug.WriteLine($"Received message: {receivedMessage}");
+
+                if (receivedMessage == "RideOn")
+                {
+                    //rideOnReceived = true;
+
+                    // Extract host IP address
+                    //_zwiftIPAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                    System.Diagnostics.Debug.WriteLine($"Handshake complete. Host IP: {_zwiftIPAddress}");
+
+                    // Send acknowledgment
+                    byte[] ack = Encoding.ASCII.GetBytes("RideOn");
+                    await stream.WriteAsync(ack, 0, ack.Length);
+                    System.Diagnostics.Debug.WriteLine("Acknowledgment sent.");
+                }
+            }
+            finally
+            {
+                listener.Stop();
+            }
+        }
+
+        private async Task StartTcpTransmission()
+        {
+            if (null == _zwiftIPAddress)
+            {
+                Console.WriteLine("No host IP address available. Exiting...");
+                return;
+            }
+
+            Console.WriteLine($"Starting TCP transmission to {_zwiftIPAddress}...");
+
+            var client = new TcpClient();
+
+            try
+            {
+                await client.ConnectAsync(_zwiftIPAddress, _zwiftPort.Value);
+
+                using var stream = client.GetStream();
+                int counter = 0;
+
+                while (true)
+                {
+                    // Generate and send sample data
+                    string message = $"Data packet {counter++}";
+                    byte[] data = Encoding.ASCII.GetBytes(message);
+                    await stream.WriteAsync(data, 0, data.Length);
+                    Console.WriteLine($"Sent: {message}");
+
+                    await Task.Delay(1000); // Send data every second
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error during TCP transmission: {ex.Message}");
+            }
+            finally
+            {
+                client.Close();
+                Console.WriteLine("TCP transmission stopped.");
             }
         }
     }

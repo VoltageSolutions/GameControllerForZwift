@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.37" />
+    <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.1.44" />
     <PackageReference Include="Makaretu.Dns" Version="2.0.1" />
     <PackageReference Include="Makaretu.Dns.Multicast.New" Version="0.38.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
