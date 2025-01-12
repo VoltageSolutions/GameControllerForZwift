@@ -18,7 +18,7 @@ namespace GameControllerForZwift.Network.IntegrationTests
         public async Task Test1()
         {
             //RunWahooKICKRmDNS();
-            RunJetBlackVictorymDNS();
+            RunJetBlackVoltagemDNS();
 
             Thread.Sleep(5000);
             System.Diagnostics.Debug.WriteLine($"Zwift IP Address: {_zwiftIPAddress}");
@@ -139,7 +139,7 @@ namespace GameControllerForZwift.Network.IntegrationTests
             }
         }
 
-        private void RunJetBlackVictorymDNS()
+        private void RunJetBlackVoltagemDNS()
         {
             _mDNSServiceJetBlack = new MulticastService();
 
@@ -158,7 +158,7 @@ namespace GameControllerForZwift.Network.IntegrationTests
                         response.Answers.Add(new PTRRecord
                         {
                             Name = "_wahoo-fitness-tnp._tcp.local",
-                            DomainName = "Victory._wahoo-fitness-tnp._tcp.local",
+                            DomainName = "Voltage GCFZ._wahoo-fitness-tnp._tcp.local",
                             Class = DnsClass.IN,
                             Type = DnsType.PTR,
                             TTL = TimeSpan.FromSeconds(3600)
@@ -167,8 +167,8 @@ namespace GameControllerForZwift.Network.IntegrationTests
 
                         response.Answers.Add(new SRVRecord
                         {
-                            Name = "Victory._wahoo-fitness-tnp._tcp.",
-                            Target = "victoryH.local.",
+                            Name = "Voltage GCFZ._wahoo-fitness-tnp._tcp.",
+                            Target = "Voltage GCFZH.local.",
                             Port = 36866,
                             Priority = 0,
                             Weight = 0,
@@ -177,7 +177,7 @@ namespace GameControllerForZwift.Network.IntegrationTests
 
                         response.Answers.Add(new ARecord
                         {
-                            Name = "victoryH.local",
+                            Name = "Voltage GCFZH.local",
                             Address = e.RemoteEndPoint.Address,
                             Class = DnsClass.IN,
                             TTL = TimeSpan.FromSeconds(3600),
@@ -185,7 +185,7 @@ namespace GameControllerForZwift.Network.IntegrationTests
 
                         response.Answers.Add(new TXTRecord
                         {
-                            Name = "Victory._wahoo-fitness-tnp._tcp.local",
+                            Name = "Voltage GCFZ._wahoo-fitness-tnp._tcp.local",
                             Type = DnsType.TXT,
                             Class = DnsClass.IN,
                             Strings = new List<string>
@@ -219,13 +219,13 @@ namespace GameControllerForZwift.Network.IntegrationTests
             var serviceDiscovery = new ServiceDiscovery(_mDNSServiceJetBlack);
             _mDNSServiceJetBlack.Start();
 
-            var victoryServiceProfile = new ServiceProfile("Victory", "_wahoo-fitness-tnp._tcp.local", 36866);
+            var voltageServiceProfile = new ServiceProfile("Voltage GCFZ", "_wahoo-fitness-tnp._tcp.local", 36866);
 
             // Make sure this service is unique / doesn't already exist on the netowrk
-            if (!serviceDiscovery.Probe(victoryServiceProfile))
+            if (!serviceDiscovery.Probe(voltageServiceProfile))
             {
-                serviceDiscovery.Advertise(victoryServiceProfile);
-                serviceDiscovery.Announce(victoryServiceProfile);
+                serviceDiscovery.Advertise(voltageServiceProfile);
+                serviceDiscovery.Announce(voltageServiceProfile);
             }
         }
 
