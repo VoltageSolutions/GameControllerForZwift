@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.33.1" />
     <PackageReference Include="InTheHand.BluetoothLE" Version="4.0.37" />
     <PackageReference Include="InTheHand.Net.Bluetooth" Version="4.1.44" />
     <PackageReference Include="Makaretu.Dns" Version="2.0.1" />
