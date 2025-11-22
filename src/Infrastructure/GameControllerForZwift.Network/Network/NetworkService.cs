@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
 namespace GameControllerForZwift.Network
@@ -15,7 +16,8 @@ namespace GameControllerForZwift.Network
         private readonly ConcurrentDictionary<ZwiftFunction, CancellationTokenSource> _activeKeyPresses = new();
         private readonly TimeSpan _actionTimeout = TimeSpan.FromMilliseconds(50);
         //private readonly string _controllerName = "Voltage Controller";
-        private readonly string _controllerName = "KICKR BIKE SHIFT B84D";
+        //private readonly string _controllerName = "KICKR BIKE SHIFT B84D";
+        private readonly string _controllerName = "KICKR BIKE Voltage";
 
         // MDNS Fields
         private MulticastService? _mDNSControllerService;
@@ -30,8 +32,8 @@ namespace GameControllerForZwift.Network
 
         // TCP Fields
         private readonly TcpListener _listener;
-        private TcpClient _currentClient;
-        private NetworkStream _currentStream;
+        private TcpClient? _currentClient;
+        private NetworkStream? _currentStream;
 
 
         // Zwift Communication
@@ -106,6 +108,9 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
         }
 
         #endregion
+
+        // todo - dispose pattern to stop listener and mdns service
+        //_mDNSServiceWahoo?.Stop();
 
         #region Methods
         public async Task<ActionResult> PerformActionAsync(ZwiftFunction zwiftFunction, ZwiftPlayerView playerView, ZwiftRiderAction riderAction)
@@ -236,10 +241,12 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                         response.Answers.Add(new PTRRecord
                         {
                             Name = _hostDomain,
+                            // Connecting to Zwift seems to only work when this has the correct KICKR name.
                             DomainName = string.Concat(_controllerName, ".", _hostDomain),
                             Class = DnsClass.IN,
                             Type = DnsType.PTR,
-                            TTL = TimeSpan.FromSeconds(4500)
+                            //TTL = TimeSpan.FromSeconds(4500)
+                            TTL = TimeSpan.FromSeconds(60)
                         });
 
                         response.Answers.Add(new SRVRecord
@@ -249,7 +256,8 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                             Port = _port,
                             Priority = 0,
                             Weight = 0,
-                            TTL = TimeSpan.FromSeconds(4500),
+                            //TTL = TimeSpan.FromSeconds(4500)
+                            TTL = TimeSpan.FromSeconds(60)
                         });
 
                         response.Answers.Add(new ARecord
@@ -257,7 +265,8 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                             Name = string.Concat(_controllerName, ".local."),
                             Address = e.RemoteEndPoint.Address,
                             Class = DnsClass.IN,
-                            TTL = TimeSpan.FromSeconds(3600),
+                            //TTL = TimeSpan.FromSeconds(3600)
+                            TTL = TimeSpan.FromSeconds(60)
                         });
 
                         response.Answers.Add(new TXTRecord
@@ -271,8 +280,22 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                                 _macAddress,
                                 _serialNumber
                             },
-                            TTL = TimeSpan.FromSeconds(3600)
+                            //TTL = TimeSpan.FromSeconds(3600)
+                            TTL = TimeSpan.FromSeconds(60)
                         });
+
+                        // Ensure the cache-flush flag is set on each answer record
+                        foreach (var rr in response.Answers)
+                        {
+                            // Makaretu.Dns 2.0.1 does not expose CacheFlush/FlushCache properties
+                            // on records. mDNS indicates cache-flush by setting the top bit
+                            // (0x8000) in the CLASS field. As a fallback, set that bit on the
+                            // record's Class property when possible.
+                            if (rr is ResourceRecord baseRecord)
+                            {
+                                baseRecord.Class = (DnsClass)(((ushort)baseRecord.Class) | 0x8000);
+                            }
+                        }
 
                         _mDNSControllerService.SendAnswer(response);
                         _logger.LogDebug($"Responded to query from {e.RemoteEndPoint.Address}");
@@ -345,7 +368,7 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                         // remove processed bytes
                         buffer.RemoveRange(0, 6 + length);
 
-                        System.Diagnostics.Debug.WriteLine($"Parsed message: ID={msgId} seq={seqNum} len={length} body={ToHex(body)}");
+                        //System.Diagnostics.Debug.WriteLine($"Parsed message: ID={msgId} seq={seqNum} len={length} body={ToHex(body)}");
                         await HandleMessageAsync(client, stream, msgVersion, msgId, seqNum, respCode, body);
                     }
                 }
@@ -375,6 +398,7 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                         // Body expected to be 16-byte UUID or something; Dart simply returned the service UUID bytes
                         var bodyResponse = HexToBytes(ZwiftServiceUuidNoDash); // raw UUID bytes
                         var header = BuildHeader(msgVersion, DC_RC_REQUEST_COMPLETED_SUCCESSFULLY, seqNum, (ushort)bodyResponse.Length, DC_MESSAGE_DISCOVER_SERVICES);
+                        System.Diagnostics.Debug.WriteLine("Responding with Zwift Service UUID.");
                         await WriteAsync(stream, header.Concat(bodyResponse).ToArray());
                         break;
                     }
@@ -403,6 +427,7 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                             responseBody.Add((byte)PropertyValue(new[] { "notify" }));
 
                             var header = BuildHeader(msgVersion, DC_RC_REQUEST_COMPLETED_SUCCESSFULLY, seqNum, (ushort)responseBody.Count, DC_MESSAGE_DISCOVER_CHARACTERISTICS);
+                            System.Diagnostics.Debug.WriteLine("Responding with RX, Async, and TX characteristics.");
                             await WriteAsync(stream, header.Concat(responseBody).ToArray());
                         }
                         break;
@@ -413,6 +438,7 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                         // echo characteristic raw uuid as body (Dart behavior)
                         var rawUuid = body.Take(16).ToArray();
                         var header = BuildHeader(msgVersion, DC_RC_REQUEST_COMPLETED_SUCCESSFULLY, seqNum, (ushort)rawUuid.Length, DC_MESSAGE_READ_CHARACTERISTIC);
+                        System.Diagnostics.Debug.WriteLine("Responding that the read request was successful.");
                         await WriteAsync(stream, header.Concat(rawUuid).ToArray());
                         break;
                     }
@@ -424,20 +450,23 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                         var rawData = body.Skip(16).ToArray();
                         var characteristicUuid = ToUuidString(rawUuid);
 
-                        System.Diagnostics.Debug.WriteLine($"Write Characteristic {characteristicUuid}, data={ToHex(rawData)}");
+                        System.Diagnostics.Debug.WriteLine($"Data={ToHex(rawData)}");
 
                         // Respond with success & rawUuid as body (Dart)
                         var headerResp = BuildHeader(msgVersion, DC_RC_REQUEST_COMPLETED_SUCCESSFULLY, seqNum, (ushort)rawUuid.Length, DC_MESSAGE_WRITE_CHARACTERISTIC);
+                        System.Diagnostics.Debug.WriteLine("Responding that the request was successful.");
                         await WriteAsync(stream, headerResp.Concat(rawUuid).ToArray());
 
                         // If this is a write to SYNC RX, check handshake
                         var syncRx = ServiceUuidWithDashes(ZwiftSyncRxCharacteristicUuidNoDash);
                         if (characteristicUuid.Equals(syncRx, StringComparison.OrdinalIgnoreCase))
                         {
+                            System.Diagnostics.Debug.WriteLine("This was a write to the Receive characteristic.");
+
                             // compare with expected handshake
                             if (rawData.SequenceEqual(RideOnHandshake) || rawData.Take(RideOn.Length).SequenceEqual(RideOn))
                             {
-                                System.Diagnostics.Debug.WriteLine("Got RIDE ON command!");
+                                System.Diagnostics.Debug.WriteLine("Got the RideOn command!");
                                 // send a CHARACTERISTIC_NOTIFICATION for SYNC TX with payload RideOn (matching Dart)
                                 var seq = (byte)((lastMessageId + 1) & 0xFF);
                                 lastMessageId = seq;
@@ -453,6 +482,7 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                                 header[3] = DC_RC_REQUEST_COMPLETED_SUCCESSFULLY;
                                 BinaryPrimitives.WriteUInt16BigEndian(header.AsSpan(4, 2), (ushort)responseBody.Count);
 
+                                System.Diagnostics.Debug.WriteLine("Responding that we understood the RideOn!");
                                 await WriteAsync(stream, header.Concat(responseBody).ToArray());
                             }
                         }
@@ -463,8 +493,10 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                         System.Diagnostics.Debug.WriteLine("Zwift message: Enable characteristic notifications.");
                         var rawUuid = body.Take(16).ToArray();
                         var enabled = body.Skip(16).FirstOrDefault();
-                        System.Diagnostics.Debug.WriteLine($"Enable notifications for {ToUuidString(rawUuid)} enabled={enabled}");
+                        //System.Diagnostics.Debug.WriteLine($"Enable notifications for {ToUuidString(rawUuid)} enabled={enabled}");
                         var header = BuildHeader(msgVersion, DC_RC_REQUEST_COMPLETED_SUCCESSFULLY, seqNum, (ushort)rawUuid.Length, DC_MESSAGE_ENABLE_CHARACTERISTIC_NOTIFICATIONS);
+
+                        System.Diagnostics.Debug.WriteLine("Responding that the enable-notification request was successful.");
                         await WriteAsync(stream, header.Concat(rawUuid).ToArray());
                         break;
                     }
@@ -581,7 +613,7 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
             {
                 await stream.WriteAsync(data, 0, data.Length).ConfigureAwait(false);
                 await stream.FlushAsync().ConfigureAwait(false);
-                System.Diagnostics.Debug.WriteLine($"Sent response: {ToHex(data)}");
+                //System.Diagnostics.Debug.WriteLine($"Sent response: {ToHex(data)}");
             }
             catch (Exception ex)
             {
