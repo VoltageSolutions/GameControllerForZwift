@@ -68,6 +68,15 @@ Post to the [Issues page](https://github.com/VoltageSolutions/GameControllerForZ
 
 This project follows a modified version of Git Flow where `main` always represents the latest version. Submit a PR - if I approve it, I will merge to a version branch for testing prior to merging to `main` and creating a new release.
 
+### Credits
+
+Thank you to the following people whose code or support helped make this possible.
+
+- [Roberto Viola (aka cagnulein)](https://github.com/cagnulein) - [qdomyos-zwift](https://github.com/cagnulein/qdomyos-zwift)
+- [jonasbark](https://github.com/jonasbark) - [SwiftControl](https://github.com/jonasbark/swiftcontrol)
+- [MattW2](https://github.com/MattW2) - provided a [Wireshark capture](https://github.com/MattW2/KickrShiftKey/tree/main/KickrBikeWireShark) of Wahoo KICKR BIKE SHIFT talking to Zwift
+- [Makinolo](https://www.makinolo.com/) - [blog investigating Zwift Play and Ride devices](https://www.makinolo.com/blog/2024/07/26/zwift-ride-protocol/)
+
 ### Donate
 
 Support this project on [ko-fi](https://ko-fi.com/voltagesolutions)!
