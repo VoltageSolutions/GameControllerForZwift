@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using GameControllerForZwift.Core;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace GameControllerForZwift.Network.IntegrationTests
@@ -15,11 +16,17 @@ namespace GameControllerForZwift.Network.IntegrationTests
         }
 
         [Fact]
-        public async Task AdvertiseTest()
+        public async Task PerformActionAsync_PerformsCorrectKeyPress_ForZwiftFunction()
         {
-            Thread.Sleep(200000);
-
-            Assert.True(true);
+            Thread.Sleep(10000);
+            var result = await _networkService.PerformActionAsync(ZwiftFunction.NavigateRight);
+            Thread.Sleep(1000);
+            await _networkService.PerformActionAsync(ZwiftFunction.NavigateLeft);
+            Thread.Sleep(1000);
+            await _networkService.PerformActionAsync(ZwiftFunction.ShowMenu);
+            Thread.Sleep(1000);
+            await _networkService.PerformActionAsync(ZwiftFunction.Uturn);
+            Assert.True(result.Success);
         }
     }
 }
