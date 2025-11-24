@@ -55,6 +55,7 @@
     <ProjectReference Include="..\..\Application\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
     <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Gamepad\GameControllerForZwift.Gamepad.csproj" />
     <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Keyboard\GameControllerForZwift.Keyboard.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Network\GameControllerForZwift.Network.csproj" />
   </ItemGroup>
 
   <ItemGroup>

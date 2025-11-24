@@ -37,6 +37,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Keyb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.UITests", "tests\GameControllerForZwift.UITests\GameControllerForZwift.UITests.csproj", "{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Network", "src\Infrastructure\GameControllerForZwift.Network\GameControllerForZwift.Network.csproj", "{118B4548-5B22-40D6-A4F8-9897C18863F4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Network.IntegrationTests", "tests\GameControllerForZwift.Network.IntegrationTests\GameControllerForZwift.Network.IntegrationTests.csproj", "{19211FF0-8E1F-40DA-8DE0-80B080AF103C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +83,14 @@ Global
 		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94}.Release|Any CPU.Build.0 = Release|Any CPU
+		{118B4548-5B22-40D6-A4F8-9897C18863F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{118B4548-5B22-40D6-A4F8-9897C18863F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{118B4548-5B22-40D6-A4F8-9897C18863F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{118B4548-5B22-40D6-A4F8-9897C18863F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19211FF0-8E1F-40DA-8DE0-80B080AF103C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19211FF0-8E1F-40DA-8DE0-80B080AF103C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19211FF0-8E1F-40DA-8DE0-80B080AF103C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19211FF0-8E1F-40DA-8DE0-80B080AF103C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +111,8 @@ Global
 		{184ECFD4-5FD2-4EA9-8664-963C76B8C2A9} = {F43A297B-8852-46F0-8FEF-EA6B5B83FD20}
 		{F40082C9-C618-41D2-900D-3E4E6BE82080} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
 		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94} = {7CBC7254-F8CE-46A5-B9E3-FB536D38BDAC}
+		{118B4548-5B22-40D6-A4F8-9897C18863F4} = {A4B699F3-1B47-4622-A16B-B87D0980157D}
+		{19211FF0-8E1F-40DA-8DE0-80B080AF103C} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF0E7AD0-FDA6-4F93-B78A-B07984BD96C9}
