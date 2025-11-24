@@ -186,6 +186,10 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                         System.Diagnostics.Debug.WriteLine("Zwift message: Read a characteristic.");
                         // echo characteristic raw uuid as body (Dart behavior)
                         var rawUuid = body.Take(16).ToArray();
+                        var characteristicUuid = ToUuidString(rawUuid);
+
+                        System.Diagnostics.Debug.WriteLine($"Read Request for UUID: {characteristicUuid}");
+
                         var header = BuildHeader(msgVersion, DC_RC_REQUEST_COMPLETED_SUCCESSFULLY, seqNum, (ushort)rawUuid.Length, DC_MESSAGE_READ_CHARACTERISTIC);
                         System.Diagnostics.Debug.WriteLine("Responding that the read request was successful.");
                         await WriteAsync(stream, header.Concat(rawUuid).ToArray());
@@ -232,6 +236,40 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
                                 BinaryPrimitives.WriteUInt16BigEndian(header.AsSpan(4, 2), (ushort)responseBody.Count);
 
                                 System.Diagnostics.Debug.WriteLine("Responding that we understood the RideOn!");
+                                await WriteAsync(stream, header.Concat(responseBody).ToArray());
+                            }
+                            // 3. CRITICAL FIX: Check for "Get Object" Commands (00 08 XX)
+                            // Zwift is sending 00 08 10 (Get Object 16). We must respond with a Notification.
+                            // The response usually mirrors the command ID on the TX characteristic.
+                            else if (rawData.Length >= 3 && rawData[0] == 0x00 && rawData[1] == 0x08)
+                            {
+                                byte objectId = rawData[2]; // e.g., 0x10 (16) or 0x00
+                                System.Diagnostics.Debug.WriteLine($"Received Command: Get Object {objectId}");
+
+                                // Construct a generic response payload: [01, 08, objectId, 00]
+                                // 01 = Response/Success? 
+                                // 08 = Command ID?
+                                // objectId = The ID requested
+                                // 00 = Value (Success/Zero)
+
+                                var responsePayload = new byte[] { 0x01, 0x08, objectId, 0x00 };
+
+                                var seq = (byte)((lastMessageId + 1) & 0xFF);
+                                lastMessageId = seq;
+
+                                var responseBody = new List<byte>();
+                                // Respond on the TX Characteristic
+                                responseBody.AddRange(HexToBytes(ZwiftSyncTxCharacteristicUuidNoDash));
+                                responseBody.AddRange(responsePayload);
+
+                                var header = new byte[6];
+                                header[0] = ProtocolVersion;
+                                header[1] = DC_MESSAGE_CHARACTERISTIC_NOTIFICATION;
+                                header[2] = seq;
+                                header[3] = DC_RC_REQUEST_COMPLETED_SUCCESSFULLY;
+                                BinaryPrimitives.WriteUInt16BigEndian(header.AsSpan(4, 2), (ushort)responseBody.Count);
+
+                                System.Diagnostics.Debug.WriteLine($"Sending Dummy Response for Object {objectId}");
                                 await WriteAsync(stream, header.Concat(responseBody).ToArray());
                             }
                         }
