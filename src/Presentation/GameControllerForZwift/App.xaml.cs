@@ -4,6 +4,7 @@ using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Gamepad.Mapping;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Keyboard;
+using GameControllerForZwift.Network;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
 using GameControllerForZwift.UI.WPF.Navigation;
@@ -70,7 +71,11 @@ namespace GameControllerForZwift
             services.AddSingleton<IInputService, SDL2InputService>();
 
             // GameControllerForZwift.Keyboard
-            services.AddSingleton<IOutputService, KeyboardService>();
+            //services.AddSingleton<IOutputService, KeyboardService>();
+
+            // GameControllerForZwift.Network
+            services.AddSingleton<IOutputService, NetworkService>();
+
             services.AddSingleton<IControllerProfileService>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();

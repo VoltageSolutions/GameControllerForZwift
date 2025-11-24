@@ -1,12 +1,4 @@
 ﻿using Makaretu.Dns;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameControllerForZwift.Network
 {
@@ -17,7 +9,7 @@ namespace GameControllerForZwift.Network
         private MulticastService? _mDNSControllerService;
 
         // Should these be configurable?
-        public const string ControllerName = "KICKR BIKE Voltage";
+        public const string ControllerName = "KICKR BIKE Emulator";
         public const string HostDomain = "_wahoo-fitness-tnp._tcp.local";
         private const ushort Port = 36866;
         private const string BLEServiceUUIDs = "ble-service-uuids=0xFC82,0x1818,0x1826,00000001-19CA-4651-86E5-FA29DCDD09D1,A026EE0D-0A7D-4AB3-97FA-F1500F9FEB8B";

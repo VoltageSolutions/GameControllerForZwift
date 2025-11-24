@@ -1,13 +1,8 @@
 ﻿using GameControllerForZwift.Core;
-using System;
 using System.Buffers.Binary;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GameControllerForZwift.Network.Network
 {
@@ -26,10 +21,10 @@ namespace GameControllerForZwift.Network.Network
 
 
         // Zwift Communication
-        static readonly string ZwiftServiceUuidNoDash = "0000fc8200001000800000805f9b34fb";
-        static readonly string ZwiftAsyncCharacteristicUuidNoDash = "0000000219ca465186e5fa29dcdd09d1";
-        static readonly string ZwiftSyncRxCharacteristicUuidNoDash = "0000000319ca465186e5fa29dcdd09d1";
-        static readonly string ZwiftSyncTxCharacteristicUuidNoDash = "0000000419ca465186e5fa29dcdd09d1";
+        private const string ZwiftServiceUuidNoDash = "0000fc8200001000800000805f9b34fb";
+        private const string ZwiftAsyncCharacteristicUuidNoDash = "0000000219ca465186e5fa29dcdd09d1";
+        private const string ZwiftSyncRxCharacteristicUuidNoDash = "0000000319ca465186e5fa29dcdd09d1";
+        private const string ZwiftSyncTxCharacteristicUuidNoDash = "0000000419ca465186e5fa29dcdd09d1";
 
         static readonly byte[] RideOn = new byte[] { 0x52, 0x69, 0x64, 0x65, 0x4f, 0x6e }; // "RideOn"
         static readonly byte[] ResponseStartClickV2 = new byte[] { 0x02, 0x03 };
@@ -71,7 +66,7 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
 
         #region Methods
 
-        public async Task AcceptTCPConnectionLoopAsync( CancellationToken token)
+        public async Task AcceptTCPConnectionLoopAsync(CancellationToken token)
         {
             try
             {
@@ -297,48 +292,6 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
             return res;
         }
 
-        //// Expose a SendAction method that mirrors Dart sendAction
-        //// Replace InGameAction enum with your own mapping; below is a simplified example.
-        //public async Task<string> SendActionAsync(string inGameAction)
-        //{
-        //    // Map action to button mask. Here we hardcode a single example.
-        //    uint mask = inGameAction switch
-        //    {
-        //        "shiftUp" => 0x01000u, // SHFT_UP_R_BTN
-        //        "shiftDown" => 0x00100u, // SHFT_UP_L_BTN
-        //        "uturn" => 0x00008u, // DOWN_BTN
-        //        _ => 0u
-        //    };
-
-        //    if (mask == 0u) return $"Action {inGameAction} not supported";
-
-        //    // Construct RideKeyPadStatus protobuf message
-        //    // Make sure you have generated the RideKeyPadStatus class from zwift.proto
-        //    /*
-        //    var status = new RideKeyPadStatus
-        //    {
-        //        ButtonMap = (~mask) & 0xFFFFFFFFu,
-        //    };
-        //    var bytes = status.ToByteArray();
-        //    */
-
-        //    // As a placeholder if you don't have proto available, create a protobuf-like byte[] (not recommended).
-        //    // Replace the following with actual protobuf serialization above.
-        //    byte[] protoBytes = BuildExampleRideKeyPadBytes(mask); // TODO: replace with status.ToByteArray()
-
-        //    var payload = new byte[] { 0x23 } // CONTROLLER_NOTIFICATION opcode (35 decimal)
-        //        .Concat(protoBytes)
-        //        .ToArray();
-
-        //    var notifyPacket = BuildButtonNotify(payload);
-
-        //    if (_currentStream == null)
-        //        throw new InvalidOperationException("No client connected");
-
-        //    await WriteAsync(_currentStream, notifyPacket);
-        //    return $"Sent action: {inGameAction}";
-        //}
-
         public byte[] BuildButtonNotify(byte[] data)
         {
             var seq = (byte)((lastMessageId + 1) & 0xFF);
@@ -416,43 +369,217 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
             if (!_asyncNotificationsEnabled)
                 return "Notifications not enabled by client";
 
-            // Build protobuf message
-            var status = new RideKeyPadStatus
+            // 1. DETERMINE BUTTON MASK BYTES
+            byte[] buttonMaskBytes;
+            string actionName;
+
+            switch (buttonMask)
             {
-                ButtonMap = (~buttonMask) & 0xFFFFFFFFu
-            };
-            //System.Diagnostics.Debug.WriteLine("protobuf status: " + status.ToString());
-            // clear analog paddles if needed: status.AnalogPaddles.Clear();
+                case 1: actionName = "Left Shift"; buttonMaskBytes = new byte[] { 0xFE, 0xFF, 0xFF, 0xFF }; break;
+                case 4: actionName = "Right Shift"; buttonMaskBytes = new byte[] { 0xFB, 0xFF, 0xFF, 0xFF }; break;
+                case 8: actionName = "Select"; buttonMaskBytes = new byte[] { 0xF7, 0xFF, 0xFF, 0xFF }; break;
+                case 16: actionName = "Back"; buttonMaskBytes = new byte[] { 0xEF, 0xFF, 0xFF, 0xFF }; break;
+                default:
+                    System.Diagnostics.Debug.WriteLine($"Error: Unknown buttonMask {buttonMask}. Cannot send press.");
+                    return "Unknown Mask";
+            }
 
-            var protoBytes = status.ToByteArray(); // Google.Protobuf
-            //System.Diagnostics.Debug.WriteLine("protobuf bytes: " + protoBytes.ToString());
-            var payload = new byte[] { OpcodeControllerNotification }.Concat(protoBytes).ToArray();
-            var notifyPacket = BuildButtonNotify(payload);
+            // --- PRESS SEQUENCE ---
+            _sequenceCounter = (byte)((_sequenceCounter + 1) % 256);
+            var pressPayload = CreateKICKRPayload(buttonMaskBytes, _sequenceCounter);
 
-            System.Diagnostics.Debug.WriteLine("Notifying Zwift of button press");
-            System.Diagnostics.Debug.WriteLine("Payload:" + BitConverter.ToString(payload).Replace("-", string.Empty));
-            System.Diagnostics.Debug.WriteLine("Packet:" + BitConverter.ToString(notifyPacket).Replace("-", string.Empty));
+            // finalPressPayload includes the OpcodeControllerNotification (e.g., 0x06)
+            var finalPressPayload = new byte[] { OpcodeControllerNotification }.Concat(pressPayload).ToArray();
+            var notifyPacket = BuildButtonNotify(finalPressPayload);
+
+            System.Diagnostics.Debug.WriteLine($"Notifying Zwift of {actionName} (Mask: {buttonMask}, Seq: {_sequenceCounter})");
+            System.Diagnostics.Debug.WriteLine("KICKR DATA (Press):" + BitConverter.ToString(pressPayload).Replace("-", string.Empty));
             await WriteAsync(_currentStream, notifyPacket);
 
-            // release packet: either send a zero/proprietary bytes or an "all ones" protobuf
+            // --- RELEASE SEQUENCE ---
             await Task.Delay(50);
-            var releaseProto = new RideKeyPadStatus { ButtonMap = 0xFFFFFFFFu };
-            var releasePayload = new byte[] { OpcodeControllerNotification }.Concat(releaseProto.ToByteArray()).ToArray();
 
-            var releasePacket = BuildButtonNotify(releasePayload);
-            System.Diagnostics.Debug.WriteLine("Sending Zwift all ones.");
-            System.Diagnostics.Debug.WriteLine("Payload:" + BitConverter.ToString(releasePayload).Replace("-", string.Empty));
-            System.Diagnostics.Debug.WriteLine("Packet:" + BitConverter.ToString(releasePacket).Replace("-", string.Empty));
+            _sequenceCounter = (byte)((_sequenceCounter + 1) % 256);
+            var releasePayload = CreateKICKRPayload(KICKR_RELEASE_DATA_MASK, _sequenceCounter);
+
+            var finalReleasePayload = new byte[] { OpcodeControllerNotification }.Concat(releasePayload).ToArray();
+            var releasePacket = BuildButtonNotify(finalReleasePayload);
+
+            System.Diagnostics.Debug.WriteLine($"Sending Zwift all ones (Release, Seq: {_sequenceCounter})");
+            System.Diagnostics.Debug.WriteLine("KICKR DATA (Release):" + BitConverter.ToString(releasePayload).Replace("-", string.Empty));
             await WriteAsync(_currentStream, releasePacket);
 
-            return "Sent";
+            return $"Sent Hybrid KICKR Action for {actionName}";
         }
 
-        
+        private byte[] CreateKICKRPayload(byte[] statusBytes, byte sequence)
+        {
+            // Create a mutable copy of the trailer template
+            var trailer = FixedButtonTrailerTemplate.ToArray();
+
+            // Insert the 1-byte sequence counter into the target location
+            // This overwrites the byte at index 4 (the fifth byte) of the 13-byte template (0x00)
+            trailer[4] = sequence;
+
+            // Build the final 19-byte KICKR DATA payload:
+            // [23 08] + [4x Mask Bytes] + [13x Dynamic Trailer Bytes]
+
+            var payload = new List<byte>
+            {
+                PropHeaderByte1, // 0x23 (Index 0)
+                PropHeaderByte2  // 0x08 (Index 1)
+            };
+
+            // Add the 4 bytes of the Button Status Mask
+            payload.AddRange(statusBytes); // (Indices 2-5)
+
+            // Add the 13-byte trailer (now containing the 1-byte sequence counter)
+            payload.AddRange(trailer); // (Indices 6-18)
+
+            return payload.ToArray();
+        }
+
+        private static readonly byte[] PressedButtonDataPayload = new byte[]
+        {
+            // Protobuf Header (2 bytes)
+            0x23, 0x08,
+            // Button Status Field - PRESSED (4 bytes)
+            0x00, 0x00, 0x00, 0x00,
+            // Fixed Trailer (13 bytes)
+            0x0F, 0x1A, 0x04, 0x08, 0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
+        };
+
+        // The full 19-byte payload that signals the button/shift event is idle (Released).
+        // The status field is FF:FF:FF:FF, which is the default/idle state.
+        private static readonly byte[] ReleasedButtonDataPayload = new byte[]
+        {
+            // Protobuf Header (2 bytes)
+            0x23, 0x08,
+            // Button Status Field - RELEASED (4 bytes)
+            0xFF, 0xFF, 0xFF, 0xFF,
+            // Fixed Trailer (13 bytes)
+            0x0F, 0x1A, 0x04, 0x08, 0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
+        };
+
+        // The KICKR BIKE sends a fixed 13-byte trailer after the 4-byte button map.
+        private static readonly byte[] FixedButtonTrailer = new byte[]
+        {
+            0x0F, 0x1A, 0x04, 0x08, 0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
+        };
+
+        // Assuming the proprietary header is 0x23, 0x08
+        private const byte PropHeaderByte1 = 0x23;
+        private const byte PropHeaderByte2 = 0x08;
+
+        private byte[] CreateButtonPayload(uint buttonMask)
+        {
+            // The mask used by Zwift is inverted, so we follow the original logic.
+            // However, since KICKR BIKE uses 0xFFFFFFFF for release, we only invert if not already 0xFFFFFFFF.
+            uint buttonMap = buttonMask == 0xFFFFFFFFu ? 0xFFFFFFFFu : (~buttonMask) & 0xFFFFFFFFu;
+
+            // The ButtonMap needs to be encoded into the Protobuf structure.
+            // The protobuf definition for RideKeyPadStatus is assumed to be:
+            // message RideKeyPadStatus { 
+            //   fixed32 button_map = 1;
+            //   repeated fixed32 analog_paddles = 2; // (Not used in this simplified example)
+            // }
+
+            // We MUST manually craft the protobuf bytes for the buttonMap to ensure a 4-byte fixed32 output.
+            // Tag 1 (fixed32) is 0x0D.
+            // 0x0D is the protobuf tag for 'field 1 (button_map)' with wire type 'fixed32'.
+
+            // Convert the uint buttonMap to 4 little-endian bytes.
+            byte[] buttonMapBytes = BitConverter.GetBytes(buttonMap);
+
+            // This manual construction ensures we get a predictable 17-byte payload 
+            // that contains the button data and the KICKR BIKE's proprietary trailer.
+            // [0x0D] + [4 bytes: ButtonMap] + [12 bytes: Unknown]
+            // Since we don't know the exact structure of the 17-byte protobuf payload
+            // that produces the exact 13-byte trailer, we must rely on the KICKR BIKE's 
+            // observation that the ButtonMap occupies bytes 3-6 of the 19-byte field.
+
+            // Let's create the payload by combining the known pieces:
+            // [Prop. Header: 2 bytes] + [Button Map: 4 bytes] + [Fixed Trailer: 13 bytes]
+
+            var payload = new List<byte>
+            {
+                PropHeaderByte1,
+                PropHeaderByte2
+            };
+
+            // Add the 4 bytes of the Button Map (in this position)
+            payload.AddRange(buttonMapBytes);
+
+            // Add the fixed 13-byte trailer
+            payload.AddRange(FixedButtonTrailer);
+
+            // This will produce a 19-byte array, where the 4 bytes in the middle 
+            // are now the actual mask you intended to send.
+
+            return payload.ToArray();
+        }
+
+        // Standard Button Masks (Inverted and Little-Endian)
+        // --------------------------------------------------------------------------------
+        // Mask 1 (Left/Down Shift) -> ~1 = 0xFFFFFFFE
+        private static readonly byte[] KICKR_PRESS_LEFT_SHIFT = new byte[]
+        {
+    0x23, 0x08, 0xFE, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
+    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
+        };
+
+        // Mask 4 (Right/Up Shift) -> ~4 = 0xFFFFFFFB
+        private static readonly byte[] KICKR_PRESS_RIGHT_SHIFT = new byte[]
+        {
+    0x23, 0x08, 0xFB, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
+    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
+        };
+
+        // Mask 8 (Select/A Button) -> ~8 = 0xFFFFFFF7
+        private static readonly byte[] KICKR_PRESS_SELECT = new byte[]
+        {
+    0x23, 0x08, 0xF7, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
+    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
+        };
+
+        // Mask 16 (Back/B Button) -> ~16 = 0xFFFFFFEF
+        private static readonly byte[] KICKR_PRESS_BACK = new byte[]
+        {
+    0x23, 0x08, 0xEF, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
+    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
+        };
+        // --------------------------------------------------------------------------------
+
+        // KICKR BIKE Release/Neutral Event Payload (0xFFFFFFFF in status field) - Used for all releases
+        // 23:08:FF:FF:FF:FF:0F:1A:04:08:00:10:00:1A:04:08:01:10:00
+        private static readonly byte[] KICKR_RELEASE_DATA_19_BYTES = new byte[]
+        {
+    0x23, 0x08, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
+    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
+        };
+
+        // KICKR BIKE Release/Neutral Event Payload (0xFFFFFFFF in status field)
+        private static readonly byte[] KICKR_RELEASE_DATA_MASK = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF };
 
 
+        // ** Dynamic State Management **
+        // Swapping the counter to a 4-byte unsigned integer (uint) for more robust sequencing.
+        private byte _sequenceCounter = 0;
+        // Private helper to manage the 13-byte trailer, making it mutable.
+        // Original: 0F 1A 04 00 00 10 00 1A 04 08 01 10 00
+        // The 13-byte trailer template, with the target byte (Index 4) set to 0xXX for the counter.
+        // Original Trace: 0F 1A 04 08 [00] 10 00 1A 04 08 01 10 00
+        private static readonly byte[] FixedButtonTrailerTemplate = new byte[]
+        {
+            0x0F, 0x1A, 0x04, 0x08, // 4 bytes of fixed header
+            0x00,                   // *** TARGET: Index 4 (9 in 19-byte total) for Sequence Counter ***
+            0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00 // 8 bytes of fixed trailer
+        };
+
+        // --- KICKR BIKE Static Mask Definitions (Hybrid Approach) ---
+        //private const byte PropHeaderByte1 = 0x23;
+        //private const byte PropHeaderByte2 = 0x08;
 
         #endregion
-
     }
 }
