@@ -369,47 +369,53 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
             if (!_asyncNotificationsEnabled)
                 return "Notifications not enabled by client";
 
-            // 1. DETERMINE BUTTON MASK BYTES
-            byte[] buttonMaskBytes;
+            byte[] pressPayload;
             string actionName;
 
+            // Map your input mask (1, 4, 8, 16) to the OBSERVED KICKR payloads
             switch (buttonMask)
             {
-                case 1: actionName = "Left Shift"; buttonMaskBytes = new byte[] { 0xFE, 0xFF, 0xFF, 0xFF }; break;
-                case 4: actionName = "Right Shift"; buttonMaskBytes = new byte[] { 0xFB, 0xFF, 0xFF, 0xFF }; break;
-                case 8: actionName = "Select"; buttonMaskBytes = new byte[] { 0xF7, 0xFF, 0xFF, 0xFF }; break;
-                case 16: actionName = "Back"; buttonMaskBytes = new byte[] { 0xEF, 0xFF, 0xFF, 0xFF }; break;
+                case 1:
+                    actionName = "Left Shift (Trace Match: FFFEFFFF)";
+                    pressPayload = KICKR_DATA_LEFT;
+                    break;
+                case 4:
+                    actionName = "Right Shift (Trace Match: BFFFFFFF)";
+                    pressPayload = KICKR_DATA_RIGHT;
+                    break;
+                case 8:
+                    actionName = "Select (Trace Match: F7FFFFFF)";
+                    pressPayload = KICKR_DATA_SELECT;
+                    break;
+                case 16:
+                    actionName = "Back (Trace Match: EFFFFFFF)";
+                    pressPayload = KICKR_DATA_BACK;
+                    break;
                 default:
-                    System.Diagnostics.Debug.WriteLine($"Error: Unknown buttonMask {buttonMask}. Cannot send press.");
+                    System.Diagnostics.Debug.WriteLine($"Error: Unknown buttonMask {buttonMask}");
                     return "Unknown Mask";
             }
 
-            // --- PRESS SEQUENCE ---
-            _sequenceCounter = (byte)((_sequenceCounter + 1) % 256);
-            var pressPayload = CreateKICKRPayload(buttonMaskBytes, _sequenceCounter);
+            // 1. SEND PRESS
+            // FIX: DO NOT prepend OpcodeControllerNotification. The KICKR payload (starting with 0x23)
+            // is the full application data for this notification.
+            var notifyPacket = BuildButtonNotify(pressPayload);
 
-            // finalPressPayload includes the OpcodeControllerNotification (e.g., 0x06)
-            var finalPressPayload = new byte[] { OpcodeControllerNotification }.Concat(pressPayload).ToArray();
-            var notifyPacket = BuildButtonNotify(finalPressPayload);
-
-            System.Diagnostics.Debug.WriteLine($"Notifying Zwift of {actionName} (Mask: {buttonMask}, Seq: {_sequenceCounter})");
-            System.Diagnostics.Debug.WriteLine("KICKR DATA (Press):" + BitConverter.ToString(pressPayload).Replace("-", string.Empty));
+            System.Diagnostics.Debug.WriteLine($"Notifying Zwift of {actionName}");
+            System.Diagnostics.Debug.WriteLine("Payload:" + BitConverter.ToString(pressPayload).Replace("-", string.Empty));
             await WriteAsync(_currentStream, notifyPacket);
 
-            // --- RELEASE SEQUENCE ---
-            await Task.Delay(50);
+            // 2. SEND RELEASE
+            // A small delay is needed to register the "press" event duration
+            await Task.Delay(100);
 
-            _sequenceCounter = (byte)((_sequenceCounter + 1) % 256);
-            var releasePayload = CreateKICKRPayload(KICKR_RELEASE_DATA_MASK, _sequenceCounter);
+            // FIX: Send raw release payload without extra opcode
+            var releasePacket = BuildButtonNotify(KICKR_DATA_RELEASE);
 
-            var finalReleasePayload = new byte[] { OpcodeControllerNotification }.Concat(releasePayload).ToArray();
-            var releasePacket = BuildButtonNotify(finalReleasePayload);
-
-            System.Diagnostics.Debug.WriteLine($"Sending Zwift all ones (Release, Seq: {_sequenceCounter})");
-            System.Diagnostics.Debug.WriteLine("KICKR DATA (Release):" + BitConverter.ToString(releasePayload).Replace("-", string.Empty));
+            System.Diagnostics.Debug.WriteLine("Sending Release");
             await WriteAsync(_currentStream, releasePacket);
 
-            return $"Sent Hybrid KICKR Action for {actionName}";
+            return $"Sent {actionName}";
         }
 
         private byte[] CreateKICKRPayload(byte[] statusBytes, byte sequence)
@@ -519,47 +525,29 @@ Command response, Indicable and Readable: 00000004-19ca-4651-86e5-fa29dcdd09d1
             return payload.ToArray();
         }
 
-        // Standard Button Masks (Inverted and Little-Endian)
-        // --------------------------------------------------------------------------------
-        // Mask 1 (Left/Down Shift) -> ~1 = 0xFFFFFFFE
-        private static readonly byte[] KICKR_PRESS_LEFT_SHIFT = new byte[]
-        {
-    0x23, 0x08, 0xFE, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
-    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
-        };
+        // --- KICKR BIKE PAYLOAD CONSTANTS (Verified from Trace) ---
+        // These are the 19-byte proprietary data sections (starting with 23 08)
+        // extracted directly from the KICKR BIKE's TCP packets.
 
-        // Mask 4 (Right/Up Shift) -> ~4 = 0xFFFFFFFB
-        private static readonly byte[] KICKR_PRESS_RIGHT_SHIFT = new byte[]
-        {
-    0x23, 0x08, 0xFB, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
-    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
-        };
+        // Idle / Release State
+        private static readonly byte[] KICKR_DATA_RELEASE = new byte[]
+        { 0x23, 0x08, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08, 0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00 };
 
-        // Mask 8 (Select/A Button) -> ~8 = 0xFFFFFFF7
-        private static readonly byte[] KICKR_PRESS_SELECT = new byte[]
-        {
-    0x23, 0x08, 0xF7, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
-    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
-        };
+        // "Back" Button (Mask EFFFFFFF)
+        private static readonly byte[] KICKR_DATA_BACK = new byte[]
+        { 0x23, 0x08, 0xEF, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08, 0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00 };
 
-        // Mask 16 (Back/B Button) -> ~16 = 0xFFFFFFEF
-        private static readonly byte[] KICKR_PRESS_BACK = new byte[]
-        {
-    0x23, 0x08, 0xEF, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
-    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
-        };
-        // --------------------------------------------------------------------------------
+        // "Right Shift" (Mask BFFFFFFF)
+        private static readonly byte[] KICKR_DATA_RIGHT = new byte[]
+        { 0x23, 0x08, 0xBF, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08, 0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00 };
 
-        // KICKR BIKE Release/Neutral Event Payload (0xFFFFFFFF in status field) - Used for all releases
-        // 23:08:FF:FF:FF:FF:0F:1A:04:08:00:10:00:1A:04:08:01:10:00
-        private static readonly byte[] KICKR_RELEASE_DATA_19_BYTES = new byte[]
-        {
-    0x23, 0x08, 0xFF, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08,
-    0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00
-        };
+        // "Select" Button (Mask F7FFFFFF)
+        private static readonly byte[] KICKR_DATA_SELECT = new byte[]
+        { 0x23, 0x08, 0xF7, 0xFF, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08, 0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00 };
 
-        // KICKR BIKE Release/Neutral Event Payload (0xFFFFFFFF in status field)
-        private static readonly byte[] KICKR_RELEASE_DATA_MASK = new byte[] { 0xFF, 0xFF, 0xFF, 0xFF };
+        // "Left Shift" (Mask FFFEFFFF - Note the byte shift!)
+        private static readonly byte[] KICKR_DATA_LEFT = new byte[]
+        { 0x23, 0x08, 0xFF, 0xFE, 0xFF, 0xFF, 0x0F, 0x1A, 0x04, 0x08, 0x00, 0x10, 0x00, 0x1A, 0x04, 0x08, 0x01, 0x10, 0x00 };
 
 
         // ** Dynamic State Management **
