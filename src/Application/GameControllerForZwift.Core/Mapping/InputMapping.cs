@@ -8,7 +8,7 @@ namespace GameControllerForZwift.Core.Mapping
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ControllerInput Input { get; set; }  // Public setter
 
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(ZwiftFunctionJsonConverter))]
         public ZwiftFunction Function { get; set; }
 
         [JsonConverter(typeof(JsonStringEnumConverter))]

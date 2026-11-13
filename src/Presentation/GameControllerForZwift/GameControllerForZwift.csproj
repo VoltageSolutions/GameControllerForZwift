@@ -66,7 +66,7 @@
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="AfterBuild">
-    <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(SolutionDir)src\Fetch-SDL2.ps1&quot; -BuildConfig &quot;$(Configuration)&quot; -TargetFramework &quot;$(TargetFramework)&quot; -ProjectDir &quot;$(ProjectDir)&quot;" />
+    <Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\..\Fetch-SDL2.ps1&quot; -BuildConfig &quot;$(Configuration)&quot; -TargetFramework &quot;$(TargetFramework)&quot; -ProjectDir &quot;$(MSBuildProjectDirectory)&quot;" />
   </Target>
 
 </Project>

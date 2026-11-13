@@ -13,8 +13,8 @@ namespace GameControllerForZwift.Core.Tests
         [InlineData(ZwiftFunction.Select, "Select")]
         [InlineData(ZwiftFunction.GoBack, "Go Back")]
         [InlineData(ZwiftFunction.SkipWorkoutBlock, "Skip a workout block")]
-        [InlineData(ZwiftFunction.FTPBiasUp, "Increase the FTP Bias")]
-        [InlineData(ZwiftFunction.FTPBiasDown, "Descease the FTP Bias")]
+        [InlineData(ZwiftFunction.ShiftUp, "Shift up / Increase workout intensity")]
+        [InlineData(ZwiftFunction.ShiftDown, "Shift down / Decrease workout intensity")]
         [InlineData(ZwiftFunction.AdjustCameraAngle, "Adjust the camera angle")]
         [InlineData(ZwiftFunction.RiderAction, "Rider (Function Key) action")]
         [InlineData(ZwiftFunction.ShowPairedDevices, "Show Paired Devices screen")]
@@ -24,6 +24,11 @@ namespace GameControllerForZwift.Core.Tests
         [InlineData(ZwiftFunction.SendGroupText, "Send a group text")]
         [InlineData(ZwiftFunction.HideHUD, "Hide the Heads-Up Display")]
         [InlineData(ZwiftFunction.PromoCode, "Enter a Promo Code")]
+        [InlineData(ZwiftFunction.SteerLeft, "Steer left - Zwift LAN controller only")]
+        [InlineData(ZwiftFunction.SteerRight, "Steer right - Zwift LAN controller only")]
+        [InlineData(ZwiftFunction.NavigateUp, "Navigate up")]
+        [InlineData(ZwiftFunction.NavigateDown, "Navigate down")]
+        [InlineData(ZwiftFunction.Brake, "Brake")]
         public void ZwiftFunction_HasCorrectDescription(ZwiftFunction function, string expectedDescription)
         {
             // Act

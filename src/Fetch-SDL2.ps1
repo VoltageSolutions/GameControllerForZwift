@@ -9,6 +9,8 @@ param (
 
 # Enable verbose output for debugging
 $VerbosePreference = "Continue"
+$ProgressPreference = "SilentlyContinue"
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 Write-Host "Starting script with the following parameters:"
 Write-Host "Version: $Version"
@@ -17,7 +19,7 @@ Write-Host "TargetFramework: $TargetFramework"
 Write-Host "ProjectDir: $ProjectDir"
 
 # Remove any extra quotes that may have been passed around the project directory
-$ProjectDir = $ProjectDir.Trim('"')
+$ProjectDir = $ProjectDir.Trim('"').TrimEnd('\')
 Write-Host "ProjectDir after trimming quotes: $ProjectDir"
 
 # Construct the target directory dynamically
@@ -34,6 +36,12 @@ if (-not (Test-Path $TargetDir)) {
     New-Item -ItemType Directory -Path $TargetDir | Out-Null
 }
 
+# Skip entirely when SDL2.dll is already present (keeps offline / repeated builds working)
+if (Test-Path (Join-Path $TargetDir "SDL2.dll")) {
+    Write-Host "SDL2.dll already present in $TargetDir, skipping download."
+    exit 0
+}
+
 # Define the download URL
 $url = "https://github.com/libsdl-org/SDL/releases/download/release-$Version/SDL2-$Version-win32-x64.zip"
 Write-Host "Download URL: $url"
@@ -48,7 +56,7 @@ try {
     Invoke-WebRequest -Uri $url -OutFile $tempZip -ErrorAction Stop
     Write-Host "Download successful."
 } catch {
-    Write-Host "Error downloading SDL2: $_"
+    Write-Host "Error downloading SDL2 (offline? place SDL2.dll in $TargetDir manually): $_"
     exit 1
 }
 

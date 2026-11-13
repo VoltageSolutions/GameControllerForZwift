@@ -18,6 +18,8 @@ namespace GameControllerForZwift.Keyboard
 
         [Theory]
         [InlineData(ZwiftFunction.ShowMenu)]
+        [InlineData(ZwiftFunction.NavigateUp)]
+        [InlineData(ZwiftFunction.NavigateDown)]
         [InlineData(ZwiftFunction.NavigateLeft)]
         [InlineData(ZwiftFunction.NavigateRight)]
         [InlineData(ZwiftFunction.Uturn)]
@@ -32,8 +34,8 @@ namespace GameControllerForZwift.Keyboard
         [InlineData(ZwiftFunction.PromoCode)]
         [InlineData(ZwiftFunction.ShowTrainingMenu)]
         [InlineData(ZwiftFunction.SkipWorkoutBlock)]
-        [InlineData(ZwiftFunction.FTPBiasUp)]
-        [InlineData(ZwiftFunction.FTPBiasDown)]
+        [InlineData(ZwiftFunction.ShiftUp)]
+        [InlineData(ZwiftFunction.ShiftDown)]
         public async Task PerformActionAsync_PerformsCorrectKeyPress_ForZwiftFunction(ZwiftFunction function)
         {
             var result = await _keyboardService.PerformActionAsync(function);
@@ -141,8 +143,8 @@ namespace GameControllerForZwift.Keyboard
         [InlineData(ZwiftFunction.PromoCode, VirtualKeyCode.VK_P)]
         [InlineData(ZwiftFunction.ShowTrainingMenu, VirtualKeyCode.VK_E)]
         [InlineData(ZwiftFunction.SkipWorkoutBlock, VirtualKeyCode.TAB)]
-        [InlineData(ZwiftFunction.FTPBiasUp, VirtualKeyCode.PRIOR)]
-        [InlineData(ZwiftFunction.FTPBiasDown, VirtualKeyCode.NEXT)]
+        [InlineData(ZwiftFunction.ShiftUp, VirtualKeyCode.PRIOR)]
+        [InlineData(ZwiftFunction.ShiftDown, VirtualKeyCode.NEXT)]
         public void GetKeyCode_ReturnsCorrectKeyCode_ForZwiftFunction(ZwiftFunction function, VirtualKeyCode expectedKeyCode)
         {
             var result = _keyboardService.GetKeyCode(function, ZwiftPlayerView.Default, ZwiftRiderAction.WaveHand);

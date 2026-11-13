@@ -1,4 +1,4 @@
-{
+﻿{
   "Profiles": [
     {
       "Name": "Default Profile",
@@ -71,13 +71,13 @@
         },
         {
           "Input": "LeftBumper",
-          "Function": "FTPBiasDown",
+          "Function": "ShiftDown",
           "PlayerView": null,
           "RiderAction": null
         },
         {
           "Input": "RightBumper",
-          "Function": "FTPBiasUp",
+          "Function": "ShiftUp",
           "PlayerView": null,
           "RiderAction": null
         }

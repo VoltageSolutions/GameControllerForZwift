@@ -10,6 +10,7 @@ namespace GameControllerForZwift.Core
         private readonly IInputService _inputService;
         private readonly IOutputService _outputService;
         private readonly IControllerProfileService _controllerProfileService;
+        private readonly IZwiftControllerOutput? _zwiftOutput;
         public ConcurrentQueue<ControllerData> DataQueue => _dataQueue;
         private readonly ConcurrentQueue<ControllerData> _dataQueue = new ConcurrentQueue<ControllerData>();
         private readonly int _maxQueueSize;
@@ -19,12 +20,13 @@ namespace GameControllerForZwift.Core
         #endregion
 
         #region Constructor
-        public DataIntegrator(IInputService inputService, IOutputService outputService, IControllerProfileService controllerProfileService, int maxQueueSize = 10)
+        public DataIntegrator(IInputService inputService, IOutputService outputService, IControllerProfileService controllerProfileService, int maxQueueSize = 10, IZwiftControllerOutput? zwiftOutput = null)
         {
             _inputService = inputService;
             _outputService = outputService;
             _controllerProfileService = controllerProfileService;
             _maxQueueSize = maxQueueSize;
+            _zwiftOutput = zwiftOutput;
         }
         #endregion      
 
@@ -46,6 +48,12 @@ namespace GameControllerForZwift.Core
         {
             if (null != _cts)
                 _cts.Cancel();
+
+            if (_zwiftOutput != null)
+            {
+                try { _ = _zwiftOutput.UpdateAsync(ZwiftControllerState.Neutral); }
+                catch { /* best effort */ }
+            }
         }
 
         public async Task ReadDataAsync(IController controller, CancellationToken cancellationToken)
@@ -64,6 +72,9 @@ namespace GameControllerForZwift.Core
 
         public void ProcessControllerData(ControllerData controllerData)
         {
+            if (controllerData == null)
+                return; // disposed controllers return null
+
             // Add data to the queue, discarding the oldest if the queue is full
             if (_dataQueue.Count >= _maxQueueSize)
             {
@@ -107,59 +118,58 @@ namespace GameControllerForZwift.Core
 
         public async Task WriteDataAsync(CancellationToken cancellationToken)
         {
+            var inputs = Enum.GetValues<ControllerInput>();
+
             while (!cancellationToken.IsCancellationRequested)
             {
-                while (_dataQueue.TryDequeue(out ControllerData controllerData))
+                while (_dataQueue.TryDequeue(out ControllerData? controllerData))
                 {
+                    if (controllerData == null)
+                        continue;
+
                     InputPolled?.Invoke(this, new InputStateChangedEventArgs(controllerData));
 
                     // this is not a good long-term way to get a profile, but it's a start
-                    //var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
+                    var profile = _controllerProfileService.Profiles?.Profiles?.FirstOrDefault();
 
-                    if (controllerData.A)
-                        await PerformActionAsync(ControllerInput.A);
-                    if (controllerData.B)
-                        await PerformActionAsync(ControllerInput.B);
-                    if (controllerData.X)
-                        await PerformActionAsync(ControllerInput.X);
-                    if (controllerData.Y)
-                        await PerformActionAsync(ControllerInput.Y);
-                    if (controllerData.Menu)
-                        await PerformActionAsync(ControllerInput.Menu);
-                    if (controllerData.View)
-                        await PerformActionAsync(ControllerInput.View);
-                    if (controllerData.DPad_Up)
-                        await PerformActionAsync(ControllerInput.DPad_Up);
-                    if (controllerData.DPad_Down)
-                        await PerformActionAsync(ControllerInput.DPad_Down);
-                    if (controllerData.DPad_Left)
-                        await PerformActionAsync(ControllerInput.DPad_Left);
-                    if (controllerData.DPad_Right)
-                        await PerformActionAsync(ControllerInput.DPad_Right);
-                    if (controllerData.LeftThumbstick_Click)
-                        await PerformActionAsync(ControllerInput.LeftThumbstick_Click);
-                    if (controllerData.LeftStick_TiltUp)
-                        await PerformActionAsync(ControllerInput.LeftThumbstick_TiltUp);
-                    if (controllerData.LeftStick_TiltDown)
-                        await PerformActionAsync(ControllerInput.LeftThumbstick_TiltDown);
-                    if (controllerData.LeftStick_TiltLeft)
-                        await PerformActionAsync(ControllerInput.LeftThumbstick_TiltLeft);
-                    if (controllerData.LeftStick_TiltRight)
-                        await PerformActionAsync(ControllerInput.LeftThumbstick_TiltRight);
-                    if (controllerData.RightThumbstick_Click)
-                        await PerformActionAsync(ControllerInput.RightThumbstick_Click);
-                    if (controllerData.RightStick_TiltUp)
-                        await PerformActionAsync(ControllerInput.RightThumbstick_TiltUp);
-                    if (controllerData.RightStick_TiltDown)
-                        await PerformActionAsync(ControllerInput.RightThumbstick_TiltDown);
-                    if (controllerData.RightStick_TiltLeft)
-                        await PerformActionAsync(ControllerInput.RightThumbstick_TiltLeft);
-                    if (controllerData.RightStick_TiltRight)
-                        await PerformActionAsync(ControllerInput.RightThumbstick_TiltRight);
-                    if (controllerData.LeftBumper)
-                        await PerformActionAsync(ControllerInput.LeftBumper);
-                    if (controllerData.RightBumper)
-                        await PerformActionAsync(ControllerInput.RightBumper);
+                    var pressed = new HashSet<ZwiftFunction>();
+                    double left = 0, right = 0, brake = 0;
+
+                    if (profile != null)
+                    {
+                        foreach (var input in inputs)
+                        {
+                            var value = controllerData.GetAnalogValue(input);
+                            if (value <= 0)
+                                continue;
+
+                            var mapping = profile.Mappings.FirstOrDefault(m => m.Input == input);
+                            if (mapping == null || mapping.Function == ZwiftFunction.None)
+                                continue;
+
+                            var riderAction = mapping.RiderAction ?? ZwiftRiderAction.RideOn;
+                            if (_zwiftOutput != null && _zwiftOutput.Handles(mapping.Function, riderAction))
+                            {
+                                switch (mapping.Function)
+                                {
+                                    case ZwiftFunction.SteerLeft: left = Math.Max(left, value); break;
+                                    case ZwiftFunction.SteerRight: right = Math.Max(right, value); break;
+                                    case ZwiftFunction.Brake: brake = Math.Max(brake, value); break;
+                                    default: pressed.Add(mapping.Function); break;
+                                }
+                            }
+                            else
+                            {
+                                await _outputService.PerformActionAsync(mapping.Function, mapping.PlayerView ?? ZwiftPlayerView.Default, riderAction);
+                            }
+                        }
+                    }
+
+                    if (_zwiftOutput != null && !cancellationToken.IsCancellationRequested)
+                    {
+                        var state = new ZwiftControllerState(pressed, Math.Clamp(right - left, -1.0, 1.0), Math.Clamp(brake, 0.0, 1.0), controllerData.BatteryPercent);
+                        await _zwiftOutput.UpdateAsync(state);
+                    }
                 }
                 await Task.Delay(10, cancellationToken); // Adjust delay based on needs
             }

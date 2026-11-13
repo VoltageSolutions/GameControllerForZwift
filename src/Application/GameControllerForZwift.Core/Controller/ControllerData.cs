@@ -5,9 +5,11 @@
         /// <summary>
         /// Threshold constants for input deadzones and trigger values.
         /// </summary>
-        private static class Thresholds
+        internal static class Thresholds
         {
             public const int Deadzone = 5000;
+            public const int TriggerDeadzone = 1638; // ~5% of full range
+            public const int AxisMax = 32767;
             public const int TriggerMaxValue = 32727;
         }
 
@@ -39,6 +41,8 @@
         public double RightThumbstickY { get; set; }
         public double RightTrigger { get; set; }
         public DateTime Timestamp { get; set; }
+        /// <summary>Approximate battery level 0-100, or null if unknown / not reported.</summary>
+        public int? BatteryPercent { get; set; }
 
         #endregion
 

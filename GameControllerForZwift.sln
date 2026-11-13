@@ -41,6 +41,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Netw
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Network.IntegrationTests", "tests\GameControllerForZwift.Network.IntegrationTests\GameControllerForZwift.Network.IntegrationTests.csproj", "{19211FF0-8E1F-40DA-8DE0-80B080AF103C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameControllerForZwift.Network.UnitTests", "tests\GameControllerForZwift.Network.UnitTests\GameControllerForZwift.Network.UnitTests.csproj", "{5D3B7C1E-8A42-4F6B-9E17-2C0A4B6D8F31}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{7A1D2C44-3B5E-4F90-8C21-6D0E9B1A5F72}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ZwiftLanProbe", "tools\ZwiftLanProbe\ZwiftLanProbe.csproj", "{C3E8A1F6-9D24-4B7A-A5E0-1F6B2D8C4E93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +97,14 @@ Global
 		{19211FF0-8E1F-40DA-8DE0-80B080AF103C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19211FF0-8E1F-40DA-8DE0-80B080AF103C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19211FF0-8E1F-40DA-8DE0-80B080AF103C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5D3B7C1E-8A42-4F6B-9E17-2C0A4B6D8F31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5D3B7C1E-8A42-4F6B-9E17-2C0A4B6D8F31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5D3B7C1E-8A42-4F6B-9E17-2C0A4B6D8F31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5D3B7C1E-8A42-4F6B-9E17-2C0A4B6D8F31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3E8A1F6-9D24-4B7A-A5E0-1F6B2D8C4E93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3E8A1F6-9D24-4B7A-A5E0-1F6B2D8C4E93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3E8A1F6-9D24-4B7A-A5E0-1F6B2D8C4E93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3E8A1F6-9D24-4B7A-A5E0-1F6B2D8C4E93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,6 +127,8 @@ Global
 		{15140E8A-3E5A-4BE1-938F-EFC2DA1B7E94} = {7CBC7254-F8CE-46A5-B9E3-FB536D38BDAC}
 		{118B4548-5B22-40D6-A4F8-9897C18863F4} = {A4B699F3-1B47-4622-A16B-B87D0980157D}
 		{19211FF0-8E1F-40DA-8DE0-80B080AF103C} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
+		{5D3B7C1E-8A42-4F6B-9E17-2C0A4B6D8F31} = {A26D571D-DD8E-4858-AA4C-B44EB2407E92}
+		{C3E8A1F6-9D24-4B7A-A5E0-1F6B2D8C4E93} = {7A1D2C44-3B5E-4F90-8C21-6D0E9B1A5F72}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EF0E7AD0-FDA6-4F93-B78A-B07984BD96C9}

@@ -83,6 +83,9 @@ namespace GameControllerForZwift.Keyboard
             return zwiftFunction switch
             {
                 ZwiftFunction.ShowMenu => VirtualKeyCode.UP,
+                ZwiftFunction.NavigateUp => VirtualKeyCode.UP,
+                ZwiftFunction.NavigateDown => VirtualKeyCode.DOWN,
+                // SteerLeft/SteerRight/Brake have no keyboard shortcut; they fall through to CANCEL (unhandled)
                 ZwiftFunction.NavigateLeft => VirtualKeyCode.LEFT,
                 ZwiftFunction.NavigateRight => VirtualKeyCode.RIGHT,
                 ZwiftFunction.Uturn => VirtualKeyCode.DOWN,
@@ -97,8 +100,8 @@ namespace GameControllerForZwift.Keyboard
                 ZwiftFunction.PromoCode => VirtualKeyCode.VK_P,
                 ZwiftFunction.ShowTrainingMenu => VirtualKeyCode.VK_E,
                 ZwiftFunction.SkipWorkoutBlock => VirtualKeyCode.TAB,
-                ZwiftFunction.FTPBiasUp => VirtualKeyCode.PRIOR,
-                ZwiftFunction.FTPBiasDown => VirtualKeyCode.NEXT,
+                ZwiftFunction.ShiftUp => VirtualKeyCode.PRIOR,
+                ZwiftFunction.ShiftDown => VirtualKeyCode.NEXT,
                 ZwiftFunction.AdjustCameraAngle => playerView switch
                 {
                     ZwiftPlayerView.Default => VirtualKeyCode.VK_1,

@@ -5,6 +5,9 @@ using GameControllerForZwift.Gamepad.Mapping;
 using GameControllerForZwift.Gamepad.SDL2;
 using GameControllerForZwift.Keyboard;
 using GameControllerForZwift.Network;
+using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.Logging;
+using GameControllerForZwift.Network.Mdns;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
 using GameControllerForZwift.UI.WPF.Navigation;
@@ -12,7 +15,9 @@ using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using GameControllerForZwift.WPF.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace GameControllerForZwift
@@ -44,6 +49,41 @@ namespace GameControllerForZwift
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             Current.ThemeMode = ThemeMode.System;
+
+            // Start the Zwift LAN controller (DirCon server + mDNS advertisement) in the background.
+            if (ServiceProvider.GetRequiredService<OutputOptions>().UseZwiftLanController)
+            {
+                var network = ServiceProvider.GetRequiredService<NetworkService>();
+                var logger = ServiceProvider.GetRequiredService<ILogger<App>>();
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        await network.StartAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, "Failed to start the Zwift LAN controller.");
+                    }
+                });
+            }
+        }
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            try
+            {
+                if (ServiceProvider is IAsyncDisposable provider)
+                {
+                    // Disposes NetworkService (stops mDNS + DirCon server) among other singletons.
+                    Task.Run(async () => await provider.DisposeAsync()).Wait(TimeSpan.FromSeconds(5));
+                }
+            }
+            catch
+            {
+                // Best effort on shutdown.
+            }
+            base.OnExit(e);
         }
 
         private bool IsTestEnvironment()
@@ -65,16 +105,36 @@ namespace GameControllerForZwift
             {
                 //configure.ClearProviders(); // Optional: Removes default logging providers if you only want your custom one.
                 configure.AddCustomEventLogProvider(); // Add your custom provider
+                configure.SetMinimumLevel(LogLevel.Information);
+                configure.AddFileLogger(Path.Combine(AppContext.BaseDirectory, "logs"));
+                configure.AddFilter<GameControllerForZwift.Network.Logging.FileLoggerProvider>("GameControllerForZwift.Network", LogLevel.Debug);
             });
 
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IInputService, SDL2InputService>();
 
-            // GameControllerForZwift.Keyboard
-            //services.AddSingleton<IOutputService, KeyboardService>();
+            // Output: keyboard + Zwift LAN controller, routed by CompositeOutputService (see its docs for the rules).
+            services.AddSingleton<OutputOptions>();
 
-            // GameControllerForZwift.Network
-            services.AddSingleton<IOutputService, NetworkService>();
+            // GameControllerForZwift.Keyboard
+            services.AddSingleton<KeyboardService>();
+
+            // GameControllerForZwift.Network: the bcride preset (BikeControl replica) for both the DirCon server and the mDNS advertisement.
+            var zwiftProfile = DeviceProfiles.ZwiftRidePreset();
+            services.AddSingleton(DeviceIdentity.Default with { Name = "Voltage Emulator" });
+            services.AddSingleton<IZwiftControllerLink>(provider =>
+                new DirconServer(provider.GetRequiredService<DeviceIdentity>(), provider.GetRequiredService<ILogger<DirconServer>>(), profile: zwiftProfile));
+            services.AddSingleton(provider => new MdnsAdvertiser(provider.GetRequiredService<ILogger<MdnsAdvertiser>>(), zwiftProfile));
+            services.AddSingleton<NetworkService>();
+            services.AddSingleton<ILanOutputService>(provider => provider.GetRequiredService<NetworkService>());
+
+            // One composite instance serves as both the discrete (IOutputService) and the continuous (IZwiftControllerOutput) output.
+            services.AddSingleton(provider => new CompositeOutputService(
+                provider.GetRequiredService<KeyboardService>(),
+                provider.GetRequiredService<ILanOutputService>(),
+                provider.GetRequiredService<OutputOptions>()));
+            services.AddSingleton<IOutputService>(provider => provider.GetRequiredService<CompositeOutputService>());
+            services.AddSingleton<IZwiftControllerOutput>(provider => provider.GetRequiredService<CompositeOutputService>());
 
             services.AddSingleton<IControllerProfileService>(provider =>
             {
@@ -87,7 +147,12 @@ namespace GameControllerForZwift
 
 
             // GameControllerForZwift.Logic
-            services.AddSingleton<IDataIntegrator, DataIntegrator>(); // this should have an interface so we can unit test it later
+            services.AddSingleton<IDataIntegrator>(provider => new DataIntegrator(
+                provider.GetRequiredService<IInputService>(),
+                provider.GetRequiredService<CompositeOutputService>(),
+                provider.GetRequiredService<IControllerProfileService>(),
+                10,
+                provider.GetRequiredService<CompositeOutputService>()));
 
 
             services.AddSingleton<INavigationService, NavigationService>();

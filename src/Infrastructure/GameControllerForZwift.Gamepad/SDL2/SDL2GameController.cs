@@ -10,6 +10,9 @@ namespace GameControllerForZwift.Gamepad.SDL2
         private readonly IntPtr _handle;
         private readonly string _vendorProduct;
         private bool _isDisposed;
+        private int? _cachedBattery;
+        private DateTime _batteryReadAt = DateTime.MinValue;
+        private static readonly TimeSpan BatteryCacheDuration = TimeSpan.FromSeconds(5);
 
         #endregion
 
@@ -88,6 +91,8 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 LeftTrigger = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERLEFT),
                 RightTrigger = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERRIGHT),
 
+                BatteryPercent = GetBatteryPercent(),
+
                 Timestamp = DateTime.Now
             };
         }
@@ -95,6 +100,35 @@ namespace GameControllerForZwift.Gamepad.SDL2
         #endregion
 
         #region Private Methods
+
+        private int? GetBatteryPercent()
+        {
+            var now = DateTime.UtcNow;
+            if (now - _batteryReadAt < BatteryCacheDuration)
+                return _cachedBattery;
+
+            _batteryReadAt = now;
+            try
+            {
+                IntPtr joystick = SDL_GameControllerGetJoystick(_handle);
+                _cachedBattery = joystick == IntPtr.Zero ? null : MapPowerLevel(SDL_JoystickCurrentPowerLevel(joystick));
+            }
+            catch
+            {
+                _cachedBattery = null;
+            }
+            return _cachedBattery;
+        }
+
+        internal static int? MapPowerLevel(SDL_JoystickPowerLevel level) => level switch
+        {
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_EMPTY => 5,
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_LOW => 20,
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_MEDIUM => 70,
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_FULL => 100,
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_WIRED => 100,
+            _ => null
+        };
 
         /// <summary>
         /// Gets the state of a specified button.

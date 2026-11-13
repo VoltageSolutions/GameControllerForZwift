@@ -22,10 +22,10 @@ namespace GameControllerForZwift.Core
         GoBack,
         [Description("Skip a workout block")]
         SkipWorkoutBlock,
-        [Description("Increase the FTP Bias")]
-        FTPBiasUp,
-        [Description("Descease the FTP Bias")]
-        FTPBiasDown,
+        [Description("Shift up / Increase workout intensity")]
+        ShiftUp,
+        [Description("Shift down / Decrease workout intensity")]
+        ShiftDown,
         [Description("Adjust the camera angle")]
         AdjustCameraAngle,
         [Description("Rider (Function Key) action")]
@@ -43,6 +43,18 @@ namespace GameControllerForZwift.Core
         [Description("Hide the Heads-Up Display")]
         HideHUD,
         [Description("Enter a Promo Code")]
-        PromoCode
+        PromoCode,
+
+        // Appended (do not reorder): profiles persist the enum by name, but keep numeric values stable anyway.
+        [Description("Steer left - Zwift LAN controller only")]
+        SteerLeft,
+        [Description("Steer right - Zwift LAN controller only")]
+        SteerRight,
+        [Description("Navigate up")]
+        NavigateUp,
+        [Description("Navigate down")]
+        NavigateDown,
+        [Description("Brake")]
+        Brake
     }
 }

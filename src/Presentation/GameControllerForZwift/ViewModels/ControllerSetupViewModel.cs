@@ -281,7 +281,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             var inputMappingsData = new Dictionary<string, ControllerInput>
             {
                 { "Left Bumper (L1)", ControllerInput.LeftBumper },
-                { "Right Bumper (R1)", ControllerInput.RightBumper }
+                { "Right Bumper (R1)", ControllerInput.RightBumper },
+                { "Left Trigger (L2)", ControllerInput.LeftTrigger },
+                { "Right Trigger (R2)", ControllerInput.RightTrigger }
             };
 
             foreach (var kvp in inputMappingsData)
