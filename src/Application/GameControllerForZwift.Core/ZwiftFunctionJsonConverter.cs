@@ -31,7 +31,7 @@ namespace GameControllerForZwift.Core
                 return ZwiftFunction.ShiftDown;
             if (name.Equals("RiderAction", StringComparison.OrdinalIgnoreCase))
                 return ZwiftFunction.RideOn;
-            if (Enum.TryParse<ZwiftFunction>(name, ignoreCase: true, out var result) && !int.TryParse(name, out _) && Enum.IsDefined(result))
+            if (!name.Contains(',') && Enum.TryParse<ZwiftFunction>(name, ignoreCase: true, out var result) && !int.TryParse(name, out _) && Enum.IsDefined(result))
                 return result;
             return ZwiftFunction.None;
         }

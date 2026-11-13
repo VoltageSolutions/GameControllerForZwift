@@ -285,7 +285,7 @@ emulator present itself as a Ride / Click v2 / Click v1 / Play instead of a self
   bikecontrol's per-device "start response" bytes are the same kind of pair: Click v1 `01 03`, Play `01 04`, Click v2 `02 03` (`bikecontrol/lib/bluetooth/devices/zwift/constants.dart:44-46`;
   `zwift_play.dart:38`, `zwift_clickv2.dart:54`). qdomyos only knows `RESPONSE_START = 01 03` (`qdomyos-zwift/src/zwift_play/abstractZapDevice.h:35`).
 - What does differ between the trainers and therefore likely drives Zwift's classification and its follow-up GETs: the f8 capability list.
-  KICKR BIKE: `(1, 36) (2, 0)` (trainer + user input) -> Zwift then asks 1024 (controller input config), 771, 528 (gear index). Victory (`captures/victory-capture-analysis.md` section 5):
+  KICKR BIKE: `(1, 36) (2, 0)` (trainer + user input) -> Zwift then asks 1024 (controller input config), 771, 528 (gear index). Victory (local capture analysis, not in the repository, section 5):
   `(1, 209) (8, 1) (4, 0)`, f9 = 8, f10 = 6 (matches 2A24 model "06") -> Zwift asks 16 and 1280 (sensor relay page, reply `3c 08 80 0a 12 06 0a 04 05 02 06 07`) and sends `44 20 01` / `44 08 01`
   (SENSOR_RELAY_CONFIG, `zp.proto:44`), answered `3e 08 44 10 00` (StatusResponse{command 0x44, status 0}). A pure controller has no trainer role, so the working hypothesis is: a controller claims only `(2, caps)`.
 - Reply to 1024 is `ControllerInputConfigPage { supportedDigitalInputs = 216, supportedAnalogInputs = 3, two analogInputRange }` (`zp.proto:475`); the digital-input bit layout is a Zp enum (NOT the Ride keypad mask), unknown for Ride/Click.
@@ -326,7 +326,7 @@ USER_INPUT_DEVICE for a real controller (0 copied from the KICKR), manufacturerI
 
 ## mDNS manufacturer-data
 
-BikeControl (accepted by Zwift) advertises `_wahoo-fitness-tnp._tcp` with TXT `manufacturer-data=4A0906B653` (see docs/captures/bikecontrol-capture-analysis.md). Findings from the BikeControl open code (read-only reference):
+BikeControl (accepted by Zwift) advertises `_wahoo-fitness-tnp._tcp` with TXT `manufacturer-data=4A0906B653` (local capture analysis, not in the repository). Findings from the BikeControl open code (read-only reference):
 
 - The value is ASCII hex text (10 characters), not binary: BikeControl writes `Uint8List.fromList(String.codeUnits)` (lib/bluetooth/devices/openbikecontrol/obc_mdns_emulator.dart:230). The open repo only holds a placeholder (`BikeControlMdnsMarkers.manufacturerData = '0000000000'`, prop_public/lib/utils/constants.dart:46); BikeControl itself only uses it as a fingerprint to ignore its own adverts (lib/bluetooth/wifi_trainer_scanner.dart:178). The real value is not in the open code.
 - Decoding: `4A 09` = Zwift company id 0x094A little-endian (ZWIFT_MANUFACTURER_ID = 2378, lib/bluetooth/devices/zwift/constants.dart:16), the same prefix as BLE manufacturer data. Remaining bytes `06 B6 53`: the BLE payload after the company id begins with a device-type byte (constants.dart:21-37, parsed by ZwiftDeviceType.fromManufacturerData, constants.dart:202; used at lib/bluetooth/devices/bluetooth_device.dart:488-500).

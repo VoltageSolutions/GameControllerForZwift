@@ -10,7 +10,7 @@ by emulating a Wahoo Direct Connect (DirCon) device: an mDNS advertisement plus 
 Detail documents:
 
 - [zwift-lan-protocol-notes.md](zwift-lan-protocol-notes.md) - wire format, GATT layout, handshake.
-- [captures/kickr-bike-capture-analysis.md](captures/kickr-bike-capture-analysis.md) (local only, not in git) - frame-by-frame analysis of the real-bike capture.
+- Frame-by-frame analysis of the real-bike capture (local capture analysis, not in the repository).
 - [zwift-lan-testing.md](zwift-lan-testing.md) - how to run the probe and test against Zwift.
 
 ## 2. Sources examined

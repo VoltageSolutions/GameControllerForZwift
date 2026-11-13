@@ -356,6 +356,6 @@ public sealed class DirconSession : IAsyncDisposable
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
         try { _cts.Cancel(); } catch (ObjectDisposedException) { }
-        try { await _stream.DisposeAsync().ConfigureAwait(false); } catch { }
+        try { await _stream.DisposeAsync().ConfigureAwait(false); } catch (Exception ex) { _logger.LogDebug(ex, "DIRCON session {Name} stream dispose failed", _name); }
     }
 }

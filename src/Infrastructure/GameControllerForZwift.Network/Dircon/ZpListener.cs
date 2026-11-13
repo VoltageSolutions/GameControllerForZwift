@@ -144,7 +144,7 @@ public sealed class ZpListener : IAsyncDisposable
         }
         finally
         {
-            try { client.Dispose(); } catch { }
+            try { client.Dispose(); } catch (Exception ex) { _logger.LogDebug(ex, "ZP client dispose failed"); }
             _logger.LogInformation("ZP closed connection from {Remote}", remote);
         }
     }

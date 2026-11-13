@@ -30,6 +30,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="GameControllerForZwift.Gamepad.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Application\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
   </ItemGroup>
 

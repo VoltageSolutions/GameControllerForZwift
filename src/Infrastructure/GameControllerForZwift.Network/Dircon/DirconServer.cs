@@ -349,7 +349,7 @@ public sealed class DirconServer : IZwiftControllerLink
         finally
         {
             await session.DisposeAsync().ConfigureAwait(false);
-            try { client.Dispose(); } catch { }
+            try { client.Dispose(); } catch (Exception ex) { _logger.LogDebug(ex, "Client dispose failed"); }
             bool wasCurrent;
             lock (_lock)
             {
