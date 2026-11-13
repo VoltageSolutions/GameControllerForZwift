@@ -9,7 +9,7 @@ namespace GameControllerForZwift.Network.UnitTests;
 /// </summary>
 public class BikeControlReplicaTests
 {
-    private static readonly DeviceIdentity AnyIdentity = new("Voltage Emulator", "612034871", "02-47-5A-00-00-01", "1.21.18", "3");
+    private static readonly DeviceIdentity AnyIdentity = new("Voltage Gamepad", "612034871", "02-47-5A-00-00-01", "1.21.18", "3");
     private static readonly byte[] Zwift2 = BleUuid.Parse("00000002-19CA-4651-86E5-FA29DCDD09D1").ToBytes();
     private static readonly byte[] Zwift4 = BleUuid.Parse("00000004-19CA-4651-86E5-FA29DCDD09D1").ToBytes();
 

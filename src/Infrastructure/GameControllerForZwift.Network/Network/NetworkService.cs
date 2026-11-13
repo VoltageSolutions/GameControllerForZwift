@@ -10,35 +10,27 @@ namespace GameControllerForZwift.Network
     /// Lifecycle: call <see cref="StartAsync"/> at app startup (starts the DirCon server, then advertises it via mDNS)
     /// and <see cref="StopAsync"/>/<see cref="DisposeAsync"/> on exit. There are no constructor side effects.
     /// </summary>
-    public sealed class NetworkService : ILanOutputService, IAsyncDisposable
+    public sealed class NetworkService : IZwiftControllerOutput, IAsyncDisposable
     {
         /// <summary>
-        /// Single place to edit the ZwiftFunction -> Zwift Ride button mapping.
-        /// Per docs/zwift-lan-protocol-notes.md: shift up = right shifter (SHFT_UP_R), shift down = left shifter (SHFT_UP_L);
-        /// steering and braking are NOT buttons any more: they are the analog paddles (see <see cref="PaddleMath"/>);
-        /// UP = in-ride menu, DOWN = U-turn; A = select, B = back, Y = power-up.
-        /// RiderAction maps to Z (Ride On bomb) and is handled specially (only when the chosen rider action is RideOn).
+        /// Single place to edit the ZwiftFunction -> Zwift Ride button mapping (exactly what a Zwift Ride provides).
+        /// Shift up = right shifter (SHFT_UP_R), shift down = left shifter (SHFT_UP_L); D-pad = Up/Down/Left/Right;
+        /// A = select, B = back/menu, Y = power-up, Z = Ride On. Steering and braking are NOT buttons: they are the
+        /// analog paddles (see <see cref="PaddleMath"/>).
         /// </summary>
         public static readonly IReadOnlyDictionary<ZwiftFunction, ZwiftRideButton> ButtonMap = new Dictionary<ZwiftFunction, ZwiftRideButton>
         {
-            [ZwiftFunction.ShiftUp] = ZwiftRideButton.RS1,
-            [ZwiftFunction.ShiftDown] = ZwiftRideButton.LS1,
-            [ZwiftFunction.NavigateLeft] = ZwiftRideButton.Left,
-            [ZwiftFunction.NavigateRight] = ZwiftRideButton.Right,
             [ZwiftFunction.NavigateUp] = ZwiftRideButton.Up,
             [ZwiftFunction.NavigateDown] = ZwiftRideButton.Down,
-            [ZwiftFunction.ShowMenu] = ZwiftRideButton.Up,
-            [ZwiftFunction.Uturn] = ZwiftRideButton.Down,
+            [ZwiftFunction.NavigateLeft] = ZwiftRideButton.Left,
+            [ZwiftFunction.NavigateRight] = ZwiftRideButton.Right,
             [ZwiftFunction.Select] = ZwiftRideButton.A,
             [ZwiftFunction.GoBack] = ZwiftRideButton.B,
             [ZwiftFunction.Powerup] = ZwiftRideButton.Y,
+            [ZwiftFunction.RideOn] = ZwiftRideButton.Z,
+            [ZwiftFunction.ShiftUp] = ZwiftRideButton.RS1,
+            [ZwiftFunction.ShiftDown] = ZwiftRideButton.LS1,
         };
-
-        /// <summary>
-        /// How long a button stays pressed after the last PerformActionAsync call for it. DataIntegrator calls PerformActionAsync
-        /// repeatedly (every poll) while the physical button is held, so each call extends the hold; a tap is held for this long.
-        /// </summary>
-        public static readonly TimeSpan HoldTime = TimeSpan.FromMilliseconds(120);
 
         private readonly IZwiftControllerLink _link;
         private readonly MdnsAdvertiser _mdns;
@@ -55,8 +47,6 @@ namespace GameControllerForZwift.Network
         private CancellationTokenSource? _loopCts;
         private Task? _loopTask;
 
-        private readonly SemaphoreSlim _sendLock = new(1, 1);
-        private readonly Dictionary<ZwiftRideButton, CancellationTokenSource> _held = new();
         private readonly object _startGate = new();
         private bool _started;
 
@@ -73,21 +63,6 @@ namespace GameControllerForZwift.Network
         public event EventHandler<bool>? ConnectionChanged;
 
         public bool IsZwiftConnected => _link.IsZwiftConnected;
-
-        bool ILanOutputService.IsAvailable => IsZwiftConnected;
-
-        public bool Supports(ZwiftFunction zwiftFunction, ZwiftRiderAction riderAction = ZwiftRiderAction.WaveHand)
-            => CanHandle(zwiftFunction, riderAction);
-
-        public bool CanHandle(ZwiftFunction function, ZwiftRiderAction riderAction)
-        {
-            if (function == ZwiftFunction.RiderAction)
-                return riderAction == ZwiftRiderAction.RideOn;
-            return ButtonMap.ContainsKey(function)
-                || function == ZwiftFunction.SteerLeft
-                || function == ZwiftFunction.SteerRight
-                || function == ZwiftFunction.Brake;
-        }
 
         /// <summary>Non-blocking: stores the latest state and wakes the send loop when the resulting frame content changed.</summary>
         public Task UpdateAsync(ZwiftControllerState state, CancellationToken ct = default)
@@ -113,9 +88,7 @@ namespace GameControllerForZwift.Network
             var mask = ZwiftRideButton.None;
             foreach (var f in state.Pressed)
             {
-                if (f == ZwiftFunction.RiderAction)
-                    mask |= ZwiftRideButton.Z;
-                else if (ButtonMap.TryGetValue(f, out var b))
+                if (ButtonMap.TryGetValue(f, out var b))
                     mask |= b;
             }
             var (zl, zr) = PaddleMath.Compute(state.Steer, state.Brake);
@@ -217,111 +190,14 @@ namespace GameControllerForZwift.Network
             _link.ConnectionChanged -= OnLinkConnectionChanged;
             _mdns.Stop();
             await StopSendLoopAsync().ConfigureAwait(false);
-            ReleaseAllHeld();
             await _link.StopAsync().ConfigureAwait(false);
-        }
-
-        public async Task<ActionResult> PerformActionAsync(ZwiftFunction zwiftFunction, ZwiftPlayerView playerView = ZwiftPlayerView.Default, ZwiftRiderAction riderAction = ZwiftRiderAction.WaveHand)
-        {
-            ZwiftRideButton button;
-            if (zwiftFunction == ZwiftFunction.RiderAction && riderAction == ZwiftRiderAction.RideOn)
-                button = ZwiftRideButton.Z;
-            else if (!ButtonMap.TryGetValue(zwiftFunction, out button))
-                return new ActionResult { Success = false, ErrorMessage = $"No Zwift LAN button mapping for {zwiftFunction}." };
-
-            if (!IsZwiftConnected)
-                return new ActionResult { Success = false, ErrorMessage = "Zwift is not connected to the LAN controller." };
-
-            try
-            {
-                await _sendLock.WaitAsync().ConfigureAwait(false);
-                try
-                {
-                    var cts = new CancellationTokenSource();
-                    var alreadyHeld = _held.TryGetValue(button, out var previous);
-                    if (alreadyHeld)
-                        previous!.Cancel(); // extend the hold; no new press frame needed
-                    _held[button] = cts;
-
-                    if (!alreadyHeld)
-                        await _link.SendButtonsAsync(CurrentMask()).ConfigureAwait(false);
-
-                    _ = ReleaseAfterDelayAsync(button, cts);
-                }
-                finally
-                {
-                    _sendLock.Release();
-                }
-                return new ActionResult { Success = true };
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending {Function} to Zwift over the network.", zwiftFunction);
-                return new ActionResult { Success = false, ErrorMessage = ex.Message };
-            }
-        }
-
-        private ZwiftRideButton CurrentMask()
-        {
-            var mask = ZwiftRideButton.None;
-            foreach (var b in _held.Keys) mask |= b;
-            return mask;
-        }
-
-        private async Task ReleaseAfterDelayAsync(ZwiftRideButton button, CancellationTokenSource cts)
-        {
-            try
-            {
-                await Task.Delay(HoldTime, cts.Token).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                return; // superseded by a newer press of the same button
-            }
-
-            try
-            {
-                await _sendLock.WaitAsync().ConfigureAwait(false);
-                try
-                {
-                    if (_held.TryGetValue(button, out var current) && ReferenceEquals(current, cts))
-                    {
-                        _held.Remove(button);
-                        cts.Dispose();
-                        await _link.SendButtonsAsync(CurrentMask()).ConfigureAwait(false);
-                    }
-                }
-                finally
-                {
-                    _sendLock.Release();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogWarning(ex, "Failed to release {Button}.", button);
-            }
-        }
-
-        private void ReleaseAllHeld()
-        {
-            _sendLock.Wait();
-            try
-            {
-                foreach (var cts in _held.Values) cts.Cancel();
-                _held.Clear();
-            }
-            finally
-            {
-                _sendLock.Release();
-            }
         }
 
         private void OnLinkConnectionChanged(object? sender, bool connected)
         {
             if (!connected)
             {
-                ReleaseAllHeld();
-                lock (_stateLock) _state = ZwiftControllerState.Neutral;
+                    lock (_stateLock) _state = ZwiftControllerState.Neutral;
                 SignalLoop();
             }
             ConnectionChanged?.Invoke(this, connected);

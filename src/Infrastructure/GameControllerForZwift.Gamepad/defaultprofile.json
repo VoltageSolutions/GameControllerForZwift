@@ -1,86 +1,21 @@
-﻿{
+{
   "Profiles": [
     {
       "Name": "Default Profile",
       "Mappings": [
-        {
-          "Input": "A",
-          "Function": "Select",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "B",
-          "Function": "GoBack",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "Y",
-          "Function": "HideHUD",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "DPad_Up",
-          "Function": "ShowMenu",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "DPad_Down",
-          "Function": "Uturn",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "DPad_Left",
-          "Function": "NavigateLeft",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "DPad_Right",
-          "Function": "NavigateRight",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "LeftThumbstick_TiltUp",
-          "Function": "ShowMenu",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "LeftThumbstick_TiltDown",
-          "Function": "Uturn",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "LeftThumbstick_TiltLeft",
-          "Function": "NavigateLeft",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "LeftThumbstick_TiltRight",
-          "Function": "NavigateRight",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "LeftBumper",
-          "Function": "ShiftDown",
-          "PlayerView": null,
-          "RiderAction": null
-        },
-        {
-          "Input": "RightBumper",
-          "Function": "ShiftUp",
-          "PlayerView": null,
-          "RiderAction": null
-        }
+        { "Input": "A", "Function": "Select" },
+        { "Input": "B", "Function": "GoBack" },
+        { "Input": "X", "Function": "RideOn" },
+        { "Input": "Y", "Function": "Powerup" },
+        { "Input": "DPad_Up", "Function": "NavigateUp" },
+        { "Input": "DPad_Down", "Function": "NavigateDown" },
+        { "Input": "DPad_Left", "Function": "NavigateLeft" },
+        { "Input": "DPad_Right", "Function": "NavigateRight" },
+        { "Input": "LeftBumper", "Function": "ShiftDown" },
+        { "Input": "RightBumper", "Function": "ShiftUp" },
+        { "Input": "LeftThumbstick_TiltLeft", "Function": "SteerLeft" },
+        { "Input": "LeftThumbstick_TiltRight", "Function": "SteerRight" },
+        { "Input": "LeftTrigger", "Function": "Brake" }
       ]
     }
   ]

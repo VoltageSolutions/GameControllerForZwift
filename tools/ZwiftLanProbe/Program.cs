@@ -23,7 +23,7 @@ bool verbose = false;
 int maxGear = 5;
 bool zpListen = false, zpOnly = false;
 int zpPort = 36870;
-string zpName = "Voltage Emulator";
+string zpName = "Voltage Gamepad";
 var zpExtraTxt = new List<string>();
 string? mfgData = DeviceProfileOptions.MfgPreset("bikecontrol");
 var txtExtra = new List<string>();

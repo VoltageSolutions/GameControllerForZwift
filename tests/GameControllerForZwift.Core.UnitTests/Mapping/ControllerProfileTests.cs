@@ -29,18 +29,14 @@ namespace GameControllerForZwift.Core.Tests.Mapping
             var profile = new ControllerProfile();
             var input = ControllerInput.A;
             var newFunction = ZwiftFunction.Select;
-            var newPlayerView = ZwiftPlayerView.Drone;
-            var newRiderAction = ZwiftRiderAction.Nice;
 
             // Act
-            profile.UpdateMapping(input, newFunction, newPlayerView, newRiderAction);
+            profile.UpdateMapping(input, newFunction);
 
             // Assert
             var updatedMapping = profile.Mappings.FirstOrDefault(m => m.Input == input);
             Assert.NotNull(updatedMapping);
             Assert.Equal(newFunction, updatedMapping.Function);
-            Assert.Equal(newPlayerView, updatedMapping.PlayerView);
-            Assert.Equal(newRiderAction, updatedMapping.RiderAction);
         }
 
         [Fact]
@@ -52,7 +48,7 @@ namespace GameControllerForZwift.Core.Tests.Mapping
 
             // Act & Assert
             Assert.Throws<ArgumentException>(() =>
-                profile.UpdateMapping(invalidInput, ZwiftFunction.HideHUD)
+                profile.UpdateMapping(invalidInput, ZwiftFunction.Select)
             );
         }
     }

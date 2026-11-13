@@ -3,7 +3,6 @@ using GameControllerForZwift.Core.FileSystem;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Gamepad.Mapping;
 using GameControllerForZwift.Gamepad.SDL2;
-using GameControllerForZwift.Keyboard;
 using GameControllerForZwift.Network;
 using GameControllerForZwift.Network.Dircon;
 using GameControllerForZwift.Network.Logging;
@@ -50,8 +49,7 @@ namespace GameControllerForZwift
             mainWindow.Show();
             Current.ThemeMode = ThemeMode.System;
 
-            // Start the Zwift LAN controller (DirCon server + mDNS advertisement) in the background. It always runs; the
-            // "Zwift Controller Emulator" checkbox only decides whether controller input is sent to it.
+            // Start the Zwift LAN controller (DirCon server + mDNS advertisement) in the background. It always runs and is the only output.
             {
                 var network = ServiceProvider.GetRequiredService<NetworkService>();
                 var logger = ServiceProvider.GetRequiredService<ILogger<App>>();
@@ -113,36 +111,14 @@ namespace GameControllerForZwift
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<IInputService, SDL2InputService>();
 
-            // Output: keyboard + Zwift LAN controller, routed by CompositeOutputService (see its docs for the rules).
-            // Choices are loaded from %APPDATA%\GameControllerForZwift\settings.json and saved whenever they change.
-            services.AddSingleton<OutputOptions>(_ =>
-            {
-                var options = new OutputOptions();
-                var store = new OutputOptionsStore(OutputOptionsStore.DefaultPath);
-                store.Load(options);
-                options.Changed += (_, _) => store.Save(options);
-                return options;
-            });
-
-            // GameControllerForZwift.Keyboard
-            services.AddSingleton<KeyboardService>();
-
             // GameControllerForZwift.Network: the bcride preset (BikeControl replica) for both the DirCon server and the mDNS advertisement.
             var zwiftProfile = DeviceProfiles.ZwiftRidePreset();
-            services.AddSingleton(DeviceIdentity.Default with { Name = "Voltage Emulator" });
+            services.AddSingleton(DeviceIdentity.Default with { Name = "Voltage Gamepad" });
             services.AddSingleton<IZwiftControllerLink>(provider =>
                 new DirconServer(provider.GetRequiredService<DeviceIdentity>(), provider.GetRequiredService<ILogger<DirconServer>>(), profile: zwiftProfile));
             services.AddSingleton(provider => new MdnsAdvertiser(provider.GetRequiredService<ILogger<MdnsAdvertiser>>(), zwiftProfile));
             services.AddSingleton<NetworkService>();
-            services.AddSingleton<ILanOutputService>(provider => provider.GetRequiredService<NetworkService>());
-
-            // One composite instance serves as both the discrete (IOutputService) and the continuous (IZwiftControllerOutput) output.
-            services.AddSingleton(provider => new CompositeOutputService(
-                provider.GetRequiredService<KeyboardService>(),
-                provider.GetRequiredService<ILanOutputService>(),
-                provider.GetRequiredService<OutputOptions>()));
-            services.AddSingleton<IOutputService>(provider => provider.GetRequiredService<CompositeOutputService>());
-            services.AddSingleton<IZwiftControllerOutput>(provider => provider.GetRequiredService<CompositeOutputService>());
+            services.AddSingleton<IZwiftControllerOutput>(provider => provider.GetRequiredService<NetworkService>());
 
             services.AddSingleton<IControllerProfileService>(provider =>
             {
@@ -157,10 +133,8 @@ namespace GameControllerForZwift
             // GameControllerForZwift.Logic
             services.AddSingleton<IDataIntegrator>(provider => new DataIntegrator(
                 provider.GetRequiredService<IInputService>(),
-                provider.GetRequiredService<CompositeOutputService>(),
                 provider.GetRequiredService<IControllerProfileService>(),
-                10,
-                provider.GetRequiredService<CompositeOutputService>()));
+                provider.GetRequiredService<IZwiftControllerOutput>()));
 
 
             services.AddSingleton<INavigationService, NavigationService>();

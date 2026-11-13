@@ -4,8 +4,9 @@ using System.Text.Json.Serialization;
 namespace GameControllerForZwift.Core
 {
     /// <summary>
-    /// Reads/writes <see cref="ZwiftFunction"/> by name (case-insensitive, like JsonStringEnumConverter) and maps the
-    /// legacy names "FTPBiasUp"/"FTPBiasDown" from older profiles to ShiftUp/ShiftDown.
+    /// Reads/writes <see cref="ZwiftFunction"/> by name (case-insensitive, like JsonStringEnumConverter). Tolerant when reading:
+    /// legacy "FTPBiasUp"/"FTPBiasDown" map to ShiftUp/ShiftDown, legacy "RiderAction" maps to RideOn (InputMapping then resets it
+    /// to None if its RiderAction was something other than RideOn), and any other unknown/removed name or number loads as None.
     /// </summary>
     public sealed class ZwiftFunctionJsonConverter : JsonConverter<ZwiftFunction>
     {
@@ -15,19 +16,24 @@ namespace GameControllerForZwift.Core
             {
                 if (reader.TryGetInt32(out var number) && Enum.IsDefined(typeof(ZwiftFunction), number))
                     return (ZwiftFunction)number;
-                throw new JsonException($"Invalid ZwiftFunction value.");
+                return ZwiftFunction.None;
             }
             if (reader.TokenType != JsonTokenType.String)
-                throw new JsonException("Expected a string for ZwiftFunction.");
+            {
+                reader.Skip();
+                return ZwiftFunction.None;
+            }
 
             var name = reader.GetString()?.Trim() ?? string.Empty;
             if (name.Equals("FTPBiasUp", StringComparison.OrdinalIgnoreCase))
                 return ZwiftFunction.ShiftUp;
             if (name.Equals("FTPBiasDown", StringComparison.OrdinalIgnoreCase))
                 return ZwiftFunction.ShiftDown;
-            if (Enum.TryParse<ZwiftFunction>(name, ignoreCase: true, out var result) && !int.TryParse(name, out _))
+            if (name.Equals("RiderAction", StringComparison.OrdinalIgnoreCase))
+                return ZwiftFunction.RideOn;
+            if (Enum.TryParse<ZwiftFunction>(name, ignoreCase: true, out var result) && !int.TryParse(name, out _) && Enum.IsDefined(result))
                 return result;
-            throw new JsonException($"Unknown ZwiftFunction '{name}'.");
+            return ZwiftFunction.None;
         }
 
         public override void Write(Utf8JsonWriter writer, ZwiftFunction value, JsonSerializerOptions options)

@@ -115,7 +115,7 @@ Resistance device and our emulator is Controls only.
 | DirCon protocol | `src/Infrastructure/GameControllerForZwift.Network/Dircon/`: `DirconMessage`, `BleUuid`, `GattModel` / `KickrBikeProfile`, `DeviceProfile` (`AdvertKind`, `GattKind`), `ZwiftControlProtocol`, `DirconSession`, `DirconServer`, `RideSimulator`, `DeviceIdentity`, `ZwiftRideButton` |
 | mDNS | `Network/Mdns/MdnsAdvertiser` |
 | Logging | `Network/Logging/FileLoggerProvider` (logs in `<exe dir>/logs`) |
-| Core abstractions | `GameControllerForZwift.Core`: `CompositeOutputService`, `ILanOutputService`, `OutputOptions`; new `ZwiftFunction` values `ShiftUp`, `ShiftDown`, `SteerLeft`, `SteerRight`, `NavigateUp`, `NavigateDown` |
+| Core abstractions | `GameControllerForZwift.Core`: `IZwiftControllerOutput` / `ZwiftControllerState` (implemented by `NetworkService`), `ZwiftFunction` (see "App simplification") |
 | Probe tool | `tools/ZwiftLanProbe` |
 | Tests | `tests/GameControllerForZwift.Network.UnitTests` (capture replay tests) |
 
@@ -190,3 +190,16 @@ Zwift launches its Zwift Ride tutorial for this device.
 - Simulated power is not shown by Zwift in `bcride`; 2AD2 notifications are sent, suspect the 2ACC feature value.
 - Partial steering and brake are untested.
 - Reconnect after probe restart still fails.
+
+## App simplification (2026-11-13)
+
+Live test (Zwift on a tablet, app on a laptop): the emulated Zwift Ride works; steer, shift, D-pad holds and brake work, but even a light brake press gives a full stop. Decisions taken:
+
+- Keyboard emulation is removed entirely (the Keyboard project and its integration tests, `CompositeOutputService`, `IOutputService`, `ILanOutputService`, `OutputOptions` / `OutputOptionsStore` / `settings.json`, the "Send to" card and the legacy `PerformActionAsync` / hold-time path in `NetworkService`). The emulated Zwift Ride is the only output and is always on; `DataIntegrator` only talks to `IZwiftControllerOutput`.
+- `ZwiftFunction` is reduced to what a Zwift Ride provides: None, NavigateUp/Down/Left/Right (D-pad), Select (A), GoBack (B, Back/Menu), Powerup (Y; hold = skip workout block), RideOn (Z; hold = Ride On bombs), ShiftUp (RS1), ShiftDown (LS1), SteerLeft, SteerRight, Brake. `ZwiftRiderAction`, `ZwiftPlayerView` and the matching `InputMapping` properties and UI dropdowns are gone.
+- Profile compatibility: `ZwiftFunctionJsonConverter` loads removed or unknown names (and unknown numbers) as None, `FTPBiasUp`/`FTPBiasDown` as ShiftUp/ShiftDown, and the legacy `RiderAction` function as RideOn when its `RiderAction` property was RideOn or absent (any other rider action loads as None). Legacy `PlayerView` / `RiderAction` JSON properties are ignored and never written.
+- Default profile: D-pad = Navigate*, A = Select, B = GoBack, X = RideOn, Y = Powerup, LB = ShiftDown, RB = ShiftUp, left stick left/right = SteerLeft/SteerRight, left trigger = Brake.
+
+### Brake scaling (no behaviour change)
+
+Chain: SDL trigger axis (0..32767) -> `GetAnalogValue` = (raw - 1638) / (32767 - 1638), 0 inside the ~5% deadzone, clamped to 0..1 -> `ZwiftControllerState.Brake` -> `PaddleMath.Compute` = round(100 x brake), written as ZL = +b and ZR = -b (inward). It is linear and not binary. Values sent for trigger travel of 10% / 30% / 60% (raw 3277 / 9830 / 19660): brake 0.053 / 0.263 / 0.579, i.e. ZL/ZR = 5/-5, 26/-26, 58/-58. So the app sends a proportional value; the full stop on a light press is most likely how Zwift reads the brake paddle (any inward value treated as full brake, or a steep curve). To verify, send fixed partial values with the probe (`--partial N` with the brake keys, default 50) and watch whether Zwift's braking changes; a dedicated `--brake-test` sweep (ramp ZL/ZR inward 5, 10, 25, 50, 75, 100 while riding) would be the next step and is not implemented yet.

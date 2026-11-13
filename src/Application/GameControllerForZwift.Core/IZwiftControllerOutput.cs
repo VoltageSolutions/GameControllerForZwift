@@ -11,14 +11,10 @@ namespace GameControllerForZwift.Core
         public bool IsNeutral => Pressed.Count == 0 && Steer == 0 && Brake == 0;
     }
 
-    /// <summary>A continuous (state based) output, as opposed to <see cref="IOutputService"/> which fires discrete actions.</summary>
+    /// <summary>The (only) output: a continuous, state based emulated Zwift Ride controller.</summary>
     public interface IZwiftControllerOutput
     {
-        /// <summary>True when the keyboard output is also enabled, so the caller should additionally send discrete actions via <see cref="IOutputService"/> even for functions this output handles.</summary>
-        bool SendsToKeyboard { get; }
-
-        bool Handles(ZwiftFunction function, ZwiftRiderAction riderAction);
-
+        /// <summary>Pushes the current controller state to Zwift. Must be cheap and non-blocking.</summary>
         Task UpdateAsync(ZwiftControllerState state, CancellationToken ct = default);
     }
 }

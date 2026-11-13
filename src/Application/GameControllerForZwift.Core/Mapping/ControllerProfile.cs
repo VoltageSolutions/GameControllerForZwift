@@ -15,18 +15,16 @@ namespace GameControllerForZwift.Core.Mapping
             // Initialize Mappings with default values for each ControllerInput
             foreach (ControllerInput input in Enum.GetValues(typeof(ControllerInput)))
             {
-                Mappings.Add(new InputMapping(input, ZwiftFunction.None, ZwiftPlayerView.Default, null));
+                Mappings.Add(new InputMapping(input, ZwiftFunction.None));
             }
         }
 
-        public void UpdateMapping(ControllerInput input, ZwiftFunction function, ZwiftPlayerView? playerView = null, ZwiftRiderAction? riderAction = null)
+        public void UpdateMapping(ControllerInput input, ZwiftFunction function)
         {
             var mapping = Mappings.FirstOrDefault(m => m.Input == input);
             if (mapping != null)
             {
                 mapping.Function = function;
-                mapping.PlayerView = playerView ?? ZwiftPlayerView.Default;
-                mapping.RiderAction = riderAction ?? ZwiftRiderAction.RideOn;
             }
             else
             {

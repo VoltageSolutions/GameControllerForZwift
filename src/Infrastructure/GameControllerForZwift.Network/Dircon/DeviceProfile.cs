@@ -149,11 +149,11 @@ public static class DeviceProfiles
         MfgData: DeviceProfileOptions.MfgPreset("bikecontrol"),
         AddObcUuid: true);
 
-    /// <summary>Default display name: the KICKR name only for kickr advert + full GATT, otherwise "Voltage Emulator".</summary>
+    /// <summary>Default display name: the KICKR name only for kickr advert + full GATT, otherwise "Voltage Gamepad".</summary>
     public static string DefaultName(DeviceProfileOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        return options.Advert == AdvertKind.Kickr && options.Gatt == GattKind.Full ? "KICKR BIKE SHIFT GC4Z" : "Voltage Emulator";
+        return options.Advert == AdvertKind.Kickr && options.Gatt == GattKind.Full ? "KICKR BIKE SHIFT GC4Z" : "Voltage Gamepad";
     }
 
     /// <summary>Value of the mDNS TXT "ble-service-uuids" entry.</summary>

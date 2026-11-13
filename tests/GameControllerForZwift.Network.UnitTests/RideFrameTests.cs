@@ -138,8 +138,8 @@ public class RideFrameTests
     {
         var id = DeviceIdentity.Default;
         Assert.Equal("KICKR BIKE SHIFT GC4Z", DeviceProfiles.DefaultName(new DeviceProfileOptions()));
-        Assert.Equal("Voltage Emulator", DeviceProfiles.DefaultName(new DeviceProfileOptions(AdvertKind.Kickr, GattKind.NoWahoo)));
-        Assert.Equal("Voltage Emulator", DeviceProfiles.DefaultName(DeviceProfileOptions.FromKind(DeviceProfileKind.Zwift)));
+        Assert.Equal("Voltage Gamepad", DeviceProfiles.DefaultName(new DeviceProfileOptions(AdvertKind.Kickr, GattKind.NoWahoo)));
+        Assert.Equal("Voltage Gamepad", DeviceProfiles.DefaultName(DeviceProfileOptions.FromKind(DeviceProfileKind.Zwift)));
         Assert.Equal(AdvertKind.Ftms, DeviceProfileOptions.FromKind(DeviceProfileKind.Ftms).Advert);
         Assert.Equal(GattKind.Minimal, DeviceProfileOptions.FromKind(DeviceProfileKind.Zwift).Gatt);
         foreach (var gatt in new[] { GattKind.Full, GattKind.NoWahoo, GattKind.Minimal })

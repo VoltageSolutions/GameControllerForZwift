@@ -62,14 +62,6 @@
                         </Grid>
                     </controls:Card>
 
-                    <!--Output Selection Card-->
-                    <controls:Card MinWidth="200" Title="Send to" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
-                        <StackPanel Orientation="Vertical">
-                            <CheckBox Content="Zwift Controller Emulator" IsChecked="{Binding ViewModel.SendToZwiftEmulator, Mode=TwoWay}"/>
-                            <CheckBox Content="Keyboard" IsChecked="{Binding ViewModel.SendToKeyboard, Mode=TwoWay}"/>
-                        </StackPanel>
-                    </controls:Card>
-
                     <!--Reset Card-->
                     <!--<controls:Card MinWidth="300" Title="Reset" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <StackPanel Orientation="Horizontal">

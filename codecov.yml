@@ -25,7 +25,6 @@ comment: false
 #   infrastructure_tests:
 #     paths:
 #       - "tests/GameControllerForZwift.Gamepad.Tests"
-#       - "tests/GameControllerForZwift.Keyboard.Tests"
 
 #   ui_tests:
 #     paths:

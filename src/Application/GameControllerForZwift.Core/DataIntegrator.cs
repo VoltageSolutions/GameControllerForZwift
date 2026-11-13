@@ -8,9 +8,8 @@ namespace GameControllerForZwift.Core
     {
         #region Fields
         private readonly IInputService _inputService;
-        private readonly IOutputService _outputService;
         private readonly IControllerProfileService _controllerProfileService;
-        private readonly IZwiftControllerOutput? _zwiftOutput;
+        private readonly IZwiftControllerOutput _zwiftOutput;
         public ConcurrentQueue<ControllerData> DataQueue => _dataQueue;
         private readonly ConcurrentQueue<ControllerData> _dataQueue = new ConcurrentQueue<ControllerData>();
         private readonly int _maxQueueSize;
@@ -20,10 +19,9 @@ namespace GameControllerForZwift.Core
         #endregion
 
         #region Constructor
-        public DataIntegrator(IInputService inputService, IOutputService outputService, IControllerProfileService controllerProfileService, int maxQueueSize = 10, IZwiftControllerOutput? zwiftOutput = null)
+        public DataIntegrator(IInputService inputService, IControllerProfileService controllerProfileService, IZwiftControllerOutput zwiftOutput, int maxQueueSize = 10)
         {
             _inputService = inputService;
-            _outputService = outputService;
             _controllerProfileService = controllerProfileService;
             _maxQueueSize = maxQueueSize;
             _zwiftOutput = zwiftOutput;
@@ -49,11 +47,8 @@ namespace GameControllerForZwift.Core
             if (null != _cts)
                 _cts.Cancel();
 
-            if (_zwiftOutput != null)
-            {
-                try { _ = _zwiftOutput.UpdateAsync(ZwiftControllerState.Neutral); }
-                catch { /* best effort */ }
-            }
+            try { _ = _zwiftOutput.UpdateAsync(ZwiftControllerState.Neutral); }
+            catch { /* best effort */ }
         }
 
         public async Task ReadDataAsync(IController controller, CancellationToken cancellationToken)
@@ -96,23 +91,10 @@ namespace GameControllerForZwift.Core
             if (originalMapping != null)
             {
                 originalMapping.Function = mapping.Function;
-                originalMapping.PlayerView = mapping.PlayerView;
-                originalMapping.RiderAction = mapping.RiderAction;
             }
             else
             {
                 profile.Mappings.Add(mapping);
-            }
-        }
-
-        public async Task PerformActionAsync(ControllerInput controllerInput)
-        {
-            // this is not a good long-term way to get a profile.
-            var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
-            var mapping = profile.Mappings.Where(m => m.Input == controllerInput).FirstOrDefault();
-            if (null != mapping)
-            {
-                await _outputService.PerformActionAsync(mapping.Function, mapping.PlayerView ?? ZwiftPlayerView.Default, mapping.RiderAction ?? ZwiftRiderAction.RideOn);
             }
         }
 
@@ -147,29 +129,17 @@ namespace GameControllerForZwift.Core
                             if (mapping == null || mapping.Function == ZwiftFunction.None)
                                 continue;
 
-                            var riderAction = mapping.RiderAction ?? ZwiftRiderAction.RideOn;
-                            bool handledByEmulator = _zwiftOutput != null && _zwiftOutput.Handles(mapping.Function, riderAction);
-                            if (handledByEmulator)
+                            switch (mapping.Function)
                             {
-                                switch (mapping.Function)
-                                {
-                                    case ZwiftFunction.SteerLeft: left = Math.Max(left, value); break;
-                                    case ZwiftFunction.SteerRight: right = Math.Max(right, value); break;
-                                    case ZwiftFunction.Brake: brake = Math.Max(brake, value); break;
-                                    default: pressed.Add(mapping.Function); break;
-                                }
-                            }
-
-                            // Discrete (keyboard) path: functions the emulator does not take always go here (the output service decides
-                            // whether anything is actually sent); functions the emulator took are ALSO sent when the keyboard is enabled.
-                            if (!handledByEmulator || (_zwiftOutput != null && _zwiftOutput.SendsToKeyboard))
-                            {
-                                await _outputService.PerformActionAsync(mapping.Function, mapping.PlayerView ?? ZwiftPlayerView.Default, riderAction);
+                                case ZwiftFunction.SteerLeft: left = Math.Max(left, value); break;
+                                case ZwiftFunction.SteerRight: right = Math.Max(right, value); break;
+                                case ZwiftFunction.Brake: brake = Math.Max(brake, value); break;
+                                default: pressed.Add(mapping.Function); break;
                             }
                         }
                     }
 
-                    if (_zwiftOutput != null && !cancellationToken.IsCancellationRequested)
+                    if (!cancellationToken.IsCancellationRequested)
                     {
                         var state = new ZwiftControllerState(pressed, Math.Clamp(right - left, -1.0, 1.0), Math.Clamp(brake, 0.0, 1.0), controllerData.BatteryPercent);
                         await _zwiftOutput.UpdateAsync(state);

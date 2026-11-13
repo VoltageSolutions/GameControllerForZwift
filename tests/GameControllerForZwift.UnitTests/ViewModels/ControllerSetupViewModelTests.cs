@@ -10,7 +10,6 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
     {
         private readonly IDataIntegrator _dataIntegratorMock;
         private readonly IControllerProfileService _profileServiceMock;
-        private readonly OutputOptions _options = new OutputOptions();
         private readonly ControllerSetupViewModel _viewModel;
 
         public ControllerSetupViewModelTests()
@@ -34,38 +33,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
                 }
             });
 
-            _viewModel = new ControllerSetupViewModel(_dataIntegratorMock, _profileServiceMock, _options);
-        }
-
-        [Fact]
-        public void OutputChoices_DefaultToEmulatorOnly()
-        {
-            Assert.True(_viewModel.SendToZwiftEmulator);
-            Assert.False(_viewModel.SendToKeyboard);
-        }
-
-        [Fact]
-        public void OutputChoices_WriteThroughToOptions_AndRaiseNotifications()
-        {
-            var raised = new List<string?>();
-            _viewModel.PropertyChanged += (_, e) => raised.Add(e.PropertyName);
-
-            _viewModel.SendToKeyboard = true;
-            _viewModel.SendToZwiftEmulator = false;
-
-            Assert.True(_options.SendToKeyboard);
-            Assert.False(_options.SendToZwiftEmulator);
-            Assert.Contains(nameof(_viewModel.SendToKeyboard), raised);
-            Assert.Contains(nameof(_viewModel.SendToZwiftEmulator), raised);
-        }
-
-        [Fact]
-        public void OutputChoices_InitializeFromPersistedOptions()
-        {
-            var options = new OutputOptions { SendToZwiftEmulator = false, SendToKeyboard = true };
-            var vm = new ControllerSetupViewModel(_dataIntegratorMock, _profileServiceMock, options);
-            Assert.False(vm.SendToZwiftEmulator);
-            Assert.True(vm.SendToKeyboard);
+            _viewModel = new ControllerSetupViewModel(_dataIntegratorMock, _profileServiceMock);
         }
 
         [Fact]
