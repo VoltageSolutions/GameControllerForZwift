@@ -12,7 +12,7 @@ namespace GameControllerForZwift.Gamepad.Mapping
         // todo - accept file service instead of doing string work itself
         //load the default on-constructor? or check for user app profile?
         // todo - means to save/load custom profiles
-        
+
         public ControllerProfiles Profiles => _profiles;
         #endregion
 
@@ -32,7 +32,7 @@ namespace GameControllerForZwift.Gamepad.Mapping
         {
             if (string.IsNullOrEmpty(jsonContent))
                 return new ControllerProfiles();
-            else 
+            else
                 return JsonSerializer.Deserialize<ControllerProfiles>(jsonContent);
         }
         public ControllerProfile GetDefaultProfile()

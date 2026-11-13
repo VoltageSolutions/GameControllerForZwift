@@ -197,7 +197,7 @@ namespace GameControllerForZwift.Network
         {
             if (!connected)
             {
-                    lock (_stateLock) _state = ZwiftControllerState.Neutral;
+                lock (_stateLock) _state = ZwiftControllerState.Neutral;
                 SignalLoop();
             }
             ConnectionChanged?.Invoke(this, connected);

@@ -66,7 +66,7 @@ namespace GameControllerForZwift.UI.WPF.Navigation
             {
                 _currentPageType = _history.Peek();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _currentPageType = null;
             }
@@ -105,7 +105,7 @@ namespace GameControllerForZwift.UI.WPF.Navigation
                     _history.Pop();
                     UpdateCurrentPage();
                 }
-                
+
             }
         }
 

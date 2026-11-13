@@ -33,7 +33,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Converters
         [InlineData("invalid", 20.3)]
         [InlineData(10.5, "invalid")]
         [InlineData(10.5)]
-        public void Convert_ReturnsUnsetValue_WhenInvalidInputsProvided(params object[] values)
+        public void Convert_ReturnsUnsetValue_WhenInvalidInputsProvided(params object[]? values)
         {
             // Act
             var result = _converter.Convert(values, typeof(Point), null, _culture);

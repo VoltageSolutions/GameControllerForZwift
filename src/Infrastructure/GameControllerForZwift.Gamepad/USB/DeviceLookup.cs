@@ -24,7 +24,7 @@ namespace GameControllerForZwift.Gamepad.USB
         {
             if (string.IsNullOrEmpty(jsonContent))
                 return new Dictionary<string, string>();
-            
+
             try
             {
                 var deserializeMap = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent);

@@ -13,20 +13,7 @@ coverage:
   ignore:
     - "**/Generated/*"
     - "**/Migrations/*"
+    - "tests/**"
+    - "tools/**"
 
 comment: false
-
-# flags:
-#   application_tests:
-#     paths:
-#       - "tests/GameControllerForZwift.App.Tests"
-#       - "tests/GameControllerForZwift.Core.Tests"
-
-#   infrastructure_tests:
-#     paths:
-#       - "tests/GameControllerForZwift.Gamepad.Tests"
-
-#   ui_tests:
-#     paths:
-#       - "tests/GameControllerForZwift.UI.WPF.Tests"
-

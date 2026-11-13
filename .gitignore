@@ -411,3 +411,7 @@ docs/captures/Jetblack Packet Disections.json
 
 # Private packet captures and their analyses (local only)
 docs/captures/
+
+# Downloaded SDL2 native runtime cache and publish output
+.cache/
+publish/

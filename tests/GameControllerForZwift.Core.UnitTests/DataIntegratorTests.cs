@@ -134,7 +134,7 @@ namespace GameControllerForZwift.App.Tests
         }
 
         [Fact]
-        public async void InputPolled_EventIsRaised()
+        public async Task InputPolled_EventIsRaised()
         {
             // Arrange
             var controllerData = new ControllerData { A = true };

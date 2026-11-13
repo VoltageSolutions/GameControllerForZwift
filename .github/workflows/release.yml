@@ -1,0 +1,118 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  check:
+    name: Check version
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      new: ${{ steps.v.outputs.new }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - id: v
+        run: |
+          csproj=src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
+          version="$(grep -oP '(?<=<Version>)[^<]+' "$csproj" | head -n1 | tr -d '[:space:]')"
+          if [ -z "$version" ]; then echo "::error::Could not read <Version> from $csproj"; exit 1; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
+            echo "new=false" >> "$GITHUB_OUTPUT"
+            echo "Tag v${version} already exists; skipping release." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  release:
+    name: Build and draft release
+    needs: check
+    if: needs.check.outputs.new == 'true'
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.check.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Build
+        run: |
+          dotnet restore GameControllerForZwift.sln
+          dotnet build GameControllerForZwift.sln -c Release --no-restore
+
+      - name: Test
+        shell: bash
+        run: |
+          bash .github/scripts/run-tests.sh TestResults \
+            tests/GameControllerForZwift.UnitTests \
+            tests/GameControllerForZwift.Core.UnitTests \
+            tests/GameControllerForZwift.Network.UnitTests \
+            tests/GameControllerForZwift.Network.IntegrationTests \
+            tests/GameControllerForZwift.Gamepad.UnitTests
+
+      - name: Publish
+        run: |
+          $proj = 'src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj'
+          dotnet publish $proj -c Release -r win-x64 --self-contained false -o artifacts/fd
+          dotnet publish $proj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/standalone
+          ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
+          ./.github/scripts/check-publish.ps1 -Path artifacts/standalone
+
+      - name: Package
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          # Flattened zips: publish output has no subfolders (verified above). PDBs are excluded.
+          Get-ChildItem artifacts/fd -File | Where-Object Extension -ne '.pdb' |
+            Compress-Archive -DestinationPath "release/GameControllerForZwift-$env:VERSION-win-x64.zip"
+          Get-ChildItem artifacts/standalone -File | Where-Object Extension -ne '.pdb' |
+            Compress-Archive -DestinationPath "release/GameControllerForZwift-$env:VERSION-win-x64-standalone.zip"
+          Get-ChildItem release/*.zip | ForEach-Object {
+            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)"
+          } | Out-File -FilePath release/SHA256SUMS.txt -Encoding ascii
+          Get-Content release/SHA256SUMS.txt
+
+      - name: Create draft release
+        shell: bash
+        run: |
+          tag="v${VERSION}"
+          if gh release view "$tag" > /dev/null 2>&1; then
+            echo "A release for $tag already exists (possibly an unpublished draft); not creating another."
+            exit 0
+          fi
+          notes="Two packages for Windows x64:
+
+          - GameControllerForZwift-${VERSION}-win-x64.zip: framework-dependent, requires the .NET 10 Desktop Runtime.
+          - GameControllerForZwift-${VERSION}-win-x64-standalone.zip: self-contained, no runtime install needed (larger download).
+
+          Verify downloads with SHA256SUMS.txt."
+          gh release create "$tag" --draft --target "$GITHUB_SHA" --title "$tag" --notes "$notes" \
+            "release/GameControllerForZwift-${VERSION}-win-x64.zip" \
+            "release/GameControllerForZwift-${VERSION}-win-x64-standalone.zip" \
+            release/SHA256SUMS.txt

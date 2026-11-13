@@ -354,39 +354,39 @@ public sealed class ZwiftControlProtocol
                 break;
 
             case 0x00:
-            {
-                if (!fields.TryGetValue(1, out uint id))
-                    break;
-                if (id == 0)
-                    result.Add((DirconUuids.ZwiftSyncTx, BuildDeviceInfoReply()));
-                else if (id == 1280)
                 {
-                    // Sensor relay page: only answered for the trainer-like KICKR identity (as the Victory does); a controller has no sensor relay.
-                    if (_controller == ControllerIdentity.KickrBike)
-                        result.Add((DirconUuids.ZwiftSyncTx, (byte[])SensorRelayPageReply.Clone()));
+                    if (!fields.TryGetValue(1, out uint id))
+                        break;
+                    if (id == 0)
+                        result.Add((DirconUuids.ZwiftSyncTx, BuildDeviceInfoReply()));
+                    else if (id == 1280)
+                    {
+                        // Sensor relay page: only answered for the trainer-like KICKR identity (as the Victory does); a controller has no sensor relay.
+                        if (_controller == ControllerIdentity.KickrBike)
+                            result.Add((DirconUuids.ZwiftSyncTx, (byte[])SensorRelayPageReply.Clone()));
+                        else
+                            _logger?.LogDebug("No reply for get-request id 1280 (identity {Controller})", _controller);
+                    }
+                    else if (CannedGetResponses.TryGetValue(id, out var canned))
+                        result.Add((DirconUuids.ZwiftSyncTx, (byte[])canned.Clone()));
                     else
-                        _logger?.LogDebug("No reply for get-request id 1280 (identity {Controller})", _controller);
+                        _logger?.LogDebug("No reply for get-request id {Id} (capture: id 16 got no reply)", id);
+                    break;
                 }
-                else if (CannedGetResponses.TryGetValue(id, out var canned))
-                    result.Add((DirconUuids.ZwiftSyncTx, (byte[])canned.Clone()));
-                else
-                    _logger?.LogDebug("No reply for get-request id {Id} (capture: id 16 got no reply)", id);
-                break;
-            }
 
             case 0x3F:
-            {
-                _logger?.LogInformation("Zwift wrote 0x3F: {Hex} decoded: {Decoded}", Convert.ToHexString(value), DescribeProtobuf(value.AsSpan(1)));
-                // Choice: the capture shows "40 08 00 10 NN" only for the two setup writes (f1 == 1, f2 = 0 then 1),
-                // echoing f2. Later gear-state writes (f1 == 0, f2 >= 2) got no reply, so we send none.
-                if (fields.TryGetValue(1, out uint f1) && f1 == 1 && fields.TryGetValue(2, out uint f2))
                 {
-                    var reply = new List<byte> { 0x40, 0x08, 0x00, 0x10 };
-                    WriteVarint(reply, f2);
-                    result.Add((DirconUuids.ZwiftSyncTx, reply.ToArray()));
+                    _logger?.LogInformation("Zwift wrote 0x3F: {Hex} decoded: {Decoded}", Convert.ToHexString(value), DescribeProtobuf(value.AsSpan(1)));
+                    // Choice: the capture shows "40 08 00 10 NN" only for the two setup writes (f1 == 1, f2 = 0 then 1),
+                    // echoing f2. Later gear-state writes (f1 == 0, f2 >= 2) got no reply, so we send none.
+                    if (fields.TryGetValue(1, out uint f1) && f1 == 1 && fields.TryGetValue(2, out uint f2))
+                    {
+                        var reply = new List<byte> { 0x40, 0x08, 0x00, 0x10 };
+                        WriteVarint(reply, f2);
+                        result.Add((DirconUuids.ZwiftSyncTx, reply.ToArray()));
+                    }
+                    break;
                 }
-                break;
-            }
 
             default:
                 _logger?.LogDebug("Unknown Zwift sync opcode 0x{Opcode:X2}: {Value}", opcode, Convert.ToHexString(value));

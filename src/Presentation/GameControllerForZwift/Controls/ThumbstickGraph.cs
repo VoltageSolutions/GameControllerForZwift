@@ -182,7 +182,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
             double factor = .1;
             if ((Math.Abs(origin - position) / origin) > factor)
                 return true;
-            else 
+            else
                 return false;
         }
     }

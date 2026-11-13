@@ -61,7 +61,7 @@ namespace GameControllerForZwift.UI.WPF.Navigation
                 {
                     allPages.Add(item);
                 }
-                
+
             }
 
             return allPages;

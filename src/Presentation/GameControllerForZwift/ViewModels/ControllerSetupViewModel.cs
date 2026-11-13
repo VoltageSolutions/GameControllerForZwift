@@ -93,10 +93,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         //[RelayCommand]
         //public void ClearAllMappings()
         //{
-            
+
         //}
 
-        
+
         #endregion
 
         #region Methods
@@ -118,18 +118,18 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         {
             var profile = _profileService.GetDefaultProfile();
 
-            ApplyProfileToMappings(profile, _buttonFunctionMappings);
-            ApplyProfileToMappings(profile, _dpadFunctionMappings);
-            ApplyProfileToMappings(profile, _leftStickFunctionMappings);
-            ApplyProfileToMappings(profile, _rightStickFunctionMappings);
-            ApplyProfileToMappings(profile, _shoulderFunctionMappings);
+            ApplyProfileToMappings(profile, ButtonFunctionMappings);
+            ApplyProfileToMappings(profile, DpadFunctionMappings);
+            ApplyProfileToMappings(profile, LeftStickFunctionMappings);
+            ApplyProfileToMappings(profile, RightStickFunctionMappings);
+            ApplyProfileToMappings(profile, ShoulderFunctionMappings);
         }
 
         private void ApplyProfileToMappings(ControllerProfile profile, List<ZwiftFunctionSelectorViewModel> viewMappings)
         {
             foreach (var vm in viewMappings)
             {
-                if(profile.Mappings.Where(m => m.Input == vm.SelectedInput).FirstOrDefault() is InputMapping inputMap)
+                if (profile.Mappings.Where(m => m.Input == vm.SelectedInput).FirstOrDefault() is InputMapping inputMap)
                 {
                     vm.SetInputMapping(inputMap);
                 }

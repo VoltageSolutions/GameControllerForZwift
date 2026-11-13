@@ -21,7 +21,7 @@ namespace GameControllerForZwift.UITests
             // Act
             aboutTreeViewItem.Click();
 
-            var githubButton= _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("OpenGitHubButton"));
+            var githubButton = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("OpenGitHubButton"));
             var kofiButton = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("OpenkofiButton"));
 
             // Assert

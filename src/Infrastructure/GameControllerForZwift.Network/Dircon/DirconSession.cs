@@ -217,115 +217,115 @@ public sealed class DirconSession : IAsyncDisposable
         switch (msg.MessageId)
         {
             case DirconMessageId.DiscoverServices:
-            {
-                var payload = new byte[16 * _services.Count];
-                for (int i = 0; i < _services.Count; i++)
-                    _services[i].Uuid.WriteTo(payload.AsSpan(i * 16, 16));
-                await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
-                break;
-            }
+                {
+                    var payload = new byte[16 * _services.Count];
+                    for (int i = 0; i < _services.Count; i++)
+                        _services[i].Uuid.WriteTo(payload.AsSpan(i * 16, 16));
+                    await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
+                    break;
+                }
             case DirconMessageId.DiscoverCharacteristics:
-            {
-                if (msg.Payload.Length != 16)
                 {
-                    await ReplyAsync(msg, DirconResponseCode.UnexpectedError, null, ct).ConfigureAwait(false);
+                    if (msg.Payload.Length != 16)
+                    {
+                        await ReplyAsync(msg, DirconResponseCode.UnexpectedError, null, ct).ConfigureAwait(false);
+                        break;
+                    }
+                    var svcUuid = BleUuid.FromBytes(msg.Payload);
+                    var svc = _services.FirstOrDefault(s => s.Uuid == svcUuid);
+                    if (svc is null)
+                    {
+                        await ReplyAsync(msg, DirconResponseCode.ServiceNotFound, null, ct).ConfigureAwait(false);
+                        break;
+                    }
+                    var payload = new byte[16 + 17 * svc.Characteristics.Count];
+                    svc.Uuid.WriteTo(payload.AsSpan(0, 16));
+                    for (int i = 0; i < svc.Characteristics.Count; i++)
+                    {
+                        int o = 16 + 17 * i;
+                        svc.Characteristics[i].Uuid.WriteTo(payload.AsSpan(o, 16));
+                        payload[o + 16] = (byte)svc.Characteristics[i].Properties;
+                    }
+                    await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
                     break;
                 }
-                var svcUuid = BleUuid.FromBytes(msg.Payload);
-                var svc = _services.FirstOrDefault(s => s.Uuid == svcUuid);
-                if (svc is null)
-                {
-                    await ReplyAsync(msg, DirconResponseCode.ServiceNotFound, null, ct).ConfigureAwait(false);
-                    break;
-                }
-                var payload = new byte[16 + 17 * svc.Characteristics.Count];
-                svc.Uuid.WriteTo(payload.AsSpan(0, 16));
-                for (int i = 0; i < svc.Characteristics.Count; i++)
-                {
-                    int o = 16 + 17 * i;
-                    svc.Characteristics[i].Uuid.WriteTo(payload.AsSpan(o, 16));
-                    payload[o + 16] = (byte)svc.Characteristics[i].Properties;
-                }
-                await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
-                break;
-            }
             case DirconMessageId.ReadCharacteristic:
-            {
-                if (!TryGetCharacteristic(msg, out var ch, out var uuid))
                 {
-                    await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
+                    if (!TryGetCharacteristic(msg, out var ch, out var uuid))
+                    {
+                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
+                        break;
+                    }
+                    if ((ch!.Properties & GattProperties.Read) == 0)
+                    {
+                        await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
+                        break;
+                    }
+                    var value = ch.Value;
+                    var payload = new byte[16 + value.Length];
+                    uuid.WriteTo(payload.AsSpan(0, 16));
+                    value.CopyTo(payload, 16);
+                    await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
                     break;
                 }
-                if ((ch!.Properties & GattProperties.Read) == 0)
-                {
-                    await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
-                    break;
-                }
-                var value = ch.Value;
-                var payload = new byte[16 + value.Length];
-                uuid.WriteTo(payload.AsSpan(0, 16));
-                value.CopyTo(payload, 16);
-                await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
-                break;
-            }
             case DirconMessageId.WriteCharacteristic:
-            {
-                if (!TryGetCharacteristic(msg, out var ch, out var uuid))
                 {
-                    await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
-                    break;
-                }
-                if ((ch!.Properties & GattProperties.Write) == 0)
-                {
-                    await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
-                    break;
-                }
-                // Ack: characteristic UUID only, same seq.
-                await ReplyAsync(msg, DirconResponseCode.Success, uuid.ToBytes(), ct).ConfigureAwait(false);
+                    if (!TryGetCharacteristic(msg, out var ch, out var uuid))
+                    {
+                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
+                        break;
+                    }
+                    if ((ch!.Properties & GattProperties.Write) == 0)
+                    {
+                        await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
+                        break;
+                    }
+                    // Ack: characteristic UUID only, same seq.
+                    await ReplyAsync(msg, DirconResponseCode.Success, uuid.ToBytes(), ct).ConfigureAwait(false);
 
-                var data = msg.Payload.AsSpan(16).ToArray();
-                foreach (var (target, notification) in _protocol.HandleWrite(uuid, data))
-                    await NotifyAsync(target, notification, true, ct).ConfigureAwait(false);
-                break;
-            }
+                    var data = msg.Payload.AsSpan(16).ToArray();
+                    foreach (var (target, notification) in _protocol.HandleWrite(uuid, data))
+                        await NotifyAsync(target, notification, true, ct).ConfigureAwait(false);
+                    break;
+                }
             case DirconMessageId.EnableNotifications:
-            {
-                if (!TryGetCharacteristic(msg, out var ch, out var uuid))
                 {
-                    await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
-                    break;
-                }
-                if ((ch!.Properties & (GattProperties.Notify | GattProperties.Indicate)) == 0)
-                {
-                    await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
-                    break;
-                }
-                bool enable = msg.Payload.Length < 17 || msg.Payload[16] != 0;
-                byte[][] flush = Array.Empty<byte[]>();
-                lock (_gate)
-                {
+                    if (!TryGetCharacteristic(msg, out var ch, out var uuid))
+                    {
+                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
+                        break;
+                    }
+                    if ((ch!.Properties & (GattProperties.Notify | GattProperties.Indicate)) == 0)
+                    {
+                        await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
+                        break;
+                    }
+                    bool enable = msg.Payload.Length < 17 || msg.Payload[16] != 0;
+                    byte[][] flush = Array.Empty<byte[]>();
+                    lock (_gate)
+                    {
+                        if (enable)
+                        {
+                            _subscribed.Add(uuid);
+                            if (_pending.Remove(uuid, out var q))
+                                flush = q.ToArray();
+                        }
+                        else
+                        {
+                            _subscribed.Remove(uuid);
+                        }
+                    }
+                    await ReplyAsync(msg, DirconResponseCode.Success, uuid.ToBytes(), ct).ConfigureAwait(false);
+
                     if (enable)
                     {
-                        _subscribed.Add(uuid);
-                        if (_pending.Remove(uuid, out var q))
-                            flush = q.ToArray();
+                        foreach (var data in flush)
+                            await SendNotificationFrameAsync(uuid, data, ct).ConfigureAwait(false);
+                        foreach (var (target, notification) in _protocol.OnSubscribed(uuid))
+                            await NotifyAsync(target, notification, true, ct).ConfigureAwait(false);
                     }
-                    else
-                    {
-                        _subscribed.Remove(uuid);
-                    }
+                    break;
                 }
-                await ReplyAsync(msg, DirconResponseCode.Success, uuid.ToBytes(), ct).ConfigureAwait(false);
-
-                if (enable)
-                {
-                    foreach (var data in flush)
-                        await SendNotificationFrameAsync(uuid, data, ct).ConfigureAwait(false);
-                    foreach (var (target, notification) in _protocol.OnSubscribed(uuid))
-                        await NotifyAsync(target, notification, true, ct).ConfigureAwait(false);
-                }
-                break;
-            }
             default:
                 _logger.LogDebug("DIRCON {Name}: unknown message id {Id}", _name, msg.MessageId);
                 await ReplyAsync(msg, DirconResponseCode.UnexpectedError, null, ct).ConfigureAwait(false);

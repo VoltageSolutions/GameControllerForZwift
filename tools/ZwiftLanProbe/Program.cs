@@ -519,19 +519,19 @@ while (!stop.IsCancellationRequested)
             }
             break;
         case 'P':
-        {
-            Console.Write("watts,rpm: ");
-            var parts = (Console.ReadLine() ?? "").Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length == 2 && int.TryParse(parts[0], out int w) && int.TryParse(parts[1], out int rpm) && w >= 0 && rpm >= 0)
             {
-                simWatts = w; simRpm = rpm;
-                server.SetSimulatedRide(simWatts, simRpm);
-                Console.WriteLine($"simulated ride ON: {simWatts} W, {simRpm} rpm");
+                Console.Write("watts,rpm: ");
+                var parts = (Console.ReadLine() ?? "").Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 2 && int.TryParse(parts[0], out int w) && int.TryParse(parts[1], out int rpm) && w >= 0 && rpm >= 0)
+                {
+                    simWatts = w; simRpm = rpm;
+                    server.SetSimulatedRide(simWatts, simRpm);
+                    Console.WriteLine($"simulated ride ON: {simWatts} W, {simRpm} rpm");
+                }
+                else
+                    Console.WriteLine("invalid input, expected e.g. 150,90");
+                break;
             }
-            else
-                Console.WriteLine("invalid input, expected e.g. 150,90");
-            break;
-        }
         case 'i':
             Console.WriteLine($"zwiftConnected={server.IsZwiftConnected} port={server.Port} name='{name}' masks={masks} partial={partialValue} hold-ms={holdMs} ride={(server.IsRideSimulated ? $"{simWatts} W/{simRpm} rpm" : "off")}");
             break;

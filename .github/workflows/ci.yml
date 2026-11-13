@@ -1,0 +1,256 @@
+name: CI
+
+on:
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  # Non-WPF test projects (also built on Linux)
+  PORTABLE_TESTS: >-
+    tests/GameControllerForZwift.Core.UnitTests
+    tests/GameControllerForZwift.Network.UnitTests
+    tests/GameControllerForZwift.Network.IntegrationTests
+    tests/GameControllerForZwift.Gamepad.UnitTests
+
+jobs:
+  lib:
+    name: Libraries (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Restore
+        run: |
+          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet restore "$p"; done
+
+      - name: Verify formatting
+        run: |
+          for p in src/Application/GameControllerForZwift.Core \
+                   src/Infrastructure/GameControllerForZwift.Network \
+                   src/Infrastructure/GameControllerForZwift.Gamepad \
+                   $PORTABLE_TESTS tools/ZwiftLanProbe; do
+            dotnet format "$p" --verify-no-changes --severity error --no-restore --verbosity diagnostic
+          done
+
+      - name: Build
+        run: |
+          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet build "$p" -c Release --no-restore; done
+
+      - name: Test
+        run: bash .github/scripts/run-tests.sh TestResults $PORTABLE_TESTS
+
+      - name: Test summary
+        if: ${{ !cancelled() }}
+        run: python3 .github/scripts/trx-summary.py "Test results (Linux)" TestResults >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-results-lib
+          path: TestResults/**/*.trx
+          if-no-files-found: warn
+
+      - name: Upload coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-lib
+          path: TestResults/**/coverage.cobertura.xml
+          if-no-files-found: warn
+
+  windows:
+    name: Solution, tests and publish (Windows)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Restore
+        run: dotnet restore GameControllerForZwift.sln
+
+      - name: Build solution (Release)
+        run: dotnet build GameControllerForZwift.sln -c Release --no-restore
+
+      - name: Test
+        shell: bash
+        run: bash .github/scripts/run-tests.sh TestResults tests/GameControllerForZwift.UnitTests $PORTABLE_TESTS
+
+      - name: Publish (framework-dependent)
+        run: dotnet publish src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -c Release -r win-x64 --self-contained false -o artifacts/fd
+
+      - name: Publish (standalone)
+        run: dotnet publish src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/standalone
+
+      - name: Check publish output
+        run: |
+          ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
+          ./.github/scripts/check-publish.ps1 -Path artifacts/standalone
+
+      - name: Test summary
+        if: ${{ !cancelled() }}
+        run: python .github/scripts/trx-summary.py "Test results (Windows)" TestResults >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-results-windows
+          path: TestResults/**/*.trx
+          if-no-files-found: warn
+
+      - name: Upload coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: coverage-windows
+          path: TestResults/**/coverage.cobertura.xml
+          if-no-files-found: warn
+
+  ui-tests:
+    name: UI tests (Appium)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/setup-dotnet@0f4a354dd5547a28c70b7853dbd95d5b67886e73 # v6.1.0
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '22'
+
+      - name: Install Appium and Windows driver
+        run: |
+          npm install -g appium@3.9.0
+          appium driver install --source=npm appium-windows-driver@6.3.1
+
+      # appium-windows-driver >= 3 no longer bundles WinAppDriver; install the server separately.
+      - name: Install WinAppDriver
+        run: |
+          Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile WinAppDriver.msi
+          Start-Process msiexec.exe -ArgumentList '/i WinAppDriver.msi /quiet /norestart' -Wait
+          $wad = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $wad) { throw 'WinAppDriver.exe not found after install' }
+          "APPIUM_WAD_PATH=$wad" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Enable Developer Mode
+        run: reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock /t REG_DWORD /f /v AllowDevelopmentWithoutDevLicense /d 1
+
+      - name: Set runner resolution to modern device size
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
+
+      - name: Start Appium server
+        run: |
+          Start-Process cmd.exe -ArgumentList '/c', 'appium --allow-cors > appium.log 2>&1' -WindowStyle Hidden
+          $deadline = (Get-Date).AddSeconds(60)
+          while ((Get-Date) -lt $deadline) {
+            try {
+              $r = Invoke-WebRequest -Uri http://127.0.0.1:4723/status -UseBasicParsing -TimeoutSec 3
+              if ($r.StatusCode -eq 200) { Write-Host 'Appium is ready.'; exit 0 }
+            } catch { Start-Sleep -Seconds 2 }
+          }
+          Get-Content appium.log -ErrorAction SilentlyContinue
+          throw 'Appium did not become ready within 60 seconds.'
+
+      - name: Build app and UI tests (Release)
+        run: |
+          dotnet build src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -c Release
+          dotnet build tests/GameControllerForZwift.UITests -c Release
+
+      - name: Run UI tests
+        run: dotnet test tests/GameControllerForZwift.UITests -c Release --no-build --verbosity normal --logger "trx;LogFileName=UITests.trx" --results-directory TestResults/UITests
+
+      - name: Test summary
+        if: ${{ !cancelled() }}
+        run: python .github/scripts/trx-summary.py "UI test results" TestResults >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload UI test diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-results-ui
+          path: |
+            TestResults/**/*.trx
+            appium.log
+            tests/GameControllerForZwift.UITests/**/screenshot.png
+          if-no-files-found: warn
+
+  coverage:
+    name: Upload coverage to Codecov
+    runs-on: ubuntu-latest
+    needs: [lib, windows]
+    if: ${{ !cancelled() }}
+    timeout-minutes: 10
+    steps:
+      # Checkout gives Codecov the repository layout for path fixing.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: coverage-*
+          path: coverage
+          merge-multiple: false
+
+      # Secrets are unavailable to fork PRs; for those, Codecov tokenless upload is used
+      # (public repos, requires "Tokenless uploads" enabled in the Codecov org settings).
+      - uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/**/coverage.cobertura.xml
+          fail_ci_if_error: true
+
+  version-check:
+    name: Version is new
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Check that v<version> is not already tagged
+        run: |
+          csproj=src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
+          version="$(grep -oP '(?<=<Version>)[^<]+' "$csproj" | head -n1 | tr -d '[:space:]')"
+          if [ -z "$version" ]; then
+            echo "::error::Could not read <Version> from $csproj"; exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
+            echo "::error title=Version not bumped::Tag v${version} already exists. Update <Version> in $csproj before merging to main."
+            exit 1
+          fi
+          echo "Version v${version} is new; merging to main will allow a release to be drafted."

@@ -1,4 +1,4 @@
-using GameControllerForZwift.Network.Dircon;
+﻿using GameControllerForZwift.Network.Dircon;
 using Makaretu.Dns;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -69,22 +69,9 @@ namespace GameControllerForZwift.Network.Mdns
                 if (addresses.Count == 0)
                     _logger?.LogWarning("mDNS: no usable IPv4 address found; Zwift will not be able to resolve this device.");
 
-                // Instance name may contain spaces (like the real bike) but must be a single DNS label (no dots).
                 var instanceName = identity.Name.Replace('.', ' ');
-                var hostName = new DomainName(instanceName.Replace(' ', '-') + ".local");
-
-                // Service type without ".local": ServiceProfile appends the domain itself.
-                var txt = new List<string>
-                {
-                    "ble-service-uuids=" + DeviceProfiles.BleServiceUuids(_advert) + (_profileOptions.AddObcUuid ? "," + DeviceProfileOptions.ObcServiceUuid : "") + (_profileOptions.AddPowerService && !DeviceProfiles.BleServiceUuids(_advert).Contains("0x1818", StringComparison.OrdinalIgnoreCase) ? ",0x1818" : ""),
-                    "mac-address=" + identity.MacAddress,
-                    "serial-number=" + identity.SerialNumber,
-                };
-                if (!string.IsNullOrEmpty(_profileOptions.MfgData))
-                    txt.Add("manufacturer-data=" + _profileOptions.MfgData);
-                if (_profileOptions.TxtExtra != null)
-                    txt.AddRange(_profileOptions.TxtExtra);
-                var profile = BuildProfile(instanceName, ServiceType, port, addresses, hostName, txt);
+                var hostName = BuildHostName(instanceName);
+                var profile = BuildPrimaryProfile(identity, port, addresses);
                 ServiceProfile? extraProfile = null;
                 if (extra != null)
                     extraProfile = BuildProfile(extra.InstanceName.Replace('.', ' '), extra.ServiceType, extra.Port, addresses, hostName, extra.TxtStrings);
@@ -130,6 +117,46 @@ namespace GameControllerForZwift.Network.Mdns
                     string.Join(", ", toAdvertise.Select(p => $"'{p.InstanceName}' ({p.ServiceName}:{p.Resources.OfType<SRVRecord>().FirstOrDefault()?.Port})")),
                     port, string.Join(", ", addresses));
             }
+        }
+
+        /// <summary>The DNS host name (single label plus ".local") derived from the advertised instance name.</summary>
+        internal static DomainName BuildHostName(string instanceName)
+            => new(instanceName.Replace(' ', '-') + ".local");
+
+        /// <summary>Builds the primary _wahoo-fitness-tnp._tcp profile (PTR, SRV, TXT, A) without touching the network.</summary>
+        internal ServiceProfile BuildPrimaryProfile(DeviceIdentity identity, int port, IReadOnlyList<IPAddress> addresses)
+        {
+            ArgumentNullException.ThrowIfNull(identity);
+            ArgumentNullException.ThrowIfNull(addresses);
+            // Instance name may contain spaces (like the real bike) but must be a single DNS label (no dots).
+            var instanceName = identity.Name.Replace('.', ' ');
+            var hostName = BuildHostName(instanceName);
+
+            // Service type without ".local": ServiceProfile appends the domain itself.
+            var txt = new List<string>
+            {
+                "ble-service-uuids=" + DeviceProfiles.BleServiceUuids(_advert) + (_profileOptions.AddObcUuid ? "," + DeviceProfileOptions.ObcServiceUuid : "") + (_profileOptions.AddPowerService && !DeviceProfiles.BleServiceUuids(_advert).Contains("0x1818", StringComparison.OrdinalIgnoreCase) ? ",0x1818" : ""),
+                "mac-address=" + identity.MacAddress,
+                "serial-number=" + identity.SerialNumber,
+            };
+            if (!string.IsNullOrEmpty(_profileOptions.MfgData))
+                txt.Add("manufacturer-data=" + _profileOptions.MfgData);
+            if (_profileOptions.TxtExtra != null)
+                txt.AddRange(_profileOptions.TxtExtra);
+            return BuildProfile(instanceName, ServiceType, port, addresses, hostName, txt);
+        }
+
+        /// <summary>Every record of the given profiles re-stamped with TTL 0 (mDNS goodbye). Mutates the profiles' records.</summary>
+        internal static IReadOnlyList<ResourceRecord> BuildGoodbyeRecords(IEnumerable<ServiceProfile> profiles)
+        {
+            var records = new List<ResourceRecord>();
+            foreach (var p in profiles)
+                foreach (var rr in p.Resources)
+                {
+                    rr.TTL = TimeSpan.Zero;
+                    records.Add(rr);
+                }
+            return records;
         }
 
         private static ServiceProfile BuildProfile(string instanceName, string serviceType, int port, IReadOnlyList<IPAddress> addresses, DomainName hostName, IReadOnlyList<string> txtStrings)
@@ -187,12 +214,8 @@ namespace GameControllerForZwift.Network.Mdns
                     if (_mdns != null && _profiles.Count > 0)
                     {
                         var goodbye = new Message { QR = true };
-                        foreach (var p in _profiles)
-                            foreach (var rr in p.Resources)
-                            {
-                                rr.TTL = TimeSpan.Zero;
-                                goodbye.Answers.Add(rr);
-                            }
+                        foreach (var rr in BuildGoodbyeRecords(_profiles))
+                            goodbye.Answers.Add(rr);
                         _mdns.SendAnswer(goodbye, false);
                         _logger?.LogInformation("mDNS: goodbye (TTL 0) sent for {Count} service(s).", _profiles.Count);
                     }
