@@ -152,33 +152,51 @@ namespace GameControllerForZwift.Network.IntegrationTests
             _link.Received(1).SetBatteryPercent(55);
         }
 
-        [Fact]
-        public void CompositeOutputService_PrefersNetworkOnlyWhenConnected_ElseKeyboard()
+        [Theory]
+        [InlineData(true, false)]
+        [InlineData(false, true)]
+        [InlineData(true, true)]
+        [InlineData(false, false)]
+        public async Task CompositeOutputService_RoutesByCheckboxes(bool emulator, bool kb)
         {
             var keyboard = Substitute.For<IOutputService>();
+            keyboard.PerformActionAsync(Arg.Any<ZwiftFunction>(), Arg.Any<ZwiftPlayerView>(), Arg.Any<ZwiftRiderAction>()).Returns(new ActionResult { Success = true });
+            var network = Substitute.For<ILanOutputService>();
+            network.CanHandle(Arg.Any<ZwiftFunction>(), Arg.Any<ZwiftRiderAction>()).Returns(c => c.Arg<ZwiftFunction>() is ZwiftFunction.ShiftUp or ZwiftFunction.Brake);
+            network.IsAvailable.Returns(false); // connection state must not matter
+            var options = new OutputOptions { SendToZwiftEmulator = emulator, SendToKeyboard = kb };
+            var router = new CompositeOutputService(keyboard, network, options);
+
+            Assert.Equal(emulator, router.Handles(ZwiftFunction.ShiftUp, ZwiftRiderAction.WaveHand));
+            Assert.False(router.Handles(ZwiftFunction.HideHUD, ZwiftRiderAction.WaveHand));
+            Assert.Equal(kb, router.SendsToKeyboard);
+
+            var result = await router.PerformActionAsync(ZwiftFunction.ShiftUp);
+            Assert.True(result.Success);
+            if (kb) await keyboard.Received(1).PerformActionAsync(ZwiftFunction.ShiftUp, Arg.Any<ZwiftPlayerView>(), Arg.Any<ZwiftRiderAction>());
+            else await keyboard.DidNotReceiveWithAnyArgs().PerformActionAsync(default, default, default);
+
+            var state = new ZwiftControllerState(new HashSet<ZwiftFunction> { ZwiftFunction.ShiftUp }, 0, 0, null);
+            await router.UpdateAsync(state);
+            if (emulator) await network.Received(1).UpdateAsync(state, Arg.Any<CancellationToken>());
+            else await network.DidNotReceiveWithAnyArgs().UpdateAsync(default!, default);
+        }
+
+        [Fact]
+        public async Task CompositeOutputService_SendsNeutralOnceWhenEmulatorTurnedOff()
+        {
             var network = Substitute.For<ILanOutputService>();
             var options = new OutputOptions();
-            var router = new CompositeOutputService(keyboard, network, options);
-            network.Supports(Arg.Any<ZwiftFunction>(), Arg.Any<ZwiftRiderAction>()).Returns(c => c.Arg<ZwiftFunction>() is ZwiftFunction.ShiftUp or ZwiftFunction.Select or ZwiftFunction.Brake);
-            network.CanHandle(Arg.Any<ZwiftFunction>(), Arg.Any<ZwiftRiderAction>()).Returns(c => c.Arg<ZwiftFunction>() is ZwiftFunction.ShiftUp or ZwiftFunction.Select or ZwiftFunction.Brake);
+            var router = new CompositeOutputService(Substitute.For<IOutputService>(), network, options);
+            var state = new ZwiftControllerState(new HashSet<ZwiftFunction> { ZwiftFunction.ShiftUp }, 0, 0, null);
 
-            // Zwift not connected: everything falls back to the keyboard (ShiftUp -> PageUp).
-            network.IsAvailable.Returns(false);
-            Assert.Same(keyboard, router.Route(ZwiftFunction.ShiftUp));
-            Assert.Same(keyboard, router.Route(ZwiftFunction.Select));
-            Assert.False(router.Handles(ZwiftFunction.ShiftUp, ZwiftRiderAction.WaveHand));
+            await router.UpdateAsync(state);
+            options.SendToZwiftEmulator = false;
+            await router.UpdateAsync(state);
+            await router.UpdateAsync(state);
 
-            // Connected: mapped functions go to the network, unmapped ones to the keyboard.
-            network.IsAvailable.Returns(true);
-            Assert.Same(network, router.Route(ZwiftFunction.ShiftUp));
-            Assert.Same(network, router.Route(ZwiftFunction.Select));
-            Assert.Same(keyboard, router.Route(ZwiftFunction.HideHUD));
-            Assert.True(router.Handles(ZwiftFunction.Brake, ZwiftRiderAction.WaveHand));
-            Assert.False(router.Handles(ZwiftFunction.HideHUD, ZwiftRiderAction.WaveHand));
-
-            options.UseZwiftLanController = false;
-            Assert.Same(keyboard, router.Route(ZwiftFunction.ShiftUp));
-            Assert.False(router.Handles(ZwiftFunction.ShiftUp, ZwiftRiderAction.WaveHand));
+            await network.Received(1).UpdateAsync(state, Arg.Any<CancellationToken>());
+            await network.Received(1).UpdateAsync(Arg.Is<ZwiftControllerState>(s => s.IsNeutral), Arg.Any<CancellationToken>());
         }
     }
 }

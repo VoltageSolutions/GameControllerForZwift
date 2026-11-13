@@ -14,6 +14,9 @@ namespace GameControllerForZwift.Core
     /// <summary>A continuous (state based) output, as opposed to <see cref="IOutputService"/> which fires discrete actions.</summary>
     public interface IZwiftControllerOutput
     {
+        /// <summary>True when the keyboard output is also enabled, so the caller should additionally send discrete actions via <see cref="IOutputService"/> even for functions this output handles.</summary>
+        bool SendsToKeyboard { get; }
+
         bool Handles(ZwiftFunction function, ZwiftRiderAction riderAction);
 
         Task UpdateAsync(ZwiftControllerState state, CancellationToken ct = default);

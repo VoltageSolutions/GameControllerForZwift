@@ -148,7 +148,8 @@ namespace GameControllerForZwift.Core
                                 continue;
 
                             var riderAction = mapping.RiderAction ?? ZwiftRiderAction.RideOn;
-                            if (_zwiftOutput != null && _zwiftOutput.Handles(mapping.Function, riderAction))
+                            bool handledByEmulator = _zwiftOutput != null && _zwiftOutput.Handles(mapping.Function, riderAction);
+                            if (handledByEmulator)
                             {
                                 switch (mapping.Function)
                                 {
@@ -158,7 +159,10 @@ namespace GameControllerForZwift.Core
                                     default: pressed.Add(mapping.Function); break;
                                 }
                             }
-                            else
+
+                            // Discrete (keyboard) path: functions the emulator does not take always go here (the output service decides
+                            // whether anything is actually sent); functions the emulator took are ALSO sent when the keyboard is enabled.
+                            if (!handledByEmulator || (_zwiftOutput != null && _zwiftOutput.SendsToKeyboard))
                             {
                                 await _outputService.PerformActionAsync(mapping.Function, mapping.PlayerView ?? ZwiftPlayerView.Default, riderAction);
                             }

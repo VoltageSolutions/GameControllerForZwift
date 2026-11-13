@@ -1,19 +1,21 @@
-﻿namespace GameControllerForZwift.Core
+namespace GameControllerForZwift.Core
 {
     /// <summary>
-    /// Routes actions to the keyboard or the Zwift LAN controller.
-    /// Rules (when <see cref="OutputOptions.UseZwiftLanController"/> is on):
-    ///  1. While Zwift is connected to the LAN controller (<see cref="ILanOutputService.IsAvailable"/>) and it has a mapping
-    ///     for the function, the function goes to the LAN service.
-    ///  2. Otherwise (Zwift not connected, or no mapping) it falls back to the keyboard (e.g. ShiftUp/ShiftDown -> PageUp/PageDown).
-    ///     Steer and Brake have no keyboard shortcut, so they are simply unhandled there.
-    /// When the option is off, everything goes to the keyboard.
+    /// Routes controller actions to the outputs ticked in <see cref="OutputOptions"/> (any combination, including none).
+    /// Two paths, which <see cref="DataIntegrator"/> uses together:
+    ///  * Continuous state path (<see cref="IZwiftControllerOutput"/>): <see cref="Handles"/> is true when "Zwift Controller Emulator"
+    ///    is ticked and the LAN service can express the function; <see cref="UpdateAsync"/> forwards state to it (regardless of whether
+    ///    Zwift is connected - the network service drops frames then). When the emulator is switched off one Neutral state is sent so nothing stays held.
+    ///  * Discrete path (<see cref="IOutputService"/>): <see cref="PerformActionAsync"/> is KEYBOARD-ONLY by design. It presses the key when
+    ///    "Keyboard" is ticked, otherwise it is a successful no-op ("not routed"). Functions without a key (Steer/Brake) are rejected by the keyboard.
+    /// <see cref="SendsToKeyboard"/> tells the integrator to call the discrete path even for functions the emulator handles.
     /// </summary>
     public class CompositeOutputService : IOutputService, IZwiftControllerOutput
     {
         private readonly IOutputService _keyboard;
         private readonly ILanOutputService _network;
         private readonly OutputOptions _options;
+        private volatile bool _emulatorHasState;
 
         public CompositeOutputService(IOutputService keyboard, ILanOutputService network, OutputOptions options)
         {
@@ -22,24 +24,35 @@
             _options = options;
         }
 
+        /// <inheritdoc />
+        public bool SendsToKeyboard => _options.SendToKeyboard;
+
+        /// <summary>Keyboard-only: presses the mapped key if "Keyboard" is ticked, otherwise does nothing (non-failing result).</summary>
         public Task<ActionResult> PerformActionAsync(ZwiftFunction zwiftFunction, ZwiftPlayerView playerView = ZwiftPlayerView.Default, ZwiftRiderAction riderAction = ZwiftRiderAction.WaveHand)
         {
-            return Route(zwiftFunction, riderAction).PerformActionAsync(zwiftFunction, playerView, riderAction);
+            if (_options.SendToKeyboard)
+                return _keyboard.PerformActionAsync(zwiftFunction, playerView, riderAction);
+            return Task.FromResult(new ActionResult { Success = true, ErrorMessage = "Not routed: keyboard output is disabled." });
         }
 
         /// <inheritdoc />
         public bool Handles(ZwiftFunction function, ZwiftRiderAction riderAction)
-            => _options.UseZwiftLanController && _network.IsAvailable && _network.CanHandle(function, riderAction);
+            => _options.SendToZwiftEmulator && _network.CanHandle(function, riderAction);
 
         /// <inheritdoc />
         public Task UpdateAsync(ZwiftControllerState state, CancellationToken ct = default)
-            => _options.UseZwiftLanController ? _network.UpdateAsync(state, ct) : Task.CompletedTask;
-
-        public IOutputService Route(ZwiftFunction zwiftFunction, ZwiftRiderAction riderAction = ZwiftRiderAction.WaveHand)
         {
-            if (_options.UseZwiftLanController && _network.IsAvailable && _network.Supports(zwiftFunction, riderAction))
-                return _network;
-            return _keyboard;
+            if (_options.SendToZwiftEmulator)
+            {
+                _emulatorHasState = true;
+                return _network.UpdateAsync(state, ct);
+            }
+            if (_emulatorHasState)
+            {
+                _emulatorHasState = false; // emulator was just switched off: release everything once
+                return _network.UpdateAsync(ZwiftControllerState.Neutral, ct);
+            }
+            return Task.CompletedTask;
         }
     }
 }

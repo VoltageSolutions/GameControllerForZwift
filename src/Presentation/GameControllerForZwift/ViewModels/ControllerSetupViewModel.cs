@@ -24,6 +24,16 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         private readonly IControllerProfileService _profileService;
 
+        private readonly OutputOptions _outputOptions;
+
+        /// <summary>Send controller actions to the emulated Zwift controller.</summary>
+        [ObservableProperty]
+        private bool _sendToZwiftEmulator;
+
+        /// <summary>Send controller actions as keyboard key presses.</summary>
+        [ObservableProperty]
+        private bool _sendToKeyboard;
+
         [ObservableProperty]
         private List<IController> _controllers;
         [ObservableProperty]
@@ -50,10 +60,13 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Constructor
 
-        public ControllerSetupViewModel(IDataIntegrator dataIntegrator, IControllerProfileService profileManager)
+        public ControllerSetupViewModel(IDataIntegrator dataIntegrator, IControllerProfileService profileManager, OutputOptions outputOptions)
         {
             _dataIntegrator = dataIntegrator;
             _profileService = profileManager;
+            _outputOptions = outputOptions;
+            _sendToZwiftEmulator = outputOptions.SendToZwiftEmulator;
+            _sendToKeyboard = outputOptions.SendToKeyboard;
 
             // Create initial mappings
             _buttonFunctionMappings = CreateButtonMappings();
@@ -100,6 +113,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #endregion
 
         #region Methods
+
+        partial void OnSendToZwiftEmulatorChanged(bool value) => _outputOptions.SendToZwiftEmulator = value;
+
+        partial void OnSendToKeyboardChanged(bool value) => _outputOptions.SendToKeyboard = value;
 
         partial void OnSelectedControllerChanged(IController oldValue, IController newValue)
         {

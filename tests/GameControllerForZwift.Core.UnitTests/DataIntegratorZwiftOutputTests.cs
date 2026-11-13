@@ -95,6 +95,16 @@ namespace GameControllerForZwift.Core.Tests
         }
 
         [Fact]
+        public async Task HandledFunction_AlsoSentToOutputService_WhenKeyboardEnabled()
+        {
+            _zwift.SendsToKeyboard.Returns(true);
+            _profile.UpdateMapping(ControllerInput.A, ZwiftFunction.ShiftUp, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+            await RunAsync(new ControllerData { A = true });
+            await _output.Received().PerformActionAsync(ZwiftFunction.ShiftUp, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+            Assert.Contains(ZwiftFunction.ShiftUp, States()[0].Pressed);
+        }
+
+        [Fact]
         public async Task NoZwiftOutput_TriggerMappedFunctionGoesToOutputService()
         {
             var sut = new DataIntegrator(Substitute.For<IInputService>(), _output, _profileService);

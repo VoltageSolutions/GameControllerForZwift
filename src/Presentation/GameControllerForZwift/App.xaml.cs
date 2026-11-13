@@ -50,8 +50,8 @@ namespace GameControllerForZwift
             mainWindow.Show();
             Current.ThemeMode = ThemeMode.System;
 
-            // Start the Zwift LAN controller (DirCon server + mDNS advertisement) in the background.
-            if (ServiceProvider.GetRequiredService<OutputOptions>().UseZwiftLanController)
+            // Start the Zwift LAN controller (DirCon server + mDNS advertisement) in the background. It always runs; the
+            // "Zwift Controller Emulator" checkbox only decides whether controller input is sent to it.
             {
                 var network = ServiceProvider.GetRequiredService<NetworkService>();
                 var logger = ServiceProvider.GetRequiredService<ILogger<App>>();
@@ -114,7 +114,15 @@ namespace GameControllerForZwift
             services.AddSingleton<IInputService, SDL2InputService>();
 
             // Output: keyboard + Zwift LAN controller, routed by CompositeOutputService (see its docs for the rules).
-            services.AddSingleton<OutputOptions>();
+            // Choices are loaded from %APPDATA%\GameControllerForZwift\settings.json and saved whenever they change.
+            services.AddSingleton<OutputOptions>(_ =>
+            {
+                var options = new OutputOptions();
+                var store = new OutputOptionsStore(OutputOptionsStore.DefaultPath);
+                store.Load(options);
+                options.Changed += (_, _) => store.Save(options);
+                return options;
+            });
 
             // GameControllerForZwift.Keyboard
             services.AddSingleton<KeyboardService>();
