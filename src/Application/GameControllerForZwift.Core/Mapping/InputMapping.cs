@@ -6,7 +6,7 @@ namespace GameControllerForZwift.Core.Mapping
 {
     public class InputMapping : IJsonOnDeserialized
     {
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [JsonConverter(typeof(ControllerInputJsonConverter))]
         public ControllerInput Input { get; set; }  // Public setter
 
         [JsonConverter(typeof(ZwiftFunctionJsonConverter))]

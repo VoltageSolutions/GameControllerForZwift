@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 namespace GameControllerForZwift.Network.DirectConnect;
 
 /// <summary>Wahoo Direct Connect (DIRCON): Bluetooth LE GATT tunnelled over TCP. Server presenting the Zwift Ride profile to Zwift.</summary>
-public sealed class DirectConnectServer : IZwiftRideLink
+public sealed partial class DirectConnectServer : IZwiftRideLink
 {
     private static readonly TimeSpan DefaultKeepAliveInterval = TimeSpan.FromSeconds(5);
 
@@ -79,7 +79,7 @@ public sealed class DirectConnectServer : IZwiftRideLink
                 {
                     last = ex;
                     candidate.Stop();
-                    _logger.LogWarning("DIRCON port {Port} unavailable: {Message}", p, ex.Message);
+                    LogPortUnavailable(p, ex.Message);
                 }
             }
             if (listener is null)
@@ -88,9 +88,9 @@ public sealed class DirectConnectServer : IZwiftRideLink
             _listener = listener;
             _cts = new CancellationTokenSource();
             var token = _cts.Token;
-            _acceptTask = Task.Run(() => AcceptLoopAsync(listener, token));
-            _keepAliveTask = Task.Run(() => KeepAliveLoopAsync(token));
-            _logger.LogInformation("DIRCON server listening on port {Port}", _port);
+            _acceptTask = Task.Run(() => AcceptLoopAsync(listener, token), token);
+            _keepAliveTask = Task.Run(() => KeepAliveLoopAsync(token), token);
+            LogListening(_port);
         }
         return Task.CompletedTask;
     }
@@ -145,7 +145,7 @@ public sealed class DirectConnectServer : IZwiftRideLink
         }
         catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException)
         {
-            _logger.LogDebug(ex, "Failed to send keypad frame");
+            LogSendKeypadFailed(ex);
         }
     }
 
@@ -176,7 +176,7 @@ public sealed class DirectConnectServer : IZwiftRideLink
         }
         catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException)
         {
-            _logger.LogDebug(ex, "Failed to send frame");
+            LogSendFrameFailed(ex);
         }
     }
 
@@ -197,13 +197,13 @@ public sealed class DirectConnectServer : IZwiftRideLink
             catch (SocketException ex)
             {
                 if (ct.IsCancellationRequested) break;
-                _logger.LogWarning(ex, "DIRCON accept failed");
+                LogAcceptFailed(ex);
                 continue;
             }
 
             try { client.NoDelay = true; } catch (SocketException) { }
             string remote = client.Client.RemoteEndPoint?.ToString() ?? "unknown";
-            _logger.LogInformation("DIRCON client connected from {Remote}", remote);
+            LogClientConnected(remote);
 
             var protocol = new ZwiftControlProtocol(_logger, () => { lock (_lock) return _batteryPercent; });
             var session = new DirectConnectSession(client.GetStream(), ZwiftRideProfile.CreateServices(), protocol, _logger, remote);
@@ -217,7 +217,7 @@ public sealed class DirectConnectServer : IZwiftRideLink
             }
             if (old is not null)
             {
-                _logger.LogInformation("Replacing previous DIRCON client");
+                LogReplacingClient();
                 await old.DisposeAsync().ConfigureAwait(false);
             }
 
@@ -235,12 +235,12 @@ public sealed class DirectConnectServer : IZwiftRideLink
         }
         catch (Exception ex)
         {
-            _logger.LogDebug(ex, "DIRCON session {Remote} ended with error", remote);
+            LogSessionError(ex, remote);
         }
         finally
         {
             await session.DisposeAsync().ConfigureAwait(false);
-            try { client.Dispose(); } catch (Exception ex) { _logger.LogDebug(ex, "Client dispose failed"); }
+            try { client.Dispose(); } catch (Exception ex) { LogClientDisposeFailed(ex); }
             bool wasCurrent;
             lock (_lock)
             {
@@ -248,7 +248,7 @@ public sealed class DirectConnectServer : IZwiftRideLink
                 if (wasCurrent)
                     _session = null;
             }
-            _logger.LogInformation("DIRCON client {Remote} disconnected", remote);
+            LogClientDisconnected(remote);
             if (wasCurrent)
                 SetConnected(false);
         }
@@ -259,7 +259,7 @@ public sealed class DirectConnectServer : IZwiftRideLink
         bool current;
         lock (_lock)
             current = ReferenceEquals(_session, session);
-        _logger.LogInformation("DIRCON RideOn handshake completed (current session: {Current})", current);
+        LogHandshakeCompleted(current);
         if (current)
             SetConnected(true);
     }
@@ -273,7 +273,7 @@ public sealed class DirectConnectServer : IZwiftRideLink
             _connected = value;
         }
         try { ConnectionChanged?.Invoke(this, value); }
-        catch (Exception ex) { _logger.LogError(ex, "ConnectionChanged handler failed"); }
+        catch (Exception ex) { LogConnectionHandlerFailed(ex); }
     }
 
     /// <summary>
@@ -306,7 +306,7 @@ public sealed class DirectConnectServer : IZwiftRideLink
                 }
                 catch (Exception ex) when (ex is IOException or ObjectDisposedException or SocketException)
                 {
-                    _logger.LogDebug(ex, "Keep-alive notification failed");
+                    LogKeepAliveFailed(ex);
                 }
             }
         }
@@ -314,4 +314,47 @@ public sealed class DirectConnectServer : IZwiftRideLink
         {
         }
     }
+
+    #region Logging
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "DIRCON port {Port} unavailable: {Message}")]
+    private partial void LogPortUnavailable(int port, string message);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "DIRCON server listening on port {Port}")]
+    private partial void LogListening(int port);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Failed to send keypad frame")]
+    private partial void LogSendKeypadFailed(Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Failed to send frame")]
+    private partial void LogSendFrameFailed(Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "DIRCON accept failed")]
+    private partial void LogAcceptFailed(Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "DIRCON client connected from {Remote}")]
+    private partial void LogClientConnected(string remote);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Replacing previous DIRCON client")]
+    private partial void LogReplacingClient();
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "DIRCON session {Remote} ended with error")]
+    private partial void LogSessionError(Exception exception, string remote);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Client dispose failed")]
+    private partial void LogClientDisposeFailed(Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "DIRCON client {Remote} disconnected")]
+    private partial void LogClientDisconnected(string remote);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "DIRCON RideOn handshake completed (current session: {Current})")]
+    private partial void LogHandshakeCompleted(bool current);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "ConnectionChanged handler failed")]
+    private partial void LogConnectionHandlerFailed(Exception exception);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Keep-alive notification failed")]
+    private partial void LogKeepAliveFailed(Exception exception);
+
+    #endregion
 }

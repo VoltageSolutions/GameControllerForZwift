@@ -5,7 +5,7 @@ using GameControllerForZwift.Core.Mapping;
 
 namespace GameControllerForZwift.Core.Tests
 {
-    public class DataIntegratorOutputTests
+    public class DataIntegratorOutputTests : IDisposable
     {
         private readonly IOutputService _outputService = Substitute.For<IOutputService>();
         private readonly IControllerProfileService _profileService = Substitute.For<IControllerProfileService>();
@@ -31,11 +31,17 @@ namespace GameControllerForZwift.Core.Tests
             _outputService.ReceivedCalls().Where(c => c.GetMethodInfo().Name == nameof(IOutputService.UpdateAsync))
                   .Select(c => (OutputState)c.GetArguments()[0]!).ToArray();
 
+        public void Dispose()
+        {
+            _sut.Dispose();
+            GC.SuppressFinalize(this);
+        }
+
         [Fact]
         public async Task SteerRight_And_SteerLeft_ProduceSignedSteer()
         {
-            _profile.UpdateMapping(ControllerInput.LeftThumbstick_TiltLeft, ZwiftFunction.SteerLeft);
-            _profile.UpdateMapping(ControllerInput.LeftThumbstick_TiltRight, ZwiftFunction.SteerRight);
+            _profile.UpdateMapping(ControllerInput.LeftThumbstickTiltLeft, ZwiftFunction.SteerLeft);
+            _profile.UpdateMapping(ControllerInput.LeftThumbstickTiltRight, ZwiftFunction.SteerRight);
 
             await RunAsync(new ControllerData { LeftThumbstickX = 32767 }, new ControllerData { LeftThumbstickX = -32767 });
 
@@ -83,8 +89,8 @@ namespace GameControllerForZwift.Core.Tests
         public async Task RideOn_And_Navigation_ArePressedFunctions()
         {
             _profile.UpdateMapping(ControllerInput.X, ZwiftFunction.RideOn);
-            _profile.UpdateMapping(ControllerInput.DPad_Up, ZwiftFunction.NavigateUp);
-            await RunAsync(new ControllerData { X = true, DPad_Up = true });
+            _profile.UpdateMapping(ControllerInput.DPadUp, ZwiftFunction.NavigateUp);
+            await RunAsync(new ControllerData { X = true, DPadUp = true });
             var s = States()[0];
             Assert.Contains(ZwiftFunction.RideOn, s.Pressed);
             Assert.Contains(ZwiftFunction.NavigateUp, s.Pressed);

@@ -151,7 +151,7 @@ async Task StateLoopAsync(CancellationToken ct)
             wasActive = active;
         }
         if (frame is not null)
-            await server.SendKeypadFrameAsync(frame);
+            await server.SendKeypadFrameAsync(frame, ct);
     }
 }
 

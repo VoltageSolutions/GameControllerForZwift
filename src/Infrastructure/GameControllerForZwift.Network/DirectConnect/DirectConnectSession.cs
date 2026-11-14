@@ -8,7 +8,7 @@ namespace GameControllerForZwift.Network.DirectConnect;
 /// One client connection: owns a <see cref="Stream"/> (any stream, so it is unit-testable),
 /// reassembles pipelined requests and answers them per the DIRCON spec.
 /// </summary>
-public sealed class DirectConnectSession : IAsyncDisposable
+public sealed partial class DirectConnectSession : IAsyncDisposable
 {
     private const int MaxPendingPerCharacteristic = 64;
 
@@ -93,14 +93,14 @@ public sealed class DirectConnectSession : IAsyncDisposable
         }
         catch (IOException ex)
         {
-            _logger.LogDebug(ex, "DIRCON session {Name} I/O ended", _name);
+            LogIoEnded(ex, _name);
         }
         catch (ObjectDisposedException)
         {
         }
         catch (System.Net.Sockets.SocketException ex)
         {
-            _logger.LogDebug(ex, "DIRCON session {Name} socket ended", _name);
+            LogSocketEnded(ex, _name);
         }
     }
 
@@ -133,9 +133,16 @@ public sealed class DirectConnectSession : IAsyncDisposable
     private Task SendNotificationFrameAsync(BleUuid characteristic, byte[] data, CancellationToken ct)
     {
         if (characteristic == ZwiftRideUuids.AsyncOut && data.Length > 0 && data[0] == 0x23 && _logger.IsEnabled(LogLevel.Information))
-            _logger.LogInformation("TX 0x23 keypad {Hex} => {Decoded}", Convert.ToHexString(data), ZwiftControlProtocol.DescribeKeyPadFrame(data));
+        {
+            var keypadHex = Convert.ToHexString(data);
+            var keypadDecoded = ZwiftControlProtocol.DescribeKeyPadFrame(data);
+            LogTxKeypad(keypadHex, keypadDecoded);
+        }
         if (_logger.IsEnabled(LogLevel.Debug) && ShouldLogNotification(characteristic, data))
-            _logger.LogDebug("DIRCON {Name} TX {MsgId} seq=0 resp=0 uuid={Uuid} value={Value}", _name, "Notification(0x06)", characteristic, Convert.ToHexString(data));
+        {
+            var notificationHex = Convert.ToHexString(data);
+            LogTxNotification(_name, "Notification(0x06)", characteristic, notificationHex);
+        }
         var payload = new byte[16 + data.Length];
         characteristic.WriteTo(payload);
         data.CopyTo(payload, 16);
@@ -168,7 +175,7 @@ public sealed class DirectConnectSession : IAsyncDisposable
         _ => $"Unknown(0x{id:X2})",
     };
 
-    private void LogWire(string direction, DirectConnectMessage m)
+    private void TraceWire(string direction, DirectConnectMessage m)
     {
         if (!_logger.IsEnabled(LogLevel.Debug))
             return;
@@ -185,14 +192,14 @@ public sealed class DirectConnectSession : IAsyncDisposable
             uuid = BleUuid.FromBytes(m.Payload.AsSpan(0, 16)).ToString();
             value = Convert.ToHexString(m.Payload.AsSpan(16));
         }
-        _logger.LogDebug("DIRCON {Name} {Dir} {MsgId} seq={Seq} resp={Resp} uuid={Uuid} value={Value}",
-            _name, direction, MsgName(m.MessageId), m.Seq, m.ResponseCode, uuid, value);
+        var msgName = MsgName(m.MessageId);
+        LogWire(_name, direction, msgName, m.Seq, m.ResponseCode, uuid, value);
     }
 
     private async Task SendAsync(DirectConnectMessage message, CancellationToken ct)
     {
         if (message.MessageId != DirectConnectMessageId.Notification)
-            LogWire("TX", message);
+            TraceWire("TX", message);
         var bytes = message.Encode();
         await _writeLock.WaitAsync(ct).ConfigureAwait(false);
         try
@@ -211,7 +218,7 @@ public sealed class DirectConnectSession : IAsyncDisposable
 
     private async Task HandleMessageAsync(DirectConnectMessage msg, CancellationToken ct)
     {
-        LogWire("RX", msg);
+        TraceWire("RX", msg);
         // Frames with a non-zero response code come from a peer that is answering; ignore them.
         if (msg.ResponseCode != 0)
             return;
@@ -327,7 +334,8 @@ public sealed class DirectConnectSession : IAsyncDisposable
                     break;
                 }
             default:
-                _logger.LogDebug("DIRCON {Name}: unknown message id {Id}", _name, msg.MessageId);
+                if (_logger.IsEnabled(LogLevel.Debug))
+                    LogUnknownMessage(_name, msg.MessageId);
                 await ReplyAsync(msg, DirectConnectResponseCode.UnexpectedError, null, ct).ConfigureAwait(false);
                 break;
         }
@@ -356,6 +364,31 @@ public sealed class DirectConnectSession : IAsyncDisposable
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
         try { _cts.Cancel(); } catch (ObjectDisposedException) { }
-        try { await _stream.DisposeAsync().ConfigureAwait(false); } catch (Exception ex) { _logger.LogDebug(ex, "DIRCON session {Name} stream dispose failed", _name); }
+        try { await _stream.DisposeAsync().ConfigureAwait(false); } catch (Exception ex) { LogStreamDisposeFailed(ex, _name); }
     }
+
+    #region Logging
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "DIRCON session {Name} I/O ended")]
+    private partial void LogIoEnded(Exception exception, string name);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "DIRCON session {Name} socket ended")]
+    private partial void LogSocketEnded(Exception exception, string name);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "TX 0x23 keypad {Hex} => {Decoded}")]
+    private partial void LogTxKeypad(string hex, string decoded);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "DIRCON {Name} TX {MsgId} seq=0 resp=0 uuid={Uuid} value={Value}")]
+    private partial void LogTxNotification(string name, string msgId, BleUuid uuid, string value);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "DIRCON {Name} {Dir} {MsgId} seq={Seq} resp={Resp} uuid={Uuid} value={Value}")]
+    private partial void LogWire(string name, string dir, string msgId, byte seq, byte resp, string uuid, string value);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "DIRCON {Name}: unknown message id {Id}")]
+    private partial void LogUnknownMessage(string name, byte id);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "DIRCON session {Name} stream dispose failed")]
+    private partial void LogStreamDisposeFailed(Exception exception, string name);
+
+    #endregion
 }

@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 
 namespace GameControllerForZwift.Core
 {
-    public class DataIntegrator : IDataIntegrator
+    public class DataIntegrator : IDataIntegrator, IDisposable
     {
         #region Fields
         private readonly IInputService _inputService;
@@ -13,9 +13,8 @@ namespace GameControllerForZwift.Core
         public ConcurrentQueue<ControllerData> DataQueue => _dataQueue;
         private readonly ConcurrentQueue<ControllerData> _dataQueue = new ConcurrentQueue<ControllerData>();
         private readonly int _maxQueueSize;
-        private CancellationTokenSource _cts;// = new CancellationTokenSource();
-        public event EventHandler<InputStateChangedEventArgs> InputPolled;
-        private ControllerData? _lastDataState;
+        private CancellationTokenSource? _cts;
+        public event EventHandler<InputStateChangedEventArgs>? InputPolled;
         #endregion
 
         #region Constructor
@@ -34,18 +33,17 @@ namespace GameControllerForZwift.Core
 
         public void StartProcessing(IController controller)
         {
-            if (null != _cts)
-                _cts.Dispose();
-            _cts = new CancellationTokenSource();
+            _cts?.Dispose();
+            var cts = new CancellationTokenSource();
+            _cts = cts;
 
-            _ = Task.Run(() => ReadDataAsync(controller, _cts.Token));
-            _ = Task.Run(() => WriteDataAsync(_cts.Token));
+            _ = Task.Run(() => ReadDataAsync(controller, cts.Token), cts.Token);
+            _ = Task.Run(() => WriteDataAsync(cts.Token), cts.Token);
         }
 
         public void StopProcessing()
         {
-            if (null != _cts)
-                _cts.Cancel();
+            _cts?.Cancel();
 
             try { _ = _outputService.UpdateAsync(OutputState.Neutral); }
             catch { /* best effort */ }
@@ -65,7 +63,7 @@ namespace GameControllerForZwift.Core
             }
         }
 
-        public void ProcessControllerData(ControllerData controllerData)
+        public void ProcessControllerData(ControllerData? controllerData)
         {
             if (controllerData == null)
                 return; // disposed controllers return null
@@ -86,7 +84,8 @@ namespace GameControllerForZwift.Core
 
         public void UpdateMapping(InputMapping mapping)
         {
-            var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault();
+            var profile = _controllerProfileService.Profiles.Profiles.FirstOrDefault()
+                ?? throw new InvalidOperationException("No controller profile is loaded.");
             var originalMapping = profile.Mappings.Where(m => m.Input == mapping.Input).FirstOrDefault();
             if (originalMapping != null)
             {
@@ -142,11 +141,19 @@ namespace GameControllerForZwift.Core
                     if (!cancellationToken.IsCancellationRequested)
                     {
                         var state = new OutputState(pressed, Math.Clamp(right - left, -1.0, 1.0), Math.Clamp(brake, 0.0, 1.0), controllerData.BatteryPercent);
-                        await _outputService.UpdateAsync(state);
+                        await _outputService.UpdateAsync(state, cancellationToken);
                     }
                 }
                 await Task.Delay(10, cancellationToken); // Adjust delay based on needs
             }
+        }
+
+        public void Dispose()
+        {
+            _cts?.Cancel();
+            _cts?.Dispose();
+            _cts = null;
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

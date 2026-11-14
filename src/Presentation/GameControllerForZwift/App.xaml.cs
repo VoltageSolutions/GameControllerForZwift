@@ -61,7 +61,7 @@ namespace GameControllerForZwift
                     }
                     catch (Exception ex)
                     {
-                        logger.LogError(ex, "Failed to start the Zwift Ride output.");
+                        LogStartFailed(logger, ex);
                     }
                 });
             }
@@ -84,12 +84,12 @@ namespace GameControllerForZwift
             base.OnExit(e);
         }
 
-        private bool IsTestEnvironment()
+        private static bool IsTestEnvironment()
         {
             return AppDomain.CurrentDomain.FriendlyName.Contains("testhost", StringComparison.OrdinalIgnoreCase);
         }
 
-        private void ConfigureServices(IServiceCollection services)
+        private static void ConfigureServices(IServiceCollection services)
         {
             // Standard .NET Event Logging
             //services.AddLogging(configure =>
@@ -160,6 +160,9 @@ namespace GameControllerForZwift
             services.AddSingleton<ControllerSetupPage>();
             services.AddTransient<MainWindow>();
         }
+
+        [LoggerMessage(Level = LogLevel.Error, Message = "Failed to start the Zwift Ride output.")]
+        private static partial void LogStartFailed(ILogger logger, Exception exception);
     }
 
 }

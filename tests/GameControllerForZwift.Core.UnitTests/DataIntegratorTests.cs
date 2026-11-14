@@ -5,7 +5,7 @@ using GameControllerForZwift.Core.Mapping;
 
 namespace GameControllerForZwift.App.Tests
 {
-    public class DataIntegratorTests
+    public class DataIntegratorTests : IDisposable
     {
         private readonly IInputService _inputService;
         private readonly IOutputService _output;
@@ -20,6 +20,12 @@ namespace GameControllerForZwift.App.Tests
             _controllerProfileService = Substitute.For<IControllerProfileService>();
             _controller = Substitute.For<IController>();
             _dataIntegrator = new DataIntegrator(_inputService, _controllerProfileService, _output, maxQueueSize: 5);
+        }
+
+        public void Dispose()
+        {
+            _dataIntegrator.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         [Fact]
@@ -78,7 +84,7 @@ namespace GameControllerForZwift.App.Tests
             var controllerProfiles = new ControllerProfiles();
             var controllerProfile = new ControllerProfile();
             controllerProfiles.Profiles.Add(controllerProfile);
-            var mapping = controllerProfile.Mappings.Where(m => m.Input == ControllerInput.A).FirstOrDefault();
+            var mapping = controllerProfile.Mappings.First(m => m.Input == ControllerInput.A);
             mapping.Function = ZwiftFunction.Select;
 
             _controllerProfileService.Profiles.Returns(controllerProfiles);

@@ -162,7 +162,7 @@ public class DirectConnectServerTests
         client.Dispose();
         await WaitUntilAsync(() => !server.IsZwiftConnected);
         lock (changes)
-            Assert.Equal(new[] { true, false }, changes);
+            Assert.Equal<bool>([true, false], changes);
     }
 
     [Fact]

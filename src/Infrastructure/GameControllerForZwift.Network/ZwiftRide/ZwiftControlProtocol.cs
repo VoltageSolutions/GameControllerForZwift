@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Text;
 using GameControllerForZwift.Network.DirectConnect;
 
@@ -10,7 +11,7 @@ namespace GameControllerForZwift.Network.ZwiftRide;
 /// (docs/captures/BikeControl Loopback.pcapng); everything not listed there is deliberately left unanswered, as BikeControl does.
 /// One instance per connection (tracks the handshake state).
 /// </summary>
-public sealed class ZwiftControlProtocol
+public sealed partial class ZwiftControlProtocol
 {
     private static readonly byte[] RideOnPrefix = Encoding.ASCII.GetBytes("RideOn");
 
@@ -31,7 +32,7 @@ public sealed class ZwiftControlProtocol
 
     private const uint BatteryRequestId = 771;
 
-    private readonly ILogger? _logger;
+    private readonly ILogger _logger;
     private readonly Func<int?>? _batteryPercent;
 
     /// <summary>Creates the protocol handler.</summary>
@@ -39,7 +40,7 @@ public sealed class ZwiftControlProtocol
     /// <param name="batteryPercent">Optional provider of the battery percentage (0..100) reported in the id-771 reply; a null result keeps the captured 100.</param>
     public ZwiftControlProtocol(ILogger? logger = null, Func<int?>? batteryPercent = null)
     {
-        _logger = logger;
+        _logger = logger ?? NullLogger.Instance;
         _batteryPercent = batteryPercent;
     }
 
@@ -106,7 +107,11 @@ public sealed class ZwiftControlProtocol
 
         if (characteristic != ZwiftRideUuids.SyncRx)
         {
-            _logger?.LogDebug("Unhandled write to {Uuid}: {Value}", characteristic, Convert.ToHexString(value));
+            if (_logger.IsEnabled(LogLevel.Debug))
+            {
+                var hex = Convert.ToHexString(value);
+                LogUnhandledWrite(characteristic, hex);
+            }
             return result;
         }
 
@@ -144,7 +149,11 @@ public sealed class ZwiftControlProtocol
                 return;
             }
         }
-        _logger?.LogDebug("No reply to {Value}", Convert.ToHexString(value));
+        if (_logger.IsEnabled(LogLevel.Debug))
+        {
+            var hex = Convert.ToHexString(value);
+            LogNoReply(hex);
+        }
     }
 
     /// <summary>Decodes a 0x23 keypad frame for logs, e.g. "pressed=0x00000001 analog=[loc0=-100, loc1=0]" (raw ~mask 0xFFFFFFFF = nothing pressed).</summary>
@@ -248,6 +257,16 @@ public sealed class ZwiftControlProtocol
         }
         return fields;
     }
+
+    #region Logging
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Unhandled write to {Uuid}: {Value}")]
+    private partial void LogUnhandledWrite(BleUuid uuid, string value);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "No reply to {Value}")]
+    private partial void LogNoReply(string value);
+
+    #endregion
 }
 
 /// <summary>One analog axis entry of a ride keypad frame.</summary>

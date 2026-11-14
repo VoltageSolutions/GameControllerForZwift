@@ -1,6 +1,5 @@
 using System.Net;
 using GameControllerForZwift.Network.ZwiftRide;
-using GameControllerForZwift.Network.ZwiftRide;
 using GameControllerForZwift.Network.Mdns;
 using Makaretu.Dns;
 

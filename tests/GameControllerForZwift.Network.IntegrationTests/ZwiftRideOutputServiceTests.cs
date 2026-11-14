@@ -7,7 +7,7 @@ using NSubstitute;
 
 namespace GameControllerForZwift.Network.IntegrationTests
 {
-    public class ZwiftRideOutputServiceTests
+    public class ZwiftRideOutputServiceTests : IAsyncDisposable
     {
         private readonly IZwiftRideLink _link = Substitute.For<IZwiftRideLink>();
         private readonly ZwiftRideOutputService _service;
@@ -15,6 +15,12 @@ namespace GameControllerForZwift.Network.IntegrationTests
         public ZwiftRideOutputServiceTests()
         {
             _service = new ZwiftRideOutputService(_link, new MdnsAdvertiser(), DeviceIdentity.Default, Substitute.For<ILogger<ZwiftRideOutputService>>());
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            GC.SuppressFinalize(this);
+            return _service.DisposeAsync();
         }
 
         private static OutputState State(double steer = 0, double brake = 0, int? battery = null, ZwiftFunction[]? pressed = null)

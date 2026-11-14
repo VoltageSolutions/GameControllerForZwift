@@ -81,7 +81,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Converters
         public void Convert_ReturnsUnsetValue_WhenValueIsNull()
         {
             // Arrange
-            object nullValue = null;
+            object? nullValue = null;
             string parameter = "LeftThumbstickX";
 
             // Act

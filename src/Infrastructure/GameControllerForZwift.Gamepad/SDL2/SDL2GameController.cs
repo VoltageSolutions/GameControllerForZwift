@@ -55,7 +55,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// Reads the current state of the game controller and returns a <see cref="ControllerData"/> object.
         /// </summary>
         /// <returns>A <see cref="ControllerData"/> object containing the current controller state.</returns>
-        public ControllerData ReadData()
+        public ControllerData? ReadData()
         {
             if (_isDisposed)
             {
@@ -76,13 +76,13 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 View = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_BACK),
                 Menu = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_START),
 
-                LeftThumbstick_Click = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK),
-                RightThumbstick_Click = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK),
+                LeftThumbstickClick = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK),
+                RightThumbstickClick = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK),
 
-                DPad_Up = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP),
-                DPad_Down = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN),
-                DPad_Left = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT),
-                DPad_Right = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT),
+                DPadUp = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP),
+                DPadDown = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN),
+                DPadLeft = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT),
+                DPadRight = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT),
 
                 LeftThumbstickX = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX),
                 LeftThumbstickY = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTY),
@@ -167,6 +167,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 }
                 _isDisposed = true;
             }
+            GC.SuppressFinalize(this);
         }
 
         #endregion

@@ -18,34 +18,34 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void Stick_InsideDeadzone_IsZero(double x)
         {
             var d = new ControllerData { LeftThumbstickX = x };
-            Assert.Equal(0.0, d.GetAnalogValue(ControllerInput.LeftThumbstick_TiltLeft));
-            Assert.Equal(0.0, d.GetAnalogValue(ControllerInput.LeftThumbstick_TiltRight));
-            Assert.False(d.IsPressed(ControllerInput.LeftThumbstick_TiltRight));
+            Assert.Equal(0.0, d.GetAnalogValue(ControllerInput.LeftThumbstickTiltLeft));
+            Assert.Equal(0.0, d.GetAnalogValue(ControllerInput.LeftThumbstickTiltRight));
+            Assert.False(d.IsPressed(ControllerInput.LeftThumbstickTiltRight));
         }
 
         [Fact]
         public void Stick_FullTilt_IsOne_AndHalfwayIsRescaled()
         {
-            Assert.Equal(1.0, new ControllerData { LeftThumbstickX = 32767 }.GetAnalogValue(ControllerInput.LeftThumbstick_TiltRight), 6);
-            Assert.Equal(1.0, new ControllerData { RightThumbstickX = -32768 }.GetAnalogValue(ControllerInput.RightThumbstick_TiltLeft), 6);
+            Assert.Equal(1.0, new ControllerData { LeftThumbstickX = 32767 }.GetAnalogValue(ControllerInput.LeftThumbstickTiltRight), 6);
+            Assert.Equal(1.0, new ControllerData { RightThumbstickX = -32768 }.GetAnalogValue(ControllerInput.RightThumbstickTiltLeft), 6);
             var mid = (5000 + 32767) / 2.0;
-            Assert.Equal(0.5, new ControllerData { LeftThumbstickX = mid }.GetAnalogValue(ControllerInput.LeftThumbstick_TiltRight), 3);
+            Assert.Equal(0.5, new ControllerData { LeftThumbstickX = mid }.GetAnalogValue(ControllerInput.LeftThumbstickTiltRight), 3);
         }
 
         [Fact]
         public void Stick_UpIsNegativeY()
         {
             var d = new ControllerData { LeftThumbstickY = -32767 };
-            Assert.Equal(1.0, d.GetAnalogValue(ControllerInput.LeftThumbstick_TiltUp), 6);
-            Assert.Equal(0.0, d.GetAnalogValue(ControllerInput.LeftThumbstick_TiltDown));
+            Assert.Equal(1.0, d.GetAnalogValue(ControllerInput.LeftThumbstickTiltUp), 6);
+            Assert.Equal(0.0, d.GetAnalogValue(ControllerInput.LeftThumbstickTiltDown));
         }
 
         [Fact]
         public void Stick_OnlyDominantAxisCounts()
         {
             var d = new ControllerData { LeftThumbstickX = 20000, LeftThumbstickY = 30000 };
-            Assert.Equal(0.0, d.GetAnalogValue(ControllerInput.LeftThumbstick_TiltRight));
-            Assert.True(d.GetAnalogValue(ControllerInput.LeftThumbstick_TiltDown) > 0);
+            Assert.Equal(0.0, d.GetAnalogValue(ControllerInput.LeftThumbstickTiltRight));
+            Assert.True(d.GetAnalogValue(ControllerInput.LeftThumbstickTiltDown) > 0);
         }
 
         [Theory]

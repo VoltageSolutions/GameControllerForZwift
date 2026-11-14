@@ -1,6 +1,7 @@
 using GameControllerForZwift.Network.ZwiftRide;
 using Makaretu.Dns;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -12,7 +13,7 @@ namespace GameControllerForZwift.Network.Mdns
     /// Mirrors what a real KICKR BIKE announces (see docs/captures/kickr-bike-capture-analysis.md): PTR + SRV + TXT, with A records
     /// for THIS machine's own IPv4 addresses.
     /// </summary>
-    public sealed class MdnsAdvertiser : IAsyncDisposable
+    public sealed partial class MdnsAdvertiser : IAsyncDisposable
     {
         public const string ServiceType = "_wahoo-fitness-tnp._tcp";
 
@@ -22,7 +23,7 @@ namespace GameControllerForZwift.Network.Mdns
             "bluetooth", "tailscale", "zerotier", "hamachi", "vpn", "pseudo", "miniport"
         };
 
-        private readonly ILogger<MdnsAdvertiser>? _logger;
+        private readonly ILogger<MdnsAdvertiser> _logger;
         private readonly object _gate = new();
         private MulticastService? _mdns;
         private ServiceDiscovery? _discovery;
@@ -30,7 +31,7 @@ namespace GameControllerForZwift.Network.Mdns
 
         public MdnsAdvertiser(ILogger<MdnsAdvertiser>? logger = null)
         {
-            _logger = logger;
+            _logger = logger ?? NullLogger<MdnsAdvertiser>.Instance;
         }
 
         public bool IsRunning
@@ -49,7 +50,7 @@ namespace GameControllerForZwift.Network.Mdns
 
                 var addresses = GetAdvertisedAddresses();
                 if (addresses.Count == 0)
-                    _logger?.LogWarning("mDNS: no usable IPv4 address found; Zwift will not be able to resolve this device.");
+                    LogNoIpv4Address();
 
                 var instanceName = identity.Name.Replace('.', ' ');
                 var profile = BuildServiceProfile(identity, port, addresses);
@@ -57,13 +58,13 @@ namespace GameControllerForZwift.Network.Mdns
                 var mdns = new MulticastService();
                 mdns.QueryReceived += (_, e) =>
                 {
-                    if (_logger is null || !_logger.IsEnabled(LogLevel.Debug)) return;
+                    if (!_logger.IsEnabled(LogLevel.Debug)) return;
                     try
                     {
                         var questions = string.Join(", ", e.Message.Questions.Select(q => $"{q.Name} {q.Type}"));
-                        _logger.LogDebug("mDNS query from {Remote}: {Questions}", e.RemoteEndPoint, questions);
+                        LogQuery(e.RemoteEndPoint, questions);
                     }
-                    catch (Exception ex) { _logger.LogDebug(ex, "mDNS query logging failed."); }
+                    catch (Exception ex) { LogQueryLoggingFailed(ex); }
                 };
                 var discovery = new ServiceDiscovery(mdns);
                 mdns.Start();
@@ -71,11 +72,11 @@ namespace GameControllerForZwift.Network.Mdns
                 try
                 {
                     if (discovery.Probe(profile))
-                        _logger?.LogWarning("mDNS: an instance named '{Name}' already exists on the network; advertising anyway.", instanceName);
+                        LogInstanceExists(instanceName);
                 }
                 catch (Exception ex)
                 {
-                    _logger?.LogDebug(ex, "mDNS probe failed; continuing.");
+                    LogProbeFailed(ex);
                 }
 
                 discovery.Advertise(profile);
@@ -84,8 +85,11 @@ namespace GameControllerForZwift.Network.Mdns
                 _mdns = mdns;
                 _discovery = discovery;
                 _serviceProfile = profile;
-                _logger?.LogInformation("mDNS: advertising '{Name}' ({Service}:{Port}) at {Addresses}",
-                    profile.InstanceName, profile.ServiceName, port, string.Join(", ", addresses));
+                if (_logger.IsEnabled(LogLevel.Information))
+                {
+                    var addressList = string.Join(", ", addresses);
+                    LogAdvertising(profile.InstanceName, profile.ServiceName, port, addressList);
+                }
             }
         }
 
@@ -183,14 +187,14 @@ namespace GameControllerForZwift.Network.Mdns
                         foreach (var rr in BuildGoodbyeRecords(new[] { _serviceProfile }))
                             goodbye.Answers.Add(rr);
                         _mdns.SendAnswer(goodbye, false);
-                        _logger?.LogInformation("mDNS: goodbye (TTL 0) sent.");
+                        LogGoodbyeSent();
                     }
                 }
-                catch (Exception ex) { _logger?.LogDebug(ex, "mDNS goodbye failed."); }
-                try { if (_serviceProfile != null) _discovery?.Unadvertise(_serviceProfile); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS unadvertise failed."); }
-                try { _discovery?.Dispose(); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS discovery dispose failed."); }
-                try { _mdns?.Stop(); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS stop failed."); }
-                try { _mdns?.Dispose(); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS dispose failed."); }
+                catch (Exception ex) { LogGoodbyeFailed(ex); }
+                try { if (_serviceProfile != null) _discovery?.Unadvertise(_serviceProfile); } catch (Exception ex) { LogUnadvertiseFailed(ex); }
+                try { _discovery?.Dispose(); } catch (Exception ex) { LogDiscoveryDisposeFailed(ex); }
+                try { _mdns?.Stop(); } catch (Exception ex) { LogStopFailed(ex); }
+                try { _mdns?.Dispose(); } catch (Exception ex) { LogDisposeFailed(ex); }
                 _discovery = null;
                 _mdns = null;
                 _serviceProfile = null;
@@ -246,5 +250,45 @@ namespace GameControllerForZwift.Network.Mdns
 
             return pick.Select(c => c.Address).Distinct().ToList();
         }
+
+        #region Logging
+
+        [LoggerMessage(Level = LogLevel.Warning, Message = "mDNS: no usable IPv4 address found; Zwift will not be able to resolve this device.")]
+        private partial void LogNoIpv4Address();
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "mDNS query from {Remote}: {Questions}")]
+        private partial void LogQuery(IPEndPoint remote, string questions);
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "mDNS query logging failed.")]
+        private partial void LogQueryLoggingFailed(Exception exception);
+
+        [LoggerMessage(Level = LogLevel.Warning, Message = "mDNS: an instance named '{Name}' already exists on the network; advertising anyway.")]
+        private partial void LogInstanceExists(string name);
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "mDNS probe failed; continuing.")]
+        private partial void LogProbeFailed(Exception exception);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "mDNS: advertising '{Name}' ({Service}:{Port}) at {Addresses}")]
+        private partial void LogAdvertising(DomainName name, DomainName service, int port, string addresses);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "mDNS: goodbye (TTL 0) sent.")]
+        private partial void LogGoodbyeSent();
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "mDNS goodbye failed.")]
+        private partial void LogGoodbyeFailed(Exception exception);
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "mDNS unadvertise failed.")]
+        private partial void LogUnadvertiseFailed(Exception exception);
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "mDNS discovery dispose failed.")]
+        private partial void LogDiscoveryDisposeFailed(Exception exception);
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "mDNS stop failed.")]
+        private partial void LogStopFailed(Exception exception);
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "mDNS dispose failed.")]
+        private partial void LogDisposeFailed(Exception exception);
+
+        #endregion
     }
 }

@@ -6,7 +6,7 @@ namespace GameControllerForZwift.UITests
     public class AppFixture : IDisposable
     {
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
-        public WindowsDriver AppSession;
+        public WindowsDriver AppSession { get; }
 
         public AppFixture()
         {
@@ -60,6 +60,7 @@ namespace GameControllerForZwift.UITests
         {
             System.Console.WriteLine("Closing GameControllerForZwift.exe");
             AppSession.Quit();
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -177,7 +177,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
             }
         }
 
-        public bool IsOutsideOrigin(double origin, double position)
+        public static bool IsOutsideOrigin(double origin, double position)
         {
             double factor = .1;
             if ((Math.Abs(origin - position) / origin) > factor)

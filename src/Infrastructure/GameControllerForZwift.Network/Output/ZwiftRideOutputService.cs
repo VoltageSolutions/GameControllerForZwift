@@ -11,7 +11,7 @@ namespace GameControllerForZwift.Network.Output
     /// Lifecycle: call <see cref="StartAsync"/> at app startup (starts the Direct Connect server, then advertises it via mDNS)
     /// and <see cref="StopAsync"/>/<see cref="DisposeAsync"/> on exit. There are no constructor side effects.
     /// </summary>
-    public sealed class ZwiftRideOutputService : IOutputService, IAsyncDisposable
+    public sealed partial class ZwiftRideOutputService : IOutputService, IAsyncDisposable
     {
         /// <summary>
         /// Single place to edit the ZwiftFunction -> Zwift Ride button mapping (exactly what a Zwift Ride provides).
@@ -127,7 +127,7 @@ namespace GameControllerForZwift.Network.Output
                 try
                 {
                     await _signal.WaitAsync(_resendInterval, ct).ConfigureAwait(false);
-                    while (_signal.CurrentCount > 0 && _signal.Wait(0)) { } // coalesce queued wake-ups
+                    while (_signal.CurrentCount > 0 && _signal.Wait(0, ct)) { } // coalesce queued wake-ups
                 }
                 catch (OperationCanceledException) { break; }
 
@@ -151,7 +151,7 @@ namespace GameControllerForZwift.Network.Output
                 catch (OperationCanceledException) { break; }
                 catch (Exception ex)
                 {
-                    _logger.LogDebug(ex, "Failed to send controller input.");
+                    LogSendFailed(ex);
                 }
             }
         }
@@ -170,7 +170,7 @@ namespace GameControllerForZwift.Network.Output
                 await _link.StartAsync(cancellationToken).ConfigureAwait(false);
                 _mdns.Start(_identity, _link.Port);
                 StartSendLoop();
-                _logger.LogInformation("Zwift Ride controller started on port {Port}", _link.Port);
+                LogStarted(_link.Port);
             }
             catch
             {
@@ -207,9 +207,22 @@ namespace GameControllerForZwift.Network.Output
         public async ValueTask DisposeAsync()
         {
             try { await StopAsync().ConfigureAwait(false); }
-            catch (Exception ex) { _logger.LogDebug(ex, "Error stopping Zwift Ride controller."); }
+            catch (Exception ex) { LogStopFailed(ex); }
             await _link.DisposeAsync().ConfigureAwait(false);
             await _mdns.DisposeAsync().ConfigureAwait(false);
         }
+
+        #region Logging
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "Failed to send controller input.")]
+        private partial void LogSendFailed(Exception exception);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Zwift Ride controller started on port {Port}")]
+        private partial void LogStarted(int port);
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "Error stopping Zwift Ride controller.")]
+        private partial void LogStopFailed(Exception exception);
+
+        #endregion
     }
 }

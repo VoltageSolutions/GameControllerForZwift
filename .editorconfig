@@ -1,0 +1,7 @@
+# Top-most EditorConfig. Only analyzer severities are configured here; formatting keeps the compiler/dotnet-format defaults.
+root = true
+
+# Test projects only: xUnit test names conventionally use underscores (Method_Scenario_Expected) and read far better that way,
+# so CA1707 (identifiers should not contain underscores) is disabled for tests. Production code under src/ and tools/ stays strict.
+[tests/**.cs]
+dotnet_diagnostic.CA1707.severity = none

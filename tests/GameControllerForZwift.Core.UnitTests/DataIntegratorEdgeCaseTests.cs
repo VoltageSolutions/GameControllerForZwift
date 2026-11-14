@@ -5,7 +5,7 @@ using NSubstitute;
 namespace GameControllerForZwift.Core.Tests
 {
     /// <summary>Edge cases of the state building in <see cref="DataIntegrator"/>.</summary>
-    public class DataIntegratorEdgeCaseTests
+    public class DataIntegratorEdgeCaseTests : IDisposable
     {
         private readonly IOutputService _outputService = Substitute.For<IOutputService>();
         private readonly IControllerProfileService _profileService = Substitute.For<IControllerProfileService>();
@@ -20,7 +20,7 @@ namespace GameControllerForZwift.Core.Tests
             _sut = new DataIntegrator(Substitute.For<IInputService>(), _profileService, _outputService, 10);
         }
 
-        private async Task RunAsync(DataIntegrator sut, params ControllerData[] data)
+        private static async Task RunAsync(DataIntegrator sut, params ControllerData[] data)
         {
             foreach (var d in data) sut.ProcessControllerData(d);
             using var cts = new CancellationTokenSource(150);
@@ -30,6 +30,12 @@ namespace GameControllerForZwift.Core.Tests
         private OutputState[] States() =>
             _outputService.ReceivedCalls().Where(c => c.GetMethodInfo().Name == nameof(IOutputService.UpdateAsync))
                   .Select(c => (OutputState)c.GetArguments()[0]!).ToArray();
+
+        public void Dispose()
+        {
+            _sut.Dispose();
+            GC.SuppressFinalize(this);
+        }
 
         [Fact]
         public void ProcessControllerData_Null_IsIgnored()
@@ -66,9 +72,9 @@ namespace GameControllerForZwift.Core.Tests
         [Fact]
         public async Task SteerLeftAndRightTogether_CancelOut()
         {
-            _profile.UpdateMapping(ControllerInput.LeftThumbstick_TiltLeft, ZwiftFunction.SteerLeft);
-            _profile.UpdateMapping(ControllerInput.DPad_Right, ZwiftFunction.SteerRight);
-            await RunAsync(_sut, new ControllerData { LeftThumbstickX = -32767, DPad_Right = true });
+            _profile.UpdateMapping(ControllerInput.LeftThumbstickTiltLeft, ZwiftFunction.SteerLeft);
+            _profile.UpdateMapping(ControllerInput.DPadRight, ZwiftFunction.SteerRight);
+            await RunAsync(_sut, new ControllerData { LeftThumbstickX = -32767, DPadRight = true });
             Assert.Equal(0.0, States()[0].Steer, 3);
         }
 

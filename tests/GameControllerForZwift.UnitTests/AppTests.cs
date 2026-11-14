@@ -18,8 +18,8 @@ namespace GameControllerForZwift.UnitTests
 
             // Act
             var configureServicesMethod = typeof(App)
-                .GetMethod("ConfigureServices", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            configureServicesMethod?.Invoke(app, new object[] { services });
+                .GetMethod("ConfigureServices", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+            configureServicesMethod?.Invoke(null, new object[] { services });
 
             // Assert
             var serviceProvider = services.BuildServiceProvider();
@@ -34,7 +34,7 @@ namespace GameControllerForZwift.UnitTests
         }
 
         // A fake file service for demonstration purposes
-        private class FakeFileService : IFileService
+        private sealed class FakeFileService : IFileService
         {
             public string ReadFileContent(string filePath)
             {

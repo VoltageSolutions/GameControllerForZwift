@@ -7,14 +7,14 @@
         { "Input": "B", "Function": "GoBack" },
         { "Input": "X", "Function": "RideOn" },
         { "Input": "Y", "Function": "Powerup" },
-        { "Input": "DPad_Up", "Function": "NavigateUp" },
-        { "Input": "DPad_Down", "Function": "NavigateDown" },
-        { "Input": "DPad_Left", "Function": "NavigateLeft" },
-        { "Input": "DPad_Right", "Function": "NavigateRight" },
+        { "Input": "DPadUp", "Function": "NavigateUp" },
+        { "Input": "DPadDown", "Function": "NavigateDown" },
+        { "Input": "DPadLeft", "Function": "NavigateLeft" },
+        { "Input": "DPadRight", "Function": "NavigateRight" },
         { "Input": "LeftBumper", "Function": "ShiftDown" },
         { "Input": "RightBumper", "Function": "ShiftUp" },
-        { "Input": "LeftThumbstick_TiltLeft", "Function": "SteerLeft" },
-        { "Input": "LeftThumbstick_TiltRight", "Function": "SteerRight" },
+        { "Input": "LeftThumbstickTiltLeft", "Function": "SteerLeft" },
+        { "Input": "LeftThumbstickTiltRight", "Function": "SteerRight" },
         { "Input": "LeftTrigger", "Function": "Brake" }
       ]
     }

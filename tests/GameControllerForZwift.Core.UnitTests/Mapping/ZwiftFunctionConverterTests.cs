@@ -10,7 +10,7 @@ namespace GameControllerForZwift.Core.Tests.Mapping
 
         [Fact]
         public void DefinedNumber_ReadsAsEnumValue()
-            => Assert.Equal(ZwiftFunction.ShiftUp, Read(((int)ZwiftFunction.ShiftUp).ToString()));
+            => Assert.Equal(ZwiftFunction.ShiftUp, Read(((int)ZwiftFunction.ShiftUp).ToString(System.Globalization.CultureInfo.InvariantCulture)));
 
         [Theory]
         [InlineData("9999")]

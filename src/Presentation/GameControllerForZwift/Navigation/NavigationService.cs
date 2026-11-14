@@ -9,16 +9,16 @@ namespace GameControllerForZwift.UI.WPF.Navigation
     /// </summary>
     public class NavigationService : INavigationService
     {
-        private Frame _frame;
+        private Frame? _frame;
 
-        private Type _currentPageType = null;
+        private Type? _currentPageType;
 
         private readonly Stack<Type> _history;
         private readonly Stack<Type> _future;
 
         private readonly IServiceProvider _serviceProvider;
 
-        public event EventHandler<NavigatingEventArgs> Navigating;
+        public event EventHandler<NavigatingEventArgs>? Navigating;
 
 
         public NavigationService(IServiceProvider serviceProvider)
@@ -28,7 +28,7 @@ namespace GameControllerForZwift.UI.WPF.Navigation
             _future = new Stack<Type>();
         }
 
-        public Type CurrentPageType { get { return _currentPageType; } }
+        public Type? CurrentPageType { get { return _currentPageType; } }
         public Stack<Type> History { get { return _history; } }
         public Stack<Type> Future { get { return _future; } }
 
@@ -38,7 +38,7 @@ namespace GameControllerForZwift.UI.WPF.Navigation
         }
 
         // use this for navigating in ways that are specific to a feature-area that justifies clearing the future stack
-        public void NavigateTo(Type type)
+        public void NavigateTo(Type? type)
         {
             if (type != null)
             {
@@ -48,28 +48,21 @@ namespace GameControllerForZwift.UI.WPF.Navigation
         }
 
         // use this for major page changes with the left-hand navigation where going forward/back are both okay.
-        public void Navigate(Type type)
+        public void Navigate(Type? type)
         {
             if (type != null)
             {
                 _history.Push(type);
                 UpdateCurrentPage();
                 var page = _serviceProvider.GetRequiredService(type);
-                _frame.Navigate(page);
+                _frame?.Navigate(page);
             }
         }
 
         public void UpdateCurrentPage()
         {
-            // This will fail if the _history stack is empty.
-            try
-            {
-                _currentPageType = _history.Peek();
-            }
-            catch (Exception ex)
-            {
-                _currentPageType = null;
-            }
+            // No current page when the _history stack is empty.
+            _currentPageType = _history.TryPeek(out var current) ? current : null;
         }
 
         public void NavigateBack()
@@ -123,7 +116,7 @@ namespace GameControllerForZwift.UI.WPF.Navigation
             }
         }
 
-        public void RaiseNavigatingEvent(Type type)
+        public void RaiseNavigatingEvent(Type? type)
         {
             Navigating?.Invoke(this, new NavigatingEventArgs(type));
         }

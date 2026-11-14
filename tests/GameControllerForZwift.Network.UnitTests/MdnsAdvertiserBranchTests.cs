@@ -1,6 +1,5 @@
 using System.Net;
 using GameControllerForZwift.Network.ZwiftRide;
-using GameControllerForZwift.Network.ZwiftRide;
 using GameControllerForZwift.Network.Mdns;
 
 namespace GameControllerForZwift.Network.UnitTests;
@@ -11,12 +10,12 @@ public class MdnsAdvertiserBranchTests
     private static readonly IPAddress[] Addresses = { IPAddress.Parse("192.168.1.50") };
 
     [Fact]
-    public void NotRunningBeforeStart_StopAndDisposeAreSafe()
+    public async Task NotRunningBeforeStart_StopAndDisposeAreSafe()
     {
         var advertiser = new MdnsAdvertiser();
         Assert.False(advertiser.IsRunning);
         advertiser.Stop();
-        advertiser.DisposeAsync().AsTask().GetAwaiter().GetResult();
+        await advertiser.DisposeAsync();
         Assert.False(advertiser.IsRunning);
     }
 

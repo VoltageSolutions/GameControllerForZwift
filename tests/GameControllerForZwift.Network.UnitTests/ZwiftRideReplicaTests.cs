@@ -100,11 +100,14 @@ public class ZwiftRideReplicaTests
             Assert.Empty(protocol.HandleWrite(ZwiftRideUuids.SyncRx, Hex(hex)));
     }
 
+    private static readonly string[] ServicePrefixes = ["0000FC82", "D273F680", "00001826", "0000180A", "00000001", "0000180D"];
+    private static readonly string[] DeviceInfoValues = ["BikeControl", "1337", "1.0", "1.0"];
+
     [Fact]
     public void Gatt_HasBothZwiftInstancesAndCapturedProperties()
     {
         var services = ZwiftRideProfile.CreateServices();
-        Assert.Equal(new[] { "0000FC82", "D273F680", "00001826", "0000180A", "00000001", "0000180D" },
+        Assert.Equal(ServicePrefixes,
             services.Select(s => s.Uuid.ToString().Substring(0, 8).ToUpperInvariant()).ToArray());
 
         var fc82 = services[0];
@@ -117,7 +120,7 @@ public class ZwiftRideReplicaTests
         Assert.Equal(new[] { GattProperties.Notify, GattProperties.Write, GattProperties.Indicate }, zwift.Characteristics.Select(c => c.Properties).ToArray());
 
         var info = services[3].Characteristics.Select(c => System.Text.Encoding.ASCII.GetString(c.Value)).ToArray();
-        Assert.Equal(new[] { "BikeControl", "1337", "1.0", "1.0" }, info);
+        Assert.Equal(DeviceInfoValues, info);
     }
 
     [Fact]

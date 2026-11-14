@@ -16,7 +16,7 @@ namespace GameControllerForZwift.Core.Tests.Mapping
             Assert.NotNull(profile.Mappings);
             Assert.NotEmpty(profile.Mappings);
 
-            Assert.All<ControllerInput>(Enum.GetValues(typeof(ControllerInput)).Cast<ControllerInput>(), input =>
+            Assert.All<ControllerInput>(Enum.GetValues<ControllerInput>(), input =>
                 Assert.Contains(profile.Mappings, m => m.Input == input)
             );
         }

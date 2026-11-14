@@ -31,9 +31,9 @@ namespace GameControllerForZwift.Core.Tests
             Assert.Equal(expected.OrderBy(x => x), Enum.GetNames<ZwiftFunction>().OrderBy(x => x));
         }
 
-        private string GetEnumDescription(Enum value)
+        private static string GetEnumDescription(Enum value)
         {
-            var field = value.GetType().GetField(value.ToString());
+            var field = value.GetType().GetField(value.ToString())!;
             var attribute = field.GetCustomAttributes(typeof(DescriptionAttribute), false)
                                  .Cast<DescriptionAttribute>()
                                  .FirstOrDefault();

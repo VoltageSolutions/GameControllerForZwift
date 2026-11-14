@@ -19,7 +19,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
          */
 
         [ObservableProperty]
-        private ControllerData _controllerData;
+        private ControllerData _controllerData = new();
 
         [ObservableProperty]
         private ControllerInput _selectedInput;
@@ -27,9 +27,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [ObservableProperty]
         private ZwiftFunction _selectedZwiftFunction;
 
-        public IEnumerable<ZwiftFunction> ZwiftFunctions => GetEnumValues<ZwiftFunction>();
+        public IEnumerable<ZwiftFunction> ZwiftFunctions { get; } = GetEnumValues<ZwiftFunction>();
 
-        public event EventHandler<EventArgs> MappingChanged;
+        public event EventHandler<EventArgs>? MappingChanged;
 
         #endregion
 
@@ -46,14 +46,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         public bool IsPressed => ControllerData.IsPressed(SelectedInput);
 
-        partial void OnControllerDataChanged(ControllerData oldValue, ControllerData newValue)
+        partial void OnControllerDataChanged(ControllerData? oldValue, ControllerData newValue)
         {
             OnPropertyChanged(nameof(IsPressed));
         }
 
-        public IEnumerable<T> GetEnumValues<T>() where T : Enum
+        public static IEnumerable<T> GetEnumValues<T>() where T : struct, Enum
         {
-            return Enum.GetValues(typeof(T)).Cast<T>();
+            return Enum.GetValues<T>();
         }
 
         partial void OnSelectedZwiftFunctionChanged(ZwiftFunction value)
@@ -63,7 +63,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         protected virtual void OnMappingChanged(EventArgs e)
         {
-            MappingChanged.Invoke(this, e);
+            MappingChanged?.Invoke(this, e);
         }
 
         public void SetInputMapping(InputMapping inputMap)

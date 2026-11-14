@@ -83,7 +83,7 @@ public sealed class FileLoggerProvider : ILoggerProvider
             if (!IsEnabled(logLevel))
                 return;
             var sb = new StringBuilder();
-            sb.Append(DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss.fff"))
+            sb.Append(DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ss.fff", System.Globalization.CultureInfo.InvariantCulture))
               .Append(' ').Append(LevelText(logLevel))
               .Append(' ').Append(_category)
               .Append(": ").Append(formatter(state, exception));

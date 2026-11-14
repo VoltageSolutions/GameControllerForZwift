@@ -5,7 +5,7 @@ namespace GameControllerForZwift.UITests
     [Collection("Application collection")]
     public class AboutTests : IDisposable
     {
-        private AppFixture _fixture;
+        private readonly AppFixture _fixture;
 
         public AboutTests(AppFixture fixture)
         {
@@ -34,6 +34,7 @@ namespace GameControllerForZwift.UITests
             // Return to default state
             var controllerSetupTreeViewItem = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("Controller Setup"));
             controllerSetupTreeViewItem.Click();
+            GC.SuppressFinalize(this);
         }
     }
 }
