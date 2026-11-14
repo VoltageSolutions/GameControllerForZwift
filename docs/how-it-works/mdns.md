@@ -25,7 +25,7 @@ A client such as Zwift asks for the PTR records of a service type, then follows 
 
 | Item | Value | Notes |
 |---|---|---|
-| Service type | `_wahoo-fitness-tnp._tcp` | The service type used by Wahoo Direct Connect devices such as the KICKR family. |
+| Service type | `_wahoo-fitness-tnp._tcp` | The service type used by Wahoo Direct Connect devices such as the KICKR family for network integration instead of Bluetooth. |
 | Instance name | `Voltage Gamepad` | Shown in Zwift's pairing screen. Dots are replaced by spaces, because the name must be one DNS label. |
 | Host name | `Voltage-Gamepad.local` | The instance name with spaces turned into hyphens. |
 | Port (SRV) | `36866` | The port the TCP server actually bound. If 36866 is busy, the server tries up to 36876, and the advertisement always carries the real port. |
@@ -36,7 +36,7 @@ A client such as Zwift asks for the PTR records of a service type, then follows 
 
 | Key | Value sent by the app | What it means |
 |---|---|---|
-| `ble-service-uuids` | `0xFC82,0x1818,0x1826,00000001-19CA-4651-86E5-FA29DCDD09D1,A026EE0D-0A7D-4AB3-97FA-F1500F9FEB8B,d273f680-d548-419d-b9d1-fa0472345229` | The Bluetooth services the device offers. This is the list a KICKR-style device announces (Zwift's FC82 service, Cycling Power 1818, Fitness Machine 1826, Zwift's 128-bit service and a Wahoo service), followed by the OpenBikeControl service UUID. |
+| `ble-service-uuids` | `0xFC82,0x1818,0x1826,00000001-19CA-4651-86E5-FA29DCDD09D1,A026EE0D-0A7D-4AB3-97FA-F1500F9FEB8B,d273f680-d548-419d-b9d1-fa0472345229` | The Bluetooth services the device offers (Wahoo's Direct Connect wraps Bluetooth messages to send over the network). This is the list a KICKR-style device announces (Zwift's FC82 service, Cycling Power 1818, Fitness Machine 1826, Zwift's 128-bit service and a Wahoo service), followed by the OpenBikeControl service UUID. |
 | `mac-address` | `02-47-5A-00-00-01` | A MAC-style identifier. The first byte `02` marks it as a locally administered address, so it can never clash with real hardware. |
 | `serial-number` | `612034871` | Digits only. Some apps parse it as a 64-bit number, so letters would break them. |
 | `manufacturer-data` | `4A09` + type byte + two id bytes | ASCII hex text, the same layout as Bluetooth manufacturer data. See below. |
@@ -66,7 +66,7 @@ For reference, the type bytes known from Zwift's Bluetooth controllers are: Play
 
 From live testing:
 
-- **The service list matters.** Zwift lists the device when `ble-service-uuids` carries the KICKR-style list above. Adverts that only listed the Fitness Machine service, or only FC82, did not appear in the pairing screen.
+- **The service list matters.** Zwift lists the device when `ble-service-uuids` carries the KICKR-style list above. Advertisements that only listed the Fitness Machine service, or only FC82, did not appear in the pairing screen.
 - **Manufacturer data is part of the identity.** The Zwift company id plus a device type byte is part of the advertisement that Zwift pairs as a Zwift Ride.
 - **The address must be reachable.** Zwift connects to the A record address and the SRV port, so both must be right.
 

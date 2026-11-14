@@ -1,7 +1,7 @@
 # The big picture
 
 !!! tldr "TL;DR"
-    The app pretends to be a Zwift Ride controller on your local network. It announces itself with mDNS, accepts a TCP connection from Zwift, and speaks Wahoo Direct Connect, which carries Bluetooth GATT operations over TCP. After a short "RideOn" handshake and a few device information requests, the app sends button and paddle frames whenever your controller changes, plus a keepalive every 5 seconds.
+    Thhis app pretends to be a Zwift Ride controller on your local network. It announces itself with mDNS, accepts a TCP connection from Zwift, and speaks Wahoo Direct Connect carrying Bluetooth GATT operations over TCP. After a short "RideOn" handshake and a few device information requests, the app sends button and paddle frames whenever your controller changes, plus a keepalive every 5 seconds.
 
 This section is for anyone who wants to understand, debug or reimplement the link between a controller and Zwift. Nothing here is specific to C#. If you can open a TCP socket and send a multicast UDP packet, you can build the same thing in any language.
 
@@ -52,7 +52,7 @@ Zwift already knows how to use a Zwift Ride. It has a D-pad, A, B, Y and Z butto
 
 Presenting as a Zwift Ride has two big advantages:
 
-- **It sits next to your trainer.** A Zwift Ride is a pure controller. Zwift pairs it under **Controls** while your trainer stays the Power Source and Resistance device, and Zwift's virtual shifting then drives your trainer.
+- **It differs virtual shifting to Zwift.** A Zwift Ride is a pure controller. Zwift pairs it under **Controls** while your trainer stays the Power Source and Resistance device, and Zwift's virtual shifting then drives your trainer.
 - **No new protocol.** The app uses formats Zwift already understands, so it works on every platform Zwift runs on, including tablets and Apple TV, with no plugin or companion app.
 
 ## What the app actually sends
