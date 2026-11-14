@@ -122,5 +122,79 @@ namespace GameControllerForZwift.UI.WPF.Tests
             Assert.Empty(result);
         }
 
+        [Fact]
+        public void GetNavigationItemHierarchyFromPageType_ReturnsSingleItem_WhenPageIsAtTopLevel()
+        {
+            // Arrange
+            var other = new PagesInfoDataItem { Title = "Other", PageName = nameof(AboutPage) };
+            var top = new PagesInfoDataItem { Title = "Top", PageName = nameof(SettingsPage) };
+            _viewModel.Pages = new List<PagesInfoDataItem> { other, top };
+
+            // Act
+            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(SettingsPage));
+
+            // Assert
+            Assert.Single(result);
+            Assert.Same(top, result[0]);
+        }
+
+        [Fact]
+        public void GetNavigationItemHierarchyFromPageType_ReturnsFullHierarchy_WhenPageIsNestedTwoLevelsDeep()
+        {
+            // Arrange
+            var grandchild = new PagesInfoDataItem { Title = "Grandchild", PageName = nameof(SettingsPage) };
+            var sibling = new PagesInfoDataItem { Title = "Sibling", PageName = nameof(AboutPage) };
+            var child = new PagesInfoDataItem
+            {
+                Title = "Child",
+                Items = new ObservableCollection<PagesInfoDataItem> { grandchild }
+            };
+            var parent = new PagesInfoDataItem
+            {
+                Title = "Parent",
+                Items = new ObservableCollection<PagesInfoDataItem> { sibling, child }
+            };
+            _viewModel.Pages = new List<PagesInfoDataItem> { parent };
+
+            // Act
+            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(SettingsPage));
+
+            // Assert
+            Assert.Equal(new[] { parent, child, grandchild }, result);
+        }
+
+        [Fact]
+        public void GetNavigationItemHierarchyFromPageType_ReturnsEmptyList_WhenNestedTreeDoesNotContainPageType()
+        {
+            // Arrange
+            var grandchild = new PagesInfoDataItem { Title = "Grandchild", PageName = nameof(AboutPage) };
+            var child = new PagesInfoDataItem
+            {
+                Title = "Child",
+                Items = new ObservableCollection<PagesInfoDataItem> { grandchild }
+            };
+            var parent = new PagesInfoDataItem
+            {
+                Title = "Parent",
+                Items = new ObservableCollection<PagesInfoDataItem> { child }
+            };
+            _viewModel.Pages = new List<PagesInfoDataItem> { parent };
+
+            // Act
+            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(SettingsPage));
+
+            // Assert
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public void GetNavigationItemHierarchyFromPageType_ReturnsEmptyList_WhenPageTypeIsNull()
+        {
+            // Act
+            var result = _viewModel.GetNavigationItemHierarchyFromPageType(null);
+
+            // Assert
+            Assert.Empty(result);
+        }
     }
 }
