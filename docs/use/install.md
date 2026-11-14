@@ -8,7 +8,7 @@ Go to the [Releases page on GitHub](https://github.com/VoltageSolutions/GameCont
 
 | Download | Size | What you need |
 |---|---|---|
-| `GameControllerForZwift-<version>-win-x64.zip` | Small | The .NET 10 Desktop Runtime. If it is missing, Windows tells you when you start the app and offers the download. |
+| `GameControllerForZwift-<version>-win-x64.zip` | Small | Requires the .NET 10 Desktop Runtime. If this is missing, Windows tells you when you start the app and offers to download it for you. |
 | `GameControllerForZwift-<version>-win-x64-standalone.zip` | Larger | Nothing else. Everything is inside. |
 
 !!! tip "Not sure which one?"
@@ -38,7 +38,7 @@ The first time the app runs, Windows Firewall asks whether the app may use the n
 2. In the app, choose your controller from the list. If you do not see it, click **Refresh List**.
 3. Press some buttons. The matching row in the app lights up while you press it.
 
-The app uses one controller at a time. A pair of Joy-Cons counts as one controller.
+The app uses one controller at a time. If you connect left and right Nintendo Joy-Cons to your computer, the app will count them as a single controller.
 
 ## Next step
 

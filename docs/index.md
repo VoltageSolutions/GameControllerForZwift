@@ -2,22 +2,21 @@
 
 <img width="128" align="right" src="./assets/images/logo.png" alt="Game Controller for Zwift logo">
 
-Game Controller for Zwift lets you ride Zwift with a video game controller you already own. Plug in an Xbox controller, a pair of Joy-Cons or another popular gamepad, and use it to shift, steer, brake and move through Zwift's menus.
+Game Controller for Zwift lets you ride Zwift with a video game controller you already own. With support for controllers from XBox, Nintendo, Playstation, and more, you can shift, steer, brake, and move through Zwift's menus.
 
-The app runs on Windows. It shows up in Zwift as a controller called **Voltage Gamepad**, so you pair it in Zwift just like any other controller. No extra hardware, no keyboard tricks and no Bluetooth pairing with Zwift.
+The app runs on Windows. It shows up in Zwift as a controller called **Voltage Gamepad** connecting over your local area network.
 
 ## Who this site is for
 
 - **Riders** who want to use the app. Start with [Install and first run](use/install.md).
-- **Protocol implementers** who want to build a Zwift controller bridge in any language. Start with [The big picture](how-it-works/big-picture.md).
+- **Protocol implementers** who want to build their own Zwift controller integration. Start with [The big picture](how-it-works/big-picture.md).
 - **Developers** who want to build the app or contribute. Start with [Architecture](build/architecture.md).
 
 ## How it fits together
 
 ```mermaid
 flowchart LR
-    pad["Game controller<br/>(USB or Bluetooth)"] --> app["Game Controller for Zwift<br/>on Windows"]
-    app -->|"looks like a Zwift Ride<br/>controller"| lan(("Your local<br/>network"))
+    pad["Game controller<br/>(USB or Bluetooth)"] --> app["Game Controller for Zwift<br/>on Windows"] -->lan["Your local<br/>network"]
     lan --> zwift["Zwift on a PC, Mac,<br/>tablet, phone or Apple TV"]
 ```
 

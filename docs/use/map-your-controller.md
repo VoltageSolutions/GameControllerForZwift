@@ -1,7 +1,7 @@
 # Map your controller
 
 !!! tldr "TL;DR"
-    Pick a Zwift function for each controller input on the **Controller Setup** page. The functions match the buttons and paddles of a Zwift Ride: navigation, select, back, power-up, Ride On, shift up and down, steer left and right, and brake. Sticks and triggers give partial steering and braking. Changes apply at once, but the app does not save them yet, so it starts with the default mapping each time.
+    Pick a Zwift function for each controller input on the **Controller Setup** page. The functions match the buttons and paddles of a Zwift Ride: navigation, select, back, power-up, Ride On, shift up and down, steer left and right, and brake. Sticks and triggers give partial steering and braking. Changes apply immediately, but the app does not save them yet, so it starts with the default mapping each time.
 
 Each button, stick direction and trigger on your controller can do one Zwift function. You choose the function from the drop-down next to each input on the **Controller Setup** page. Changes take effect straight away.
 
@@ -40,9 +40,7 @@ Buttons are on or off. Sticks and triggers are **analog**: the further you push,
 
 - **Steering** from a stick tilt is partial. A small tilt steers a little, a full tilt steers fully.
 - **Braking** from a trigger is partial too. A light squeeze sends a light brake value.
-- There is a small dead zone near the centre of each stick and at the start of each trigger, so a resting stick does nothing.
-
-If you map both Steer left and Steer right, the app combines them. If several inputs ask for the same thing, the strongest one wins.
+- There is a small dead zone near the center of each stick iin anticipation of stick drift. Letting go of the stick should return it to the center.
 
 !!! note "How Zwift reads the brake"
     The app sends a brake value that grows with your trigger. Zwift decides how strongly to brake from that value, and in testing even a light squeeze could bring the rider to a full stop.

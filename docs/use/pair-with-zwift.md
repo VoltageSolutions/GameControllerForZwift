@@ -1,6 +1,6 @@
 # Pair with Zwift
 
-The app shows up in Zwift as a controller named **Voltage Gamepad**. You pair it once on Zwift's pairing screen, the same way you would pair a Zwift Ride.
+The app shows up in Zwift as a controller named **Voltage Gamepad**. You connect to it on Zwift's device pairing screen.
 
 ## Same computer or a different device?
 
@@ -12,19 +12,20 @@ Both work.
 ## Step by step
 
 1. Start Game Controller for Zwift and pick your controller (see [Install and first run](install.md)).
-2. Start Zwift and open the **pairing screen**.
-3. Under **Power Source**, choose **Voltage Gamepad** first. Zwift then fills in **Controls** with Voltage Gamepad for you.
-4. Now switch **Power Source**, **Resistance** and **Cadence** to your real trainer (and your heart rate monitor, if you use one).
-5. Keep **Controls** on **Voltage Gamepad**.
-6. Start riding.
+1. Start Zwift and open the **device pairing screen**.
+1. Under **Power Source**, choose **Voltage Gamepad** first.
+1. Switch to **Controls**, Voltage Gamepad will now be an option. Select it.
+1. Now switch **Power Source** and other devices like **Resistance** and **Cadence** to your real devices.
+1. Keep **Controls** on **Voltage Gamepad**.
+1. Start riding!
 
 !!! tip "Why choose Power Source first?"
-    Picking Voltage Gamepad as the Power Source is the quickest way to get Zwift to place it under Controls. Once Controls is filled in, you move your trainer back into the Power Source, Resistance and Cadence slots. Voltage Gamepad does not send power or cadence, so your trainer must provide those.
+    Picking Voltage Gamepad as the Power Source triggers the communication handshake between Zwift and this app. This handshake needs to happen at least once per Zwift session to enable Controls integration. Once Controls is filled in, you can select your real Power Source. Voltage Gamepad does not send power or cadence, your trainer must provide those.
 
 ```mermaid
 flowchart TD
     a["Open the pairing screen"] --> b["Power Source: Voltage Gamepad"]
-    b --> c["Zwift fills Controls:<br/>Voltage Gamepad"]
+    b --> c["Controls:<br/>Voltage Gamepad"]
     c --> d["Power Source, Resistance, Cadence:<br/>your trainer"]
     d --> e["Controls stays on<br/>Voltage Gamepad"]
     e --> f["Ride On!"]
