@@ -4,7 +4,7 @@
 
 ### GATT
 
-The Generic Attribute Profile. It is how Bluetooth Low Energy devices organise their data: a device offers **services**, and each service holds **characteristics**. Clients discover them, read and write them, and subscribe to changes.
+The Generic Attribute Profile. It is how Bluetooth Low Energy devices organize their data: a device offers **services**, and each service holds **characteristics**. Clients discover them, read and write them, and subscribe to changes.
 
 ### Service
 

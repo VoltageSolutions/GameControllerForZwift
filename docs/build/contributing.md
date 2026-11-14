@@ -18,7 +18,7 @@ flowchart LR
     f1["feature branch"] --> v["version branch<br/>for example v0.0.9"]
     f2["feature branch"] --> v
     v -->|"tested, then merged"| m["main"]
-    m -->|"CD Workflow"| r["GitHub release v0.0.9"]
+    m -->|"release"| r["GitHub release v0.0.9"]
 ```
 
 1. Create a feature branch for your change.
@@ -29,18 +29,19 @@ flowchart LR
 
 The app's version lives in one place: the `<Version>` element in `src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj`.
 
-- Every pull request into `main` that changes code must carry a **new** version. The **Version Check** fails if a release with that version already exists.
+- Every pull request into `main` that changes code must carry a **new** version.
 - Docs-only pull requests do not need a new version.
-- When the merge to `main` lands, the CD Workflow tags `v<version>` and publishes the release. See [CI and CD](ci-cd.md).
+- When the merge to `main` lands, the release `v<version>` is published.
 
-## What we expect in a pull request
+## What a pull request needs
 
-- **All checks are green.** See [CI and CD](ci-cd.md) for what each check means.
-- **No warnings.** The build treats warnings as errors, so a warning fails CI.
+Pull requests run automated checks; keep them green.
+
+- **No warnings.** The build treats warnings as errors.
 - **Formatting is clean.** Run `dotnet format --verify-no-changes` on the projects you touched.
-- **Tests for new behaviour.** Add or update tests in the matching test project. Skipped tests fail CI, so do not leave tests skipped.
+- **Tests for new behavior.** Add or update tests in the matching test project. Do not leave tests skipped.
 - **Coverage holds up.** New and changed lines should be covered (the patch target is 60%).
-- **Docs follow the code.** If you change behaviour that riders or protocol readers rely on, update the matching page on this site.
+- **Docs follow the code.** If you change behavior that riders or protocol readers rely on, update the matching page on this site.
 
 ## Writing docs
 

@@ -43,7 +43,7 @@ After the handshake, Zwift writes **GET** requests to `0003`. A GET is opcode `0
 | `00 08 80 08` | 1024 (`0x400`) | Controller input configuration | `3C 08 80 08 12 06 08 FF FF 03 10 03` |
 | `00 08 83 06` | 771 (`0x303`) | Battery state | `3C 08 83 06 12 08 08 00 10 <percent> 18 00 20 00` |
 
-Any other request on `0003` gets no reply. That matches the behaviour of the presentation Zwift is known to accept.
+Any other request on `0003` gets no reply. That matches the behavior of the presentation Zwift is known to accept.
 
 !!! tip "Decoding the request bytes"
     `00` is the opcode. `08` is the protobuf tag for field 1 as a varint. The rest is the id as a [varint](glossary.md#varint): `80 08` is 1024 and `83 06` is 771.

@@ -1,7 +1,7 @@
 # Additional learnings
 
 !!! tldr "TL;DR"
-    Getting to a working Zwift Ride presentation taught us a lot about how Zwift sees network devices. The identity a device claims shapes how Zwift uses it, and Zwift understands several other controller formats too. This page collects those findings so that anyone can pick them up and build on them. Each item ends with ideas for where it could go next.
+    Getting to a working Zwift Ride presentation showed me a lot about how Zwift sees network devices. The identity a device claims shapes how Zwift uses it, and Zwift understands several other controller formats too. This page collects those findings so that anyone can pick them up and build on them. Each item ends with ideas for where it could go next.
 
 ## Identity shapes how Zwift uses a device
 
@@ -37,7 +37,7 @@ The app's GATT tree includes a Fitness Machine service, but a device presenting 
 
 ## Zwift also browses `_zwift-protocol._tcp`
 
-Besides `_wahoo-fitness-tnp._tcp`, Zwift sends mDNS queries for a second service type, `_zwift-protocol._tcp`. We have not seen a public description of what Zwift expects behind it.
+Besides `_wahoo-fitness-tnp._tcp`, Zwift sends mDNS queries for a second service type, `_zwift-protocol._tcp`. I have not seen a public description of what Zwift expects behind it.
 
 **Where this could go next:** watch for any public documentation of this service. It may be a more direct way for third-party devices to talk to Zwift on the local network.
 

@@ -83,9 +83,5 @@ nav:
       - build/architecture.md
       - build/build-and-test.md
       - build/probe.md
-      - build/ci-cd.md
       - build/contributing.md
       - build/roadmap.md
-      - Design notes:
-          - build/design/ux-concepts.md
-          - build/design/gamepad-visualization.md

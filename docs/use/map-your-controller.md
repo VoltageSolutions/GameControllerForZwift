@@ -32,7 +32,7 @@ The app presents itself to Zwift as a Zwift Ride controller, so the functions ar
 The shift directions follow Zwift's **Sequential** shift style for the Zwift Ride, where the left shifters (LS1, LS2) shift to an easier gear and the right shifters (RS1, RS2) shift to a harder gear. See Zwift's [Shift Style and Gear Range](https://support.zwift.com/en_us/shift-style-and-gear-range-rksYezzIC) article.
 
 !!! tip "Press and hold"
-    Some buttons do more when you hold them. This is Zwift's own behaviour for the Zwift Ride, and the app passes your hold straight through. For example, holding **Ride On (Z)** sends Ride Ons to several nearby riders, and holding **Power-up (Y)** skips the current workout block.
+    Some buttons do more when you hold them. This is Zwift's own behavior for the Zwift Ride, and the app passes your hold straight through. For example, holding **Ride On (Z)** sends Ride Ons to several nearby riders, and holding **Power-up (Y)** skips the current workout block.
 
 ## Analog sticks and triggers
 

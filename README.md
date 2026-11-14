@@ -88,7 +88,7 @@ Thank you to the following people whose code or support helped make this possibl
 - [MattW2](https://github.com/MattW2): provided a [Wireshark capture](https://github.com/MattW2/KickrShiftKey/tree/main/KickrBikeWireShark) of Wahoo KICKR BIKE SHIFT talking to Zwift
 - [Makinolo](https://www.makinolo.com/): [blog investigating Zwift Play and Ride devices](https://www.makinolo.com/blog/2024/07/26/zwift-ride-protocol/)
 
-See [Credits](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/credits/) for what each one helped us understand.
+See [Credits](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/credits/) for what each one helped me understand.
 
 ### Donate
 
@@ -108,4 +108,4 @@ See the [Roadmap](https://VoltageSolutions.github.io/GameControllerForZwift/buil
 
 ## Technical Details
 
-Please visit our [GitHub Pages site](https://VoltageSolutions.github.io/GameControllerForZwift) for more details.
+Please visit the [GitHub Pages site](https://VoltageSolutions.github.io/GameControllerForZwift) for more details.
