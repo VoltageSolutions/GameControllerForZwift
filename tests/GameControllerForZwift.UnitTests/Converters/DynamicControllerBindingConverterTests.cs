@@ -43,7 +43,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Converters
             var result = _converter.Convert(controllerData, typeof(int), parameter, _culture);
 
             // Assert
-            Assert.Equal(null, result);
+            Assert.Null(result);
         }
 
         [Fact]
@@ -81,7 +81,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Converters
         public void Convert_ReturnsUnsetValue_WhenValueIsNull()
         {
             // Arrange
-            object nullValue = null;
+            object? nullValue = null;
             string parameter = "LeftThumbstickX";
 
             // Act

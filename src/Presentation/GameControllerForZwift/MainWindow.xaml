@@ -36,7 +36,7 @@
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="true">
-                                <Setter TargetName="EnclosingBorder" Property="Background" Value="#E5EAEF" />
+                                <Setter TargetName="EnclosingBorder" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -265,7 +265,7 @@
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8,0,0,0">
-                <Frame x:Name="RootContentFrame" Navigated="RootContentFrame_Navigated"/>
+                <Frame x:Name="RootContentFrame" NavigationUIVisibility="Hidden" Navigated="RootContentFrame_Navigated"/>
             </Border>
         </Grid>
     </Grid>

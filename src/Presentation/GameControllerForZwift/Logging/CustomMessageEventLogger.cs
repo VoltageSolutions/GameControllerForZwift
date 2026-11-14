@@ -39,16 +39,16 @@ namespace GameControllerForZwift.WPF.Logging
 
         #region Methods
 
-        public IDisposable BeginScope<TState>(TState state) => null;
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
 
         public bool IsEnabled(LogLevel logLevel) => logLevel >= LogLevel.Information;
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             if (!IsEnabled(logLevel)) return;
 
             string message = formatter(state, exception);
-            var entryType = _logLevelMapping.ContainsKey(logLevel) ? _logLevelMapping[logLevel] : EventLogEntryType.Information;
+            var entryType = _logLevelMapping.TryGetValue(logLevel, out var mapped) ? mapped : EventLogEntryType.Information;
 
             int eventIdValue = logLevel switch
             {

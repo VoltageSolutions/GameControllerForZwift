@@ -30,37 +30,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
         }
         public static readonly DependencyProperty SelectedFunctionProperty =
             DependencyProperty.Register(nameof(SelectedFunction), typeof(ZwiftFunction), typeof(InputMapper),
-                new PropertyMetadata(ZwiftFunction.ShowMenu, OnSelectedFunctionChanged));
-
-        // Dependency property for ZwiftPlayerView selection
-        public ZwiftPlayerView? SelectedPlayerView
-        {
-            get { return (ZwiftPlayerView?)GetValue(SelectedPlayerViewProperty); }
-            set { SetValue(SelectedPlayerViewProperty, value); }
-        }
-        public static readonly DependencyProperty SelectedPlayerViewProperty =
-            DependencyProperty.Register(nameof(SelectedPlayerView), typeof(ZwiftPlayerView?), typeof(InputMapper));
-
-        // Dependency property for ZwiftRiderAction selection
-        public ZwiftRiderAction? SelectedRiderAction
-        {
-            get { return (ZwiftRiderAction?)GetValue(SelectedRiderActionProperty); }
-            set { SetValue(SelectedRiderActionProperty, value); }
-        }
-        public static readonly DependencyProperty SelectedRiderActionProperty =
-            DependencyProperty.Register(nameof(SelectedRiderAction), typeof(ZwiftRiderAction?), typeof(InputMapper));
-
-        private static void OnSelectedFunctionChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var control = (InputMapper)d;
-            var selectedFunction = (ZwiftFunction)e.NewValue;
-
-            // Reset secondary ComboBox selections based on function
-            if (selectedFunction != ZwiftFunction.AdjustCameraAngle)
-                control.SelectedPlayerView = null;
-
-            if (selectedFunction != ZwiftFunction.RiderAction)
-                control.SelectedRiderAction = null;
-        }
+                new PropertyMetadata(ZwiftFunction.None));
     }
 }

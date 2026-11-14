@@ -8,11 +8,12 @@ namespace GameControllerForZwift.Gamepad.Mapping
     {
         #region Fields
         private ControllerProfiles _profiles = new();
+        private static readonly JsonSerializerOptions WriteIndentedOptions = new() { WriteIndented = true };
         private const string DefaultProfileName = "Default Profile";
         // todo - accept file service instead of doing string work itself
         //load the default on-constructor? or check for user app profile?
         // todo - means to save/load custom profiles
-        
+
         public ControllerProfiles Profiles => _profiles;
         #endregion
 
@@ -28,14 +29,14 @@ namespace GameControllerForZwift.Gamepad.Mapping
 
         #region Methods
 
-        public ControllerProfiles LoadControllerProfiles(string jsonContent)
+        public static ControllerProfiles LoadControllerProfiles(string jsonContent)
         {
             if (string.IsNullOrEmpty(jsonContent))
                 return new ControllerProfiles();
-            else 
-                return JsonSerializer.Deserialize<ControllerProfiles>(jsonContent);
+            else
+                return JsonSerializer.Deserialize<ControllerProfiles>(jsonContent) ?? new ControllerProfiles();
         }
-        public ControllerProfile GetDefaultProfile()
+        public ControllerProfile? GetDefaultProfile()
         {
             return GetProfile(DefaultProfileName);
         }
@@ -50,7 +51,7 @@ namespace GameControllerForZwift.Gamepad.Mapping
             _profiles.Profiles.Add(profile);
         }
 
-        public ControllerProfile GetProfile(string profileName)
+        public ControllerProfile? GetProfile(string profileName)
         {
             return _profiles.Profiles.Where(p => p.Name == profileName).FirstOrDefault();
         }
@@ -59,13 +60,14 @@ namespace GameControllerForZwift.Gamepad.Mapping
         {
             var profileToRemove = _profiles.Profiles.Where(p => p.Name == profileName).FirstOrDefault();
 
-            _profiles.Profiles.Remove(profileToRemove);
+            if (profileToRemove != null)
+                _profiles.Profiles.Remove(profileToRemove);
         }
 
         // Serialize all profiles to JSON
         public string ToJson()
         {
-            return JsonSerializer.Serialize(_profiles, new JsonSerializerOptions { WriteIndented = true });
+            return JsonSerializer.Serialize(_profiles, WriteIndentedOptions);
         }
         #endregion
     }

@@ -6,9 +6,9 @@ namespace GameControllerForZwift.UI.WPF.Converters
 {
     public class DoubleToPointConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object?[]? values, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (values.Length < 2 ||
+            if (values is null || values.Length < 2 ||
                 !(values[0] is double x) ||
                 !(values[1] is double y))
             {
@@ -18,7 +18,7 @@ namespace GameControllerForZwift.UI.WPF.Converters
             return new Point(x, y);
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture)
         {
             if (value is Point point)
             {

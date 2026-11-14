@@ -31,11 +31,11 @@ namespace GameControllerForZwift.UI.WPF.Controls
             DependencyProperty.Register("Subtitle", typeof(string), typeof(Card), new PropertyMetadata(""));
 
 
-        public static readonly DependencyProperty ContentProperty =
+        public static new readonly DependencyProperty ContentProperty =
             DependencyProperty.Register(nameof(Content), typeof(object), typeof(Card),
                 new PropertyMetadata(null));
 
-        public object Content
+        public new object Content
         {
             get => GetValue(ContentProperty);
             set => SetValue(ContentProperty, value);

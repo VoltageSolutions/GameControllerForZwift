@@ -52,8 +52,10 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 Height = 20,
                 RadiusX = 5,
                 RadiusY = 5,
-                Fill = (Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"]
+                Opacity = 0.35
             };
+            // Resource references follow the Fluent light/dark theme dynamically.
+            _backgroundBar.SetResourceReference(Shape.FillProperty, "ControlStrongFillColorDefaultBrush");
             _grid.Children.Add(_backgroundBar);
 
             // Fill bar (dynamic)
@@ -62,9 +64,9 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 Height = 20,
                 RadiusX = 5,
                 RadiusY = 5,
-                Fill = (Brush)Application.Current.Resources["AccentTextFillColorTertiaryBrush"],
                 HorizontalAlignment = HorizontalAlignment.Left
             };
+            _fillBar.SetResourceReference(Shape.FillProperty, "AccentFillColorDefaultBrush");
             _grid.Children.Add(_fillBar);
 
             Content = _grid;

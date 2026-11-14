@@ -18,7 +18,6 @@ namespace GameControllerForZwift.UI.WPF
     public partial class MainWindow : Window
     {
         #region Fields
-        private readonly IServiceProvider _serviceProvider;
         private readonly INavigationService _navigationService;
         public MainWindowViewModel ViewModel { get; }
         #endregion
@@ -64,7 +63,7 @@ namespace GameControllerForZwift.UI.WPF
 
             if (appContextBackdropData != null)
             {
-                disableFluentThemeWindowBackdrop = bool.Parse(Convert.ToString(appContextBackdropData));
+                disableFluentThemeWindowBackdrop = bool.Parse(Convert.ToString(appContextBackdropData, System.Globalization.CultureInfo.InvariantCulture) ?? bool.FalseString);
             }
 
 
@@ -116,7 +115,7 @@ namespace GameControllerForZwift.UI.WPF
             });
         }
 
-        private void MainWindow_StateChanged(object sender, EventArgs e)
+        private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
             if (this.WindowState == WindowState.Maximized)
             {
@@ -145,7 +144,7 @@ namespace GameControllerForZwift.UI.WPF
         {
             if (e.Key == Key.Enter)
             {
-                SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem((sender as TreeView).SelectedItem) as TreeViewItem);
+                SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem(((TreeView)sender).SelectedItem) as TreeViewItem);
             }
         }
 
@@ -155,7 +154,7 @@ namespace GameControllerForZwift.UI.WPF
             {
                 return;
             }
-            SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem((sender as TreeView).SelectedItem) as TreeViewItem);
+            SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem(((TreeView)sender).SelectedItem) as TreeViewItem);
         }
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
@@ -225,7 +224,7 @@ namespace GameControllerForZwift.UI.WPF
 
             if (list.Count > 0)
             {
-                TreeViewItem selectedTreeViewItem = null;
+                TreeViewItem? selectedTreeViewItem = null;
                 ItemsControl itemsControl = PagesTreeView;
                 foreach (PagesInfoDataItem item in list)
                 {

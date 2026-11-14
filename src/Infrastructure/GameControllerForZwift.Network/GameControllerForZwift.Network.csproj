@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Makaretu.Dns.Multicast.New" Version="0.38.0" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.15" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Application\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
+	</ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="GameControllerForZwift.Network.UnitTests" />
+    <InternalsVisibleTo Include="GameControllerForZwift.Network.IntegrationTests" />
+  </ItemGroup>
+</Project>

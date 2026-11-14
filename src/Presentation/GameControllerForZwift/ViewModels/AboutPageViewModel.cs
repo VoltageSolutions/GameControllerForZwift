@@ -23,7 +23,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private string _description = "GameControllerForZwift is an open source application. Voltage Solutions provides this application under GNU GPLv3. https://www.gnu.org/licenses/gpl-3.0.en.html.";
 
         [ObservableProperty]
-        private FlowDocument _acknowledgments;
+        private FlowDocument? _acknowledgments;
 
         #endregion
 
@@ -63,14 +63,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #region Commands
 
         [RelayCommand]
-        public void OpenGitHub()
+        public static void OpenGitHub()
         {
             string url = "https://github.com/VoltageSolutions/GameControllerForZwift";
             Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
         }
 
         [RelayCommand]
-        public void Openkofi()
+        public static void Openkofi()
         {
             string url = "https://ko-fi.com/voltagesolutions";
             Process.Start(new ProcessStartInfo("cmd", $"/c start {url}") { CreateNoWindow = true });
@@ -78,13 +78,13 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #endregion
 
-        class MyXamlSchemaContext : XamlSchemaContext
+        private sealed class MyXamlSchemaContext : XamlSchemaContext
         {
             public override bool TryGetCompatibleXamlNamespace(string xamlNamespace, out string compatibleNamespace)
             {
                 if (xamlNamespace.Equals("clr-namespace:Markdig.Wpf", StringComparison.Ordinal))
                 {
-                    compatibleNamespace = $"clr-namespace:Markdig.Wpf;assembly={Assembly.GetAssembly(typeof(Markdig.Wpf.Styles)).FullName}";
+                    compatibleNamespace = $"clr-namespace:Markdig.Wpf;assembly={typeof(Markdig.Wpf.Styles).Assembly.FullName}";
                     return true;
                 }
                 return base.TryGetCompatibleXamlNamespace(xamlNamespace, out compatibleNamespace);

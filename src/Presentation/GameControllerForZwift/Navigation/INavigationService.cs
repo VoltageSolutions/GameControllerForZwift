@@ -8,9 +8,9 @@ namespace GameControllerForZwift.UI.WPF.Navigation
     /// </summary>
     public interface INavigationService
     {
-        void Navigate(Type type);
+        void Navigate(Type? type);
 
-        void NavigateTo(Type type);
+        void NavigateTo(Type? type);
 
         void SetFrame(Frame frame);
         void NavigateBack();
@@ -19,6 +19,6 @@ namespace GameControllerForZwift.UI.WPF.Navigation
 
         bool IsBackHistoryNonEmpty();
 
-        event EventHandler<NavigatingEventArgs> Navigating;
+        event EventHandler<NavigatingEventArgs>? Navigating;
     }
 }

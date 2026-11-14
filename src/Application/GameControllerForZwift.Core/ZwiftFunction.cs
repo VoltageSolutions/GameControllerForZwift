@@ -1,48 +1,41 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
 namespace GameControllerForZwift.Core
 {
+    /// <summary>
+    /// Exactly what a Zwift Ride controller provides. Profiles persist this enum by name (see <see cref="ZwiftFunctionJsonConverter"/>),
+    /// so do not rename members; removed or unknown names load as <see cref="None"/>.
+    /// </summary>
+    // Hold behaviour is Zwift's: holding Powerup (Y) skips a workout block; holding RideOn (Z) sends Ride On bombs.
     public enum ZwiftFunction
     {
         [Description("No Action Configured")]
         None,
-        [Description("Up / Show the in-ride menu")]
-        ShowMenu,
-        [Description("Left")]
+        [Description("Navigate Up")]
+        NavigateUp,
+        [Description("Navigate Down")]
+        NavigateDown,
+        [Description("Navigate Left")]
         NavigateLeft,
-        [Description("Right")]
+        [Description("Navigate Right")]
         NavigateRight,
-        [Description("Down / Make a U-Turn")]
-        Uturn,
-        [Description("Use a Power-up")]
-        Powerup,
-        [Description("Select")]
+        [Description("Select (A)")]
         Select,
-        [Description("Go Back")]
+        [Description("Back / Menu (B)")]
         GoBack,
-        [Description("Skip a workout block")]
-        SkipWorkoutBlock,
-        [Description("Increase the FTP Bias")]
-        FTPBiasUp,
-        [Description("Descease the FTP Bias")]
-        FTPBiasDown,
-        [Description("Adjust the camera angle")]
-        AdjustCameraAngle,
-        [Description("Rider (Function Key) action")]
-        RiderAction,
-        [Description("Show Paired Devices screen")]
-        ShowPairedDevices,
-        [Description("Show the Garage")]
-        ShowGarage,
-        [Description("Show the Training Menu")]
-        ShowTrainingMenu,
-        [Description("Hide the watt and HR graphs")]
-        ToggleGraphs,
-        [Description("Send a group text")]
-        SendGroupText,
-        [Description("Hide the Heads-Up Display")]
-        HideHUD,
-        [Description("Enter a Promo Code")]
-        PromoCode
+        [Description("Power-up (Y)")]
+        Powerup,
+        [Description("Ride On (Z)")]
+        RideOn,
+        [Description("Shift up / Increase workout intensity")]
+        ShiftUp,
+        [Description("Shift down / Decrease workout intensity")]
+        ShiftDown,
+        [Description("Steer left")]
+        SteerLeft,
+        [Description("Steer right")]
+        SteerRight,
+        [Description("Brake")]
+        Brake
     }
 }

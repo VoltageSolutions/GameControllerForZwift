@@ -7,24 +7,24 @@ namespace GameControllerForZwift.Gamepad.USB
     {
         #region Fields
         private const string UnknownDevice = "Unknown Device";
-        private Dictionary<string, string> _deviceMap;
+        private readonly Dictionary<string, string> _deviceMap;
         #endregion
 
         #region Constructors
-        public DeviceLookup(string jsonContent)
+        public DeviceLookup(string? jsonContent)
         {
-            _deviceMap = LoadDeviceMap(jsonContent ?? string.Empty);
+            _deviceMap = LoadDeviceMap(jsonContent);
         }
         public DeviceLookup(IFileService fileService, string filePath) : this(fileService.ReadFileContent(filePath)) { }
         #endregion
 
         #region Methods
 
-        public Dictionary<string, string> LoadDeviceMap(string jsonContent)
+        public static Dictionary<string, string> LoadDeviceMap(string? jsonContent)
         {
             if (string.IsNullOrEmpty(jsonContent))
                 return new Dictionary<string, string>();
-            
+
             try
             {
                 var deserializeMap = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonContent);
@@ -55,7 +55,7 @@ namespace GameControllerForZwift.Gamepad.USB
             string vendorId = guidString.Substring(4, 4);
 
             // Create the key using Vendor ID and Product ID
-            string key = $"{vendorId}-{productId}".ToUpper();
+            string key = $"{vendorId}-{productId}".ToUpperInvariant();
 
             // Look up the device name from the dictionary
             return _deviceMap.TryGetValue(key, out var name) ? name : UnknownDevice;

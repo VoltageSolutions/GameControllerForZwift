@@ -3,13 +3,13 @@
     /// <summary>
     /// Event arguments for the Navigating event.
     /// </summary>
-    public class NavigatingEventArgs
+    public class NavigatingEventArgs : EventArgs
     {
-        public Type? PageType { get; set; } = null;
+        public Type? PageType { get; set; }
 
         public NavigatingEventArgs() { }
 
-        public NavigatingEventArgs(Type pageType)
+        public NavigatingEventArgs(Type? pageType)
         {
             PageType = pageType;
         }

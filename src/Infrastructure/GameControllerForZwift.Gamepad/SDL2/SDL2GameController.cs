@@ -10,6 +10,9 @@ namespace GameControllerForZwift.Gamepad.SDL2
         private readonly IntPtr _handle;
         private readonly string _vendorProduct;
         private bool _isDisposed;
+        private int? _cachedBattery;
+        private DateTime _batteryReadAt = DateTime.MinValue;
+        private static readonly TimeSpan BatteryCacheDuration = TimeSpan.FromSeconds(5);
 
         #endregion
 
@@ -52,7 +55,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// Reads the current state of the game controller and returns a <see cref="ControllerData"/> object.
         /// </summary>
         /// <returns>A <see cref="ControllerData"/> object containing the current controller state.</returns>
-        public ControllerData ReadData()
+        public ControllerData? ReadData()
         {
             if (_isDisposed)
             {
@@ -73,13 +76,13 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 View = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_BACK),
                 Menu = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_START),
 
-                LeftThumbstick_Click = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK),
-                RightThumbstick_Click = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK),
+                LeftThumbstickClick = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_LEFTSTICK),
+                RightThumbstickClick = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_RIGHTSTICK),
 
-                DPad_Up = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP),
-                DPad_Down = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN),
-                DPad_Left = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT),
-                DPad_Right = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT),
+                DPadUp = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_UP),
+                DPadDown = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_DOWN),
+                DPadLeft = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_LEFT),
+                DPadRight = GetButtonState(SDL_GameControllerButton.SDL_CONTROLLER_BUTTON_DPAD_RIGHT),
 
                 LeftThumbstickX = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTX),
                 LeftThumbstickY = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_LEFTY),
@@ -88,6 +91,8 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 LeftTrigger = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERLEFT),
                 RightTrigger = GetAxisValue(SDL_GameControllerAxis.SDL_CONTROLLER_AXIS_TRIGGERRIGHT),
 
+                BatteryPercent = GetBatteryPercent(),
+
                 Timestamp = DateTime.Now
             };
         }
@@ -95,6 +100,36 @@ namespace GameControllerForZwift.Gamepad.SDL2
         #endregion
 
         #region Private Methods
+
+        private int? GetBatteryPercent()
+        {
+            var now = DateTime.UtcNow;
+            if (now - _batteryReadAt < BatteryCacheDuration)
+                return _cachedBattery;
+
+            _batteryReadAt = now;
+            try
+            {
+                IntPtr joystick = SDL_GameControllerGetJoystick(_handle);
+                _cachedBattery = joystick == IntPtr.Zero ? null : MapPowerLevel(SDL_JoystickCurrentPowerLevel(joystick));
+            }
+            catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+            {
+                // The loaded SDL2 build lacks the joystick power-level API; battery is simply unknown.
+                _cachedBattery = null;
+            }
+            return _cachedBattery;
+        }
+
+        internal static int? MapPowerLevel(SDL_JoystickPowerLevel level) => level switch
+        {
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_EMPTY => 5,
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_LOW => 20,
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_MEDIUM => 70,
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_FULL => 100,
+            SDL_JoystickPowerLevel.SDL_JOYSTICK_POWER_WIRED => 100,
+            _ => null
+        };
 
         /// <summary>
         /// Gets the state of a specified button.
@@ -133,6 +168,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 }
                 _isDisposed = true;
             }
+            GC.SuppressFinalize(this);
         }
 
         #endregion

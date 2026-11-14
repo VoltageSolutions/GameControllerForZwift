@@ -25,11 +25,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private readonly IControllerProfileService _profileService;
 
         [ObservableProperty]
-        private List<IController> _controllers;
+        private List<IController> _controllers = new();
         [ObservableProperty]
-        private IController _selectedController;
+        private IController? _selectedController;
         [ObservableProperty]
-        private ControllerData _currentControllerValues;
+        private ControllerData? _currentControllerValues;
 
         [ObservableProperty]
         private List<ZwiftFunctionSelectorViewModel> _buttonFunctionMappings;
@@ -69,7 +69,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
             // Auto setup the first controller
             RefreshControllerList();
-            if (Controllers.Any())
+            if (Controllers.Count > 0)
             {
                 SelectedController = Controllers.First();
             }
@@ -93,15 +93,15 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         //[RelayCommand]
         //public void ClearAllMappings()
         //{
-            
+
         //}
 
-        
+
         #endregion
 
         #region Methods
 
-        partial void OnSelectedControllerChanged(IController oldValue, IController newValue)
+        partial void OnSelectedControllerChanged(IController? oldValue, IController? newValue)
         {
             // Stop the previous processing, if any
             _dataIntegrator.StopProcessing();
@@ -117,27 +117,32 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private void LoadDefaultProfile()
         {
             var profile = _profileService.GetDefaultProfile();
+            if (profile is null)
+                return;
 
-            ApplyProfileToMappings(profile, _buttonFunctionMappings);
-            ApplyProfileToMappings(profile, _dpadFunctionMappings);
-            ApplyProfileToMappings(profile, _leftStickFunctionMappings);
-            ApplyProfileToMappings(profile, _rightStickFunctionMappings);
-            ApplyProfileToMappings(profile, _shoulderFunctionMappings);
+            ApplyProfileToMappings(profile, ButtonFunctionMappings);
+            ApplyProfileToMappings(profile, DpadFunctionMappings);
+            ApplyProfileToMappings(profile, LeftStickFunctionMappings);
+            ApplyProfileToMappings(profile, RightStickFunctionMappings);
+            ApplyProfileToMappings(profile, ShoulderFunctionMappings);
         }
 
-        private void ApplyProfileToMappings(ControllerProfile profile, List<ZwiftFunctionSelectorViewModel> viewMappings)
+        private static void ApplyProfileToMappings(ControllerProfile profile, List<ZwiftFunctionSelectorViewModel> viewMappings)
         {
             foreach (var vm in viewMappings)
             {
-                if(profile.Mappings.Where(m => m.Input == vm.SelectedInput).FirstOrDefault() is InputMapping inputMap)
+                if (profile.Mappings.Where(m => m.Input == vm.SelectedInput).FirstOrDefault() is InputMapping inputMap)
                 {
                     vm.SetInputMapping(inputMap);
                 }
             }
         }
 
-        partial void OnCurrentControllerValuesChanged(ControllerData oldValue, ControllerData newValue)
+        partial void OnCurrentControllerValuesChanged(ControllerData? oldValue, ControllerData? newValue)
         {
+            if (newValue is null)
+                return;
+
             foreach (ZwiftFunctionSelectorViewModel vm in ButtonFunctionMappings)
                 vm.ControllerData = newValue;
 
@@ -185,9 +190,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         private void InputMappingChanged(object? sender, EventArgs e)
         {
-            if ((null != sender) && (sender.GetType() == typeof(ZwiftFunctionSelectorViewModel)))
+            if (sender is ZwiftFunctionSelectorViewModel selector)
             {
-                _dataIntegrator.UpdateMapping((sender as ZwiftFunctionSelectorViewModel).GetInputMapping());
+                _dataIntegrator.UpdateMapping(selector.GetInputMapping());
             }
         }
 
@@ -197,10 +202,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
             var inputMappingsData = new Dictionary<string, ControllerInput>
             {
-                { "Up", ControllerInput.DPad_Up },
-                { "Left", ControllerInput.DPad_Left },
-                { "Down", ControllerInput.DPad_Down },
-                { "Right", ControllerInput.DPad_Right }
+                { "Up", ControllerInput.DPadUp },
+                { "Left", ControllerInput.DPadLeft },
+                { "Down", ControllerInput.DPadDown },
+                { "Right", ControllerInput.DPadRight }
             };
 
             foreach (var kvp in inputMappingsData)
@@ -224,11 +229,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
             var inputMappingsData = new Dictionary<string, ControllerInput>
             {
-                { "Left Stick (L3)", ControllerInput.LeftThumbstick_Click },
-                { "Up", ControllerInput.LeftThumbstick_TiltUp},
-                { "Left", ControllerInput.LeftThumbstick_TiltLeft },
-                { "Down", ControllerInput.LeftThumbstick_TiltDown },
-                { "Right", ControllerInput.LeftThumbstick_TiltRight }
+                { "Left Stick (L3)", ControllerInput.LeftThumbstickClick },
+                { "Up", ControllerInput.LeftThumbstickTiltUp},
+                { "Left", ControllerInput.LeftThumbstickTiltLeft },
+                { "Down", ControllerInput.LeftThumbstickTiltDown },
+                { "Right", ControllerInput.LeftThumbstickTiltRight }
             };
 
             foreach (var kvp in inputMappingsData)
@@ -252,11 +257,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
             var inputMappingsData = new Dictionary<string, ControllerInput>
             {
-                { "Right Stick (R3)", ControllerInput.RightThumbstick_Click },
-                { "Up", ControllerInput.RightThumbstick_TiltUp },
-                { "Left", ControllerInput.RightThumbstick_TiltLeft },
-                { "Down", ControllerInput.RightThumbstick_TiltDown },
-                { "Right", ControllerInput.RightThumbstick_TiltRight }
+                { "Right Stick (R3)", ControllerInput.RightThumbstickClick },
+                { "Up", ControllerInput.RightThumbstickTiltUp },
+                { "Left", ControllerInput.RightThumbstickTiltLeft },
+                { "Down", ControllerInput.RightThumbstickTiltDown },
+                { "Right", ControllerInput.RightThumbstickTiltRight }
             };
 
             foreach (var kvp in inputMappingsData)
@@ -281,7 +286,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             var inputMappingsData = new Dictionary<string, ControllerInput>
             {
                 { "Left Bumper (L1)", ControllerInput.LeftBumper },
-                { "Right Bumper (R1)", ControllerInput.RightBumper }
+                { "Right Bumper (R1)", ControllerInput.RightBumper },
+                { "Left Trigger (L2)", ControllerInput.LeftTrigger },
+                { "Right Trigger (R2)", ControllerInput.RightTrigger }
             };
 
             foreach (var kvp in inputMappingsData)

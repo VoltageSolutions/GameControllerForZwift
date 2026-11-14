@@ -63,7 +63,7 @@ namespace GameControllerForZwift.UI.WPF.Views
         {
             if (Change_ThemeMode.SelectedItem is ComboBoxItem selectedItem)
             {
-                string selectedValue = selectedItem.Content.ToString();
+                string? selectedValue = selectedItem.Content?.ToString();
 
                 switch (selectedValue)
                 {

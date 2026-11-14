@@ -1,0 +1,38 @@
+<Project>
+  <!--
+    Downloads the SDL2 native runtime (win32-x64) once into .cache/sdl2/ and ships it next to the app
+    (build output and publish output). Windows only; other platforms build without it.
+  -->
+  <PropertyGroup>
+    <Sdl2Version>2.30.10</Sdl2Version>
+    <Sdl2ZipSha256>EACB331E9EF8615F4D7039A55A83D192FB4983086B317592115BAC16489B13F0</Sdl2ZipSha256>
+    <Sdl2CacheDir>$([MSBuild]::EnsureTrailingSlash('$(MSBuildThisFileDirectory)..\.cache\sdl2'))</Sdl2CacheDir>
+    <Sdl2Zip>$(Sdl2CacheDir)SDL2-$(Sdl2Version)-win32-x64.zip</Sdl2Zip>
+    <Sdl2Dll>$(Sdl2CacheDir)SDL2.dll</Sdl2Dll>
+  </PropertyGroup>
+
+  <Target Name="FetchSdl2" BeforeTargets="AssignTargetPaths" Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+    <MakeDir Directories="$(Sdl2CacheDir)" Condition="!Exists('$(Sdl2Dll)')" />
+    <DownloadFile Condition="!Exists('$(Sdl2Dll)') And !Exists('$(Sdl2Zip)')"
+                  SourceUrl="https://github.com/libsdl-org/SDL/releases/download/release-$(Sdl2Version)/SDL2-$(Sdl2Version)-win32-x64.zip"
+                  DestinationFolder="$(Sdl2CacheDir)" />
+    <GetFileHash Condition="!Exists('$(Sdl2Dll)')" Files="$(Sdl2Zip)" Algorithm="SHA256" HashEncoding="hex">
+      <Output TaskParameter="Items" ItemName="Sdl2ZipHash" />
+    </GetFileHash>
+    <PropertyGroup Condition="!Exists('$(Sdl2Dll)')">
+      <Sdl2ActualHash>@(Sdl2ZipHash->'%(FileHash)')</Sdl2ActualHash>
+    </PropertyGroup>
+    <Message Importance="high" Text="SDL2 zip SHA256: $(Sdl2ActualHash)" Condition="!Exists('$(Sdl2Dll)')" />
+    <Delete Files="$(Sdl2Zip)" Condition="!Exists('$(Sdl2Dll)') And '$(Sdl2ActualHash)' != '$(Sdl2ZipSha256)'" />
+    <Error Condition="!Exists('$(Sdl2Dll)') And '$(Sdl2ActualHash)' != '$(Sdl2ZipSha256)'"
+           Text="SDL2 download hash mismatch (expected $(Sdl2ZipSha256), got $(Sdl2ActualHash)). The file was deleted; place SDL2.dll in $(Sdl2CacheDir) manually if offline." />
+    <Unzip Condition="!Exists('$(Sdl2Dll)')" SourceFiles="$(Sdl2Zip)" DestinationFolder="$(Sdl2CacheDir)" OverwriteReadOnlyFiles="true" />
+    <ItemGroup>
+      <Content Include="$(Sdl2Dll)" Link="SDL2.dll" Condition="Exists('$(Sdl2Dll)')">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        <Visible>false</Visible>
+      </Content>
+    </ItemGroup>
+  </Target>
+</Project>
