@@ -142,11 +142,13 @@ jobs:
 
       - name: Run tests
         shell: bash
-        run: bash .github/scripts/run-tests.sh TestResults tests/GameControllerForZwift.UnitTests $PORTABLE_TESTS
-
-      - name: Test summary
-        if: ${{ !cancelled() }}
-        run: python .github/scripts/trx-summary.py "Unit test results" TestResults >> $env:GITHUB_STEP_SUMMARY
+        run: |
+          rc=0
+          for p in tests/GameControllerForZwift.UnitTests $PORTABLE_TESTS; do
+            dotnet test "$p" -c Release --no-build --collect:"XPlat Code Coverage" \
+              --logger "trx;LogFileName=$(basename "$p").trx" --results-directory "TestResults/$(basename "$p")" || rc=1
+          done
+          exit $rc
 
       - name: Upload test results
         if: ${{ !cancelled() }}
@@ -164,7 +166,9 @@ jobs:
           path: TestResults/**/coverage.cobertura.xml
           if-no-files-found: warn
 
-      # Fork PRs get a read-only token and cannot create check runs; the step summary covers them.
+      # use-actions-summary defaults to true in dorny/test-reporter >= v2.1 and then NO check run is created,
+      # only a job summary. The first step creates the PR check run (needs checks: write; fork PRs have a
+      # read-only token); the second adds a short per-file count table to the job summary.
       - name: Unit Test Results
         if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: dorny/test-reporter@v3
@@ -172,7 +176,20 @@ jobs:
           name: Unit Test Results
           path: TestResults/**/*.trx
           reporter: dotnet-trx
+          use-actions-summary: 'false'
           fail-on-error: 'true'
+
+      - name: Unit Test Results (job summary)
+        if: ${{ !cancelled() }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: Unit Test Results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          use-actions-summary: 'true'
+          only-summary: 'true'
+          fail-on-error: 'false'
+          fail-on-empty: 'false'
 
   ui-tests:
     name: UI tests
@@ -236,10 +253,9 @@ jobs:
       - name: Run UI tests
         run: dotnet test tests/GameControllerForZwift.UITests -c Release --no-build --verbosity normal --logger "trx;LogFileName=UITests.trx" --results-directory TestResults/UITests
 
-      - name: Test summary
-        if: ${{ !cancelled() }}
-        run: python .github/scripts/trx-summary.py "UI test results" TestResults >> $env:GITHUB_STEP_SUMMARY
-
+      # use-actions-summary defaults to true in dorny/test-reporter >= v2.1 and then NO check run is created,
+      # only a job summary. The first step creates the PR check run (needs checks: write; fork PRs have a
+      # read-only token); the second adds a short per-file count table to the job summary.
       - name: UI Test Results
         if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: dorny/test-reporter@v3
@@ -247,7 +263,20 @@ jobs:
           name: UI Test Results
           path: TestResults/**/*.trx
           reporter: dotnet-trx
+          use-actions-summary: 'false'
           fail-on-error: 'true'
+
+      - name: UI Test Results (job summary)
+        if: ${{ !cancelled() }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: UI Test Results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          use-actions-summary: 'true'
+          only-summary: 'true'
+          fail-on-error: 'false'
+          fail-on-empty: 'false'
 
       - name: Upload UI test results
         if: ${{ !cancelled() }}
@@ -329,18 +358,22 @@ jobs:
           output: sarif-results
           upload: always
 
-      - name: Summarize CodeQL alerts
-        if: always()
-        continue-on-error: true
-        shell: bash
-        run: python .github/scripts/sarif-summary.py sarif-results
-
       - name: Check NuGet packages for known vulnerabilities
-        shell: bash
+        shell: pwsh
         run: |
-          dotnet list GameControllerForZwift.sln package --vulnerable --include-transitive --format json --output-version 1 > vulnerable.json
-          python .github/scripts/vuln-check.py vulnerable.json | tee -a "$GITHUB_STEP_SUMMARY"
-          exit "${PIPESTATUS[0]}"
+          $json = dotnet list GameControllerForZwift.sln package --vulnerable --include-transitive --format json --output-version 1 | Out-String
+          $data = $json.Substring($json.IndexOf('{')) | ConvertFrom-Json
+          $rows = foreach ($proj in $data.projects) { foreach ($fw in $proj.frameworks) {
+            foreach ($pkg in @($fw.topLevelPackages) + @($fw.transitivePackages)) { foreach ($v in $pkg.vulnerabilities) {
+              [pscustomobject]@{ Severity = $v.severity; Package = $pkg.id; Version = $pkg.resolvedVersion; Project = Split-Path $proj.path -Leaf; Advisory = $v.advisoryurl }
+            } } } } | Sort-Object Package, Project -Unique
+          "### NuGet vulnerabilities`n" >> $env:GITHUB_STEP_SUMMARY
+          if (-not $rows) { 'No known vulnerable packages.' >> $env:GITHUB_STEP_SUMMARY; exit 0 }
+          "| Severity | Package | Version | Project | Advisory |`n|---|---|---|---|---|" >> $env:GITHUB_STEP_SUMMARY
+          $rows | ForEach-Object { "| $($_.Severity) | $($_.Package) | $($_.Version) | $($_.Project) | $($_.Advisory) |" } >> $env:GITHUB_STEP_SUMMARY
+          $blocking = @($rows | Where-Object Severity -in 'High', 'Critical')
+          $blocking | ForEach-Object { Write-Host "::error title=Vulnerable package::$($_.Severity): $($_.Package) $($_.Version) ($($_.Project)) $($_.Advisory)" }
+          if ($blocking.Count -gt 0) { exit 1 }
 
   coverage:
     name: Coverage
