@@ -6,7 +6,7 @@
 Each button, stick direction and trigger on your controller can do one Zwift function. You choose the function from the drop-down next to each input on the **Controller Setup** page. Changes take effect straight away.
 
 !!! note "Mappings reset when the app restarts"
-    The app does not save your changes yet. Each time it starts, it loads the default mapping shown below.
+    The app does not save your changes yet. Each time it starts, it loads the default mapping shown below. Saving them is on the [roadmap](../build/roadmap.md#save-mapping-changes).
 
 ## The functions you can choose
 

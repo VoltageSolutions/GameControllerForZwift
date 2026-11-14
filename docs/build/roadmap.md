@@ -6,6 +6,10 @@ These are the next big pieces of work. They are plans, not promises, and the ord
 
 A calmer, more guided main page.
 
+## Save mapping changes
+
+Today mapping changes in the app apply right away but are not saved, so they reset to the defaults when the app restarts. The goal is to save them to your user profile.
+
 ## An on-screen controller view
 
 A picture of your controller that lights up as you press buttons.

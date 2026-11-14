@@ -1,0 +1,77 @@
+# Zensical configuration. Docs: https://zensical.org/docs/setup/basics/
+[project]
+site_name = "Game Controller For Zwift"
+site_url = "https://VoltageSolutions.github.io/GameControllerForZwift"
+site_author = "Eric Lauber"
+site_description = "Windows WPF application that allows you to control your Zwift game with a game controller."
+repo_name = "VoltageSolutions/GameControllerForZwift"
+repo_url = "https://github.com/VoltageSolutions/GameControllerForZwift"
+
+nav = [
+  { "Home" = "index.md" },
+  { "Use the app" = [
+    "use/install.md",
+    "use/pair-with-zwift.md",
+    "use/map-your-controller.md",
+    "use/troubleshooting.md",
+  ] },
+  { "How it works" = [
+    "how-it-works/big-picture.md",
+    "how-it-works/mdns.md",
+    "how-it-works/direct-connect.md",
+    "how-it-works/zwift-protocol.md",
+    "how-it-works/button-reference.md",
+    "how-it-works/additional-learnings.md",
+    "how-it-works/glossary.md",
+    "how-it-works/credits.md",
+  ] },
+  { "Build and contribute" = [
+    "build/architecture.md",
+    "build/build-and-test.md",
+    "build/probe.md",
+    "build/contributing.md",
+    "build/roadmap.md",
+  ] },
+]
+
+# Local-only material (private packet captures) is never part of the site.
+# Zensical 0.0.67 ignores exclude_docs, so the exclude plugin does it instead.
+[project.plugins.exclude]
+regex = ["^captures/", "^requirements\\.txt$"]
+
+[project.theme]
+features = [
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.indexes",
+  "navigation.top",
+  "search.highlight",
+  "search.suggest",
+  "content.code.copy",
+  "toc.follow",
+]
+
+[[project.theme.palette]]
+scheme = "default"
+primary = "deep-orange"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+scheme = "slate"
+primary = "deep-orange"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+[project.markdown_extensions]
+admonition = {}
+attr_list = {}
+md_in_html = {}
+tables = {}
+toc.permalink = true
+pymdownx.details = {}
+pymdownx.highlight = {}
+pymdownx.inlinehilite = {}
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]

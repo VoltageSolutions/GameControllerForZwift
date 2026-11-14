@@ -45,14 +45,14 @@ Pull requests run automated checks; keep them green.
 
 ## Writing docs
 
-This site is built with Material for MkDocs from the `docs/` folder. To preview it locally:
+This site is built with [Zensical](https://zensical.org) from the `docs/` folder. To preview it locally:
 
 ```bash
 pip install -r docs/requirements.txt
-mkdocs serve
+zensical serve
 ```
 
-Diagrams are written as Mermaid code blocks, so they live in the repository as plain text and show up in reviews like any other change. Keep the build clean with `mkdocs build --strict`.
+Diagrams are written as Mermaid code blocks, so they live in the repository as plain text and show up in reviews like any other change. Keep the build clean with `zensical build --clean --strict`.
 
 ## Support the project
 

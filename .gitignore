@@ -415,3 +415,6 @@ docs/captures/
 # Downloaded SDL2 native runtime cache and publish output
 .cache/
 publish/
+
+# Zensical docs build output
+/site/

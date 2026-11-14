@@ -6,8 +6,8 @@ namespace GameControllerForZwift.Network.ZwiftRide;
 /// <summary>
 /// The one device presentation this application offers to Zwift: a Zwift Ride controller. It is the combination that was verified
 /// to work (Zwift pairs it as a Zwift Ride): a Wahoo KICKR style mDNS advertisement, the GATT tree of the BikeControl app
-/// (decoded from docs/captures/BikeControl Loopback.pcapng), BikeControl's manufacturer data and the OpenBikeControl service UUID.
-/// Nothing here is configurable on purpose; see docs/zwift-lan-protocol-notes.md for how each piece was found.
+/// (an existing bridge that Zwift accepts), BikeControl's manufacturer data and the OpenBikeControl service UUID.
+/// Nothing here is configurable on purpose, because the values mirror what Zwift is known to accept. See docs/how-it-works/zwift-protocol.md.
 /// </summary>
 public static class ZwiftRideProfile
 {

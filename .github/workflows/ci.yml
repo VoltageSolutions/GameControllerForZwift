@@ -68,7 +68,7 @@ jobs:
           version="$(grep -oP '(?<=<Version>)[^<]+' "$APP_PROJECT" | head -n1 | tr -d '[:space:]')"
           if [ -z "$version" ]; then echo "::error::Could not read <Version> from $APP_PROJECT"; exit 1; fi
           git fetch --no-tags origin main
-          if git diff --name-only origin/main...HEAD | grep -vqE '^docs/|^mkdocs\.yml$|\.md$'; then
+          if git diff --name-only origin/main...HEAD | grep -vqE '^docs/|^zensical\.toml$|\.md$'; then
             docs_only=false
           else
             docs_only=true

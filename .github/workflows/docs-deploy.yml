@@ -6,7 +6,7 @@ on:
     branches: [main]
     paths:
       - 'docs/**'
-      - 'mkdocs.yml'
+      - 'zensical.toml'
       - 'docs/requirements.txt'
       - '.github/workflows/docs.yml'
       - '.github/workflows/docs-deploy.yml'
@@ -33,9 +33,7 @@ jobs:
           cache: pip
           cache-dependency-path: docs/requirements.txt
       - run: pip install -r docs/requirements.txt
-      - run: mkdocs build --strict
-        env:
-          NO_MKDOCS_2_WARNING: '1'
+      - run: zensical build --clean --strict
       - uses: actions/upload-pages-artifact@v5
         with:
           path: site
