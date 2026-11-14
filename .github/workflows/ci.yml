@@ -170,6 +170,7 @@ jobs:
       # only a job summary. The first step creates the PR check run (needs checks: write; fork PRs have a
       # read-only token); the second adds a short per-file count table to the job summary.
       - name: Unit Test Results
+        id: report-unit
         if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: dorny/test-reporter@v3
         with:
@@ -178,6 +179,12 @@ jobs:
           reporter: dotnet-trx
           use-actions-summary: 'false'
           fail-on-error: 'true'
+
+      # dorny/test-reporter has no fail-on-skip input, so the check run itself still reports success when tests
+      # are only skipped (it shows the skipped count); this step fails the job instead.
+      - name: Fail if any unit test was skipped
+        if: ${{ !cancelled() && steps.report-unit.conclusion != 'skipped' && steps.report-unit.outputs.skipped != '0' }}
+        run: echo "::error title=Skipped tests::${{ steps.report-unit.outputs.skipped }} unit test(s) were skipped. Skipped tests are not allowed."; exit 1
 
       - name: Unit Test Results (job summary)
         if: ${{ !cancelled() }}
@@ -257,6 +264,7 @@ jobs:
       # only a job summary. The first step creates the PR check run (needs checks: write; fork PRs have a
       # read-only token); the second adds a short per-file count table to the job summary.
       - name: UI Test Results
+        id: report-ui
         if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: dorny/test-reporter@v3
         with:
@@ -265,6 +273,12 @@ jobs:
           reporter: dotnet-trx
           use-actions-summary: 'false'
           fail-on-error: 'true'
+
+      # dorny/test-reporter has no fail-on-skip input, so the check run itself still reports success when tests
+      # are only skipped (it shows the skipped count); this step fails the job instead.
+      - name: Fail if any UI test was skipped
+        if: ${{ !cancelled() && steps.report-ui.conclusion != 'skipped' && steps.report-ui.outputs.skipped != '0' }}
+        run: echo "::error title=Skipped tests::${{ steps.report-ui.outputs.skipped }} ui test(s) were skipped. Skipped tests are not allowed."; exit 1
 
       - name: UI Test Results (job summary)
         if: ${{ !cancelled() }}
@@ -361,18 +375,49 @@ jobs:
       - name: Check NuGet packages for known vulnerabilities
         shell: pwsh
         run: |
+          dotnet restore GameControllerForZwift.sln
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           $json = dotnet list GameControllerForZwift.sln package --vulnerable --include-transitive --format json --output-version 1 | Out-String
-          $data = $json.Substring($json.IndexOf('{')) | ConvertFrom-Json
-          $rows = foreach ($proj in $data.projects) { foreach ($fw in $proj.frameworks) {
-            foreach ($pkg in @($fw.topLevelPackages) + @($fw.transitivePackages)) { foreach ($v in $pkg.vulnerabilities) {
-              [pscustomobject]@{ Severity = $v.severity; Package = $pkg.id; Version = $pkg.resolvedVersion; Project = Split-Path $proj.path -Leaf; Advisory = $v.advisoryurl }
-            } } } } | Sort-Object Package, Project -Unique
+          if ($LASTEXITCODE -ne 0) { Write-Host $json; exit $LASTEXITCODE }
+          $start = $json.IndexOf('{')
+          $data = if ($start -ge 0) { $json.Substring($start) | ConvertFrom-Json } else { $null }
+          $list = [System.Collections.Generic.List[object]]::new()
+          if ($null -ne $data -and $null -ne $data.projects) {
+            foreach ($proj in @($data.projects)) {
+              if ($null -eq $proj.frameworks) { continue }
+              foreach ($fw in @($proj.frameworks)) {
+                $pkgs = @()
+                if ($null -ne $fw.topLevelPackages) { $pkgs += @($fw.topLevelPackages) }
+                if ($null -ne $fw.transitivePackages) { $pkgs += @($fw.transitivePackages) }
+                foreach ($pkg in $pkgs) {
+                  if ($null -eq $pkg.vulnerabilities) { continue }
+                  foreach ($v in @($pkg.vulnerabilities)) {
+                    $list.Add([pscustomobject]@{
+                      Severity = $v.severity
+                      Package  = $pkg.id
+                      Version  = $pkg.resolvedVersion
+                      Project  = Split-Path $proj.path -Leaf
+                      Advisory = $v.advisoryurl
+                    })
+                  }
+                }
+              }
+            }
+          }
+          $rows = @($list | Sort-Object Package, Project -Unique)
           "### NuGet vulnerabilities`n" >> $env:GITHUB_STEP_SUMMARY
-          if (-not $rows) { 'No known vulnerable packages.' >> $env:GITHUB_STEP_SUMMARY; exit 0 }
+          if ($rows.Count -eq 0) {
+            'No vulnerable packages found.' >> $env:GITHUB_STEP_SUMMARY
+            exit 0
+          }
           "| Severity | Package | Version | Project | Advisory |`n|---|---|---|---|---|" >> $env:GITHUB_STEP_SUMMARY
-          $rows | ForEach-Object { "| $($_.Severity) | $($_.Package) | $($_.Version) | $($_.Project) | $($_.Advisory) |" } >> $env:GITHUB_STEP_SUMMARY
-          $blocking = @($rows | Where-Object Severity -in 'High', 'Critical')
-          $blocking | ForEach-Object { Write-Host "::error title=Vulnerable package::$($_.Severity): $($_.Package) $($_.Version) ($($_.Project)) $($_.Advisory)" }
+          foreach ($r in $rows) { "| $($r.Severity) | $($r.Package) | $($r.Version) | $($r.Project) | $($r.Advisory) |" >> $env:GITHUB_STEP_SUMMARY }
+          $blocking = @($rows | Where-Object { $_.Severity -in 'High', 'Critical' })
+          foreach ($r in $rows) {
+            $msg = "$($r.Severity): $($r.Package) $($r.Version) ($($r.Project)) $($r.Advisory)"
+            if ($r.Severity -in 'High', 'Critical') { Write-Host "::error title=Vulnerable package::$msg" }
+            else { Write-Host "::warning title=Vulnerable package::$msg" }
+          }
           if ($blocking.Count -gt 0) { exit 1 }
 
   coverage:

@@ -16,8 +16,6 @@
   &nbsp;
   <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img alt="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/docs-deploy.yml/badge.svg?branch=main"></a>
   &nbsp;
-  <a href="https://codecov.io/gh/VoltageSolutions/GameControllerForZwift"><img alt="Codecov" src="https://codecov.io/gh/VoltageSolutions/GameControllerForZwift/graph/badge.svg"></a>
-  &nbsp;
   <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases"><img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"></a>
 </p>
 
