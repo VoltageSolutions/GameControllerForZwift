@@ -269,57 +269,38 @@ jobs:
           }
           exit $rc
 
-      # use-actions-summary defaults to true in dorny/test-reporter >= v2.1 and then NO check run is created,
-      # only a job summary. The first step creates the PR check run (needs checks: write; fork PRs have a
-      # read-only token); the second adds a short per-file count table to the job summary.
+      # Test reports use EnricoMi/publish-unit-test-result-action instead of dorny/test-reporter: dorny creates a
+      # check run and then updates it in a second API call, and since early Nov 2026 GitHub intermittently answers
+      # that update with "HttpError: Not Found" (dorny/test-reporter#866, no retry in the action). EnricoMi creates the
+      # completed check run in one call and retries API errors (github_retries). One step per report publishes the PR
+      # check run (named as before; needs checks: write, which fork PRs lack, so check_run is off for them) and the
+      # job summary; the json output feeds the skipped-test gate below.
       - name: Unit Test Results
         id: report-unit
-        if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
-        uses: dorny/test-reporter@v3
-        with:
-          name: Unit Test Results
-          path: TestResults/**/*.trx
-          reporter: dotnet-trx
-          use-actions-summary: 'false'
-          fail-on-error: 'false'
-
-      - name: Unit Test Results (job summary)
         if: ${{ !cancelled() }}
-        uses: dorny/test-reporter@v3
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
         with:
-          name: Unit Test Results
-          path: TestResults/**/*.trx
-          reporter: dotnet-trx
-          use-actions-summary: 'true'
-          only-summary: 'true'
-          fail-on-error: 'false'
-          fail-on-empty: 'false'
+          check_name: Unit Test Results
+          trx_files: TestResults/**/*.trx
+          comment_mode: 'off'
+          check_run: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+          job_summary: 'true'
+          github_retries: '10'
 
       - name: UI Test Results
         id: report-ui
-        if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
-        uses: dorny/test-reporter@v3
-        with:
-          name: UI Test Results
-          path: TestResults-UI/**/*.trx
-          reporter: dotnet-trx
-          use-actions-summary: 'false'
-          fail-on-error: 'false'
-
-      - name: UI Test Results (job summary)
         if: ${{ !cancelled() }}
-        uses: dorny/test-reporter@v3
+        uses: EnricoMi/publish-unit-test-result-action/windows@v2
         with:
-          name: UI Test Results
-          path: TestResults-UI/**/*.trx
-          reporter: dotnet-trx
-          use-actions-summary: 'true'
-          only-summary: 'true'
-          fail-on-error: 'false'
-          fail-on-empty: 'false'
+          check_name: UI Test Results
+          trx_files: TestResults-UI/**/*.trx
+          comment_mode: 'off'
+          check_run: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+          job_summary: 'true'
+          github_retries: '10'
 
-      # dorny/test-reporter has no fail-on-skip input, so the check run itself still reports success when tests
-      # are only skipped (it shows the skipped count); these outputs are evaluated by the final step.
+      # Check runs report failures themselves; skipped tests do not fail a check run, so the final step
+      # evaluates the skipped counts from the reporters' json output.
       - name: Upload test results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
@@ -356,8 +337,8 @@ jobs:
           UI_OUTCOME: ${{ steps.ui-run.outcome }}
           TOOLCHAIN: ${{ steps.unit-run.outputs.ui_toolchain }}
           WAD: ${{ steps.wad.outputs.wad }}
-          UNIT_SKIPPED: ${{ steps.report-unit.outputs.skipped }}
-          UI_SKIPPED: ${{ steps.report-ui.outputs.skipped }}
+          UNIT_SKIPPED: ${{ fromJSON(steps.report-unit.outputs.json || '{}').stats.tests_skip }}
+          UI_SKIPPED: ${{ fromJSON(steps.report-ui.outputs.json || '{}').stats.tests_skip }}
         run: |
           fail=0
           if [ "$WAD" != ok ]; then echo "::error title=UI toolchain (WinAppDriver) install failed::UI toolchain (WinAppDriver) install failed (status: ${WAD:-none})."; fail=1; fi
@@ -421,8 +402,10 @@ jobs:
           build-mode: manual
           config-file: ./.github/codeql/codeql-config.yml
 
-      - name: Build
-        run: dotnet build GameControllerForZwift.sln -c Release
+      # Only the shipping projects are built inside the CodeQL window (the app pulls in Core/Gamepad/Network):
+      # for compiled languages CodeQL analyzes what the build compiles, and paths-ignore is not applied to them.
+      - name: Build shipping projects
+        run: dotnet build $env:APP_PROJECT -c Release
 
       - uses: github/codeql-action/analyze@v4
         with:
