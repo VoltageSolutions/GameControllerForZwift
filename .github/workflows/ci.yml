@@ -150,9 +150,27 @@ jobs:
       - name: Build solution (Release)
         run: dotnet build GameControllerForZwift.sln -c Release --no-restore
 
-      # The UI toolchain installs (slow, mostly network bound) run as a PowerShell job INSIDE this step: the
+      # WinAppDriver is installed in its own foreground step (absolute paths, verbose msiexec log) so that a
+      # failure stops the job with a clear message. appium-windows-driver >= 3 no longer bundles it.
+      - name: Install WinAppDriver
+        shell: pwsh
+        run: |
+          $msi = Join-Path $env:RUNNER_TEMP 'WinAppDriver.msi'
+          $log = Join-Path $env:RUNNER_TEMP 'winappdriver-install.log'
+          Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile $msi
+          $p = Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /quiet /norestart /l*v `"$log`"" -Wait -PassThru
+          if ($p.ExitCode -notin 0, 3010) {
+            Write-Host "--- last 60 lines of $log ---"
+            if (Test-Path $log) { Get-Content $log -Tail 60 }
+            throw "WinAppDriver installation failed: msiexec exit code $($p.ExitCode)"
+          }
+          $wad = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $wad) { throw 'WinAppDriver.exe not found after install' }
+          Write-Host "WinAppDriver installed at $wad"
+          "WINAPPDRIVER_PATH=$wad" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      # The Appium install (slow, mostly network bound) runs as a PowerShell job INSIDE this step: the
       # runner kills background processes that outlive their step ("Cleaning up orphan processes").
-      # appium-windows-driver >= 3 no longer bundles WinAppDriver; the server is installed separately.
       # continue-on-error so the UI tests still run and both reports are published; the final step fails the job.
       - name: Unit tests (UI toolchain installs in parallel)
         id: unit-run
@@ -161,8 +179,9 @@ jobs:
         run: |
           $log = Join-Path $env:RUNNER_TEMP 'ui-setup.log'
           Remove-Item $log -ErrorAction SilentlyContinue
-          $job = Start-Job -ArgumentList $env:PATH, $env:RUNNER_TEMP, $log -ScriptBlock {
-            param($path, $temp, $log)
+          $job = Start-Job -ArgumentList $env:PATH, $PWD.Path, $log -ScriptBlock {
+            param($path, $workDir, $log)
+            Set-Location $workDir
             $env:PATH = $path
             $ErrorActionPreference = 'Stop'
             try {
@@ -171,10 +190,6 @@ jobs:
                 if ($LASTEXITCODE -ne 0) { throw 'npm install appium failed' }
                 appium driver install --source=npm appium-windows-driver@6.3.1
                 if ($LASTEXITCODE -ne 0) { throw 'appium driver install failed' }
-                $msi = Join-Path $temp 'WinAppDriver.msi'
-                Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile $msi
-                $p = Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /quiet /norestart" -Wait -PassThru
-                if ($p.ExitCode -notin 0, 3010) { throw "WinAppDriver msiexec exit code $($p.ExitCode)" }
               } *>&1 | Out-File -FilePath $log -Encoding utf8
               'ok'
             } catch {
@@ -214,8 +229,11 @@ jobs:
           UI_TOOLCHAIN: ${{ steps.unit-run.outputs.ui_toolchain }}
         run: |
           if ($env:UI_TOOLCHAIN -ne 'ok') { throw "UI toolchain installation did not succeed (status: '$env:UI_TOOLCHAIN'); see the unit test step log." }
-          $wad = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
-          if (-not $wad) { throw 'WinAppDriver.exe not found after install' }
+          $wad = $env:WINAPPDRIVER_PATH
+          if (-not $wad -or -not (Test-Path $wad)) {
+            $wad = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+          }
+          if (-not $wad) { throw 'WinAppDriver.exe not found' }
           $env:APPIUM_WAD_PATH = $wad
           $appium = Start-Process cmd.exe -ArgumentList '/c', 'appium --allow-cors > appium.log 2>&1' -WindowStyle Hidden -PassThru
           $rc = 1
@@ -329,11 +347,11 @@ jobs:
           UI_SKIPPED: ${{ steps.report-ui.outputs.skipped }}
         run: |
           fail=0
-          if [ "$TOOLCHAIN" != ok ]; then echo "::error title=UI toolchain::UI toolchain installation failed (status: ${TOOLCHAIN:-none})."; fail=1; fi
-          if [ "$UNIT_OUTCOME" = failure ]; then echo "::error title=Unit tests::Unit/integration tests failed."; fail=1; fi
-          if [ "$UI_OUTCOME" = failure ]; then echo "::error title=UI tests::UI tests failed."; fail=1; fi
-          if [ -n "$UNIT_SKIPPED" ] && [ "$UNIT_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::$UNIT_SKIPPED unit test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
-          if [ -n "$UI_SKIPPED" ] && [ "$UI_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::$UI_SKIPPED ui test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
+          if [ "$TOOLCHAIN" != ok ]; then echo "::error title=UI toolchain (Appium) install failed::UI toolchain (Appium) install failed (status: ${TOOLCHAIN:-none})."; fail=1; fi
+          if [ "$UNIT_OUTCOME" = failure ]; then echo "::error title=Unit tests failed::unit tests failed (unit/integration test step reported failure)."; fail=1; fi
+          if [ "$UI_OUTCOME" = failure ]; then echo "::error title=UI tests failed::UI tests failed."; fail=1; fi
+          if [ -n "$UNIT_SKIPPED" ] && [ "$UNIT_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::skipped tests in unit tests: $UNIT_SKIPPED unit test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
+          if [ -n "$UI_SKIPPED" ] && [ "$UI_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::skipped tests in UI tests: $UI_SKIPPED ui test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
           exit $fail
 
   lint:
