@@ -5,8 +5,8 @@ using Microsoft.Extensions.Logging.Abstractions;
 namespace GameControllerForZwift.Network.UnitTests;
 
 /// <summary>
-/// The Zwift Ride profile (<see cref="ZwiftRideProfile"/> plus <see cref="ZwiftControlProtocol"/>) against the decoded loopback capture
-/// docs/captures/BikeControl Loopback.pcapng (Zwift to BikeControl on TCP 36868, first 0.6 s of the conversation).
+/// The Zwift Ride profile (<see cref="ZwiftRideProfile"/> plus <see cref="ZwiftControlProtocol"/>) against the byte sequences an existing bridge
+/// (BikeControl) exchanges with Zwift on TCP 36868 during the first 0.6 s of a conversation. See docs/how-it-works/zwift-protocol.md.
 /// </summary>
 public class ZwiftRideReplicaTests
 {

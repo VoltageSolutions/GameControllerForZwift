@@ -10,7 +10,7 @@ namespace GameControllerForZwift.Network.Mdns
 {
     /// <summary>
     /// Advertises the emulated Zwift Ride device over Wahoo Direct Connect (DIRCON, _wahoo-fitness-tnp._tcp) on the local network so Zwift can discover it.
-    /// Mirrors what a real KICKR BIKE announces (see docs/captures/kickr-bike-capture-analysis.md): PTR + SRV + TXT, with A records
+    /// Mirrors what a real KICKR BIKE announces (see docs/how-it-works/mdns.md): PTR + SRV + TXT, with A records
     /// for THIS machine's own IPv4 addresses.
     /// </summary>
     public sealed partial class MdnsAdvertiser : IAsyncDisposable

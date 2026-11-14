@@ -69,12 +69,10 @@ namespace GameControllerForZwift.UI.WPF
             {
                 return list;
             }
-            bool found = false;
-
             foreach (var item in Pages)
             {
                 _stack.Push(item);
-                found = FindNavigationItemsHierarchyFromPageType(pageType, item.Items, ref _stack);
+                bool found = FindNavigationItemsHierarchyFromPageType(pageType, item.Items, ref _stack);
                 if (found)
                 {
                     break;
@@ -98,8 +96,6 @@ namespace GameControllerForZwift.UI.WPF
         private static bool FindNavigationItemsHierarchyFromPageType(Type pageType, ICollection<PagesInfoDataItem> pages, ref Stack<PagesInfoDataItem> stack)
         {
             var item = stack.Peek();
-            bool found = false;
-
             if (pageType == item.PageType)
             {
                 return true;
@@ -108,8 +104,7 @@ namespace GameControllerForZwift.UI.WPF
             foreach (var child in item.Items)
             {
                 stack.Push(child);
-                found = FindNavigationItemsHierarchyFromPageType(pageType, child.Items, ref stack);
-                if (found) { return true; }
+                if (FindNavigationItemsHierarchyFromPageType(pageType, child.Items, ref stack)) { return true; }
                 stack.Pop();
             }
 

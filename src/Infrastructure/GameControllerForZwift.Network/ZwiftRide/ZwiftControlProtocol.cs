@@ -7,8 +7,8 @@ namespace GameControllerForZwift.Network.ZwiftRide;
 
 /// <summary>
 /// Pure Zwift Ride controller protocol logic (no sockets): the handshake and request replies a Zwift Ride controller gives on the
-/// Zwift characteristics, plus the keypad frame builders. The replies are byte-exact copies of the BikeControl capture
-/// (docs/captures/BikeControl Loopback.pcapng); everything not listed there is deliberately left unanswered, as BikeControl does.
+/// Zwift characteristics, plus the keypad frame builders. The replies are byte-exact copies of what an existing bridge (BikeControl) sends and Zwift accepts;
+/// everything not listed there is deliberately left unanswered, as that bridge does. See docs/how-it-works/zwift-protocol.md.
 /// One instance per connection (tracks the handshake state).
 /// </summary>
 public sealed partial class ZwiftControlProtocol

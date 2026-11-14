@@ -23,7 +23,7 @@ internal sealed class LoopbackPair : IDisposable
 
     public static async Task<LoopbackPair> CreateAsync()
     {
-        var listener = new TcpListener(IPAddress.Loopback, 0);
+        using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
         try
         {
