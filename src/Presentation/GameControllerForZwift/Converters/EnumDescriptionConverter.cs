@@ -7,33 +7,22 @@ namespace GameControllerForZwift.UI.WPF.Converters
 {
     public class EnumDescriptionConverter : IValueConverter
     {
-        private string GetEnumDescription(Enum enumObj)
+        private static string GetEnumDescription(Enum? enumObj)
         {
-            if (null != enumObj)
-            {
-                FieldInfo fieldInfo = enumObj.GetType().GetField(enumObj.ToString());
-
-                object[] attribArray = fieldInfo.GetCustomAttributes(false);
-
-                if (attribArray.Length == 0)
-                {
-                    return enumObj.ToString();
-                }
-                else
-                {
-                    DescriptionAttribute attrib = attribArray[0] as DescriptionAttribute;
-                    return attrib.Description;
-                }
-            }
-            else
+            if (enumObj is null)
             {
                 return string.Empty;
             }
+
+            string name = enumObj.ToString();
+            FieldInfo? fieldInfo = enumObj.GetType().GetField(name);
+            var description = fieldInfo?.GetCustomAttributes(false).OfType<DescriptionAttribute>().FirstOrDefault();
+            return description?.Description ?? name;
         }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Enum myEnum = (Enum)value;
+            Enum? myEnum = (Enum?)value;
             string description = GetEnumDescription(myEnum);
             return description;
         }

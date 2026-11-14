@@ -53,3 +53,9 @@ markdown_extensions:
 # Page Tree
 nav:
   - Home: index.md
+  - Developer notes:
+      - zwift-lan-findings.md
+      - zwift-lan-protocol-notes.md
+      - zwift-lan-testing.md
+      - gamepad-visualization-research.md
+      - ux-review-notes.md

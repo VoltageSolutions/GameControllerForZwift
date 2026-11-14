@@ -1,0 +1,510 @@
+name: CI Workflow
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  APP_PROJECT: src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
+  # Non-WPF test projects (also built on Linux by the Lint job)
+  PORTABLE_TESTS: >-
+    tests/GameControllerForZwift.Core.UnitTests
+    tests/GameControllerForZwift.Network.UnitTests
+    tests/GameControllerForZwift.Network.IntegrationTests
+    tests/GameControllerForZwift.Gamepad.UnitTests
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      checks: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Restore
+        run: dotnet restore GameControllerForZwift.sln
+
+      - name: Build solution (Release)
+        run: dotnet build GameControllerForZwift.sln -c Release --no-restore
+
+      - name: Publish (framework-dependent)
+        run: dotnet publish $env:APP_PROJECT -c Release -r win-x64 --self-contained false -o artifacts/fd
+
+      - name: Publish (standalone)
+        run: dotnet publish $env:APP_PROJECT -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/standalone
+
+      - name: Check publish output
+        run: |
+          ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
+          ./.github/scripts/check-publish.ps1 -Path artifacts/standalone
+
+      - name: Evaluate version
+        id: version
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        shell: bash
+        run: |
+          version="$(grep -oP '(?<=<Version>)[^<]+' "$APP_PROJECT" | head -n1 | tr -d '[:space:]')"
+          if [ -z "$version" ]; then echo "::error::Could not read <Version> from $APP_PROJECT"; exit 1; fi
+          git fetch --no-tags origin main
+          if git diff --name-only origin/main...HEAD | grep -vqE '^docs/|^mkdocs\.yml$|\.md$'; then
+            docs_only=false
+          else
+            docs_only=true
+          fi
+          if [ "$docs_only" = true ]; then
+            conclusion=success; title="Docs-only change — no new version needed"
+            summary="This pull request only changes documentation, so no version bump is required."
+          elif git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
+            conclusion=failure; title="Version v${version} already exists — bump <Version> in GameControllerForZwift.csproj"
+            summary="A tag and release for v${version} already exist. Update <Version> in src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj."
+          else
+            conclusion=success; title="New app version v${version}"
+            summary="Merging to main will create a new tag and release for v${version}."
+          fi
+          {
+            echo "conclusion=$conclusion"
+            echo "title=$title"
+            echo "summary=$summary"
+          } >> "$GITHUB_OUTPUT"
+          echo "### Version Check: $conclusion" >> "$GITHUB_STEP_SUMMARY"
+          echo "**$title**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "$summary" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Version Check
+        if: github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v9
+        env:
+          V_CONCLUSION: ${{ steps.version.outputs.conclusion }}
+          V_TITLE: ${{ steps.version.outputs.title }}
+          V_SUMMARY: ${{ steps.version.outputs.summary }}
+        with:
+          script: |
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Version Check',
+              head_sha: context.payload.pull_request.head.sha,
+              status: 'completed',
+              conclusion: process.env.V_CONCLUSION,
+              output: { title: process.env.V_TITLE, summary: process.env.V_SUMMARY },
+            });
+
+      - name: Fail on version error
+        if: steps.version.outputs.conclusion == 'failure'
+        shell: bash
+        run: echo "::error title=Version not bumped::${{ steps.version.outputs.title }}"; exit 1
+
+  tests:
+    name: Run tests
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      checks: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      - name: Enable Developer Mode
+        run: reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock /t REG_DWORD /f /v AllowDevelopmentWithoutDevLicense /d 1
+
+      - name: Set runner resolution to modern device size
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Restore
+        run: dotnet restore GameControllerForZwift.sln
+
+      - name: Build solution (Release)
+        run: dotnet build GameControllerForZwift.sln -c Release --no-restore
+
+      # WinAppDriver is installed in its own foreground step (absolute paths, verbose msiexec log) so that a
+      # failure stops the job with a clear message. appium-windows-driver >= 3 no longer bundles it.
+      - name: Install WinAppDriver
+        id: wad
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $candidates = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe")
+          $wad = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          "wad=failed" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          if ($wad) {
+            Write-Host "WinAppDriver already installed at $wad"
+          } else {
+            $msi = Join-Path $env:RUNNER_TEMP 'WinAppDriver.msi'
+            $log = Join-Path $env:RUNNER_TEMP 'winappdriver-install.log'
+            Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile $msi
+            $p = Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /quiet /norestart /l*v `"$log`"" -Wait -PassThru
+            $wad = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+            if ($p.ExitCode -notin 0, 3010 -and -not $wad) {
+              Write-Host "--- last 60 lines of $log ---"
+              if (Test-Path $log) { Get-Content $log -Tail 60 }
+              throw "WinAppDriver installation failed: msiexec exit code $($p.ExitCode)"
+            }
+            if (-not $wad) { throw 'WinAppDriver.exe not found after install' }
+            Write-Host "WinAppDriver installed at $wad (msiexec exit code $($p.ExitCode))"
+          }
+          "WINAPPDRIVER_PATH=$wad" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "wad=ok" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      # The Appium install (slow, mostly network bound) runs as a PowerShell job INSIDE this step: the
+      # runner kills background processes that outlive their step ("Cleaning up orphan processes").
+      # continue-on-error so the UI tests still run and both reports are published; the final step fails the job.
+      - name: Unit tests (UI toolchain installs in parallel)
+        id: unit-run
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $log = Join-Path $env:RUNNER_TEMP 'ui-setup.log'
+          Remove-Item $log -ErrorAction SilentlyContinue
+          $job = Start-Job -ArgumentList $env:PATH, $PWD.Path, $log -ScriptBlock {
+            param($path, $workDir, $log)
+            Set-Location $workDir
+            $env:PATH = $path
+            $ErrorActionPreference = 'Stop'
+            try {
+              & {
+                npm install -g appium@3.9.0
+                if ($LASTEXITCODE -ne 0) { throw 'npm install appium failed' }
+                appium driver install --source=npm appium-windows-driver@6.3.1
+                if ($LASTEXITCODE -ne 0) { throw 'appium driver install failed' }
+              } *>&1 | Out-File -FilePath $log -Encoding utf8
+              'ok'
+            } catch {
+              "ERROR: $_" | Out-File -FilePath $log -Append -Encoding utf8
+              'failed'
+            }
+          }
+
+          $rc = 0
+          $projects = @('tests/GameControllerForZwift.UnitTests') + @(($env:PORTABLE_TESTS -split '\s+') | Where-Object { $_ })
+          foreach ($p in $projects) {
+            $name = Split-Path $p -Leaf
+            dotnet test $p -c Release --no-build --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"
+            if ($LASTEXITCODE -ne 0) { $rc = 1 }
+          }
+
+          $status = 'failed'
+          if (Wait-Job $job -Timeout 900) {
+            $res = @(Receive-Job $job)
+            if ($res.Count -gt 0 -and $res[-1] -eq 'ok') { $status = 'ok' }
+          } else {
+            Write-Host 'UI toolchain installation did not finish within 15 minutes.'
+            Stop-Job $job
+            Receive-Job $job -ErrorAction SilentlyContinue | Out-Null
+          }
+          Remove-Job $job -Force -ErrorAction SilentlyContinue
+          Write-Host '--- UI toolchain install log ---'
+          if (Test-Path $log) { Get-Content $log }
+          "ui_toolchain=$status" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          exit $rc
+
+      - name: UI tests
+        id: ui-run
+        continue-on-error: true
+        shell: pwsh
+        env:
+          UI_TOOLCHAIN: ${{ steps.unit-run.outputs.ui_toolchain }}
+          WAD_STATUS: ${{ steps.wad.outputs.wad }}
+        run: |
+          if ($env:WAD_STATUS -ne 'ok') { throw "UI toolchain (WinAppDriver) install failed (status: '$env:WAD_STATUS'); see the Install WinAppDriver step log." }
+          if ($env:UI_TOOLCHAIN -ne 'ok') { throw "UI toolchain installation did not succeed (status: '$env:UI_TOOLCHAIN'); see the unit test step log." }
+          $wad = $env:WINAPPDRIVER_PATH
+          if (-not $wad -or -not (Test-Path $wad)) {
+            $wad = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+          }
+          if (-not $wad) { throw 'WinAppDriver.exe not found' }
+          $env:APPIUM_WAD_PATH = $wad
+          $appium = Start-Process cmd.exe -ArgumentList '/c', 'appium --allow-cors > appium.log 2>&1' -WindowStyle Hidden -PassThru
+          $rc = 1
+          try {
+            $ready = $false
+            $deadline = (Get-Date).AddSeconds(60)
+            while (-not $ready -and (Get-Date) -lt $deadline) {
+              try {
+                $r = Invoke-WebRequest -Uri http://127.0.0.1:4723/status -UseBasicParsing -TimeoutSec 3
+                if ($r.StatusCode -eq 200) { $ready = $true; Write-Host 'Appium is ready.' }
+              } catch { Start-Sleep -Seconds 2 }
+            }
+            if (-not $ready) {
+              Get-Content appium.log -ErrorAction SilentlyContinue
+              throw 'Appium did not become ready within 60 seconds.'
+            }
+            dotnet test tests/GameControllerForZwift.UITests -c Release --no-build --verbosity normal --logger "trx;LogFileName=UITests.trx" --results-directory TestResults-UI/UITests
+            $rc = $LASTEXITCODE
+          } finally {
+            taskkill /T /F /PID $appium.Id 2>&1 | Out-Null
+          }
+          exit $rc
+
+      # use-actions-summary defaults to true in dorny/test-reporter >= v2.1 and then NO check run is created,
+      # only a job summary. The first step creates the PR check run (needs checks: write; fork PRs have a
+      # read-only token); the second adds a short per-file count table to the job summary.
+      - name: Unit Test Results
+        id: report-unit
+        if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: Unit Test Results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          use-actions-summary: 'false'
+          fail-on-error: 'false'
+
+      - name: Unit Test Results (job summary)
+        if: ${{ !cancelled() }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: Unit Test Results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          use-actions-summary: 'true'
+          only-summary: 'true'
+          fail-on-error: 'false'
+          fail-on-empty: 'false'
+
+      - name: UI Test Results
+        id: report-ui
+        if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: UI Test Results
+          path: TestResults-UI/**/*.trx
+          reporter: dotnet-trx
+          use-actions-summary: 'false'
+          fail-on-error: 'false'
+
+      - name: UI Test Results (job summary)
+        if: ${{ !cancelled() }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: UI Test Results
+          path: TestResults-UI/**/*.trx
+          reporter: dotnet-trx
+          use-actions-summary: 'true'
+          only-summary: 'true'
+          fail-on-error: 'false'
+          fail-on-empty: 'false'
+
+      # dorny/test-reporter has no fail-on-skip input, so the check run itself still reports success when tests
+      # are only skipped (it shows the skipped count); these outputs are evaluated by the final step.
+      - name: Upload test results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: |
+            TestResults/**/*.trx
+            TestResults-UI/**/*.trx
+          if-no-files-found: warn
+
+      - name: Upload coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-unit
+          path: TestResults/**/coverage.cobertura.xml
+          if-no-files-found: warn
+
+      - name: Upload UI diagnostics
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ui-diagnostics
+          path: |
+            appium.log
+            tests/GameControllerForZwift.UITests/**/screenshot.png
+          if-no-files-found: warn
+
+      - name: Fail if any test failed or was skipped
+        if: ${{ !cancelled() }}
+        shell: bash
+        env:
+          UNIT_OUTCOME: ${{ steps.unit-run.outcome }}
+          UI_OUTCOME: ${{ steps.ui-run.outcome }}
+          TOOLCHAIN: ${{ steps.unit-run.outputs.ui_toolchain }}
+          WAD: ${{ steps.wad.outputs.wad }}
+          UNIT_SKIPPED: ${{ steps.report-unit.outputs.skipped }}
+          UI_SKIPPED: ${{ steps.report-ui.outputs.skipped }}
+        run: |
+          fail=0
+          if [ "$WAD" != ok ]; then echo "::error title=UI toolchain (WinAppDriver) install failed::UI toolchain (WinAppDriver) install failed (status: ${WAD:-none})."; fail=1; fi
+          if [ "$TOOLCHAIN" != ok ]; then echo "::error title=UI toolchain (Appium) install failed::UI toolchain (Appium) install failed (status: ${TOOLCHAIN:-none})."; fail=1; fi
+          if [ "$UNIT_OUTCOME" = failure ]; then echo "::error title=Unit tests failed::unit tests failed (unit/integration test step reported failure)."; fail=1; fi
+          if [ "$UI_OUTCOME" = failure ]; then echo "::error title=UI tests failed::UI tests failed."; fail=1; fi
+          if [ -n "$UNIT_SKIPPED" ] && [ "$UNIT_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::skipped tests in unit tests: $UNIT_SKIPPED unit test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
+          if [ -n "$UI_SKIPPED" ] && [ "$UI_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::skipped tests in UI tests: $UI_SKIPPED ui test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
+          exit $fail
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Restore
+        run: |
+          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet restore "$p"; done
+
+      - name: Verify formatting
+        run: |
+          for p in src/Application/GameControllerForZwift.Core \
+                   src/Infrastructure/GameControllerForZwift.Network \
+                   src/Infrastructure/GameControllerForZwift.Gamepad \
+                   $PORTABLE_TESTS tools/ZwiftLanProbe; do
+            dotnet format "$p" --verify-no-changes --severity error --no-restore --verbosity diagnostic
+          done
+
+      - name: Build portable projects (Linux)
+        run: |
+          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet build "$p" -c Release --no-restore; done
+
+  vulnerabilities:
+    name: Vulnerabilities
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          build-mode: manual
+          config-file: ./.github/codeql/codeql-config.yml
+
+      - name: Build
+        run: dotnet build GameControllerForZwift.sln -c Release
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: '/language:csharp'
+          output: sarif-results
+          upload: always
+
+      - name: Check NuGet packages for known vulnerabilities
+        shell: pwsh
+        run: |
+          dotnet restore GameControllerForZwift.sln
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          $json = dotnet list GameControllerForZwift.sln package --vulnerable --include-transitive --format json --output-version 1 | Out-String
+          if ($LASTEXITCODE -ne 0) { Write-Host $json; exit $LASTEXITCODE }
+          $start = $json.IndexOf('{')
+          $data = if ($start -ge 0) { $json.Substring($start) | ConvertFrom-Json } else { $null }
+          $list = [System.Collections.Generic.List[object]]::new()
+          if ($null -ne $data -and $null -ne $data.projects) {
+            foreach ($proj in @($data.projects)) {
+              if ($null -eq $proj.frameworks) { continue }
+              foreach ($fw in @($proj.frameworks)) {
+                $pkgs = @()
+                if ($null -ne $fw.topLevelPackages) { $pkgs += @($fw.topLevelPackages) }
+                if ($null -ne $fw.transitivePackages) { $pkgs += @($fw.transitivePackages) }
+                foreach ($pkg in $pkgs) {
+                  if ($null -eq $pkg.vulnerabilities) { continue }
+                  foreach ($v in @($pkg.vulnerabilities)) {
+                    $list.Add([pscustomobject]@{
+                      Severity = $v.severity
+                      Package  = $pkg.id
+                      Version  = $pkg.resolvedVersion
+                      Project  = Split-Path $proj.path -Leaf
+                      Advisory = $v.advisoryurl
+                    })
+                  }
+                }
+              }
+            }
+          }
+          $rows = @($list | Sort-Object Package, Project -Unique)
+          "### NuGet vulnerabilities`n" >> $env:GITHUB_STEP_SUMMARY
+          if ($rows.Count -eq 0) {
+            'No vulnerable packages found.' >> $env:GITHUB_STEP_SUMMARY
+            exit 0
+          }
+          "| Severity | Package | Version | Project | Advisory |`n|---|---|---|---|---|" >> $env:GITHUB_STEP_SUMMARY
+          foreach ($r in $rows) { "| $($r.Severity) | $($r.Package) | $($r.Version) | $($r.Project) | $($r.Advisory) |" >> $env:GITHUB_STEP_SUMMARY }
+          $blocking = @($rows | Where-Object { $_.Severity -in 'High', 'Critical' })
+          foreach ($r in $rows) {
+            $msg = "$($r.Severity): $($r.Package) $($r.Version) ($($r.Project)) $($r.Advisory)"
+            if ($r.Severity -in 'High', 'Critical') { Write-Host "::error title=Vulnerable package::$msg" }
+            else { Write-Host "::warning title=Vulnerable package::$msg" }
+          }
+          if ($blocking.Count -gt 0) { exit 1 }
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    needs: [tests]
+    if: ${{ always() && needs.tests.result != 'cancelled' }}
+    timeout-minutes: 10
+    steps:
+      # Checkout gives Codecov the repository layout for path fixing.
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: coverage-*
+          path: coverage
+
+      - name: Check coverage files exist
+        shell: bash
+        run: |
+          if ! find coverage -name coverage.cobertura.xml 2>/dev/null | grep -q .; then
+            echo "::error title=Coverage skipped::Coverage skipped: unit tests did not produce coverage — see Run tests"
+            exit 1
+          fi
+
+      # Secrets are unavailable to fork PRs; for those, Codecov tokenless upload is used
+      # (public repos, requires "Tokenless uploads" enabled in the Codecov org settings).
+      - uses: codecov/codecov-action@v7
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/**/coverage.cobertura.xml
+          fail_ci_if_error: true

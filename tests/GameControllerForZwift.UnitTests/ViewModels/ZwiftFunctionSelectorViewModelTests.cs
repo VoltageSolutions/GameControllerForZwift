@@ -8,51 +8,6 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
     public class ZwiftFunctionSelectorViewModelTests
     {
         [Fact]
-        public void OnSelectedZwiftFunctionChanged_ShouldEnablePlayerView_WhenAdjustCameraAngleSelected()
-        {
-            // Arrange
-            var viewModel = new ZwiftFunctionSelectorViewModel();
-            var controllerData = new ControllerData
-            {
-                A = true, // You can set the state of buttons here as needed
-                B = false,
-                LeftBumper = false,
-                RightBumper = false,
-                // Set other necessary properties here
-            };
-            viewModel.ControllerData = controllerData;
-
-            // Act
-            viewModel.SelectedZwiftFunction = ZwiftFunction.AdjustCameraAngle;
-
-            // Assert
-            Assert.True(viewModel.ShowPlayerView);
-            Assert.False(viewModel.ShowRiderAction);
-        }
-
-        [Fact]
-        public void OnSelectedZwiftFunctionChanged_ShouldEnableRiderAction_WhenRiderActionSelected()
-        {
-            // Arrange
-            var viewModel = new ZwiftFunctionSelectorViewModel();
-            var controllerData = new ControllerData
-            {
-                A = true, // Set appropriate button values
-                B = false,
-                LeftBumper = false,
-                RightBumper = false,
-            };
-            viewModel.ControllerData = controllerData;
-
-            // Act
-            viewModel.SelectedZwiftFunction = ZwiftFunction.RiderAction;
-
-            // Assert
-            Assert.False(viewModel.ShowPlayerView);
-            Assert.True(viewModel.ShowRiderAction);
-        }
-
-        [Fact]
         public void IsPressed_ShouldReturnTrue_WhenButtonIsPressed()
         {
             // Arrange
@@ -97,25 +52,25 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         }
 
         [Fact]
-        public void OnSelectedZwiftFunctionChanged_ShouldHideSecondarySelections_WhenOtherFunctionSelected()
+        public void SelectedZwiftFunction_Change_RaisesMappingChanged_AndRoundTripsThroughInputMapping()
         {
-            // Arrange
+            var viewModel = new ZwiftFunctionSelectorViewModel { SelectedInput = ControllerInput.X };
+            int raised = 0;
+            viewModel.MappingChanged += (_, _) => raised++;
+
+            viewModel.SelectedZwiftFunction = ZwiftFunction.RideOn;
+
+            Assert.Equal(1, raised);
+            var mapping = viewModel.GetInputMapping();
+            Assert.Equal(ControllerInput.X, mapping.Input);
+            Assert.Equal(ZwiftFunction.RideOn, mapping.Function);
+        }
+
+        [Fact]
+        public void ZwiftFunctions_ListsAllZwiftRideFunctions()
+        {
             var viewModel = new ZwiftFunctionSelectorViewModel();
-            var controllerData = new ControllerData
-            {
-                A = true, // Set appropriate state here
-                B = false,
-                LeftBumper = false,
-                RightBumper = false,
-            };
-            viewModel.ControllerData = controllerData;
-
-            // Act
-            viewModel.SelectedZwiftFunction = ZwiftFunction.Select; // Replace with a valid ZwiftFunction enum value
-
-            // Assert
-            Assert.False(viewModel.ShowPlayerView);
-            Assert.False(viewModel.ShowRiderAction);
+            Assert.Equal(Enum.GetValues<ZwiftFunction>(), viewModel.ZwiftFunctions);
         }
     }
 }

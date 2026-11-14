@@ -5,7 +5,7 @@ using static SDL2.SDL;
 
 namespace GameControllerForZwift.Gamepad.SDL2
 {
-    public class SDL2InputService : IInputService, IDisposable
+    public sealed partial class SDL2InputService : IInputService, IDisposable
     {
         #region Fields
 
@@ -47,7 +47,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
 
             if (numberOfGamepads < 1)
             {
-                _logger.LogInformation("No game controllers found.");
+                LogNoControllers();
                 return Enumerable.Empty<IController>();
             }
 
@@ -57,13 +57,13 @@ namespace GameControllerForZwift.Gamepad.SDL2
 
                 if (controllerHandle == IntPtr.Zero)
                 {
-                    _logger.LogError($"Failed to open controller at index {i}: {SDL_GetError()}");
+                    LogOpenFailed(i, SDL_GetError());
                     continue;
                 }
 
                 var controller = new SDL2GameController(controllerHandle);
                 _controllers.Add(controller);
-                _logger.LogInformation($"Controller connected: {controller.Name}");
+                LogControllerConnected(controller.Name);
             }
 
             return _controllers;
@@ -74,13 +74,13 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// </summary>
         /// <param name="controller">The controller to read data from.</param>
         /// <returns>A <see cref="ControllerData"/> object containing the controller's state.</returns>
-        public ControllerData ReadData(IController controller)
+        public ControllerData? ReadData(IController controller)
         {
             EnsureInitialized();
 
             if (controller == null)
             {
-                _logger.LogError("Attempted to read data from a null controller.");
+                LogNullController();
                 throw new ArgumentNullException(nameof(controller));
             }
 
@@ -98,13 +98,14 @@ namespace GameControllerForZwift.Gamepad.SDL2
         {
             if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_GAMECONTROLLER | SDL_INIT_HAPTIC) < 0)
             {
-                string errorMessage = $"SDL could not initialize! Error: {SDL_GetError()}";
-                _logger.LogError(errorMessage);
+                string sdlError = SDL_GetError();
+                LogInitFailed(sdlError);
+                string errorMessage = $"SDL could not initialize! Error: {sdlError}";
                 throw new InvalidOperationException(errorMessage);
             }
 
             _isInitialized = true;
-            _logger.LogInformation("SDL2 initialized successfully.");
+            LogInitialized();
 
             // Use the button labels native to the controller.
             SDL_SetHint(SDL_HINT_GAMECONTROLLER_USE_BUTTON_LABELS, "1");
@@ -118,9 +119,8 @@ namespace GameControllerForZwift.Gamepad.SDL2
         {
             if (!_isInitialized)
             {
-                string errorMessage = "SDL2 has not been initialized.";
-                _logger.LogError(errorMessage);
-                throw new InvalidOperationException(errorMessage);
+                LogNotInitialized();
+                throw new InvalidOperationException("SDL2 has not been initialized.");
             }
         }
 
@@ -132,11 +132,42 @@ namespace GameControllerForZwift.Gamepad.SDL2
             foreach (var controller in _controllers)
             {
                 controller.Dispose();
-                _logger.LogInformation("Disposed a controller.");
+                LogControllerDisposed();
             }
 
             _controllers.Clear();
         }
+
+        #endregion
+
+        #region Logging
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "No game controllers found.")]
+        private partial void LogNoControllers();
+
+        [LoggerMessage(Level = LogLevel.Error, Message = "Failed to open controller at index {Index}: {Error}")]
+        private partial void LogOpenFailed(int index, string error);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Controller connected: {Name}")]
+        private partial void LogControllerConnected(string name);
+
+        [LoggerMessage(Level = LogLevel.Error, Message = "Attempted to read data from a null controller.")]
+        private partial void LogNullController();
+
+        [LoggerMessage(Level = LogLevel.Error, Message = "SDL could not initialize! Error: {Error}")]
+        private partial void LogInitFailed(string error);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "SDL2 initialized successfully.")]
+        private partial void LogInitialized();
+
+        [LoggerMessage(Level = LogLevel.Error, Message = "SDL2 has not been initialized.")]
+        private partial void LogNotInitialized();
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Disposed a controller.")]
+        private partial void LogControllerDisposed();
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "SDL2InputService disposed and SDL2 resources released.")]
+        private partial void LogDisposed();
 
         #endregion
 
@@ -152,8 +183,9 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 DisposeControllers();
                 SDL_Quit();
                 _isDisposed = true;
-                _logger.LogInformation("SDL2InputService disposed and SDL2 resources released.");
+                LogDisposed();
             }
+            GC.SuppressFinalize(this);
         }
 
         #endregion

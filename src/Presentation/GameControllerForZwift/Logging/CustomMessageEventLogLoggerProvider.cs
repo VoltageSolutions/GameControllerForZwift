@@ -31,6 +31,7 @@ namespace GameControllerForZwift.WPF.Logging
         public void Dispose()
         {
             _eventLog?.Dispose();
+            GC.SuppressFinalize(this);
         }
         #endregion
     }

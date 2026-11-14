@@ -4,8 +4,9 @@
     "projects": [
       "src\\Application\\GameControllerForZwift.Core\\GameControllerForZwift.Core.csproj",
       "src\\Infrastructure\\GameControllerForZwift.Gamepad\\GameControllerForZwift.Gamepad.csproj",
-      "src\\Infrastructure\\GameControllerForZwift.Keyboard\\GameControllerForZwift.Keyboard.csproj",
-      "src\\Presentation\\GameControllerForZwift\\GameControllerForZwift.csproj"
+      "src\\Infrastructure\\GameControllerForZwift.Network\\GameControllerForZwift.Network.csproj",
+      "src\\Presentation\\GameControllerForZwift\\GameControllerForZwift.csproj",
+      "tools\\ZwiftLanProbe\\ZwiftLanProbe.csproj"
     ]
   }
 }

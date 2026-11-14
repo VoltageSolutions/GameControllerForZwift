@@ -11,17 +11,13 @@ namespace GameControllerForZwift.Core.Tests.Mapping
             // Arrange
             var input = ControllerInput.A;
             var function = ZwiftFunction.Select;
-            var playerView = ZwiftPlayerView.Drone;
-            var riderAction = ZwiftRiderAction.Nice;
 
             // Act
-            var mapping = new InputMapping(input, function, playerView, riderAction);
+            var mapping = new InputMapping(input, function);
 
             // Assert
             Assert.Equal(input, mapping.Input);
             Assert.Equal(function, mapping.Function);
-            Assert.Equal(playerView, mapping.PlayerView);
-            Assert.Equal(riderAction, mapping.RiderAction);
         }
 
         [Fact]
@@ -33,8 +29,6 @@ namespace GameControllerForZwift.Core.Tests.Mapping
             // Assert
             Assert.Equal(default, mapping.Input);
             Assert.Equal(default, mapping.Function);
-            Assert.Null(mapping.PlayerView);
-            Assert.Null(mapping.RiderAction);
         }
     }
 }

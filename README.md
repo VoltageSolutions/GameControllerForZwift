@@ -10,13 +10,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/merge.yml"><img alt="GitHub Workflow Status (with event)" src="https://img.shields.io/github/actions/workflow/status/VoltageSolutions/GameControllerForZwift/merge.yml"></a>
+  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/ci.yml"><img alt="CI Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/ci.yml/badge.svg?branch=main"></a>
   &nbsp;
-  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases">
-    <img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"/>
-  </a>
+  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/cd.yml"><img alt="CD Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/cd.yml/badge.svg?branch=main"></a>
   &nbsp;
-  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img title="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/publish_docs.yml/badge.svg"/></a>
+  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img alt="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/docs-deploy.yml/badge.svg?branch=main"></a>
+  &nbsp;
+  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases"><img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"></a>
 </p>
 
 ## Introduction
@@ -67,6 +67,15 @@ Post to the [Issues page](https://github.com/VoltageSolutions/GameControllerForZ
 ### Code
 
 This project follows a modified version of Git Flow where `main` always represents the latest version. Submit a PR - if I approve it, I will merge to a version branch for testing prior to merging to `main` and creating a new release.
+
+### Credits
+
+Thank you to the following people whose code or support helped make this possible.
+
+- [Roberto Viola (aka cagnulein)](https://github.com/cagnulein) - [qdomyos-zwift](https://github.com/cagnulein/qdomyos-zwift)
+- [jonasbark](https://github.com/jonasbark) - [SwiftControl](https://github.com/jonasbark/swiftcontrol)
+- [MattW2](https://github.com/MattW2) - provided a [Wireshark capture](https://github.com/MattW2/KickrShiftKey/tree/main/KickrBikeWireShark) of Wahoo KICKR BIKE SHIFT talking to Zwift
+- [Makinolo](https://www.makinolo.com/) - [blog investigating Zwift Play and Ride devices](https://www.makinolo.com/blog/2024/07/26/zwift-ride-protocol/)
 
 ### Donate
 

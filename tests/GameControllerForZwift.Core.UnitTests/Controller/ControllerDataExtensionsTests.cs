@@ -29,17 +29,17 @@ namespace GameControllerForZwift.Core.Tests.Controller
             // Arrange
             var controllerData = new ControllerData
             {
-                DPad_Up = true,
-                DPad_Down = false,
-                DPad_Left = true,
-                DPad_Right = false
+                DPadUp = true,
+                DPadDown = false,
+                DPadLeft = true,
+                DPadRight = false
             };
 
             // Act & Assert
-            Assert.True(controllerData.IsPressed(ControllerInput.DPad_Up));
-            Assert.False(controllerData.IsPressed(ControllerInput.DPad_Down));
-            Assert.True(controllerData.IsPressed(ControllerInput.DPad_Left));
-            Assert.False(controllerData.IsPressed(ControllerInput.DPad_Right));
+            Assert.True(controllerData.IsPressed(ControllerInput.DPadUp));
+            Assert.False(controllerData.IsPressed(ControllerInput.DPadDown));
+            Assert.True(controllerData.IsPressed(ControllerInput.DPadLeft));
+            Assert.False(controllerData.IsPressed(ControllerInput.DPadRight));
         }
 
         [Fact]
@@ -48,23 +48,23 @@ namespace GameControllerForZwift.Core.Tests.Controller
             // Arrange
             var controllerData = new ControllerData
             {
-                LeftThumbstick_Click = true,
-                RightThumbstick_Click = false
+                LeftThumbstickClick = true,
+                RightThumbstickClick = false
             };
 
             // Act & Assert
-            Assert.True(controllerData.IsPressed(ControllerInput.LeftThumbstick_Click));
-            Assert.False(controllerData.IsPressed(ControllerInput.RightThumbstick_Click));
+            Assert.True(controllerData.IsPressed(ControllerInput.LeftThumbstickClick));
+            Assert.False(controllerData.IsPressed(ControllerInput.RightThumbstickClick));
         }
 
         [Theory]
-        [InlineData(-6000, 0, ControllerInput.LeftThumbstick_TiltLeft, true)]    // Left tilt
-        [InlineData(6000, 0, ControllerInput.LeftThumbstick_TiltRight, true)]   // Right tilt
-        [InlineData(0, -6000, ControllerInput.LeftThumbstick_TiltUp, true)]     // Up tilt
-        [InlineData(0, 6000, ControllerInput.LeftThumbstick_TiltDown, true)]    // Down tilt
-        [InlineData(-4000, 0, ControllerInput.LeftThumbstick_TiltLeft, false)]  // Within deadzone (left)
-        [InlineData(0, 4000, ControllerInput.LeftThumbstick_TiltDown, false)]   // Within deadzone (down)]
-        [InlineData(-6000, 7000, ControllerInput.LeftThumbstick_TiltLeft, false)] // Conflicting directions
+        [InlineData(-6000, 0, ControllerInput.LeftThumbstickTiltLeft, true)]    // Left tilt
+        [InlineData(6000, 0, ControllerInput.LeftThumbstickTiltRight, true)]   // Right tilt
+        [InlineData(0, -6000, ControllerInput.LeftThumbstickTiltUp, true)]     // Up tilt
+        [InlineData(0, 6000, ControllerInput.LeftThumbstickTiltDown, true)]    // Down tilt
+        [InlineData(-4000, 0, ControllerInput.LeftThumbstickTiltLeft, false)]  // Within deadzone (left)
+        [InlineData(0, 4000, ControllerInput.LeftThumbstickTiltDown, false)]   // Within deadzone (down)]
+        [InlineData(-6000, 7000, ControllerInput.LeftThumbstickTiltLeft, false)] // Conflicting directions
         public void IsPressed_ReturnsCorrectResult_ForThumbstickTiltDirections(double x, double y, ControllerInput input, bool expectedResult)
         {
             // Arrange

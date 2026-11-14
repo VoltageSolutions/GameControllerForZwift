@@ -6,7 +6,7 @@ namespace GameControllerForZwift.UITests
     public class AppFixture : IDisposable
     {
         private const string WindowsApplicationDriverUrl = "http://127.0.0.1:4723";
-        public WindowsDriver AppSession;
+        public WindowsDriver AppSession { get; }
 
         public AppFixture()
         {
@@ -29,23 +29,38 @@ namespace GameControllerForZwift.UITests
             AppSession.GetScreenshot().SaveAsFile("screenshot.png");
         }
 
-        private string GetApplicationPath()
+        private static string GetApplicationPath()
         {
-            // BaseDirectory points to the bin directory of the test project
-            var testDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            // Navigate back to the solution root and then to the app's output directory
+            // Explicit override, e.g. for CI or a published build.
+            var fromEnv = Environment.GetEnvironmentVariable("GC4Z_APP_PATH");
+            if (!string.IsNullOrWhiteSpace(fromEnv) && File.Exists(fromEnv))
+                return Path.GetFullPath(fromEnv);
+
 #if DEBUG
-            string relativePathToApp = @"..\..\..\..\..\src\Presentation\GameControllerForZwift\bin\Debug\net9.0-windows10.0.17763.0\GameControllerForZwift.exe";
+            const string configuration = "Debug";
 #else
-            string relativePathToApp = @"..\..\..\..\..\src\Presentation\GameControllerForZwift\bin\Release\net9.0-windows10.0.17763.0\GameControllerForZwift.exe";
+            const string configuration = "Release";
 #endif
-            return Path.GetFullPath(Path.Combine(testDirectory, relativePathToApp));
+            // Walk up from the test output directory to the solution root, then look in the app's output folder.
+            var dir = new DirectoryInfo(AppContext.BaseDirectory);
+            while (dir != null && !File.Exists(Path.Combine(dir.FullName, "GameControllerForZwift.sln")))
+                dir = dir.Parent;
+            if (dir == null)
+                throw new FileNotFoundException("Could not locate GameControllerForZwift.sln above " + AppContext.BaseDirectory + "; set GC4Z_APP_PATH to the exe.");
+
+            var binDir = Path.Combine(dir.FullName, "src", "Presentation", "GameControllerForZwift", "bin", configuration);
+            var exe = Directory.Exists(binDir)
+                ? Directory.GetFiles(binDir, "GameControllerForZwift.exe", SearchOption.AllDirectories)
+                    .OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault()
+                : null;
+            return exe ?? throw new FileNotFoundException("GameControllerForZwift.exe not found under " + binDir + "; build the app or set GC4Z_APP_PATH.");
         }
 
         public void Dispose()
         {
             System.Console.WriteLine("Closing GameControllerForZwift.exe");
             AppSession.Quit();
+            GC.SuppressFinalize(this);
         }
     }
 }

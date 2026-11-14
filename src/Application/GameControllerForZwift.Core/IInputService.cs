@@ -5,6 +5,6 @@ namespace GameControllerForZwift.Core
     public interface IInputService
     {
         public IEnumerable<IController> GetControllers();
-        public ControllerData ReadData(IController controller);
+        public ControllerData? ReadData(IController controller);
     }
 }

@@ -4,11 +4,11 @@
     {
         ControllerProfiles Profiles { get; }
 
-        public ControllerProfile GetDefaultProfile();
+        public ControllerProfile? GetDefaultProfile();
 
         void AddProfile(ControllerProfile profile);
 
-        ControllerProfile GetProfile(string profileName);
+        ControllerProfile? GetProfile(string profileName);
 
         void RemoveProfile(string profileName);
     }

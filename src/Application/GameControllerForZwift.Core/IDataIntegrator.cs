@@ -9,7 +9,7 @@ namespace GameControllerForZwift.Core
         /// <summary>
         /// Event that is raised when input is polled.
         /// </summary>
-        event EventHandler<InputStateChangedEventArgs> InputPolled;
+        event EventHandler<InputStateChangedEventArgs>? InputPolled;
 
         /// <summary>
         /// Gets the concurrent queue of controller data.
@@ -36,7 +36,7 @@ namespace GameControllerForZwift.Core
         /// Processes the provided controller data.
         /// </summary>
         /// <param name="controllerData">The controller data to process.</param>
-        void ProcessControllerData(ControllerData controllerData);
+        void ProcessControllerData(ControllerData? controllerData);
 
         public void UpdateMapping(InputMapping mapping);
     }

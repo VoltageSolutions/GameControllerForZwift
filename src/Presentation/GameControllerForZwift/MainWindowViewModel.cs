@@ -95,7 +95,7 @@ namespace GameControllerForZwift.UI.WPF
             return list;
         }
 
-        private bool FindNavigationItemsHierarchyFromPageType(Type pageType, ICollection<PagesInfoDataItem> pages, ref Stack<PagesInfoDataItem> stack)
+        private static bool FindNavigationItemsHierarchyFromPageType(Type pageType, ICollection<PagesInfoDataItem> pages, ref Stack<PagesInfoDataItem> stack)
         {
             var item = stack.Peek();
             bool found = false;

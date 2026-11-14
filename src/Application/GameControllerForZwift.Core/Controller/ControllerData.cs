@@ -5,9 +5,11 @@
         /// <summary>
         /// Threshold constants for input deadzones and trigger values.
         /// </summary>
-        private static class Thresholds
+        internal static class Thresholds
         {
             public const int Deadzone = 5000;
+            public const int TriggerDeadzone = 1638; // ~5% of full range
+            public const int AxisMax = 32767;
             public const int TriggerMaxValue = 32727;
         }
 
@@ -19,14 +21,14 @@
         public bool Y { get; set; }
         public bool Menu { get; set; }
         public bool View { get; set; }
-        public bool DPad_Up { get; set; }
-        public bool DPad_Down { get; set; }
-        public bool DPad_Left { get; set; }
-        public bool DPad_Right { get; set; }
+        public bool DPadUp { get; set; }
+        public bool DPadDown { get; set; }
+        public bool DPadLeft { get; set; }
+        public bool DPadRight { get; set; }
         public bool LeftBumper { get; set; }
         public bool RightBumper { get; set; }
-        public bool LeftThumbstick_Click { get; set; }
-        public bool RightThumbstick_Click { get; set; }
+        public bool LeftThumbstickClick { get; set; }
+        public bool RightThumbstickClick { get; set; }
 
         #endregion
 
@@ -39,24 +41,26 @@
         public double RightThumbstickY { get; set; }
         public double RightTrigger { get; set; }
         public DateTime Timestamp { get; set; }
+        /// <summary>Approximate battery level 0-100, or null if unknown / not reported.</summary>
+        public int? BatteryPercent { get; set; }
 
         #endregion
 
         #region Left Thumbstick Directions
 
-        public bool LeftStick_TiltUp => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Up);
-        public bool LeftStick_TiltDown => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Down);
-        public bool LeftStick_TiltLeft => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Left);
-        public bool LeftStick_TiltRight => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Right);
+        public bool LeftStickTiltUp => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Up);
+        public bool LeftStickTiltDown => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Down);
+        public bool LeftStickTiltLeft => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Left);
+        public bool LeftStickTiltRight => IsStickInDirection(LeftThumbstickX, LeftThumbstickY, Direction.Right);
 
         #endregion
 
         #region Right Thumbstick Directions
 
-        public bool RightStick_TiltUp => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Up);
-        public bool RightStick_TiltDown => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Down);
-        public bool RightStick_TiltLeft => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Left);
-        public bool RightStick_TiltRight => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Right);
+        public bool RightStickTiltUp => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Up);
+        public bool RightStickTiltDown => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Down);
+        public bool RightStickTiltLeft => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Left);
+        public bool RightStickTiltRight => IsStickInDirection(RightThumbstickX, RightThumbstickY, Direction.Right);
 
         #endregion
 
