@@ -109,3 +109,5 @@ See the [Roadmap](https://VoltageSolutions.github.io/GameControllerForZwift/buil
 ## Technical Details
 
 Please visit the [GitHub Pages site](https://VoltageSolutions.github.io/GameControllerForZwift) for more details.
+
+This is an AI-assisted project, leveraging support from Anthropic's Claude Code.
