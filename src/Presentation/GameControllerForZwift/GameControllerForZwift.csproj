@@ -45,8 +45,8 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageReference Include="DotNetProjects.SVGImage" Version="5.2.2" />
     <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.15" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.15" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.15" />
     <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="10.0.15" />
   </ItemGroup>
