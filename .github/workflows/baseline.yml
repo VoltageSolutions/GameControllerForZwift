@@ -100,20 +100,29 @@ jobs:
           }
           exit $rc
 
-      - name: Check coverage files exist
+      # On Windows the Codecov action expands a glob into several bare arguments, which its CLI rejects.
+      # List the files here and pass them as one comma-separated value. The copies under "In" folders are
+      # duplicates attached by the TRX logger, so skip them.
+      - name: Find coverage files
+        id: coverage-files
         if: ${{ !cancelled() }}
-        shell: bash
+        shell: pwsh
         run: |
-          if ! find TestResults -name coverage.cobertura.xml 2>/dev/null | grep -q .; then
+          $files = Get-ChildItem TestResults -Recurse -Filter coverage.cobertura.xml -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -notmatch '[\\/]In[\\/]' } |
+            ForEach-Object { (Resolve-Path -Relative $_.FullName) -replace '\\', '/' }
+          if (-not $files) {
             echo "::error title=Coverage skipped::Coverage skipped: unit tests did not produce coverage, see Unit tests"
             exit 1
-          fi
+          }
+          $files | ForEach-Object { Write-Host $_ }
+          "files=$($files -join ',')" >> $env:GITHUB_OUTPUT
 
       - uses: codecov/codecov-action@v7
         if: ${{ !cancelled() }}
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ./TestResults/**/coverage.cobertura.xml
+          files: ${{ steps.coverage-files.outputs.files }}
           fail_ci_if_error: true
 
       - name: Fail if any test failed
