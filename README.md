@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/ci.yml"><img alt="CI Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/ci.yml/badge.svg?branch=main"></a>
+  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/baseline.yml"><img alt="Baseline Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/baseline.yml/badge.svg?branch=main"></a>
   &nbsp;
   <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/cd.yml"><img alt="CD Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/cd.yml/badge.svg?branch=main"></a>
   &nbsp;
