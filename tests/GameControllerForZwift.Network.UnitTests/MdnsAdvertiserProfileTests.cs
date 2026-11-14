@@ -1,5 +1,6 @@
 using System.Net;
-using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.ZwiftRide;
+using GameControllerForZwift.Network.ZwiftRide;
 using GameControllerForZwift.Network.Mdns;
 using Makaretu.Dns;
 
@@ -10,7 +11,7 @@ public class MdnsAdvertiserProfileTests
     private static readonly IPAddress[] Addresses = { IPAddress.Parse("192.168.1.50"), IPAddress.Parse("10.0.0.7") };
 
     private static ServiceProfile Build(int port = 36866)
-        => new MdnsAdvertiser().BuildPrimaryProfile(DeviceIdentity.Default, port, Addresses);
+        => MdnsAdvertiser.BuildServiceProfile(DeviceIdentity.Default, port, Addresses);
 
     [Fact]
     public void Profile_HasWahooServiceTypeAndInstanceName()
@@ -30,22 +31,17 @@ public class MdnsAdvertiserProfileTests
     }
 
     [Fact]
-    public void Profile_TxtHasIdentityEntries()
+    public void Profile_TxtIsTheZwiftRideAdvertisement()
     {
         var txt = Assert.Single(Build().Resources.OfType<TXTRecord>());
         var id = DeviceIdentity.Default;
-        Assert.Contains(txt.Strings, s => s.StartsWith("ble-service-uuids=", StringComparison.Ordinal) && s.Contains("0xFC82", StringComparison.OrdinalIgnoreCase));
-        Assert.Contains("mac-address=" + id.MacAddress, txt.Strings);
-        Assert.Contains("serial-number=" + id.SerialNumber, txt.Strings);
-    }
-
-    [Fact]
-    public void Profile_TxtIncludesManufacturerDataWhenConfigured()
-    {
-        var options = DeviceProfileOptions.Default with { MfgData = "abcd" };
-        var profile = new MdnsAdvertiser(null, options).BuildPrimaryProfile(DeviceIdentity.Default, 1234, Addresses);
-        var txt = Assert.Single(profile.Resources.OfType<TXTRecord>());
-        Assert.Contains("manufacturer-data=abcd", txt.Strings);
+        Assert.Equal(new[]
+        {
+            "ble-service-uuids=0xFC82,0x1818,0x1826,00000001-19CA-4651-86E5-FA29DCDD09D1,A026EE0D-0A7D-4AB3-97FA-F1500F9FEB8B,d273f680-d548-419d-b9d1-fa0472345229",
+            "mac-address=" + id.MacAddress,
+            "serial-number=" + id.SerialNumber,
+            "manufacturer-data=4A0906B653",
+        }, txt.Strings.ToArray());
     }
 
     [Fact]

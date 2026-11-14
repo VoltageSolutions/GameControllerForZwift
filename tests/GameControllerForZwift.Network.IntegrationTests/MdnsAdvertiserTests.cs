@@ -1,4 +1,3 @@
-using GameControllerForZwift.Network.Dircon;
 using GameControllerForZwift.Network.Mdns;
 using System.Net;
 using System.Net.Sockets;

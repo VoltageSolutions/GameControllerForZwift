@@ -1,28 +1,29 @@
 using GameControllerForZwift.Core;
-using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.Output;
+using GameControllerForZwift.Network.ZwiftRide;
 using GameControllerForZwift.Network.Mdns;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 
 namespace GameControllerForZwift.Network.IntegrationTests
 {
-    public class NetworkServiceTests
+    public class ZwiftRideOutputServiceTests
     {
-        private readonly IZwiftControllerLink _link = Substitute.For<IZwiftControllerLink>();
-        private readonly NetworkService _service;
+        private readonly IZwiftRideLink _link = Substitute.For<IZwiftRideLink>();
+        private readonly ZwiftRideOutputService _service;
 
-        public NetworkServiceTests()
+        public ZwiftRideOutputServiceTests()
         {
-            _service = new NetworkService(_link, new MdnsAdvertiser(), DeviceIdentity.Default, Substitute.For<ILogger<NetworkService>>());
+            _service = new ZwiftRideOutputService(_link, new MdnsAdvertiser(), DeviceIdentity.Default, Substitute.For<ILogger<ZwiftRideOutputService>>());
         }
 
-        private static ZwiftControllerState State(double steer = 0, double brake = 0, int? battery = null, ZwiftFunction[]? pressed = null)
+        private static OutputState State(double steer = 0, double brake = 0, int? battery = null, ZwiftFunction[]? pressed = null)
             => new(new HashSet<ZwiftFunction>(pressed ?? Array.Empty<ZwiftFunction>()), steer, brake, battery);
 
-        private NetworkService LoopService()
+        private ZwiftRideOutputService LoopService()
         {
             _link.IsZwiftConnected.Returns(true);
-            return new NetworkService(_link, new MdnsAdvertiser(), DeviceIdentity.Default, Substitute.For<ILogger<NetworkService>>(), TimeSpan.FromMilliseconds(20));
+            return new ZwiftRideOutputService(_link, new MdnsAdvertiser(), DeviceIdentity.Default, Substitute.For<ILogger<ZwiftRideOutputService>>(), TimeSpan.FromMilliseconds(20));
         }
 
         private static async Task Settle() => await Task.Delay(150);
@@ -39,14 +40,14 @@ namespace GameControllerForZwift.Network.IntegrationTests
         [InlineData(ZwiftFunction.ShiftUp, ZwiftRideButton.RS1)]
         [InlineData(ZwiftFunction.ShiftDown, ZwiftRideButton.LS1)]
         public void ButtonMap_MapsZwiftRideFunctionsToButtons(ZwiftFunction function, ZwiftRideButton expected)
-            => Assert.Equal(expected, NetworkService.ButtonMap[function]);
+            => Assert.Equal(expected, ZwiftRideOutputService.ButtonMap[function]);
 
         [Fact]
         public void ButtonMap_HasNoOtherEntries_AndNoNoneOrAnalog()
         {
-            Assert.Equal(10, NetworkService.ButtonMap.Count);
-            Assert.False(NetworkService.ButtonMap.ContainsKey(ZwiftFunction.None));
-            Assert.False(NetworkService.ButtonMap.ContainsKey(ZwiftFunction.Brake));
+            Assert.Equal(10, ZwiftRideOutputService.ButtonMap.Count);
+            Assert.False(ZwiftRideOutputService.ButtonMap.ContainsKey(ZwiftFunction.None));
+            Assert.False(ZwiftRideOutputService.ButtonMap.ContainsKey(ZwiftFunction.Brake));
         }
 
         [Fact]
@@ -66,8 +67,8 @@ namespace GameControllerForZwift.Network.IntegrationTests
         [Fact]
         public void ButtonMap_NoLongerContainsSteering()
         {
-            Assert.False(NetworkService.ButtonMap.ContainsKey(ZwiftFunction.SteerLeft));
-            Assert.False(NetworkService.ButtonMap.ContainsKey(ZwiftFunction.SteerRight));
+            Assert.False(ZwiftRideOutputService.ButtonMap.ContainsKey(ZwiftFunction.SteerLeft));
+            Assert.False(ZwiftRideOutputService.ButtonMap.ContainsKey(ZwiftFunction.SteerRight));
         }
 
         [Theory]
@@ -98,9 +99,9 @@ namespace GameControllerForZwift.Network.IntegrationTests
                 await svc.UpdateAsync(State(steer: -1, pressed: new[] { ZwiftFunction.ShiftUp }));
                 await Settle();
                 await _link.Received().SendInputAsync(ZwiftRideButton.RS1, -100, 0, Arg.Any<CancellationToken>());
-                Assert.True(_link.ReceivedCalls().Count(c => c.GetMethodInfo().Name == nameof(IZwiftControllerLink.SendInputAsync)) >= 3, "should resend while active");
+                Assert.True(_link.ReceivedCalls().Count(c => c.GetMethodInfo().Name == nameof(IZwiftRideLink.SendInputAsync)) >= 3, "should resend while active");
 
-                await svc.UpdateAsync(ZwiftControllerState.Neutral);
+                await svc.UpdateAsync(OutputState.Neutral);
                 await Settle();
                 await _link.Received(1).SendInputAsync(ZwiftRideButton.None, 0, 0, Arg.Any<CancellationToken>());
                 _link.ClearReceivedCalls();

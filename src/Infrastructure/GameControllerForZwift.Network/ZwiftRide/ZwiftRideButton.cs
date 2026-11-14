@@ -1,4 +1,4 @@
-namespace GameControllerForZwift.Network.Dircon;
+namespace GameControllerForZwift.Network.ZwiftRide;
 
 /// <summary>
 /// Logical Zwift Ride buttons, named as in Zwift's own labels. Values are the "pressed" masks; on the wire the keypad

@@ -5,19 +5,19 @@ using GameControllerForZwift.Core.Mapping;
 
 namespace GameControllerForZwift.Core.Tests
 {
-    public class DataIntegratorZwiftOutputTests
+    public class DataIntegratorOutputTests
     {
-        private readonly IZwiftControllerOutput _zwift = Substitute.For<IZwiftControllerOutput>();
+        private readonly IOutputService _outputService = Substitute.For<IOutputService>();
         private readonly IControllerProfileService _profileService = Substitute.For<IControllerProfileService>();
         private readonly ControllerProfile _profile = new ControllerProfile();
         private readonly DataIntegrator _sut;
 
-        public DataIntegratorZwiftOutputTests()
+        public DataIntegratorOutputTests()
         {
             var profiles = new ControllerProfiles();
             profiles.Profiles.Add(_profile);
             _profileService.Profiles.Returns(profiles);
-            _sut = new DataIntegrator(Substitute.For<IInputService>(), _profileService, _zwift, 10);
+            _sut = new DataIntegrator(Substitute.For<IInputService>(), _profileService, _outputService, 10);
         }
 
         private async Task RunAsync(params ControllerData[] data)
@@ -27,9 +27,9 @@ namespace GameControllerForZwift.Core.Tests
             try { await _sut.WriteDataAsync(cts.Token); } catch (OperationCanceledException) { }
         }
 
-        private ZwiftControllerState[] States() =>
-            _zwift.ReceivedCalls().Where(c => c.GetMethodInfo().Name == nameof(IZwiftControllerOutput.UpdateAsync))
-                  .Select(c => (ZwiftControllerState)c.GetArguments()[0]!).ToArray();
+        private OutputState[] States() =>
+            _outputService.ReceivedCalls().Where(c => c.GetMethodInfo().Name == nameof(IOutputService.UpdateAsync))
+                  .Select(c => (OutputState)c.GetArguments()[0]!).ToArray();
 
         [Fact]
         public async Task SteerRight_And_SteerLeft_ProduceSignedSteer()
@@ -95,7 +95,7 @@ namespace GameControllerForZwift.Core.Tests
         {
             _sut.StartProcessing(Substitute.For<IController>());
             _sut.StopProcessing();
-            _zwift.Received().UpdateAsync(Arg.Is<ZwiftControllerState>(s => s.IsNeutral), Arg.Any<CancellationToken>());
+            _outputService.Received().UpdateAsync(Arg.Is<OutputState>(s => s.IsNeutral), Arg.Any<CancellationToken>());
         }
     }
 }

@@ -9,7 +9,7 @@ namespace GameControllerForZwift.Core
         #region Fields
         private readonly IInputService _inputService;
         private readonly IControllerProfileService _controllerProfileService;
-        private readonly IZwiftControllerOutput _zwiftOutput;
+        private readonly IOutputService _outputService;
         public ConcurrentQueue<ControllerData> DataQueue => _dataQueue;
         private readonly ConcurrentQueue<ControllerData> _dataQueue = new ConcurrentQueue<ControllerData>();
         private readonly int _maxQueueSize;
@@ -19,12 +19,12 @@ namespace GameControllerForZwift.Core
         #endregion
 
         #region Constructor
-        public DataIntegrator(IInputService inputService, IControllerProfileService controllerProfileService, IZwiftControllerOutput zwiftOutput, int maxQueueSize = 10)
+        public DataIntegrator(IInputService inputService, IControllerProfileService controllerProfileService, IOutputService outputService, int maxQueueSize = 10)
         {
             _inputService = inputService;
             _controllerProfileService = controllerProfileService;
             _maxQueueSize = maxQueueSize;
-            _zwiftOutput = zwiftOutput;
+            _outputService = outputService;
         }
         #endregion      
 
@@ -47,7 +47,7 @@ namespace GameControllerForZwift.Core
             if (null != _cts)
                 _cts.Cancel();
 
-            try { _ = _zwiftOutput.UpdateAsync(ZwiftControllerState.Neutral); }
+            try { _ = _outputService.UpdateAsync(OutputState.Neutral); }
             catch { /* best effort */ }
         }
 
@@ -141,8 +141,8 @@ namespace GameControllerForZwift.Core
 
                     if (!cancellationToken.IsCancellationRequested)
                     {
-                        var state = new ZwiftControllerState(pressed, Math.Clamp(right - left, -1.0, 1.0), Math.Clamp(brake, 0.0, 1.0), controllerData.BatteryPercent);
-                        await _zwiftOutput.UpdateAsync(state);
+                        var state = new OutputState(pressed, Math.Clamp(right - left, -1.0, 1.0), Math.Clamp(brake, 0.0, 1.0), controllerData.BatteryPercent);
+                        await _outputService.UpdateAsync(state);
                     }
                 }
                 await Task.Delay(10, cancellationToken); // Adjust delay based on needs

@@ -1,4 +1,4 @@
-using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.DirectConnect;
 
 namespace GameControllerForZwift.Network.UnitTests;
 

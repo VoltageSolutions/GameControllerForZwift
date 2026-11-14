@@ -20,7 +20,7 @@ This project's organization loosely follows a Clean Architecture Layout.
 
 `GameControllerForZwift.Gamepad` leverages SDL2 to capture game controller input.
 
-`GameControllerForZwift.Network` emulates a Zwift Ride controller over the local network (Wahoo DirCon over WiFi/LAN plus mDNS), which is how Zwift receives shifting, steering, braking and menu input. Keyboard emulation has been removed.
+`GameControllerForZwift.Network` emulates a Zwift Ride controller over the local network (Wahoo Direct Connect, "DIRCON", over WiFi/LAN plus mDNS), which is how Zwift receives shifting, steering, braking and menu input. Keyboard emulation has been removed.
 
 ### Presentation
 

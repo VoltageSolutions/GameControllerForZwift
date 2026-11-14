@@ -1,5 +1,6 @@
 using System.Net;
-using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.ZwiftRide;
+using GameControllerForZwift.Network.ZwiftRide;
 using GameControllerForZwift.Network.Mdns;
 
 namespace GameControllerForZwift.Network.UnitTests;
@@ -24,11 +25,10 @@ public class MdnsAdvertiserBranchTests
         => Assert.Throws<ArgumentNullException>(() => new MdnsAdvertiser().Start(null!, 1234));
 
     [Fact]
-    public void BuildPrimaryProfile_NullArguments_Throw()
+    public void BuildServiceProfile_NullArguments_Throw()
     {
-        var advertiser = new MdnsAdvertiser();
-        Assert.Throws<ArgumentNullException>(() => advertiser.BuildPrimaryProfile(null!, 1, Addresses));
-        Assert.Throws<ArgumentNullException>(() => advertiser.BuildPrimaryProfile(DeviceIdentity.Default, 1, null!));
+        Assert.Throws<ArgumentNullException>(() => MdnsAdvertiser.BuildServiceProfile(null!, 1, Addresses));
+        Assert.Throws<ArgumentNullException>(() => MdnsAdvertiser.BuildServiceProfile(DeviceIdentity.Default, 1, null!));
     }
 
     [Fact]
@@ -39,32 +39,8 @@ public class MdnsAdvertiserBranchTests
     public void InstanceNameWithDots_IsSanitisedToSingleLabel()
     {
         var identity = DeviceIdentity.Default with { Name = "Zwift v1.2 Bike" };
-        var profile = new MdnsAdvertiser().BuildPrimaryProfile(identity, 1234, Addresses);
+        var profile = MdnsAdvertiser.BuildServiceProfile(identity, 1234, Addresses);
         Assert.DoesNotContain(".2", profile.HostName.ToString().Replace(".local", ""));
-    }
-
-    [Fact]
-    public void ProfileOptions_AddObcPowerMfgDataAndExtraTxt()
-    {
-        var options = new DeviceProfileOptions(
-            Advert: AdvertKind.Zwift, MfgData: "4A0906B653", TxtExtra: new[] { "foo=bar" }, AddObcUuid: true, AddPowerService: true);
-        var profile = new MdnsAdvertiser(null, options).BuildPrimaryProfile(DeviceIdentity.Default, 1234, Addresses);
-        var txt = profile.Resources.OfType<Makaretu.Dns.TXTRecord>().Single().Strings;
-        var uuids = Assert.Single(txt, s => s.StartsWith("ble-service-uuids=", StringComparison.Ordinal));
-        Assert.Contains(DeviceProfileOptions.ObcServiceUuid, uuids);
-        Assert.EndsWith(",0x1818", uuids);
-        Assert.Contains("manufacturer-data=4A0906B653", txt);
-        Assert.Contains("foo=bar", txt);
-        Assert.Contains("serial-number=" + DeviceIdentity.Default.SerialNumber, txt);
-    }
-
-    [Fact]
-    public void KickrAdvert_WithPowerService_DoesNotDuplicate1818()
-    {
-        var options = new DeviceProfileOptions(AddPowerService: true);
-        var profile = new MdnsAdvertiser(null, options).BuildPrimaryProfile(DeviceIdentity.Default, 1234, Addresses);
-        var uuids = profile.Resources.OfType<Makaretu.Dns.TXTRecord>().Single().Strings.Single(s => s.StartsWith("ble-service-uuids=", StringComparison.Ordinal));
-        Assert.Single(uuids.Split(','), p => p.Equals("0x1818", StringComparison.OrdinalIgnoreCase));
     }
 
     [Fact]

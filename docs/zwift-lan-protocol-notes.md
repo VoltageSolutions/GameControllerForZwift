@@ -1,6 +1,8 @@
 # Zwift LAN (DirCon) controller emulation - notes from `bikecontrol`
 
 Source repo: `$HOME/mnt/bikecontrol` (Dart/Flutter, read-only). Paths below are relative to it.
+> **DIRCON = Wahoo Direct Connect** (Bluetooth LE GATT tunnelled over TCP). Our code names these types `DirectConnect*` (`DirectConnectMessage`, `DirectConnectServer`, `DirectConnectSession`); "DirCon" below is the wire protocol name, and `DirconMessage` / `DirconFrameAccumulator` are bikecontrol's own (Dart) classes. The KICKR / Click / Play identities and `Network/Protos/*.proto` described in this document were research tools; the code and protos were removed, the shipped device is the Zwift Ride profile (`ZwiftRideProfile`, `ZwiftControlProtocol`).
+
 Convention: `file:line` citations. **UNVERIFIED** = not in the repo, inferred or from general DirCon knowledge.
 
 ## 0. Critical caveat: the DirCon/TCP/mDNS core is NOT in this repo
@@ -266,12 +268,12 @@ Services served by qdomyos for bike (`mgr.cpp:281-287,305-344`): FTMS 1826 (2ACC
 ## Controller identity (device-info) research
 
 Question: what does Zwift learn about *what kind of device we are* from our replies after connecting, and can a KICKR-advertised
-emulator present itself as a Ride / Click v2 / Click v1 / Play instead of a self-shifting KICKR BIKE? Implemented probe-only as
-`--identity kickr|ride|clickv2|clickv1|play` (`ControllerIdentity` in `DeviceProfile.cs`, applied in `ZwiftControlProtocol`).
+emulator present itself as a Ride / Click v2 / Click v1 / Play instead of a self-shifting KICKR BIKE? Was implemented probe-only as
+`--identity kickr|ride|clickv2|clickv1|play` (the `ControllerIdentity` enum, removed in the Ride-only refactor; see git history).
 
 ### a. Request / reply structure (decoded with zp.proto)
 
-- `00 08 xx` is opcode `GET = 0x00` with `Get { required uint32 dataObjectId = 1 }` (`Network/Protos/zp.proto:36` Opcode enum, `zp.proto:510`). The reply is opcode
+- `00 08 xx` is opcode `GET = 0x00` with `Get { required uint32 dataObjectId = 1 }` (`zp.proto:36` (the proto files were removed from the repo; see git history) Opcode enum, `zp.proto:510`). The reply is opcode
   `GET_RESPONSE = 0x3c` with `GetResponse { required uint32 dataObjectId = 1; optional bytes dataObjectData = 2 }` (`zp.proto:672`). Data object ids (`enum DO`):
   `0x000` PAGE_DEV_INFO, `0x010` PAGE_CLIENT_SERVER_CONFIGURATION, `0x210` PAGE_TRAINER_GEAR_INDEX_CONFIG, `0x303` BATTERY_STATE, `0x400` PAGE_CONTROLLER_INPUT_CONFIG,
   `0x500` SENSOR_RELAY_DATA_PAGE. So `00 08 00` = 0, `00 08 10` = 16, `00 08 80 08` = 1024, `00 08 83 06` = 771, `00 08 90 04` = 528, `00 08 80 0a` = 1280.

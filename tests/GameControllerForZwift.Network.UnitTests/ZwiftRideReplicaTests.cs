@@ -1,23 +1,20 @@
-using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.DirectConnect;
+using GameControllerForZwift.Network.ZwiftRide;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GameControllerForZwift.Network.UnitTests;
 
 /// <summary>
-/// BikeControl replica (GattKind.BikeControlRide + ControllerIdentity.BikeControlRide) against the decoded loopback capture
+/// The Zwift Ride profile (<see cref="ZwiftRideProfile"/> plus <see cref="ZwiftControlProtocol"/>) against the decoded loopback capture
 /// docs/captures/BikeControl Loopback.pcapng (Zwift to BikeControl on TCP 36868, first 0.6 s of the conversation).
 /// </summary>
-public class BikeControlReplicaTests
+public class ZwiftRideReplicaTests
 {
-    private static readonly DeviceIdentity AnyIdentity = new("Voltage Gamepad", "612034871", "02-47-5A-00-00-01", "1.21.18", "3");
     private static readonly byte[] Zwift2 = BleUuid.Parse("00000002-19CA-4651-86E5-FA29DCDD09D1").ToBytes();
     private static readonly byte[] Zwift4 = BleUuid.Parse("00000004-19CA-4651-86E5-FA29DCDD09D1").ToBytes();
 
     private static byte[] Hex(string h) => Convert.FromHexString(h);
     private static byte[] Cat(params byte[][] parts) => parts.SelectMany(p => p).ToArray();
-
-    private static readonly DeviceProfileOptions Options = new(
-        AdvertKind.Kickr, GattKind.BikeControlRide, false, DeviceProfiles.DefaultManufacturer, ControllerIdentity.BikeControlRide);
 
     // (message id, seq, request payload hex, captured response payload hex) in the order Zwift sent them, then the writes BikeControl never answered (ack only).
     private static readonly (byte Id, byte Seq, string Req, string Resp)[] Steps =
@@ -61,22 +58,22 @@ public class BikeControlReplicaTests
         (Zwift4, "3c08830612080800106418002000"),
     };
 
-    private static ZwiftControlProtocol NewProtocol() => new(AnyIdentity, null, ControllerIdentity.BikeControlRide);
+    private static ZwiftControlProtocol NewProtocol() => new();
 
     [Fact]
     public async Task CapturedConversation_ProducesCapturedResponses()
     {
         using var pair = await LoopbackPair.CreateAsync();
-        var session = new DirconSession(pair.Server, DeviceProfiles.CreateServices(Options, AnyIdentity), NewProtocol(), NullLogger.Instance, "test");
+        var session = new DirectConnectSession(pair.Server, ZwiftRideProfile.CreateServices(), NewProtocol(), NullLogger.Instance, "test");
         var run = session.RunAsync();
 
-        var burst = Steps.SelectMany(s => DirconMessage.Create(s.Id, s.Seq, 0, Hex(s.Req)).Encode()).ToArray();
+        var burst = Steps.SelectMany(s => DirectConnectMessage.Create(s.Id, s.Seq, 0, Hex(s.Req)).Encode()).ToArray();
         await pair.Client.WriteAsync(burst);
 
         var messages = await pair.ReadMessagesAsync(Steps.Length + Notifications.Length);
         Assert.Equal(Steps.Length + Notifications.Length, messages.Count);
 
-        var responses = messages.Where(m => m.MessageId != DirconMessageId.Notification).ToList();
+        var responses = messages.Where(m => m.MessageId != DirectConnectMessageId.Notification).ToList();
         Assert.Equal(Steps.Length, responses.Count);
         for (int i = 0; i < Steps.Length; i++)
         {
@@ -86,7 +83,7 @@ public class BikeControlReplicaTests
             Assert.Equal(Hex(Steps[i].Resp), responses[i].Payload);
         }
 
-        var notes = messages.Where(m => m.MessageId == DirconMessageId.Notification).ToList();
+        var notes = messages.Where(m => m.MessageId == DirectConnectMessageId.Notification).ToList();
         Assert.Equal(Notifications.Length, notes.Count);
         for (int i = 0; i < notes.Count; i++)
             Assert.Equal(Cat(Notifications[i].Uuid, Hex(Notifications[i].Data)), notes[i].Payload);
@@ -100,43 +97,27 @@ public class BikeControlReplicaTests
     {
         var protocol = NewProtocol();
         foreach (var hex in new[] { "410805", "442001", "440801", "0008800a", "00089004", "3f080010022203288002" })
-            Assert.Empty(protocol.HandleWrite(DirconUuids.ZwiftSyncRx, Hex(hex)));
-    }
-
-    [Fact]
-    public void Subscription_ProducesNoStatusStrings()
-    {
-        var protocol = NewProtocol();
-        Assert.Empty(protocol.OnSubscribed(DirconUuids.ZwiftAsync));
-        Assert.Empty(protocol.OnSubscribed(DirconUuids.ZwiftSyncTx));
+            Assert.Empty(protocol.HandleWrite(ZwiftRideUuids.SyncRx, Hex(hex)));
     }
 
     [Fact]
     public void Gatt_HasBothZwiftInstancesAndCapturedProperties()
     {
-        var services = DeviceProfiles.CreateServices(Options, AnyIdentity);
+        var services = ZwiftRideProfile.CreateServices();
         Assert.Equal(new[] { "0000FC82", "D273F680", "00001826", "0000180A", "00000001", "0000180D" },
             services.Select(s => s.Uuid.ToString().Substring(0, 8).ToUpperInvariant()).ToArray());
 
         var fc82 = services[0];
-        Assert.Equal(new[] { DirconUuids.ZwiftSyncRx, DirconUuids.ZwiftAsync, DirconUuids.ZwiftSyncTx }, fc82.Characteristics.Select(c => c.Uuid).ToArray());
+        Assert.Equal(new[] { ZwiftRideUuids.SyncRx, ZwiftRideUuids.AsyncOut, ZwiftRideUuids.SyncTx }, fc82.Characteristics.Select(c => c.Uuid).ToArray());
         Assert.Equal(new[] { GattProperties.Write, GattProperties.Notify, GattProperties.Notify }, fc82.Characteristics.Select(c => c.Properties).ToArray());
 
         var zwift = services[4];
-        Assert.Equal(DirconUuids.ZwiftService, zwift.Uuid);
-        Assert.Equal(new[] { DirconUuids.ZwiftAsync, DirconUuids.ZwiftSyncRx, DirconUuids.ZwiftSyncTx }, zwift.Characteristics.Select(c => c.Uuid).ToArray());
+        Assert.Equal(ZwiftRideUuids.ZwiftService, zwift.Uuid);
+        Assert.Equal(new[] { ZwiftRideUuids.AsyncOut, ZwiftRideUuids.SyncRx, ZwiftRideUuids.SyncTx }, zwift.Characteristics.Select(c => c.Uuid).ToArray());
         Assert.Equal(new[] { GattProperties.Notify, GattProperties.Write, GattProperties.Indicate }, zwift.Characteristics.Select(c => c.Properties).ToArray());
 
         var info = services[3].Characteristics.Select(c => System.Text.Encoding.ASCII.GetString(c.Value)).ToArray();
         Assert.Equal(new[] { "BikeControl", "1337", "1.0", "1.0" }, info);
-    }
-
-    [Fact]
-    public void ManufacturerOverride_IsHonoured()
-    {
-        var options = Options with { Manufacturer = "Zwift" };
-        var info = DeviceProfiles.CreateServices(options, AnyIdentity)[3];
-        Assert.Equal("Zwift", System.Text.Encoding.ASCII.GetString(info.Characteristics[0].Value));
     }
 
     [Fact]
@@ -146,17 +127,17 @@ public class BikeControlReplicaTests
         Assert.Equal(Hex("2308ffffffff0f"), ZwiftControlProtocol.BuildKeyPadFrame(ZwiftRideButton.None));
 
         // Both 00000002 instances (FC82 and 00000001-19CA) exist in the model; DIRCON addresses them by UUID, so one notification reaches Zwift.
-        var services = DeviceProfiles.CreateServices(Options, AnyIdentity);
-        Assert.Equal(2, services.SelectMany(s => s.Characteristics).Count(c => c.Uuid == DirconUuids.ZwiftAsync));
+        var services = ZwiftRideProfile.CreateServices();
+        Assert.Equal(2, services.SelectMany(s => s.Characteristics).Count(c => c.Uuid == ZwiftRideUuids.AsyncOut));
 
         using var pair = await LoopbackPair.CreateAsync();
-        var session = new DirconSession(pair.Server, services, NewProtocol(), NullLogger.Instance, "test");
+        var session = new DirectConnectSession(pair.Server, services, NewProtocol(), NullLogger.Instance, "test");
         var run = session.RunAsync();
-        await pair.Client.WriteAsync(DirconMessage.Create(5, 1, 0, Cat(Zwift2, new byte[] { 1 })).Encode());
+        await pair.Client.WriteAsync(DirectConnectMessage.Create(5, 1, 0, Cat(Zwift2, new byte[] { 1 })).Encode());
         var ack = await pair.ReadMessagesAsync(1);
         Assert.Equal(Zwift2, ack[0].Payload);
 
-        Assert.True(await session.NotifyAsync(DirconUuids.ZwiftAsync, ZwiftControlProtocol.BuildKeyPadFrame(ZwiftRideButton.None), false));
+        Assert.True(await session.NotifyAsync(ZwiftRideUuids.AsyncOut, ZwiftControlProtocol.BuildKeyPadFrame(ZwiftRideButton.None), false));
         var note = await pair.ReadMessagesAsync(1);
         Assert.Equal(Cat(Zwift2, Hex("2308ffffffff0f")), note[0].Payload);
 

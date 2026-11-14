@@ -1,6 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
-using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.DirectConnect;
 
 namespace GameControllerForZwift.Network.UnitTests;
 
@@ -42,10 +42,10 @@ internal sealed class LoopbackPair : IDisposable
     }
 
     /// <summary>Reads exactly <paramref name="count"/> DIRCON messages (10 s timeout).</summary>
-    public async Task<List<DirconMessage>> ReadMessagesAsync(int count)
+    public async Task<List<DirectConnectMessage>> ReadMessagesAsync(int count)
     {
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
-        var result = new List<DirconMessage>();
+        var result = new List<DirectConnectMessage>();
         var buffer = new byte[256 * 1024];
         int length = 0;
         while (result.Count < count)
@@ -55,7 +55,7 @@ internal sealed class LoopbackPair : IDisposable
                 break;
             length += read;
             int offset = 0;
-            while (DirconMessage.TryParse(buffer.AsSpan(offset, length - offset), out var msg, out int consumed))
+            while (DirectConnectMessage.TryParse(buffer.AsSpan(offset, length - offset), out var msg, out int consumed))
             {
                 result.Add(msg!);
                 offset += consumed;

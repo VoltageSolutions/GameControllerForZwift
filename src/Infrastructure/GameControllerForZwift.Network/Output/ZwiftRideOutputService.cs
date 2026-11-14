@@ -1,16 +1,17 @@
 using GameControllerForZwift.Core;
-using GameControllerForZwift.Network.Dircon;
 using GameControllerForZwift.Network.Mdns;
+using GameControllerForZwift.Network.ZwiftRide;
 using Microsoft.Extensions.Logging;
 
-namespace GameControllerForZwift.Network
+namespace GameControllerForZwift.Network.Output
 {
     /// <summary>
-    /// Output service that presses buttons on an emulated Zwift Ride controller exposed through a Wahoo DirCon (LAN) server.
-    /// Lifecycle: call <see cref="StartAsync"/> at app startup (starts the DirCon server, then advertises it via mDNS)
+    /// <see cref="IOutputService"/> that delivers the controller state to Zwift as an emulated Zwift Ride controller: it owns the
+    /// Direct Connect (DIRCON) server and its mDNS advertisement, the 100 ms send loop, the button map, the analog paddle math and the battery report.
+    /// Lifecycle: call <see cref="StartAsync"/> at app startup (starts the Direct Connect server, then advertises it via mDNS)
     /// and <see cref="StopAsync"/>/<see cref="DisposeAsync"/> on exit. There are no constructor side effects.
     /// </summary>
-    public sealed class NetworkService : IZwiftControllerOutput, IAsyncDisposable
+    public sealed class ZwiftRideOutputService : IOutputService, IAsyncDisposable
     {
         /// <summary>
         /// Single place to edit the ZwiftFunction -> Zwift Ride button mapping (exactly what a Zwift Ride provides).
@@ -32,17 +33,17 @@ namespace GameControllerForZwift.Network
             [ZwiftFunction.ShiftDown] = ZwiftRideButton.LS1,
         };
 
-        private readonly IZwiftControllerLink _link;
+        private readonly IZwiftRideLink _link;
         private readonly MdnsAdvertiser _mdns;
         private readonly DeviceIdentity _identity;
-        private readonly ILogger<NetworkService> _logger;
+        private readonly ILogger<ZwiftRideOutputService> _logger;
 
         private static readonly TimeSpan DefaultResendInterval = TimeSpan.FromMilliseconds(100);
 
         private readonly TimeSpan _resendInterval;
         private readonly object _stateLock = new();
         private readonly SemaphoreSlim _signal = new(0, int.MaxValue);
-        private ZwiftControllerState _state = ZwiftControllerState.Neutral;
+        private OutputState _state = OutputState.Neutral;
         private int? _lastBattery;
         private CancellationTokenSource? _loopCts;
         private Task? _loopTask;
@@ -50,7 +51,7 @@ namespace GameControllerForZwift.Network
         private readonly object _startGate = new();
         private bool _started;
 
-        public NetworkService(IZwiftControllerLink link, MdnsAdvertiser mdns, DeviceIdentity identity, ILogger<NetworkService> logger, TimeSpan? resendInterval = null)
+        public ZwiftRideOutputService(IZwiftRideLink link, MdnsAdvertiser mdns, DeviceIdentity identity, ILogger<ZwiftRideOutputService> logger, TimeSpan? resendInterval = null)
         {
             _resendInterval = resendInterval ?? DefaultResendInterval;
             _link = link;
@@ -65,7 +66,7 @@ namespace GameControllerForZwift.Network
         public bool IsZwiftConnected => _link.IsZwiftConnected;
 
         /// <summary>Non-blocking: stores the latest state and wakes the send loop when the resulting frame content changed.</summary>
-        public Task UpdateAsync(ZwiftControllerState state, CancellationToken ct = default)
+        public Task UpdateAsync(OutputState state, CancellationToken ct = default)
         {
             bool changed;
             bool batteryChanged;
@@ -83,7 +84,7 @@ namespace GameControllerForZwift.Network
             return Task.CompletedTask;
         }
 
-        private static (ZwiftRideButton Mask, sbyte Zl, sbyte Zr) ComputeInput(ZwiftControllerState state)
+        private static (ZwiftRideButton Mask, sbyte Zl, sbyte Zr) ComputeInput(OutputState state)
         {
             var mask = ZwiftRideButton.None;
             foreach (var f in state.Pressed)
@@ -136,7 +137,7 @@ namespace GameControllerForZwift.Network
                     continue;
                 }
 
-                ZwiftControllerState state;
+                OutputState state;
                 lock (_stateLock) state = _state;
                 var current = ComputeInput(state);
                 bool active = current.Mask != ZwiftRideButton.None || current.Zl != 0 || current.Zr != 0;
@@ -169,7 +170,7 @@ namespace GameControllerForZwift.Network
                 await _link.StartAsync(cancellationToken).ConfigureAwait(false);
                 _mdns.Start(_identity, _link.Port);
                 StartSendLoop();
-                _logger.LogInformation("Zwift LAN controller started on port {Port}", _link.Port);
+                _logger.LogInformation("Zwift Ride controller started on port {Port}", _link.Port);
             }
             catch
             {
@@ -197,7 +198,7 @@ namespace GameControllerForZwift.Network
         {
             if (!connected)
             {
-                lock (_stateLock) _state = ZwiftControllerState.Neutral;
+                lock (_stateLock) _state = OutputState.Neutral;
                 SignalLoop();
             }
             ConnectionChanged?.Invoke(this, connected);
@@ -206,34 +207,9 @@ namespace GameControllerForZwift.Network
         public async ValueTask DisposeAsync()
         {
             try { await StopAsync().ConfigureAwait(false); }
-            catch (Exception ex) { _logger.LogDebug(ex, "Error stopping Zwift LAN controller."); }
+            catch (Exception ex) { _logger.LogDebug(ex, "Error stopping Zwift Ride controller."); }
             await _link.DisposeAsync().ConfigureAwait(false);
             await _mdns.DisposeAsync().ConfigureAwait(false);
         }
-    }
-}
-
-namespace GameControllerForZwift.Network
-{
-    /// <summary>Maps steer/brake axes to the analog ZL (location 0) / ZR (location 1) paddle values of the Zwift Ride.</summary>
-    internal static class PaddleMath
-    {
-        /// <summary>
-        /// ZL: outward (negative) = steer left, inward (positive) = brake. ZR: outward (positive) = steer right, inward (negative) = brake.
-        /// When steering and braking compete for the same paddle the larger magnitude wins (steer on ties).
-        /// </summary>
-        public static (sbyte Zl, sbyte Zr) Compute(double steer, double brake)
-        {
-            int s = Scale(steer, -100, 100);
-            int b = Scale(brake, 0, 100);
-            int left = Math.Min(s, 0);
-            int right = Math.Max(s, 0);
-            int zl = -left >= b ? left : b;
-            int zr = right >= b ? right : -b;
-            return ((sbyte)zl, (sbyte)zr);
-        }
-
-        private static int Scale(double v, int min, int max)
-            => double.IsNaN(v) ? 0 : (int)Math.Clamp(Math.Round(100 * v, MidpointRounding.AwayFromZero), min, max);
     }
 }

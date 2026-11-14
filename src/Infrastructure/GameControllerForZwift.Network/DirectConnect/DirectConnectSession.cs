@@ -1,12 +1,14 @@
+using GameControllerForZwift.Network.ZwiftRide;
 using Microsoft.Extensions.Logging;
 
-namespace GameControllerForZwift.Network.Dircon;
+namespace GameControllerForZwift.Network.DirectConnect;
 
 /// <summary>
-/// One DIRCON client connection. Owns a <see cref="Stream"/> (any stream, so it is unit-testable),
+/// Wahoo Direct Connect (DIRCON): Bluetooth LE GATT tunnelled over TCP.
+/// One client connection: owns a <see cref="Stream"/> (any stream, so it is unit-testable),
 /// reassembles pipelined requests and answers them per the DIRCON spec.
 /// </summary>
-public sealed class DirconSession : IAsyncDisposable
+public sealed class DirectConnectSession : IAsyncDisposable
 {
     private const int MaxPendingPerCharacteristic = 64;
 
@@ -27,7 +29,7 @@ public sealed class DirconSession : IAsyncDisposable
     private int _bufferLength;
 
     /// <summary>Creates a session over <paramref name="stream"/>.</summary>
-    public DirconSession(
+    public DirectConnectSession(
         Stream stream,
         IReadOnlyList<GattService> services,
         ZwiftControlProtocol protocol,
@@ -73,7 +75,7 @@ public sealed class DirconSession : IAsyncDisposable
                 _bufferLength += read;
 
                 int offset = 0;
-                while (DirconMessage.TryParse(_buffer.AsSpan(offset, _bufferLength - offset), out var msg, out int consumed))
+                while (DirectConnectMessage.TryParse(_buffer.AsSpan(offset, _bufferLength - offset), out var msg, out int consumed))
                 {
                     offset += consumed;
                     await HandleMessageAsync(msg!, ct).ConfigureAwait(false);
@@ -130,22 +132,22 @@ public sealed class DirconSession : IAsyncDisposable
 
     private Task SendNotificationFrameAsync(BleUuid characteristic, byte[] data, CancellationToken ct)
     {
-        if (characteristic == DirconUuids.ZwiftAsync && data.Length > 0 && data[0] == 0x23 && _logger.IsEnabled(LogLevel.Information))
+        if (characteristic == ZwiftRideUuids.AsyncOut && data.Length > 0 && data[0] == 0x23 && _logger.IsEnabled(LogLevel.Information))
             _logger.LogInformation("TX 0x23 keypad {Hex} => {Decoded}", Convert.ToHexString(data), ZwiftControlProtocol.DescribeKeyPadFrame(data));
         if (_logger.IsEnabled(LogLevel.Debug) && ShouldLogNotification(characteristic, data))
             _logger.LogDebug("DIRCON {Name} TX {MsgId} seq=0 resp=0 uuid={Uuid} value={Value}", _name, "Notification(0x06)", characteristic, Convert.ToHexString(data));
         var payload = new byte[16 + data.Length];
         characteristic.WriteTo(payload);
         data.CopyTo(payload, 16);
-        return SendAsync(DirconMessage.Create(DirconMessageId.Notification, 0, DirconResponseCode.Success, payload), ct);
+        return SendAsync(DirectConnectMessage.Create(DirectConnectMessageId.Notification, 0, DirectConnectResponseCode.Success, payload), ct);
     }
 
     // Always log keypad frames (0x23) and everything on 0004 (handshake); other periodic notifications only every 10th.
     private bool ShouldLogNotification(BleUuid characteristic, byte[] data)
     {
-        if (characteristic == DirconUuids.ZwiftSyncTx)
+        if (characteristic == ZwiftRideUuids.SyncTx)
             return true;
-        if (characteristic == DirconUuids.ZwiftAsync && data.Length > 0 && (data[0] == 0x23 || data[0] == 0x37 || data[0] == 0x07 || data[0] == 0x42))
+        if (characteristic == ZwiftRideUuids.AsyncOut && data.Length > 0 && data[0] == 0x23)
             return true;
         lock (_notifyCounters)
         {
@@ -157,25 +159,25 @@ public sealed class DirconSession : IAsyncDisposable
 
     private static string MsgName(byte id) => id switch
     {
-        DirconMessageId.DiscoverServices => "DiscoverServices(0x01)",
-        DirconMessageId.DiscoverCharacteristics => "DiscoverCharacteristics(0x02)",
-        DirconMessageId.ReadCharacteristic => "Read(0x03)",
-        DirconMessageId.WriteCharacteristic => "Write(0x04)",
-        DirconMessageId.EnableNotifications => "EnableNotifications(0x05)",
-        DirconMessageId.Notification => "Notification(0x06)",
+        DirectConnectMessageId.DiscoverServices => "DiscoverServices(0x01)",
+        DirectConnectMessageId.DiscoverCharacteristics => "DiscoverCharacteristics(0x02)",
+        DirectConnectMessageId.ReadCharacteristic => "Read(0x03)",
+        DirectConnectMessageId.WriteCharacteristic => "Write(0x04)",
+        DirectConnectMessageId.EnableNotifications => "EnableNotifications(0x05)",
+        DirectConnectMessageId.Notification => "Notification(0x06)",
         _ => $"Unknown(0x{id:X2})",
     };
 
-    private void LogWire(string direction, DirconMessage m)
+    private void LogWire(string direction, DirectConnectMessage m)
     {
         if (!_logger.IsEnabled(LogLevel.Debug))
             return;
         string uuid = "-";
         string value;
-        if (m.MessageId is DirconMessageId.DiscoverServices or DirconMessageId.DiscoverCharacteristics || m.Payload.Length < 16)
+        if (m.MessageId is DirectConnectMessageId.DiscoverServices or DirectConnectMessageId.DiscoverCharacteristics || m.Payload.Length < 16)
         {
             value = Convert.ToHexString(m.Payload);
-            if (m.MessageId == DirconMessageId.DiscoverCharacteristics && m.Payload.Length >= 16)
+            if (m.MessageId == DirectConnectMessageId.DiscoverCharacteristics && m.Payload.Length >= 16)
                 uuid = BleUuid.FromBytes(m.Payload.AsSpan(0, 16)).ToString();
         }
         else
@@ -187,9 +189,9 @@ public sealed class DirconSession : IAsyncDisposable
             _name, direction, MsgName(m.MessageId), m.Seq, m.ResponseCode, uuid, value);
     }
 
-    private async Task SendAsync(DirconMessage message, CancellationToken ct)
+    private async Task SendAsync(DirectConnectMessage message, CancellationToken ct)
     {
-        if (message.MessageId != DirconMessageId.Notification)
+        if (message.MessageId != DirectConnectMessageId.Notification)
             LogWire("TX", message);
         var bytes = message.Encode();
         await _writeLock.WaitAsync(ct).ConfigureAwait(false);
@@ -204,10 +206,10 @@ public sealed class DirconSession : IAsyncDisposable
         }
     }
 
-    private Task ReplyAsync(DirconMessage request, byte code, byte[]? payload, CancellationToken ct)
-        => SendAsync(DirconMessage.Create(request.MessageId, request.Seq, code, payload), ct);
+    private Task ReplyAsync(DirectConnectMessage request, byte code, byte[]? payload, CancellationToken ct)
+        => SendAsync(DirectConnectMessage.Create(request.MessageId, request.Seq, code, payload), ct);
 
-    private async Task HandleMessageAsync(DirconMessage msg, CancellationToken ct)
+    private async Task HandleMessageAsync(DirectConnectMessage msg, CancellationToken ct)
     {
         LogWire("RX", msg);
         // Frames with a non-zero response code come from a peer that is answering; ignore them.
@@ -216,26 +218,26 @@ public sealed class DirconSession : IAsyncDisposable
 
         switch (msg.MessageId)
         {
-            case DirconMessageId.DiscoverServices:
+            case DirectConnectMessageId.DiscoverServices:
                 {
                     var payload = new byte[16 * _services.Count];
                     for (int i = 0; i < _services.Count; i++)
                         _services[i].Uuid.WriteTo(payload.AsSpan(i * 16, 16));
-                    await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
+                    await ReplyAsync(msg, DirectConnectResponseCode.Success, payload, ct).ConfigureAwait(false);
                     break;
                 }
-            case DirconMessageId.DiscoverCharacteristics:
+            case DirectConnectMessageId.DiscoverCharacteristics:
                 {
                     if (msg.Payload.Length != 16)
                     {
-                        await ReplyAsync(msg, DirconResponseCode.UnexpectedError, null, ct).ConfigureAwait(false);
+                        await ReplyAsync(msg, DirectConnectResponseCode.UnexpectedError, null, ct).ConfigureAwait(false);
                         break;
                     }
                     var svcUuid = BleUuid.FromBytes(msg.Payload);
                     var svc = _services.FirstOrDefault(s => s.Uuid == svcUuid);
                     if (svc is null)
                     {
-                        await ReplyAsync(msg, DirconResponseCode.ServiceNotFound, null, ct).ConfigureAwait(false);
+                        await ReplyAsync(msg, DirectConnectResponseCode.ServiceNotFound, null, ct).ConfigureAwait(false);
                         break;
                     }
                     var payload = new byte[16 + 17 * svc.Characteristics.Count];
@@ -246,58 +248,58 @@ public sealed class DirconSession : IAsyncDisposable
                         svc.Characteristics[i].Uuid.WriteTo(payload.AsSpan(o, 16));
                         payload[o + 16] = (byte)svc.Characteristics[i].Properties;
                     }
-                    await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
+                    await ReplyAsync(msg, DirectConnectResponseCode.Success, payload, ct).ConfigureAwait(false);
                     break;
                 }
-            case DirconMessageId.ReadCharacteristic:
+            case DirectConnectMessageId.ReadCharacteristic:
                 {
                     if (!TryGetCharacteristic(msg, out var ch, out var uuid))
                     {
-                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
+                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirectConnectResponseCode.UnexpectedError : DirectConnectResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
                         break;
                     }
                     if ((ch!.Properties & GattProperties.Read) == 0)
                     {
-                        await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
+                        await ReplyAsync(msg, DirectConnectResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
                         break;
                     }
                     var value = ch.Value;
                     var payload = new byte[16 + value.Length];
                     uuid.WriteTo(payload.AsSpan(0, 16));
                     value.CopyTo(payload, 16);
-                    await ReplyAsync(msg, DirconResponseCode.Success, payload, ct).ConfigureAwait(false);
+                    await ReplyAsync(msg, DirectConnectResponseCode.Success, payload, ct).ConfigureAwait(false);
                     break;
                 }
-            case DirconMessageId.WriteCharacteristic:
+            case DirectConnectMessageId.WriteCharacteristic:
                 {
                     if (!TryGetCharacteristic(msg, out var ch, out var uuid))
                     {
-                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
+                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirectConnectResponseCode.UnexpectedError : DirectConnectResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
                         break;
                     }
                     if ((ch!.Properties & GattProperties.Write) == 0)
                     {
-                        await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
+                        await ReplyAsync(msg, DirectConnectResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
                         break;
                     }
                     // Ack: characteristic UUID only, same seq.
-                    await ReplyAsync(msg, DirconResponseCode.Success, uuid.ToBytes(), ct).ConfigureAwait(false);
+                    await ReplyAsync(msg, DirectConnectResponseCode.Success, uuid.ToBytes(), ct).ConfigureAwait(false);
 
                     var data = msg.Payload.AsSpan(16).ToArray();
                     foreach (var (target, notification) in _protocol.HandleWrite(uuid, data))
                         await NotifyAsync(target, notification, true, ct).ConfigureAwait(false);
                     break;
                 }
-            case DirconMessageId.EnableNotifications:
+            case DirectConnectMessageId.EnableNotifications:
                 {
                     if (!TryGetCharacteristic(msg, out var ch, out var uuid))
                     {
-                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirconResponseCode.UnexpectedError : DirconResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
+                        await ReplyAsync(msg, ch is null && msg.Payload.Length < 16 ? DirectConnectResponseCode.UnexpectedError : DirectConnectResponseCode.CharacteristicNotFound, null, ct).ConfigureAwait(false);
                         break;
                     }
                     if ((ch!.Properties & (GattProperties.Notify | GattProperties.Indicate)) == 0)
                     {
-                        await ReplyAsync(msg, DirconResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
+                        await ReplyAsync(msg, DirectConnectResponseCode.OperationNotSupported, null, ct).ConfigureAwait(false);
                         break;
                     }
                     bool enable = msg.Payload.Length < 17 || msg.Payload[16] != 0;
@@ -315,25 +317,23 @@ public sealed class DirconSession : IAsyncDisposable
                             _subscribed.Remove(uuid);
                         }
                     }
-                    await ReplyAsync(msg, DirconResponseCode.Success, uuid.ToBytes(), ct).ConfigureAwait(false);
+                    await ReplyAsync(msg, DirectConnectResponseCode.Success, uuid.ToBytes(), ct).ConfigureAwait(false);
 
                     if (enable)
                     {
                         foreach (var data in flush)
                             await SendNotificationFrameAsync(uuid, data, ct).ConfigureAwait(false);
-                        foreach (var (target, notification) in _protocol.OnSubscribed(uuid))
-                            await NotifyAsync(target, notification, true, ct).ConfigureAwait(false);
                     }
                     break;
                 }
             default:
                 _logger.LogDebug("DIRCON {Name}: unknown message id {Id}", _name, msg.MessageId);
-                await ReplyAsync(msg, DirconResponseCode.UnexpectedError, null, ct).ConfigureAwait(false);
+                await ReplyAsync(msg, DirectConnectResponseCode.UnexpectedError, null, ct).ConfigureAwait(false);
                 break;
         }
     }
 
-    private bool TryGetCharacteristic(DirconMessage msg, out GattCharacteristic? characteristic, out BleUuid uuid)
+    private bool TryGetCharacteristic(DirectConnectMessage msg, out GattCharacteristic? characteristic, out BleUuid uuid)
     {
         characteristic = null;
         uuid = default;

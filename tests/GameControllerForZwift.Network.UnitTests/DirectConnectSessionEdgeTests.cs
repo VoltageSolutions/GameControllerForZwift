@@ -1,20 +1,19 @@
-using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.DirectConnect;
+using GameControllerForZwift.Network.ZwiftRide;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace GameControllerForZwift.Network.UnitTests;
 
-/// <summary>Error codes, queueing and framing behaviour of <see cref="DirconSession"/>.</summary>
-public class DirconSessionEdgeTests
+/// <summary>Error codes, queueing and framing behaviour of <see cref="DirectConnectSession"/>.</summary>
+public class DirectConnectSessionEdgeTests
 {
-    private static readonly DeviceIdentity Identity = new("KICKR BIKE SHIFT 0001", "100000001", "02-47-5A-00-00-01", "1.21.18", "3");
-
     private static byte[] Cat(params byte[][] parts) => parts.SelectMany(p => p).ToArray();
-    private static byte[] Req(byte id, byte seq, byte[] payload, byte rc = 0) => DirconMessage.Create(id, seq, rc, payload).Encode();
+    private static byte[] Req(byte id, byte seq, byte[] payload, byte rc = 0) => DirectConnectMessage.Create(id, seq, rc, payload).Encode();
 
-    private static DirconSession NewSession(LoopbackPair pair)
-        => new(pair.Server, KickrBikeProfile.Create(Identity), new ZwiftControlProtocol(Identity), NullLogger.Instance, "test");
+    private static DirectConnectSession NewSession(LoopbackPair pair)
+        => new(pair.Server, ZwiftRideProfile.CreateServices(), new ZwiftControlProtocol(), NullLogger.Instance, "test");
 
-    private static async Task<DirconMessage> RoundTripAsync(LoopbackPair pair, byte[] request)
+    private static async Task<DirectConnectMessage> RoundTripAsync(LoopbackPair pair, byte[] request)
     {
         await pair.Client.WriteAsync(request);
         return (await pair.ReadMessagesAsync(1))[0];
@@ -27,7 +26,7 @@ public class DirconSessionEdgeTests
         await using var session = NewSession(pair);
         var run = session.RunAsync();
         var reply = await RoundTripAsync(pair, Req(0x7F, 9, Array.Empty<byte>()));
-        Assert.Equal(DirconResponseCode.UnexpectedError, reply.ResponseCode);
+        Assert.Equal(DirectConnectResponseCode.UnexpectedError, reply.ResponseCode);
         Assert.Equal(9, reply.Seq);
         Assert.Equal(0x7F, reply.MessageId);
     }
@@ -38,8 +37,8 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        await pair.Client.WriteAsync(Req(DirconMessageId.DiscoverServices, 1, Array.Empty<byte>(), rc: 3));
-        var reply = await RoundTripAsync(pair, Req(DirconMessageId.DiscoverServices, 2, Array.Empty<byte>()));
+        await pair.Client.WriteAsync(Req(DirectConnectMessageId.DiscoverServices, 1, Array.Empty<byte>(), rc: 3));
+        var reply = await RoundTripAsync(pair, Req(DirectConnectMessageId.DiscoverServices, 2, Array.Empty<byte>()));
         Assert.Equal(2, reply.Seq); // the first request got no answer
     }
 
@@ -49,25 +48,25 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        var bad = await RoundTripAsync(pair, Req(DirconMessageId.DiscoverCharacteristics, 1, new byte[4]));
-        Assert.Equal(DirconResponseCode.UnexpectedError, bad.ResponseCode);
-        var unknown = await RoundTripAsync(pair, Req(DirconMessageId.DiscoverCharacteristics, 2, BleUuid.FromShort(0x1234).ToBytes()));
-        Assert.Equal(DirconResponseCode.ServiceNotFound, unknown.ResponseCode);
+        var bad = await RoundTripAsync(pair, Req(DirectConnectMessageId.DiscoverCharacteristics, 1, new byte[4]));
+        Assert.Equal(DirectConnectResponseCode.UnexpectedError, bad.ResponseCode);
+        var unknown = await RoundTripAsync(pair, Req(DirectConnectMessageId.DiscoverCharacteristics, 2, BleUuid.FromShort(0x1234).ToBytes()));
+        Assert.Equal(DirectConnectResponseCode.ServiceNotFound, unknown.ResponseCode);
     }
 
     [Theory]
-    [InlineData(DirconMessageId.ReadCharacteristic)]
-    [InlineData(DirconMessageId.WriteCharacteristic)]
-    [InlineData(DirconMessageId.EnableNotifications)]
+    [InlineData(DirectConnectMessageId.ReadCharacteristic)]
+    [InlineData(DirectConnectMessageId.WriteCharacteristic)]
+    [InlineData(DirectConnectMessageId.EnableNotifications)]
     public async Task ShortPayload_RepliesUnexpectedError_UnknownCharacteristic_RepliesNotFound(byte id)
     {
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
         var shortReply = await RoundTripAsync(pair, Req(id, 1, new byte[3]));
-        Assert.Equal(DirconResponseCode.UnexpectedError, shortReply.ResponseCode);
+        Assert.Equal(DirectConnectResponseCode.UnexpectedError, shortReply.ResponseCode);
         var notFound = await RoundTripAsync(pair, Req(id, 2, Cat(BleUuid.FromShort(0x1234).ToBytes(), new byte[] { 1 })));
-        Assert.Equal(DirconResponseCode.CharacteristicNotFound, notFound.ResponseCode);
+        Assert.Equal(DirectConnectResponseCode.CharacteristicNotFound, notFound.ResponseCode);
     }
 
     [Fact]
@@ -76,13 +75,13 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        // 2A29 manufacturer name: read-only. 2A63 power measurement: notify only.
-        var write = await RoundTripAsync(pair, Req(DirconMessageId.WriteCharacteristic, 1, Cat(DirconUuids.ManufacturerName.ToBytes(), new byte[] { 1 })));
-        Assert.Equal(DirconResponseCode.OperationNotSupported, write.ResponseCode);
-        var notify = await RoundTripAsync(pair, Req(DirconMessageId.EnableNotifications, 2, Cat(DirconUuids.ManufacturerName.ToBytes(), new byte[] { 1 })));
-        Assert.Equal(DirconResponseCode.OperationNotSupported, notify.ResponseCode);
-        var read = await RoundTripAsync(pair, Req(DirconMessageId.ReadCharacteristic, 3, DirconUuids.CyclingPowerMeasurement.ToBytes()));
-        Assert.Equal(DirconResponseCode.OperationNotSupported, read.ResponseCode);
+        // 2A29 manufacturer name: read-only. 2AD2 indoor bike data: notify only.
+        var write = await RoundTripAsync(pair, Req(DirectConnectMessageId.WriteCharacteristic, 1, Cat(ZwiftRideUuids.ManufacturerName.ToBytes(), new byte[] { 1 })));
+        Assert.Equal(DirectConnectResponseCode.OperationNotSupported, write.ResponseCode);
+        var notify = await RoundTripAsync(pair, Req(DirectConnectMessageId.EnableNotifications, 2, Cat(ZwiftRideUuids.ManufacturerName.ToBytes(), new byte[] { 1 })));
+        Assert.Equal(DirectConnectResponseCode.OperationNotSupported, notify.ResponseCode);
+        var read = await RoundTripAsync(pair, Req(DirectConnectMessageId.ReadCharacteristic, 3, ZwiftRideUuids.IndoorBikeData.ToBytes()));
+        Assert.Equal(DirectConnectResponseCode.OperationNotSupported, read.ResponseCode);
     }
 
     [Fact]
@@ -91,10 +90,10 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        var uuid = DirconUuids.ZwiftSyncRx;
-        var ack = await RoundTripAsync(pair, Req(DirconMessageId.WriteCharacteristic, 77, Cat(uuid.ToBytes(), new byte[] { 0x99, 0x01 })));
+        var uuid = ZwiftRideUuids.SyncRx;
+        var ack = await RoundTripAsync(pair, Req(DirectConnectMessageId.WriteCharacteristic, 77, Cat(uuid.ToBytes(), new byte[] { 0x99, 0x01 })));
         Assert.Equal(77, ack.Seq);
-        Assert.Equal(DirconResponseCode.Success, ack.ResponseCode);
+        Assert.Equal(DirectConnectResponseCode.Success, ack.ResponseCode);
         Assert.Equal(uuid.ToBytes(), ack.Payload);
     }
 
@@ -104,20 +103,20 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        var uuid = DirconUuids.IndoorBikeData;
+        var uuid = ZwiftRideUuids.IndoorBikeData;
 
         Assert.False(await session.NotifyAsync(uuid, new byte[] { 1 }, queueIfNotSubscribed: true));
         Assert.False(await session.NotifyAsync(uuid, new byte[] { 2 }, queueIfNotSubscribed: true));
         Assert.False(await session.NotifyAsync(uuid, new byte[] { 3 }, queueIfNotSubscribed: false)); // dropped
         Assert.False(session.IsSubscribed(uuid));
 
-        await pair.Client.WriteAsync(Req(DirconMessageId.EnableNotifications, 5, Cat(uuid.ToBytes(), new byte[] { 1 })));
+        await pair.Client.WriteAsync(Req(DirectConnectMessageId.EnableNotifications, 5, Cat(uuid.ToBytes(), new byte[] { 1 })));
         var msgs = await pair.ReadMessagesAsync(3);
 
-        Assert.Equal(DirconMessageId.EnableNotifications, msgs[0].MessageId);
+        Assert.Equal(DirectConnectMessageId.EnableNotifications, msgs[0].MessageId);
         Assert.Equal(5, msgs[0].Seq);
         Assert.Equal(uuid.ToBytes(), msgs[0].Payload);
-        Assert.Equal(DirconMessageId.Notification, msgs[1].MessageId);
+        Assert.Equal(DirectConnectMessageId.Notification, msgs[1].MessageId);
         Assert.Equal(Cat(uuid.ToBytes(), new byte[] { 1 }), msgs[1].Payload);
         Assert.Equal(Cat(uuid.ToBytes(), new byte[] { 2 }), msgs[2].Payload);
         Assert.True(session.IsSubscribed(uuid));
@@ -135,11 +134,11 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        var uuid = DirconUuids.IndoorBikeData;
+        var uuid = ZwiftRideUuids.IndoorBikeData;
         for (int i = 0; i < 70; i++)
             await session.NotifyAsync(uuid, new[] { (byte)i }, true);
 
-        await pair.Client.WriteAsync(Req(DirconMessageId.EnableNotifications, 1, Cat(uuid.ToBytes(), new byte[] { 1 })));
+        await pair.Client.WriteAsync(Req(DirectConnectMessageId.EnableNotifications, 1, Cat(uuid.ToBytes(), new byte[] { 1 })));
         var msgs = await pair.ReadMessagesAsync(65);
         Assert.Equal(65, msgs.Count);
         Assert.Equal(6, msgs[1].Payload[16]);   // oldest 6 dropped
@@ -152,10 +151,10 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        var uuid = DirconUuids.IndoorBikeData;
-        await RoundTripAsync(pair, Req(DirconMessageId.EnableNotifications, 1, Cat(uuid.ToBytes(), new byte[] { 1 })));
+        var uuid = ZwiftRideUuids.IndoorBikeData;
+        await RoundTripAsync(pair, Req(DirectConnectMessageId.EnableNotifications, 1, Cat(uuid.ToBytes(), new byte[] { 1 })));
         Assert.True(session.IsSubscribed(uuid));
-        await RoundTripAsync(pair, Req(DirconMessageId.EnableNotifications, 2, Cat(uuid.ToBytes(), new byte[] { 0 })));
+        await RoundTripAsync(pair, Req(DirectConnectMessageId.EnableNotifications, 2, Cat(uuid.ToBytes(), new byte[] { 0 })));
         Assert.False(session.IsSubscribed(uuid));
     }
 
@@ -165,8 +164,8 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        await RoundTripAsync(pair, Req(DirconMessageId.EnableNotifications, 1, DirconUuids.IndoorBikeData.ToBytes()));
-        Assert.True(session.IsSubscribed(DirconUuids.IndoorBikeData));
+        await RoundTripAsync(pair, Req(DirectConnectMessageId.EnableNotifications, 1, ZwiftRideUuids.IndoorBikeData.ToBytes()));
+        Assert.True(session.IsSubscribed(ZwiftRideUuids.IndoorBikeData));
     }
 
     [Fact]
@@ -175,8 +174,8 @@ public class DirconSessionEdgeTests
         using var pair = await LoopbackPair.CreateAsync();
         await using var session = NewSession(pair);
         var run = session.RunAsync();
-        var a = Req(DirconMessageId.DiscoverServices, 1, Array.Empty<byte>());
-        var b = Req(DirconMessageId.DiscoverServices, 2, Array.Empty<byte>());
+        var a = Req(DirectConnectMessageId.DiscoverServices, 1, Array.Empty<byte>());
+        var b = Req(DirectConnectMessageId.DiscoverServices, 2, Array.Empty<byte>());
         var all = Cat(a, b);
         foreach (var chunk in all.Chunk(4))
         {
@@ -211,12 +210,12 @@ public class DirconSessionEdgeTests
     [Fact]
     public void Constructor_RejectsNulls()
     {
-        var protocol = new ZwiftControlProtocol(Identity);
-        var services = KickrBikeProfile.Create(Identity);
-        Assert.Throws<ArgumentNullException>(() => new DirconSession(null!, services, protocol, NullLogger.Instance));
-        Assert.Throws<ArgumentNullException>(() => new DirconSession(Stream.Null, null!, protocol, NullLogger.Instance));
-        Assert.Throws<ArgumentNullException>(() => new DirconSession(Stream.Null, services, null!, NullLogger.Instance));
-        Assert.Throws<ArgumentNullException>(() => new DirconSession(Stream.Null, services, protocol, null!));
+        var protocol = new ZwiftControlProtocol();
+        var services = ZwiftRideProfile.CreateServices();
+        Assert.Throws<ArgumentNullException>(() => new DirectConnectSession(null!, services, protocol, NullLogger.Instance));
+        Assert.Throws<ArgumentNullException>(() => new DirectConnectSession(Stream.Null, null!, protocol, NullLogger.Instance));
+        Assert.Throws<ArgumentNullException>(() => new DirectConnectSession(Stream.Null, services, null!, NullLogger.Instance));
+        Assert.Throws<ArgumentNullException>(() => new DirectConnectSession(Stream.Null, services, protocol, null!));
     }
 
     [Fact]
@@ -228,7 +227,7 @@ public class DirconSessionEdgeTests
         var raised = new TaskCompletionSource();
         session.HandshakeCompleted += (_, _) => raised.TrySetResult();
         var rideOn = System.Text.Encoding.ASCII.GetBytes("RideOn").Concat(new byte[] { 2, 4 }).ToArray();
-        await pair.Client.WriteAsync(Req(DirconMessageId.WriteCharacteristic, 1, Cat(DirconUuids.ZwiftSyncRx.ToBytes(), rideOn)));
+        await pair.Client.WriteAsync(Req(DirectConnectMessageId.WriteCharacteristic, 1, Cat(ZwiftRideUuids.SyncRx.ToBytes(), rideOn)));
         await raised.Task.WaitAsync(TimeSpan.FromSeconds(10));
         Assert.True(session.IsHandshakeComplete);
     }

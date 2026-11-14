@@ -1,7 +1,7 @@
 using System.Buffers.Binary;
 using System.Globalization;
 
-namespace GameControllerForZwift.Network.Dircon;
+namespace GameControllerForZwift.Network.DirectConnect;
 
 /// <summary>
 /// 128-bit Bluetooth UUID held in canonical (textual, big-endian) byte order.

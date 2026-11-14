@@ -1,8 +1,9 @@
+using System.IO;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace GameControllerForZwift.Network.Logging;
+namespace GameControllerForZwift.WPF.Logging;
 
 /// <summary>Minimal thread-safe file logger: one timestamped line per entry, flushed immediately.</summary>
 public sealed class FileLoggerProvider : ILoggerProvider

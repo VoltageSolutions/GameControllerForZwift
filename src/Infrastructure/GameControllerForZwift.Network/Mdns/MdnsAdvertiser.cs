@@ -1,4 +1,4 @@
-﻿using GameControllerForZwift.Network.Dircon;
+using GameControllerForZwift.Network.ZwiftRide;
 using Makaretu.Dns;
 using Microsoft.Extensions.Logging;
 using System.Net;
@@ -7,18 +7,14 @@ using System.Net.Sockets;
 
 namespace GameControllerForZwift.Network.Mdns
 {
-    /// <summary>An additional mDNS service instance advertised next to (or instead of) the DirCon one.</summary>
-    public sealed record MdnsExtraService(string InstanceName, string ServiceType, int Port, IReadOnlyList<string> TxtStrings);
-
     /// <summary>
-    /// Advertises the emulated Wahoo DirCon device (_wahoo-fitness-tnp._tcp) on the local network so Zwift can discover it.
+    /// Advertises the emulated Zwift Ride device over Wahoo Direct Connect (DIRCON, _wahoo-fitness-tnp._tcp) on the local network so Zwift can discover it.
     /// Mirrors what a real KICKR BIKE announces (see docs/captures/kickr-bike-capture-analysis.md): PTR + SRV + TXT, with A records
     /// for THIS machine's own IPv4 addresses.
     /// </summary>
     public sealed class MdnsAdvertiser : IAsyncDisposable
     {
         public const string ServiceType = "_wahoo-fitness-tnp._tcp";
-        public const string BleServiceUuids = "0xFC82,0x1818,0x1826,00000001-19CA-4651-86E5-FA29DCDD09D1,A026EE0D-0A7D-4AB3-97FA-F1500F9FEB8B";
 
         private static readonly string[] VirtualAdapterMarkers =
         {
@@ -30,16 +26,11 @@ namespace GameControllerForZwift.Network.Mdns
         private readonly object _gate = new();
         private MulticastService? _mdns;
         private ServiceDiscovery? _discovery;
-        private List<ServiceProfile> _profiles = new();
+        private ServiceProfile? _serviceProfile;
 
-        private readonly AdvertKind _advert;
-        private readonly DeviceProfileOptions _profileOptions;
-
-        public MdnsAdvertiser(ILogger<MdnsAdvertiser>? logger = null, DeviceProfileOptions? profile = null)
+        public MdnsAdvertiser(ILogger<MdnsAdvertiser>? logger = null)
         {
             _logger = logger;
-            _profileOptions = profile ?? DeviceProfileOptions.Default;
-            _advert = _profileOptions.Advert;
         }
 
         public bool IsRunning
@@ -47,22 +38,13 @@ namespace GameControllerForZwift.Network.Mdns
             get { lock (_gate) return _mdns != null; }
         }
 
-        /// <summary>Starts advertising. <paramref name="port"/> must be the port the DirCon server actually bound.</summary>
+        /// <summary>Starts advertising. <paramref name="port"/> must be the port the Direct Connect server actually bound.</summary>
         public void Start(DeviceIdentity identity, int port)
-            => Start(identity, port, null, true);
-
-        /// <summary>
-        /// Starts advertising, optionally with an additional service instance (e.g. _zwift-protocol._tcp) that reuses the same host A records.
-        /// With <paramref name="advertisePrimary"/> false only <paramref name="extra"/> is advertised.
-        /// </summary>
-        public void Start(DeviceIdentity identity, int port, MdnsExtraService? extra, bool advertisePrimary)
         {
             ArgumentNullException.ThrowIfNull(identity);
             lock (_gate)
             {
                 if (_mdns != null)
-                    return;
-                if (!advertisePrimary && extra == null)
                     return;
 
                 var addresses = GetAdvertisedAddresses();
@@ -70,11 +52,7 @@ namespace GameControllerForZwift.Network.Mdns
                     _logger?.LogWarning("mDNS: no usable IPv4 address found; Zwift will not be able to resolve this device.");
 
                 var instanceName = identity.Name.Replace('.', ' ');
-                var hostName = BuildHostName(instanceName);
-                var profile = BuildPrimaryProfile(identity, port, addresses);
-                ServiceProfile? extraProfile = null;
-                if (extra != null)
-                    extraProfile = BuildProfile(extra.InstanceName.Replace('.', ' '), extra.ServiceType, extra.Port, addresses, hostName, extra.TxtStrings);
+                var profile = BuildServiceProfile(identity, port, addresses);
 
                 var mdns = new MulticastService();
                 mdns.QueryReceived += (_, e) =>
@@ -90,13 +68,9 @@ namespace GameControllerForZwift.Network.Mdns
                 var discovery = new ServiceDiscovery(mdns);
                 mdns.Start();
 
-                var toAdvertise = new List<ServiceProfile>();
-                if (advertisePrimary) toAdvertise.Add(profile);
-                if (extraProfile != null) toAdvertise.Add(extraProfile);
-
                 try
                 {
-                    if (advertisePrimary && discovery.Probe(profile))
+                    if (discovery.Probe(profile))
                         _logger?.LogWarning("mDNS: an instance named '{Name}' already exists on the network; advertising anyway.", instanceName);
                 }
                 catch (Exception ex)
@@ -104,18 +78,14 @@ namespace GameControllerForZwift.Network.Mdns
                     _logger?.LogDebug(ex, "mDNS probe failed; continuing.");
                 }
 
-                foreach (var p in toAdvertise)
-                {
-                    discovery.Advertise(p);
-                    discovery.Announce(p);
-                }
+                discovery.Advertise(profile);
+                discovery.Announce(profile);
 
                 _mdns = mdns;
                 _discovery = discovery;
-                _profiles = toAdvertise;
-                _logger?.LogInformation("mDNS: advertising {Services} on port {Port} at {Addresses}",
-                    string.Join(", ", toAdvertise.Select(p => $"'{p.InstanceName}' ({p.ServiceName}:{p.Resources.OfType<SRVRecord>().FirstOrDefault()?.Port})")),
-                    port, string.Join(", ", addresses));
+                _serviceProfile = profile;
+                _logger?.LogInformation("mDNS: advertising '{Name}' ({Service}:{Port}) at {Addresses}",
+                    profile.InstanceName, profile.ServiceName, port, string.Join(", ", addresses));
             }
         }
 
@@ -123,8 +93,8 @@ namespace GameControllerForZwift.Network.Mdns
         internal static DomainName BuildHostName(string instanceName)
             => new(instanceName.Replace(' ', '-') + ".local");
 
-        /// <summary>Builds the primary _wahoo-fitness-tnp._tcp profile (PTR, SRV, TXT, A) without touching the network.</summary>
-        internal ServiceProfile BuildPrimaryProfile(DeviceIdentity identity, int port, IReadOnlyList<IPAddress> addresses)
+        /// <summary>Builds the _wahoo-fitness-tnp._tcp profile (PTR, SRV, TXT, A) without touching the network.</summary>
+        internal static ServiceProfile BuildServiceProfile(DeviceIdentity identity, int port, IReadOnlyList<IPAddress> addresses)
         {
             ArgumentNullException.ThrowIfNull(identity);
             ArgumentNullException.ThrowIfNull(addresses);
@@ -132,17 +102,13 @@ namespace GameControllerForZwift.Network.Mdns
             var instanceName = identity.Name.Replace('.', ' ');
             var hostName = BuildHostName(instanceName);
 
-            // Service type without ".local": ServiceProfile appends the domain itself.
             var txt = new List<string>
             {
-                "ble-service-uuids=" + DeviceProfiles.BleServiceUuids(_advert) + (_profileOptions.AddObcUuid ? "," + DeviceProfileOptions.ObcServiceUuid : "") + (_profileOptions.AddPowerService && !DeviceProfiles.BleServiceUuids(_advert).Contains("0x1818", StringComparison.OrdinalIgnoreCase) ? ",0x1818" : ""),
+                "ble-service-uuids=" + ZwiftRideProfile.AdvertisedBleServiceUuids,
                 "mac-address=" + identity.MacAddress,
                 "serial-number=" + identity.SerialNumber,
+                "manufacturer-data=" + ZwiftRideProfile.ManufacturerData,
             };
-            if (!string.IsNullOrEmpty(_profileOptions.MfgData))
-                txt.Add("manufacturer-data=" + _profileOptions.MfgData);
-            if (_profileOptions.TxtExtra != null)
-                txt.AddRange(_profileOptions.TxtExtra);
             return BuildProfile(instanceName, ServiceType, port, addresses, hostName, txt);
         }
 
@@ -211,23 +177,23 @@ namespace GameControllerForZwift.Network.Mdns
                 // Explicit goodbye first: every record of our profiles (PTR, SRV, TXT, A) re-sent with TTL 0 so Zwift drops the device at once.
                 try
                 {
-                    if (_mdns != null && _profiles.Count > 0)
+                    if (_mdns != null && _serviceProfile != null)
                     {
                         var goodbye = new Message { QR = true };
-                        foreach (var rr in BuildGoodbyeRecords(_profiles))
+                        foreach (var rr in BuildGoodbyeRecords(new[] { _serviceProfile }))
                             goodbye.Answers.Add(rr);
                         _mdns.SendAnswer(goodbye, false);
-                        _logger?.LogInformation("mDNS: goodbye (TTL 0) sent for {Count} service(s).", _profiles.Count);
+                        _logger?.LogInformation("mDNS: goodbye (TTL 0) sent.");
                     }
                 }
                 catch (Exception ex) { _logger?.LogDebug(ex, "mDNS goodbye failed."); }
-                try { foreach (var p in _profiles) _discovery?.Unadvertise(p); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS unadvertise failed."); }
+                try { if (_serviceProfile != null) _discovery?.Unadvertise(_serviceProfile); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS unadvertise failed."); }
                 try { _discovery?.Dispose(); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS discovery dispose failed."); }
                 try { _mdns?.Stop(); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS stop failed."); }
                 try { _mdns?.Dispose(); } catch (Exception ex) { _logger?.LogDebug(ex, "mDNS dispose failed."); }
                 _discovery = null;
                 _mdns = null;
-                _profiles = new();
+                _serviceProfile = null;
             }
         }
 

@@ -7,7 +7,7 @@ namespace GameControllerForZwift.Core.Tests
     /// <summary>Edge cases of the state building in <see cref="DataIntegrator"/>.</summary>
     public class DataIntegratorEdgeCaseTests
     {
-        private readonly IZwiftControllerOutput _zwift = Substitute.For<IZwiftControllerOutput>();
+        private readonly IOutputService _outputService = Substitute.For<IOutputService>();
         private readonly IControllerProfileService _profileService = Substitute.For<IControllerProfileService>();
         private readonly ControllerProfile _profile = new();
         private readonly DataIntegrator _sut;
@@ -17,7 +17,7 @@ namespace GameControllerForZwift.Core.Tests
             var profiles = new ControllerProfiles();
             profiles.Profiles.Add(_profile);
             _profileService.Profiles.Returns(profiles);
-            _sut = new DataIntegrator(Substitute.For<IInputService>(), _profileService, _zwift, 10);
+            _sut = new DataIntegrator(Substitute.For<IInputService>(), _profileService, _outputService, 10);
         }
 
         private async Task RunAsync(DataIntegrator sut, params ControllerData[] data)
@@ -27,9 +27,9 @@ namespace GameControllerForZwift.Core.Tests
             try { await sut.WriteDataAsync(cts.Token); } catch (OperationCanceledException) { }
         }
 
-        private ZwiftControllerState[] States() =>
-            _zwift.ReceivedCalls().Where(c => c.GetMethodInfo().Name == nameof(IZwiftControllerOutput.UpdateAsync))
-                  .Select(c => (ZwiftControllerState)c.GetArguments()[0]!).ToArray();
+        private OutputState[] States() =>
+            _outputService.ReceivedCalls().Where(c => c.GetMethodInfo().Name == nameof(IOutputService.UpdateAsync))
+                  .Select(c => (OutputState)c.GetArguments()[0]!).ToArray();
 
         [Fact]
         public void ProcessControllerData_Null_IsIgnored()
@@ -110,13 +110,13 @@ namespace GameControllerForZwift.Core.Tests
         public void StopProcessing_WithoutStart_SendsNeutral()
         {
             _sut.StopProcessing();
-            _zwift.Received().UpdateAsync(Arg.Is<ZwiftControllerState>(s => s.IsNeutral), Arg.Any<CancellationToken>());
+            _outputService.Received().UpdateAsync(Arg.Is<OutputState>(s => s.IsNeutral), Arg.Any<CancellationToken>());
         }
 
         [Fact]
         public void StopProcessing_SwallowsOutputException()
         {
-            _zwift.UpdateAsync(Arg.Any<ZwiftControllerState>(), Arg.Any<CancellationToken>()).Returns<Task>(_ => throw new InvalidOperationException());
+            _outputService.UpdateAsync(Arg.Any<OutputState>(), Arg.Any<CancellationToken>()).Returns<Task>(_ => throw new InvalidOperationException());
             _sut.StopProcessing();
         }
 

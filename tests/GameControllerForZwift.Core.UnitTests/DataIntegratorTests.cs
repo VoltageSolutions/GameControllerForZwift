@@ -8,7 +8,7 @@ namespace GameControllerForZwift.App.Tests
     public class DataIntegratorTests
     {
         private readonly IInputService _inputService;
-        private readonly IZwiftControllerOutput _output;
+        private readonly IOutputService _output;
         private readonly IControllerProfileService _controllerProfileService;
         private readonly DataIntegrator _dataIntegrator;
         private readonly IController _controller;
@@ -16,7 +16,7 @@ namespace GameControllerForZwift.App.Tests
         public DataIntegratorTests()
         {
             _inputService = Substitute.For<IInputService>();
-            _output = Substitute.For<IZwiftControllerOutput>();
+            _output = Substitute.For<IOutputService>();
             _controllerProfileService = Substitute.For<IControllerProfileService>();
             _controller = Substitute.For<IController>();
             _dataIntegrator = new DataIntegrator(_inputService, _controllerProfileService, _output, maxQueueSize: 5);
@@ -94,7 +94,7 @@ namespace GameControllerForZwift.App.Tests
             cancellationTokenSource.Cancel();
 
             // Assert
-            await _output.Received().UpdateAsync(Arg.Is<ZwiftControllerState>(st => st.Pressed.Contains(ZwiftFunction.Select)), Arg.Any<CancellationToken>());
+            await _output.Received().UpdateAsync(Arg.Is<OutputState>(st => st.Pressed.Contains(ZwiftFunction.Select)), Arg.Any<CancellationToken>());
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace GameControllerForZwift.App.Tests
             // Assert
             _output.ClearReceivedCalls();
             await Task.Delay(100);
-            await _output.DidNotReceive().UpdateAsync(Arg.Is<ZwiftControllerState>(st => st.Pressed.Count > 0), Arg.Any<CancellationToken>());
+            await _output.DidNotReceive().UpdateAsync(Arg.Is<OutputState>(st => st.Pressed.Count > 0), Arg.Any<CancellationToken>());
         }
 
         [Fact]
