@@ -1,0 +1,6 @@
+name: GameControllerForZwift CodeQL config
+queries:
+  - uses: security-and-quality
+paths-ignore:
+  - tests/**
+  - tools/**

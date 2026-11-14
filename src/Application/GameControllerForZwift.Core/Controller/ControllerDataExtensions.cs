@@ -5,34 +5,52 @@
         public static bool IsPressed(this ControllerData controllerData, ControllerInput input)
         {
             if (controllerData == null) return false;
+            return controllerData.GetAnalogValue(input) > 0;
+        }
+
+        /// <summary>
+        /// Returns the input's activation as 0..1. Buttons are 0 or 1; stick tilts are the component along that direction
+        /// (0 inside the deadzone, rescaled beyond it); triggers are rescaled past a small deadzone.
+        /// </summary>
+        public static double GetAnalogValue(this ControllerData d, ControllerInput input)
+        {
+            if (d == null) return 0;
             return input switch
             {
-                ControllerInput.A => controllerData.A,
-                ControllerInput.B => controllerData.B,
-                ControllerInput.X => controllerData.X,
-                ControllerInput.Y => controllerData.Y,
-                ControllerInput.Menu => controllerData.Menu,
-                ControllerInput.View => controllerData.View,
-                ControllerInput.DPad_Up => controllerData.DPad_Up,
-                ControllerInput.DPad_Down => controllerData.DPad_Down,
-                ControllerInput.DPad_Left => controllerData.DPad_Left,
-                ControllerInput.DPad_Right => controllerData.DPad_Right,
-                ControllerInput.LeftBumper => controllerData.LeftBumper,
-                ControllerInput.RightBumper => controllerData.RightBumper,
-                ControllerInput.LeftThumbstick_Click => controllerData.LeftThumbstick_Click,
-                ControllerInput.RightThumbstick_Click => controllerData.RightThumbstick_Click,
-                ControllerInput.LeftThumbstick_TiltLeft => controllerData.LeftStick_TiltLeft,
-                ControllerInput.LeftThumbstick_TiltRight => controllerData.LeftStick_TiltRight,
-                ControllerInput.LeftThumbstick_TiltUp => controllerData.LeftStick_TiltUp,
-                ControllerInput.LeftThumbstick_TiltDown => controllerData.LeftStick_TiltDown,
-                ControllerInput.LeftTrigger => controllerData.LeftTrigger != 0,
-                ControllerInput.RightThumbstick_TiltLeft => controllerData.RightStick_TiltLeft,
-                ControllerInput.RightThumbstick_TiltRight => controllerData.RightStick_TiltRight,
-                ControllerInput.RightThumbstick_TiltUp => controllerData.RightStick_TiltUp,
-                ControllerInput.RightThumbstick_TiltDown => controllerData.RightStick_TiltDown,
-                ControllerInput.RightTrigger => controllerData.RightTrigger != 0,
+                ControllerInput.A => Digital(d.A),
+                ControllerInput.B => Digital(d.B),
+                ControllerInput.X => Digital(d.X),
+                ControllerInput.Y => Digital(d.Y),
+                ControllerInput.Menu => Digital(d.Menu),
+                ControllerInput.View => Digital(d.View),
+                ControllerInput.DPadUp => Digital(d.DPadUp),
+                ControllerInput.DPadDown => Digital(d.DPadDown),
+                ControllerInput.DPadLeft => Digital(d.DPadLeft),
+                ControllerInput.DPadRight => Digital(d.DPadRight),
+                ControllerInput.LeftBumper => Digital(d.LeftBumper),
+                ControllerInput.RightBumper => Digital(d.RightBumper),
+                ControllerInput.LeftThumbstickClick => Digital(d.LeftThumbstickClick),
+                ControllerInput.RightThumbstickClick => Digital(d.RightThumbstickClick),
+                ControllerInput.LeftThumbstickTiltLeft => d.LeftStickTiltLeft ? Scale(-d.LeftThumbstickX, ControllerData.Thresholds.Deadzone) : 0,
+                ControllerInput.LeftThumbstickTiltRight => d.LeftStickTiltRight ? Scale(d.LeftThumbstickX, ControllerData.Thresholds.Deadzone) : 0,
+                ControllerInput.LeftThumbstickTiltUp => d.LeftStickTiltUp ? Scale(-d.LeftThumbstickY, ControllerData.Thresholds.Deadzone) : 0,
+                ControllerInput.LeftThumbstickTiltDown => d.LeftStickTiltDown ? Scale(d.LeftThumbstickY, ControllerData.Thresholds.Deadzone) : 0,
+                ControllerInput.RightThumbstickTiltLeft => d.RightStickTiltLeft ? Scale(-d.RightThumbstickX, ControllerData.Thresholds.Deadzone) : 0,
+                ControllerInput.RightThumbstickTiltRight => d.RightStickTiltRight ? Scale(d.RightThumbstickX, ControllerData.Thresholds.Deadzone) : 0,
+                ControllerInput.RightThumbstickTiltUp => d.RightStickTiltUp ? Scale(-d.RightThumbstickY, ControllerData.Thresholds.Deadzone) : 0,
+                ControllerInput.RightThumbstickTiltDown => d.RightStickTiltDown ? Scale(d.RightThumbstickY, ControllerData.Thresholds.Deadzone) : 0,
+                ControllerInput.LeftTrigger => Scale(d.LeftTrigger, ControllerData.Thresholds.TriggerDeadzone),
+                ControllerInput.RightTrigger => Scale(d.RightTrigger, ControllerData.Thresholds.TriggerDeadzone),
                 _ => throw new ArgumentOutOfRangeException(nameof(input), $"Unknown input: {input}")
             };
+        }
+
+        private static double Digital(bool pressed) => pressed ? 1.0 : 0.0;
+
+        private static double Scale(double value, double deadzone)
+        {
+            if (value <= deadzone) return 0;
+            return Math.Clamp((value - deadzone) / (ControllerData.Thresholds.AxisMax - deadzone), 0.0, 1.0);
         }
 
         //const float AnalogTolerance = 0.05f; // Tolerance for detecting changes in analog inputs

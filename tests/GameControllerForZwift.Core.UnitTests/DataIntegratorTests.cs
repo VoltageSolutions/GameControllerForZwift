@@ -5,10 +5,10 @@ using GameControllerForZwift.Core.Mapping;
 
 namespace GameControllerForZwift.App.Tests
 {
-    public class DataIntegratorTests
+    public class DataIntegratorTests : IDisposable
     {
         private readonly IInputService _inputService;
-        private readonly IOutputService _outputService;
+        private readonly IOutputService _output;
         private readonly IControllerProfileService _controllerProfileService;
         private readonly DataIntegrator _dataIntegrator;
         private readonly IController _controller;
@@ -16,10 +16,16 @@ namespace GameControllerForZwift.App.Tests
         public DataIntegratorTests()
         {
             _inputService = Substitute.For<IInputService>();
-            _outputService = Substitute.For<IOutputService>();
+            _output = Substitute.For<IOutputService>();
             _controllerProfileService = Substitute.For<IControllerProfileService>();
             _controller = Substitute.For<IController>();
-            _dataIntegrator = new DataIntegrator(_inputService, _outputService, _controllerProfileService, maxQueueSize: 5);
+            _dataIntegrator = new DataIntegrator(_inputService, _controllerProfileService, _output, maxQueueSize: 5);
+        }
+
+        public void Dispose()
+        {
+            _dataIntegrator.Dispose();
+            GC.SuppressFinalize(this);
         }
 
         [Fact]
@@ -69,7 +75,7 @@ namespace GameControllerForZwift.App.Tests
         }
 
         [Fact]
-        public async Task StartProcessing_InvokesOutputServiceActions()
+        public async Task StartProcessing_SendsPressedFunctionToOutput()
         {
             // Arrange
             var controllerData = new ControllerData { A = true };
@@ -78,10 +84,8 @@ namespace GameControllerForZwift.App.Tests
             var controllerProfiles = new ControllerProfiles();
             var controllerProfile = new ControllerProfile();
             controllerProfiles.Profiles.Add(controllerProfile);
-            var mapping = controllerProfile.Mappings.Where(m => m.Input == ControllerInput.A).FirstOrDefault();
+            var mapping = controllerProfile.Mappings.First(m => m.Input == ControllerInput.A);
             mapping.Function = ZwiftFunction.Select;
-            mapping.PlayerView = ZwiftPlayerView.Default;
-            mapping.RiderAction = ZwiftRiderAction.RideOn;
 
             _controllerProfileService.Profiles.Returns(controllerProfiles);
 
@@ -96,7 +100,7 @@ namespace GameControllerForZwift.App.Tests
             cancellationTokenSource.Cancel();
 
             // Assert
-            await _outputService.Received().PerformActionAsync(ZwiftFunction.Select, ZwiftPlayerView.Default, ZwiftRiderAction.RideOn);
+            await _output.Received().UpdateAsync(Arg.Is<OutputState>(st => st.Pressed.Contains(ZwiftFunction.Select)), Arg.Any<CancellationToken>());
         }
 
         [Fact]
@@ -118,8 +122,9 @@ namespace GameControllerForZwift.App.Tests
             await Task.Delay(50);
 
             // Assert
-            _outputService.ClearReceivedCalls();
-            await _outputService.DidNotReceive().PerformActionAsync(Arg.Any<ZwiftFunction>(), Arg.Any<ZwiftPlayerView>(), Arg.Any<ZwiftRiderAction>());
+            _output.ClearReceivedCalls();
+            await Task.Delay(100);
+            await _output.DidNotReceive().UpdateAsync(Arg.Is<OutputState>(st => st.Pressed.Count > 0), Arg.Any<CancellationToken>());
         }
 
         [Fact]
@@ -135,7 +140,7 @@ namespace GameControllerForZwift.App.Tests
         }
 
         [Fact]
-        public async void InputPolled_EventIsRaised()
+        public async Task InputPolled_EventIsRaised()
         {
             // Arrange
             var controllerData = new ControllerData { A = true };

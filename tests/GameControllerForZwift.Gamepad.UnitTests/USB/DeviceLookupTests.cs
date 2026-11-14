@@ -13,7 +13,7 @@ namespace GameControllerForZwift.Gamepad.Tests.USB
             var deviceLookup = new DeviceLookup(json);
 
             // Act
-            var deviceMap = deviceLookup.LoadDeviceMap(json);
+            var deviceMap = DeviceLookup.LoadDeviceMap(json);
 
             // Assert
             Assert.Equal(2, deviceMap.Count);
@@ -25,11 +25,11 @@ namespace GameControllerForZwift.Gamepad.Tests.USB
         public void LoadDeviceMap_ShouldReturnEmptyDictionary_WhenJsonIsNull()
         {
             // Arrange
-            var json = (string)null;
+            var json = (string?)null;
             var deviceLookup = new DeviceLookup(json);
 
             // Act
-            var deviceMap = deviceLookup.LoadDeviceMap(json);
+            var deviceMap = DeviceLookup.LoadDeviceMap(json);
 
             // Assert
             Assert.Empty(deviceMap);
@@ -43,7 +43,7 @@ namespace GameControllerForZwift.Gamepad.Tests.USB
             var deviceLookup = new DeviceLookup(json);
 
             // Act
-            var deviceMap = deviceLookup.LoadDeviceMap(json);
+            var deviceMap = DeviceLookup.LoadDeviceMap(json);
 
             // Assert
             Assert.Empty(deviceMap);

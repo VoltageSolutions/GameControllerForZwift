@@ -5,15 +5,15 @@ namespace GameControllerForZwift.UI.WPF.Navigation
 {
     public class PagesInfoDataItem
     {
-        public string UniqueId { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string IconGlyph { get; set; }
+        public string UniqueId { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
+        public string IconGlyph { get; set; } = string.Empty;
         //public string ImagePath { get; set; }
-        public string PageName { get; set; }
-        public bool IsGroup { get; set; } = false;
+        public string PageName { get; set; } = string.Empty;
+        public bool IsGroup { get; set; }
 
-        public Type PageType
+        public Type? PageType
         {
             get
             {

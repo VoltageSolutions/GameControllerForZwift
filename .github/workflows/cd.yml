@@ -1,0 +1,124 @@
+name: CD Workflow
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - '**/*.md'
+  workflow_dispatch:
+
+concurrency:
+  group: cd
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  publish:
+    name: Publish
+    runs-on: windows-latest
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      skip: ${{ steps.v.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read version
+        id: v
+        shell: bash
+        run: |
+          csproj=src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
+          version="$(grep -oP '(?<=<Version>)[^<]+' "$csproj" | head -n1 | tr -d '[:space:]')"
+          if [ -z "$version" ]; then echo "::error::Could not read <Version> from $csproj"; exit 1; fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice title=No release::Tag v${version} already exists; nothing to publish."
+            echo "Tag v${version} already exists; no release created." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-dotnet@v6
+        if: steps.v.outputs.skip != 'true'
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Build
+        if: steps.v.outputs.skip != 'true'
+        run: |
+          dotnet restore GameControllerForZwift.sln
+          dotnet build GameControllerForZwift.sln -c Release --no-restore
+
+      - name: Publish
+        if: steps.v.outputs.skip != 'true'
+        run: |
+          $proj = 'src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj'
+          dotnet publish $proj -c Release -r win-x64 --self-contained false -o artifacts/fd
+          dotnet publish $proj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/standalone
+          ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
+          ./.github/scripts/check-publish.ps1 -Path artifacts/standalone
+
+      - name: Package
+        if: steps.v.outputs.skip != 'true'
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          # Flattened zips: publish output has no subfolders (verified above). PDBs are excluded.
+          Get-ChildItem artifacts/fd -File | Where-Object Extension -ne '.pdb' |
+            Compress-Archive -DestinationPath "release/GameControllerForZwift-$env:VERSION-win-x64.zip"
+          Get-ChildItem artifacts/standalone -File | Where-Object Extension -ne '.pdb' |
+            Compress-Archive -DestinationPath "release/GameControllerForZwift-$env:VERSION-win-x64-standalone.zip"
+          Get-ChildItem release/*.zip | ForEach-Object {
+            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)"
+          } | Out-File -FilePath release/SHA256SUMS.txt -Encoding ascii
+          Get-Content release/SHA256SUMS.txt
+
+      - name: Upload release files
+        if: steps.v.outputs.skip != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: release
+          path: release/*
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy Release to GitHub
+    needs: publish
+    if: needs.publish.outputs.skip != 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.publish.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: release
+          path: release
+
+      - name: Create release
+        run: |
+          notes="Two packages for Windows x64:
+
+          - GameControllerForZwift-${VERSION}-win-x64.zip: framework-dependent, requires the .NET 10 Desktop Runtime.
+          - GameControllerForZwift-${VERSION}-win-x64-standalone.zip: self-contained, no runtime install needed (larger download).
+
+          Verify downloads with SHA256SUMS.txt."
+          gh release create "v${VERSION}" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "v${VERSION}" --notes "$notes" \
+            "release/GameControllerForZwift-${VERSION}-win-x64.zip" \
+            "release/GameControllerForZwift-${VERSION}-win-x64-standalone.zip" \
+            release/SHA256SUMS.txt

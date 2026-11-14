@@ -14,7 +14,7 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void LeftStickUp_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
-            Assert.Equal(expected, controller.LeftStick_TiltUp);
+            Assert.Equal(expected, controller.LeftStickTiltUp);
         }
 
         [Theory]
@@ -23,7 +23,7 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void LeftStickDown_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
-            Assert.Equal(expected, controller.LeftStick_TiltDown);
+            Assert.Equal(expected, controller.LeftStickTiltDown);
         }
 
         [Theory]
@@ -32,7 +32,7 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void LeftStickLeft_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
-            Assert.Equal(expected, controller.LeftStick_TiltLeft);
+            Assert.Equal(expected, controller.LeftStickTiltLeft);
         }
 
         [Theory]
@@ -41,7 +41,7 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void LeftStickRight_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { LeftThumbstickX = x, LeftThumbstickY = y };
-            Assert.Equal(expected, controller.LeftStick_TiltRight);
+            Assert.Equal(expected, controller.LeftStickTiltRight);
         }
 
         #endregion
@@ -54,7 +54,7 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void RightStickUp_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
-            Assert.Equal(expected, controller.RightStick_TiltUp);
+            Assert.Equal(expected, controller.RightStickTiltUp);
         }
 
         [Theory]
@@ -63,7 +63,7 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void RightStickDown_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
-            Assert.Equal(expected, controller.RightStick_TiltDown);
+            Assert.Equal(expected, controller.RightStickTiltDown);
         }
 
         [Theory]
@@ -72,7 +72,7 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void RightStickLeft_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
-            Assert.Equal(expected, controller.RightStick_TiltLeft);
+            Assert.Equal(expected, controller.RightStickTiltLeft);
         }
 
         [Theory]
@@ -81,7 +81,7 @@ namespace GameControllerForZwift.Core.Tests.Controller
         public void RightStickRight_ReturnsCorrectValue(double x, double y, bool expected)
         {
             var controller = new ControllerData { RightThumbstickX = x, RightThumbstickY = y };
-            Assert.Equal(expected, controller.RightStick_TiltRight);
+            Assert.Equal(expected, controller.RightStickTiltRight);
         }
 
         #endregion

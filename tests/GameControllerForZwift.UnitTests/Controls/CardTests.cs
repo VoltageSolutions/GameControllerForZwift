@@ -137,7 +137,6 @@ namespace GameControllerForZwift.UI.WPF.Tests.Controls
             // Arrange
             var card = new Card();
             var newRadius = new CornerRadius(10);
-            bool callbackCalled = false;
 
             // Act
             card.TileRadius = newRadius;
