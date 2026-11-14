@@ -1,6 +1,13 @@
 name: GameControllerForZwift CodeQL config
 queries:
   - uses: security-and-quality
+# The gamepad layer talks to SDL through native interop on purpose. There is no managed replacement
+# with the same controller support, so the "use managed code" recommendations are excluded.
+query-filters:
+  - exclude:
+      id:
+        - cs/call-to-unmanaged-code
+        - cs/unmanaged-code
 # C# is a compiled language: CodeQL's `paths`/`paths-ignore` apply only to interpreted languages (Python, Ruby,
 # JavaScript/TypeScript), see "Customizing your advanced setup for code scanning" in the GitHub docs. What gets
 # analyzed is whatever the manual build in .github/workflows/ci.yml compiles, and that build only compiles the
