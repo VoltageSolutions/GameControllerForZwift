@@ -170,3 +170,4 @@ Chain: SDL trigger axis (0..32767) -> `GetAnalogValue` = (raw - 1638) / (32767 -
 ## Future work
 
 - Audit and improve logging app-wide: consistent categories and levels, structured messages, a single place that configures providers (Event Log and file), log retention, and a decision on what is logged by default versus at Debug.
+- Bluetooth: 8BitDo SN30 Pro+ is not detected over Bluetooth (works over USB) - investigate SDL2 HIDAPI/Bluetooth hints and device mapping.

@@ -89,9 +89,11 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 var circle = new Ellipse
                 {
                     StrokeThickness = 1,
-                    StrokeDashArray = new DoubleCollection { 2, 2 },
-                    Stroke = Brushes.Black
+                    StrokeDashArray = new DoubleCollection { 2, 2 }
                 };
+                // Resource references follow the Fluent light/dark theme dynamically.
+                circle.SetResourceReference(Shape.StrokeProperty, "ControlStrongStrokeColorDefaultBrush");
+                circle.SetResourceReference(Shape.FillProperty, "CardBackgroundFillColorDefaultBrush");
                 _circles.Add(circle);
                 _chartCanvas.Children.Add(circle);
             }
@@ -130,9 +132,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
                 Canvas.SetLeft(circle, centerX - radius);
                 Canvas.SetTop(circle, centerY - radius);
-
-                circle.Fill = (Brush)Application.Current.Resources["CardBackgroundFillColorDefaultBrush"];
-                circle.Stroke = Brushes.Black;
             }
 
             UpdatePlotPosition();
@@ -169,11 +168,11 @@ namespace GameControllerForZwift.UI.WPF.Controls
             // Update plot point color
             if (IsOutsideOrigin(originX, Position.X) || IsOutsideOrigin(originY, Position.Y))
             {
-                _plotPoint.Fill = (Brush)Application.Current.Resources["AccentTextFillColorTertiaryBrush"];
+                _plotPoint.SetResourceReference(Shape.FillProperty, "AccentFillColorDefaultBrush");
             }
             else
             {
-                _plotPoint.Fill = (Brush)Application.Current.Resources["CardStrokeColorDefaultBrush"];
+                _plotPoint.SetResourceReference(Shape.FillProperty, "TextFillColorSecondaryBrush");
             }
         }
 

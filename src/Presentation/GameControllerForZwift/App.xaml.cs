@@ -77,9 +77,9 @@ namespace GameControllerForZwift
                     Task.Run(async () => await provider.DisposeAsync()).Wait(TimeSpan.FromSeconds(5));
                 }
             }
-            catch
+            catch (Exception ex) when (ex is AggregateException or ObjectDisposedException or InvalidOperationException)
             {
-                // Best effort on shutdown.
+                // Best effort on shutdown: nothing useful can be done (or logged, the logger may be disposed) at this point.
             }
             base.OnExit(e);
         }

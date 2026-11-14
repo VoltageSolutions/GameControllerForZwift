@@ -55,7 +55,7 @@ using var stopSignal = new CancellationTokenSource();
 Console.CancelKeyPress += (_, e) =>
 {
     e.Cancel = true;
-    try { stopSignal.Cancel(); } catch (ObjectDisposedException) { }
+    try { stopSignal.Cancel(); } catch (ObjectDisposedException) { /* already disposed */ }
 };
 
 using var factory = LoggerFactory.Create(b =>
@@ -307,8 +307,8 @@ while (!stop.IsCancellationRequested)
 }
 
 Console.WriteLine("Ctrl+C: shutting down...");
-try { await stateLoop; } catch (OperationCanceledException) { }
-try { await server.SendKeypadFrameAsync(BuildStateFrame(0, 0, 0)); } catch (Exception) { }
+try { await stateLoop; } catch (OperationCanceledException) { /* expected on shutdown */ }
+try { await server.SendKeypadFrameAsync(BuildStateFrame(0, 0, 0)); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or System.Net.Sockets.SocketException) { /* best-effort neutral frame on exit */ }
 mdns.Stop(); // sends the mDNS goodbye (TTL 0) for our records
 await server.StopAsync();
 return 0;

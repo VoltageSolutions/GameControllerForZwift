@@ -113,8 +113,9 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 IntPtr joystick = SDL_GameControllerGetJoystick(_handle);
                 _cachedBattery = joystick == IntPtr.Zero ? null : MapPowerLevel(SDL_JoystickCurrentPowerLevel(joystick));
             }
-            catch
+            catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
             {
+                // The loaded SDL2 build lacks the joystick power-level API; battery is simply unknown.
                 _cachedBattery = null;
             }
             return _cachedBattery;

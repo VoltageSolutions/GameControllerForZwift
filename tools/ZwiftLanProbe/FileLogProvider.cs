@@ -30,7 +30,7 @@ internal sealed class FileLogProvider : ILoggerProvider
         lock (_gate)
         {
             try { _writer.WriteLine(line); }
-            catch (Exception ex) when (ex is IOException or ObjectDisposedException) { }
+            catch (Exception ex) when (ex is IOException or ObjectDisposedException) { /* never throw from logging */ }
         }
     }
 

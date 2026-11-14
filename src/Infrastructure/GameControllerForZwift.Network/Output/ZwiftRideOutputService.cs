@@ -98,7 +98,7 @@ namespace GameControllerForZwift.Network.Output
 
         private void SignalLoop()
         {
-            try { _signal.Release(); } catch (SemaphoreFullException) { }
+            try { _signal.Release(); } catch (SemaphoreFullException) { /* a wake-up is already pending */ }
         }
 
         internal void StartSendLoop()
@@ -115,7 +115,7 @@ namespace GameControllerForZwift.Network.Output
             _loopCts = null; _loopTask = null;
             if (cts is null) return;
             cts.Cancel();
-            try { if (task is not null) await task.ConfigureAwait(false); } catch (OperationCanceledException) { }
+            try { if (task is not null) await task.ConfigureAwait(false); } catch (OperationCanceledException) { /* send loop cancelled on stop */ }
             cts.Dispose();
         }
 

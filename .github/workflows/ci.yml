@@ -117,16 +117,53 @@ jobs:
         shell: bash
         run: echo "::error title=Version not bumped::${{ steps.version.outputs.title }}"; exit 1
 
-  unit-tests:
-    name: Unit tests
+  tests:
+    name: Run tests
     runs-on: windows-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: read
       checks: write
       actions: read
     steps:
       - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+
+      # The UI toolchain installs (slow, mostly network bound) run in a background process while the
+      # solution builds and the unit tests run; "Wait for UI toolchain and start Appium" joins them.
+      # appium-windows-driver >= 3 no longer bundles WinAppDriver; the server is installed separately.
+      - name: Start UI toolchain installation (background)
+        shell: pwsh
+        run: |
+          $script = Join-Path $env:RUNNER_TEMP 'ui-setup.ps1'
+          @'
+          $ErrorActionPreference = 'Stop'
+          $marker = Join-Path $env:RUNNER_TEMP 'ui-setup.done'
+          try {
+            npm install -g appium@3.9.0
+            if ($LASTEXITCODE -ne 0) { throw 'npm install appium failed' }
+            appium driver install --source=npm appium-windows-driver@6.3.1
+            if ($LASTEXITCODE -ne 0) { throw 'appium driver install failed' }
+            Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile (Join-Path $env:RUNNER_TEMP 'WinAppDriver.msi')
+            Start-Process msiexec.exe -ArgumentList "/i `"$(Join-Path $env:RUNNER_TEMP 'WinAppDriver.msi')`" /quiet /norestart" -Wait
+            Set-Content -Path $marker -Value 'ok'
+          } catch {
+            Write-Host "ERROR: $_"
+            Set-Content -Path $marker -Value 'failed'
+          }
+          '@ | Set-Content -Path $script
+          Remove-Item (Join-Path $env:RUNNER_TEMP 'ui-setup.done') -ErrorAction SilentlyContinue
+          Start-Process pwsh -ArgumentList '-NoProfile', '-File', $script -WindowStyle Hidden `
+            -RedirectStandardOutput (Join-Path $env:RUNNER_TEMP 'ui-setup.log') -RedirectStandardError (Join-Path $env:RUNNER_TEMP 'ui-setup.err.log')
+
+      - name: Enable Developer Mode
+        run: reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock /t REG_DWORD /f /v AllowDevelopmentWithoutDevLicense /d 1
+
+      - name: Set runner resolution to modern device size
+        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
 
       - uses: actions/setup-dotnet@v6
         with:
@@ -140,7 +177,10 @@ jobs:
       - name: Build solution (Release)
         run: dotnet build GameControllerForZwift.sln -c Release --no-restore
 
-      - name: Run tests
+      # continue-on-error so the UI tests still run and both reports are published; the final step fails the job.
+      - name: Run unit and integration tests
+        id: unit-run
+        continue-on-error: true
         shell: bash
         run: |
           rc=0
@@ -150,21 +190,35 @@ jobs:
           done
           exit $rc
 
-      - name: Upload test results
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: test-results
-          path: TestResults/**/*.trx
-          if-no-files-found: warn
+      - name: Wait for UI toolchain and start Appium
+        shell: pwsh
+        run: |
+          $marker = Join-Path $env:RUNNER_TEMP 'ui-setup.done'
+          $log = Join-Path $env:RUNNER_TEMP 'ui-setup.log'
+          $deadline = (Get-Date).AddMinutes(10)
+          while (-not (Test-Path $marker) -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 3 }
+          if (Test-Path $log) { Get-Content $log }
+          if (-not (Test-Path $marker)) { throw 'UI toolchain installation did not finish within 10 minutes.' }
+          if ((Get-Content $marker -Raw).Trim() -ne 'ok') { throw 'UI toolchain installation failed, see log above.' }
+          $wad = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
+          if (-not $wad) { throw 'WinAppDriver.exe not found after install' }
+          "APPIUM_WAD_PATH=$wad" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          $env:APPIUM_WAD_PATH = $wad
+          Start-Process cmd.exe -ArgumentList '/c', 'appium --allow-cors > appium.log 2>&1' -WindowStyle Hidden
+          $deadline = (Get-Date).AddSeconds(60)
+          while ((Get-Date) -lt $deadline) {
+            try {
+              $r = Invoke-WebRequest -Uri http://127.0.0.1:4723/status -UseBasicParsing -TimeoutSec 3
+              if ($r.StatusCode -eq 200) { Write-Host 'Appium is ready.'; exit 0 }
+            } catch { Start-Sleep -Seconds 2 }
+          }
+          Get-Content appium.log -ErrorAction SilentlyContinue
+          throw 'Appium did not become ready within 60 seconds.'
 
-      - name: Upload coverage
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: coverage-unit
-          path: TestResults/**/coverage.cobertura.xml
-          if-no-files-found: warn
+      - name: Run UI tests
+        id: ui-run
+        continue-on-error: true
+        run: dotnet test tests/GameControllerForZwift.UITests -c Release --no-build --verbosity normal --logger "trx;LogFileName=UITests.trx" --results-directory TestResults-UI/UITests
 
       # use-actions-summary defaults to true in dorny/test-reporter >= v2.1 and then NO check run is created,
       # only a job summary. The first step creates the PR check run (needs checks: write; fork PRs have a
@@ -178,13 +232,7 @@ jobs:
           path: TestResults/**/*.trx
           reporter: dotnet-trx
           use-actions-summary: 'false'
-          fail-on-error: 'true'
-
-      # dorny/test-reporter has no fail-on-skip input, so the check run itself still reports success when tests
-      # are only skipped (it shows the skipped count); this step fails the job instead.
-      - name: Fail if any unit test was skipped
-        if: ${{ !cancelled() && steps.report-unit.conclusion != 'skipped' && steps.report-unit.outputs.skipped != '0' }}
-        run: echo "::error title=Skipped tests::${{ steps.report-unit.outputs.skipped }} unit test(s) were skipped. Skipped tests are not allowed."; exit 1
+          fail-on-error: 'false'
 
       - name: Unit Test Results (job summary)
         if: ${{ !cancelled() }}
@@ -198,110 +246,51 @@ jobs:
           fail-on-error: 'false'
           fail-on-empty: 'false'
 
-  ui-tests:
-    name: UI tests
-    runs-on: windows-latest
-    timeout-minutes: 30
-    permissions:
-      contents: read
-      checks: write
-      actions: read
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-dotnet@v6
-        with:
-          global-json-file: global.json
-          cache: true
-          cache-dependency-path: '**/*.csproj'
-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: '22'
-
-      - name: Install Appium and Windows driver
-        run: |
-          npm install -g appium@3.9.0
-          appium driver install --source=npm appium-windows-driver@6.3.1
-
-      # appium-windows-driver >= 3 no longer bundles WinAppDriver; install the server separately.
-      - name: Install WinAppDriver
-        run: |
-          Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile WinAppDriver.msi
-          Start-Process msiexec.exe -ArgumentList '/i WinAppDriver.msi /quiet /norestart' -Wait
-          $wad = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
-          if (-not $wad) { throw 'WinAppDriver.exe not found after install' }
-          "APPIUM_WAD_PATH=$wad" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-
-      - name: Enable Developer Mode
-        run: reg add HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock /t REG_DWORD /f /v AllowDevelopmentWithoutDevLicense /d 1
-
-      - name: Set runner resolution to modern device size
-        run: Set-DisplayResolution -Width 1920 -Height 1080 -Force
-
-      - name: Start Appium server
-        run: |
-          Start-Process cmd.exe -ArgumentList '/c', 'appium --allow-cors > appium.log 2>&1' -WindowStyle Hidden
-          $deadline = (Get-Date).AddSeconds(60)
-          while ((Get-Date) -lt $deadline) {
-            try {
-              $r = Invoke-WebRequest -Uri http://127.0.0.1:4723/status -UseBasicParsing -TimeoutSec 3
-              if ($r.StatusCode -eq 200) { Write-Host 'Appium is ready.'; exit 0 }
-            } catch { Start-Sleep -Seconds 2 }
-          }
-          Get-Content appium.log -ErrorAction SilentlyContinue
-          throw 'Appium did not become ready within 60 seconds.'
-
-      - name: Build app and UI tests (Release)
-        run: |
-          dotnet build src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -c Release
-          dotnet build tests/GameControllerForZwift.UITests -c Release
-
-      - name: Run UI tests
-        run: dotnet test tests/GameControllerForZwift.UITests -c Release --no-build --verbosity normal --logger "trx;LogFileName=UITests.trx" --results-directory TestResults/UITests
-
-      # use-actions-summary defaults to true in dorny/test-reporter >= v2.1 and then NO check run is created,
-      # only a job summary. The first step creates the PR check run (needs checks: write; fork PRs have a
-      # read-only token); the second adds a short per-file count table to the job summary.
       - name: UI Test Results
         id: report-ui
         if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: dorny/test-reporter@v3
         with:
           name: UI Test Results
-          path: TestResults/**/*.trx
+          path: TestResults-UI/**/*.trx
           reporter: dotnet-trx
           use-actions-summary: 'false'
-          fail-on-error: 'true'
-
-      # dorny/test-reporter has no fail-on-skip input, so the check run itself still reports success when tests
-      # are only skipped (it shows the skipped count); this step fails the job instead.
-      - name: Fail if any UI test was skipped
-        if: ${{ !cancelled() && steps.report-ui.conclusion != 'skipped' && steps.report-ui.outputs.skipped != '0' }}
-        run: echo "::error title=Skipped tests::${{ steps.report-ui.outputs.skipped }} ui test(s) were skipped. Skipped tests are not allowed."; exit 1
+          fail-on-error: 'false'
 
       - name: UI Test Results (job summary)
         if: ${{ !cancelled() }}
         uses: dorny/test-reporter@v3
         with:
           name: UI Test Results
-          path: TestResults/**/*.trx
+          path: TestResults-UI/**/*.trx
           reporter: dotnet-trx
           use-actions-summary: 'true'
           only-summary: 'true'
           fail-on-error: 'false'
           fail-on-empty: 'false'
 
-      - name: Upload UI test results
+      # dorny/test-reporter has no fail-on-skip input, so the check run itself still reports success when tests
+      # are only skipped (it shows the skipped count); these outputs are evaluated by the final step.
+      - name: Upload test results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
-          name: test-results-ui
-          path: TestResults/**/*.trx
+          name: test-results
+          path: |
+            TestResults/**/*.trx
+            TestResults-UI/**/*.trx
+          if-no-files-found: warn
+
+      - name: Upload coverage
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-unit
+          path: TestResults/**/coverage.cobertura.xml
           if-no-files-found: warn
 
       - name: Upload UI diagnostics
-        if: ${{ failure() }}
+        if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
           name: ui-diagnostics
@@ -309,6 +298,22 @@ jobs:
             appium.log
             tests/GameControllerForZwift.UITests/**/screenshot.png
           if-no-files-found: warn
+
+      - name: Fail if any test failed or was skipped
+        if: ${{ !cancelled() }}
+        shell: bash
+        env:
+          UNIT_OUTCOME: ${{ steps.unit-run.outcome }}
+          UI_OUTCOME: ${{ steps.ui-run.outcome }}
+          UNIT_SKIPPED: ${{ steps.report-unit.outputs.skipped }}
+          UI_SKIPPED: ${{ steps.report-ui.outputs.skipped }}
+        run: |
+          fail=0
+          if [ "$UNIT_OUTCOME" = failure ]; then echo "::error title=Unit tests::Unit/integration tests failed."; fail=1; fi
+          if [ "$UI_OUTCOME" = failure ]; then echo "::error title=UI tests::UI tests failed."; fail=1; fi
+          if [ -n "$UNIT_SKIPPED" ] && [ "$UNIT_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::$UNIT_SKIPPED unit test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
+          if [ -n "$UI_SKIPPED" ] && [ "$UI_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::$UI_SKIPPED ui test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
+          exit $fail
 
   lint:
     name: Lint
@@ -361,7 +366,7 @@ jobs:
         with:
           languages: csharp
           build-mode: manual
-          queries: security-and-quality
+          config-file: ./.github/codeql/codeql-config.yml
 
       - name: Build
         run: dotnet build GameControllerForZwift.sln -c Release
@@ -423,8 +428,8 @@ jobs:
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
-    needs: [unit-tests]
-    if: ${{ always() && needs.unit-tests.result != 'cancelled' }}
+    needs: [tests]
+    if: ${{ always() && needs.tests.result != 'cancelled' }}
     timeout-minutes: 10
     steps:
       # Checkout gives Codecov the repository layout for path fixing.

@@ -113,13 +113,13 @@ public sealed partial class DirectConnectServer : IZwiftRideLink
             return;
 
         cts.Cancel();
-        try { listener?.Stop(); } catch (SocketException) { }
+        try { listener?.Stop(); } catch (SocketException) { /* listener already closed */ }
         if (session is not null)
             await session.DisposeAsync().ConfigureAwait(false);
         foreach (var t in new[] { accept, keepAlive, sessionTask })
         {
             if (t is null) continue;
-            try { await t.ConfigureAwait(false); } catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException or SocketException or IOException) { }
+            try { await t.ConfigureAwait(false); } catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException or SocketException or IOException) { /* expected while shutting down */ }
         }
         cts.Dispose();
         SetConnected(false);
@@ -201,7 +201,7 @@ public sealed partial class DirectConnectServer : IZwiftRideLink
                 continue;
             }
 
-            try { client.NoDelay = true; } catch (SocketException) { }
+            try { client.NoDelay = true; } catch (SocketException) { /* NoDelay is only an optimisation */ }
             string remote = client.Client.RemoteEndPoint?.ToString() ?? "unknown";
             LogClientConnected(remote);
 
@@ -312,6 +312,7 @@ public sealed partial class DirectConnectServer : IZwiftRideLink
         }
         catch (OperationCanceledException)
         {
+            // Normal shutdown of the keep-alive loop.
         }
     }
 

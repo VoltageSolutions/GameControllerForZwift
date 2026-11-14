@@ -90,6 +90,7 @@ public sealed partial class DirectConnectSession : IAsyncDisposable
         }
         catch (OperationCanceledException)
         {
+            // Session cancelled on shutdown.
         }
         catch (IOException ex)
         {
@@ -97,6 +98,7 @@ public sealed partial class DirectConnectSession : IAsyncDisposable
         }
         catch (ObjectDisposedException)
         {
+            // Stream closed concurrently by DisposeAsync; the session is ending anyway.
         }
         catch (System.Net.Sockets.SocketException ex)
         {
@@ -363,7 +365,7 @@ public sealed partial class DirectConnectSession : IAsyncDisposable
     {
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
-        try { _cts.Cancel(); } catch (ObjectDisposedException) { }
+        try { _cts.Cancel(); } catch (ObjectDisposedException) { /* already disposed */ }
         try { await _stream.DisposeAsync().ConfigureAwait(false); } catch (Exception ex) { LogStreamDisposeFailed(ex, _name); }
     }
 

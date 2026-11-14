@@ -46,7 +46,10 @@ namespace GameControllerForZwift.Core
             _cts?.Cancel();
 
             try { _ = _outputService.UpdateAsync(OutputState.Neutral); }
-            catch { /* best effort */ }
+            catch (Exception ex) when (ex is InvalidOperationException or ObjectDisposedException)
+            {
+                // Best effort: the output service may already be stopped or disposed while we shut down.
+            }
         }
 
         public async Task ReadDataAsync(IController controller, CancellationToken cancellationToken)

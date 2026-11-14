@@ -24,7 +24,7 @@ namespace GameControllerForZwift.Core.Tests
         {
             foreach (var d in data) sut.ProcessControllerData(d);
             using var cts = new CancellationTokenSource(150);
-            try { await sut.WriteDataAsync(cts.Token); } catch (OperationCanceledException) { }
+            try { await sut.WriteDataAsync(cts.Token); } catch (OperationCanceledException) { /* expected: the test cancels the loop */ }
         }
 
         private OutputState[] States() =>
@@ -54,7 +54,7 @@ namespace GameControllerForZwift.Core.Tests
             var controller = Substitute.For<IController>();
             controller.ReadData().Returns(new ControllerData { A = true });
             using var cts = new CancellationTokenSource(120);
-            try { await _sut.ReadDataAsync(controller, cts.Token); } catch (OperationCanceledException) { }
+            try { await _sut.ReadDataAsync(controller, cts.Token); } catch (OperationCanceledException) { /* expected: the test cancels the loop */ }
             Assert.NotEmpty(_sut.DataQueue);
         }
 

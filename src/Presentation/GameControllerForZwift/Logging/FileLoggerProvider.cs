@@ -33,7 +33,7 @@ public sealed class FileLoggerProvider : ILoggerProvider
     {
         lock (_gate)
         {
-            try { _writer.Dispose(); } catch (IOException) { }
+            try { _writer.Dispose(); } catch (IOException) { /* nothing to report to if the log file itself fails */ }
         }
     }
 
@@ -48,7 +48,7 @@ public sealed class FileLoggerProvider : ILoggerProvider
         lock (_gate)
         {
             try { _writer.WriteLine(line); }
-            catch (Exception ex) when (ex is IOException or ObjectDisposedException) { }
+            catch (Exception ex) when (ex is IOException or ObjectDisposedException) { /* logging must never throw; the log file is closed or unwritable */ }
         }
     }
 
