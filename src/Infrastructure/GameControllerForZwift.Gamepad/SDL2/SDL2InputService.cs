@@ -163,7 +163,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// <summary>
         /// Reads what SDL knows about the device at the given index.
         /// </summary>
-        private static SdlDeviceInfo DescribeDevice(int index)
+        internal static SdlDeviceInfo DescribeDevice(int index)
         {
             return new SdlDeviceInfo(
                 index,
