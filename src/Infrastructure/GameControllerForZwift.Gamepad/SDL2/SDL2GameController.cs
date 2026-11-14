@@ -8,7 +8,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
         #region Fields
 
         private readonly IntPtr _handle;
-        private readonly string _vendorProduct;
+        private readonly Lock _sync = new();
         private bool _isDisposed;
         private int? _cachedBattery;
         private DateTime _batteryReadAt = DateTime.MinValue;
@@ -31,10 +31,6 @@ namespace GameControllerForZwift.Gamepad.SDL2
 
             _handle = handle;
 
-            ushort vendor = SDL_GameControllerGetVendor(handle);
-            ushort product = SDL_GameControllerGetProduct(handle);
-            _vendorProduct = $"{vendor:X4}-{product:X4}";
-
             Name = SDL_GameControllerName(handle) ?? "Unknown Controller";
         }
 
@@ -56,6 +52,15 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// </summary>
         /// <returns>A <see cref="ControllerData"/> object containing the current controller state.</returns>
         public ControllerData? ReadData()
+        {
+            // The poll loop reads on a background thread while a refresh may dispose this controller.
+            lock (_sync)
+            {
+                return ReadDataLocked();
+            }
+        }
+
+        private ControllerData? ReadDataLocked()
         {
             if (_isDisposed)
             {
@@ -160,13 +165,16 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// </summary>
         public void Dispose()
         {
-            if (!_isDisposed)
+            lock (_sync)
             {
-                if (_handle != IntPtr.Zero)
+                if (!_isDisposed)
                 {
-                    SDL_GameControllerClose(_handle);
+                    if (_handle != IntPtr.Zero)
+                    {
+                        SDL_GameControllerClose(_handle);
+                    }
+                    _isDisposed = true;
                 }
-                _isDisposed = true;
             }
             GC.SuppressFinalize(this);
         }

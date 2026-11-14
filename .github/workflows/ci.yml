@@ -2,12 +2,10 @@ name: CI Workflow
 
 on:
   pull_request:
-  push:
-    branches: [main]
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -62,7 +60,7 @@ jobs:
 
       - name: Evaluate version
         id: version
-        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        if: github.base_ref == 'main'
         shell: bash
         run: |
           version="$(grep -oP '(?<=<Version>)[^<]+' "$APP_PROJECT" | head -n1 | tr -d '[:space:]')"
@@ -94,7 +92,7 @@ jobs:
           echo "$summary" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Version Check
-        if: github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository
+        if: github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v9
         env:
           V_CONCLUSION: ${{ steps.version.outputs.conclusion }}
@@ -283,7 +281,7 @@ jobs:
           check_name: Unit Test Results
           trx_files: TestResults/**/*.trx
           comment_mode: 'off'
-          check_run: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+          check_run: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
           job_summary: 'true'
           github_retries: '10'
 
@@ -295,7 +293,7 @@ jobs:
           check_name: UI Test Results
           trx_files: TestResults-UI/**/*.trx
           comment_mode: 'off'
-          check_run: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+          check_run: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
           job_summary: 'true'
           github_retries: '10'
 

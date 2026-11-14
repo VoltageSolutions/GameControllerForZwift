@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <Version>0.1.0</Version>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Makaretu.Dns.Multicast.New" Version="0.38.0" />
-	<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.15" />
+	<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="11.0.0" />
   </ItemGroup>
 
 	<ItemGroup>
