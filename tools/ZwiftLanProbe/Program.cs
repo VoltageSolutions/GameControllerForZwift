@@ -146,7 +146,7 @@ async Task StateLoopAsync(CancellationToken ct)
             bool pads = padL != 0 || padR != 0;
             bool active = pads || heldButtons != 0;
             // resend every 100 ms while a paddle is held; a state change sends at once; one neutral frame after the last release
-            if (woke || active || (wasActive && !active))
+            if (woke || active || wasActive)
                 frame = BuildStateFrame(heldButtons, padL, padR);
             wasActive = active;
         }

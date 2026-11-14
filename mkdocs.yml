@@ -1,4 +1,3 @@
-
 # Project information
 site_name: Game Controller For Zwift
 site_url: https://VoltageSolutions.github.io/GameControllerForZwift
@@ -10,18 +9,22 @@ site_description: >-
 repo_name: VoltageSolutions/GameControllerForZwift
 repo_url: https://github.com/VoltageSolutions/GameControllerForZwift
 
+# Local-only material (private packet captures) is never part of the site.
+exclude_docs: |
+  captures/
+
 # Configuration
 theme:
   name: material
   highlightjs: true
   hljs_languages:
     - yaml
-  palette: 
+  palette:
     # Palette toggle for light mode
     - scheme: default
       primary: deep orange
       toggle:
-        icon: material/brightness-7 
+        icon: material/brightness-7
         name: Switch to dark mode
 
     # Palette toggle for dark mode
@@ -30,32 +33,59 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
-    
-    - navigation.indexes
-    # - navigation.instant
-    # - navigation.instant.prefetch
-    # - navigation.instant.progress
-    # - navigation.prune
+    - navigation.tabs
     - navigation.sections
-    
-    # - navigation.tabs.sticky
-
+    - navigation.indexes
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
     - toc.follow
+
+plugins:
+  - search
 
 # Extensions
 markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-  
+
 # Page Tree
 nav:
   - Home: index.md
-  - Developer notes:
-      - zwift-lan-findings.md
-      - zwift-lan-protocol-notes.md
-      - zwift-lan-testing.md
-      - gamepad-visualization-research.md
-      - ux-review-notes.md
+  - Use the app:
+      - use/install.md
+      - use/pair-with-zwift.md
+      - use/map-your-controller.md
+      - use/troubleshooting.md
+  - How it works:
+      - how-it-works/big-picture.md
+      - how-it-works/mdns.md
+      - how-it-works/direct-connect.md
+      - how-it-works/zwift-protocol.md
+      - how-it-works/button-reference.md
+      - how-it-works/additional-learnings.md
+      - how-it-works/glossary.md
+      - how-it-works/credits.md
+  - Build and contribute:
+      - build/architecture.md
+      - build/build-and-test.md
+      - build/probe.md
+      - build/ci-cd.md
+      - build/contributing.md
+      - build/roadmap.md
+      - Design notes:
+          - build/design/ux-concepts.md
+          - build/design/gamepad-visualization.md
