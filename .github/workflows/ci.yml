@@ -1,15 +1,9 @@
-name: CI
+name: CI Workflow
 
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
   push:
     branches: [main]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -22,7 +16,8 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  # Non-WPF test projects (also built on Linux)
+  APP_PROJECT: src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
+  # Non-WPF test projects (also built on Linux by the Lint job)
   PORTABLE_TESTS: >-
     tests/GameControllerForZwift.Core.UnitTests
     tests/GameControllerForZwift.Network.UnitTests
@@ -30,12 +25,17 @@ env:
     tests/GameControllerForZwift.Gamepad.UnitTests
 
 jobs:
-  lib:
-    name: Libraries (Linux)
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
+  build:
+    name: Build
+    runs-on: windows-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      checks: write
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-dotnet@v6
         with:
@@ -44,49 +44,87 @@ jobs:
           cache-dependency-path: '**/*.csproj'
 
       - name: Restore
+        run: dotnet restore GameControllerForZwift.sln
+
+      - name: Build solution (Release)
+        run: dotnet build GameControllerForZwift.sln -c Release --no-restore
+
+      - name: Publish (framework-dependent)
+        run: dotnet publish $env:APP_PROJECT -c Release -r win-x64 --self-contained false -o artifacts/fd
+
+      - name: Publish (standalone)
+        run: dotnet publish $env:APP_PROJECT -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/standalone
+
+      - name: Check publish output
         run: |
-          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet restore "$p"; done
+          ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
+          ./.github/scripts/check-publish.ps1 -Path artifacts/standalone
 
-      - name: Verify formatting
+      - name: Evaluate version
+        id: version
+        if: github.event_name == 'pull_request' && github.base_ref == 'main'
+        shell: bash
         run: |
-          for p in src/Application/GameControllerForZwift.Core \
-                   src/Infrastructure/GameControllerForZwift.Network \
-                   src/Infrastructure/GameControllerForZwift.Gamepad \
-                   $PORTABLE_TESTS tools/ZwiftLanProbe; do
-            dotnet format "$p" --verify-no-changes --severity error --no-restore --verbosity diagnostic
-          done
+          version="$(grep -oP '(?<=<Version>)[^<]+' "$APP_PROJECT" | head -n1 | tr -d '[:space:]')"
+          if [ -z "$version" ]; then echo "::error::Could not read <Version> from $APP_PROJECT"; exit 1; fi
+          git fetch --no-tags origin main
+          if git diff --name-only origin/main...HEAD | grep -vqE '^docs/|^mkdocs\.yml$|\.md$'; then
+            docs_only=false
+          else
+            docs_only=true
+          fi
+          if [ "$docs_only" = true ]; then
+            conclusion=success; title="Docs-only change — no new version needed"
+            summary="This pull request only changes documentation, so no version bump is required."
+          elif git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
+            conclusion=failure; title="Version v${version} already exists — bump <Version> in GameControllerForZwift.csproj"
+            summary="A tag and release for v${version} already exist. Update <Version> in src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj."
+          else
+            conclusion=success; title="New app version v${version}"
+            summary="Merging to main will create a new tag and release for v${version}."
+          fi
+          {
+            echo "conclusion=$conclusion"
+            echo "title=$title"
+            echo "summary=$summary"
+          } >> "$GITHUB_OUTPUT"
+          echo "### Version Check: $conclusion" >> "$GITHUB_STEP_SUMMARY"
+          echo "**$title**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "$summary" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Build
-        run: |
-          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet build "$p" -c Release --no-restore; done
-
-      - name: Test
-        run: bash .github/scripts/run-tests.sh TestResults $PORTABLE_TESTS
-
-      - name: Test summary
-        if: ${{ !cancelled() }}
-        run: python3 .github/scripts/trx-summary.py "Test results (Linux)" TestResults >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Upload test results
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
+      - name: Version Check
+        if: github.event_name == 'pull_request' && github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v9
+        env:
+          V_CONCLUSION: ${{ steps.version.outputs.conclusion }}
+          V_TITLE: ${{ steps.version.outputs.title }}
+          V_SUMMARY: ${{ steps.version.outputs.summary }}
         with:
-          name: test-results-lib
-          path: TestResults/**/*.trx
-          if-no-files-found: warn
+          script: |
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: 'Version Check',
+              head_sha: context.payload.pull_request.head.sha,
+              status: 'completed',
+              conclusion: process.env.V_CONCLUSION,
+              output: { title: process.env.V_TITLE, summary: process.env.V_SUMMARY },
+            });
 
-      - name: Upload coverage
-        if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v7
-        with:
-          name: coverage-lib
-          path: TestResults/**/coverage.cobertura.xml
-          if-no-files-found: warn
+      - name: Fail on version error
+        if: steps.version.outputs.conclusion == 'failure'
+        shell: bash
+        run: echo "::error title=Version not bumped::${{ steps.version.outputs.title }}"; exit 1
 
-  windows:
-    name: Solution, tests and publish (Windows)
+  unit-tests:
+    name: Unit tests
     runs-on: windows-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      checks: write
+      actions: read
     steps:
       - uses: actions/checkout@v7
 
@@ -102,30 +140,19 @@ jobs:
       - name: Build solution (Release)
         run: dotnet build GameControllerForZwift.sln -c Release --no-restore
 
-      - name: Test
+      - name: Run tests
         shell: bash
         run: bash .github/scripts/run-tests.sh TestResults tests/GameControllerForZwift.UnitTests $PORTABLE_TESTS
 
-      - name: Publish (framework-dependent)
-        run: dotnet publish src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -c Release -r win-x64 --self-contained false -o artifacts/fd
-
-      - name: Publish (standalone)
-        run: dotnet publish src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/standalone
-
-      - name: Check publish output
-        run: |
-          ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
-          ./.github/scripts/check-publish.ps1 -Path artifacts/standalone
-
       - name: Test summary
         if: ${{ !cancelled() }}
-        run: python .github/scripts/trx-summary.py "Test results (Windows)" TestResults >> $env:GITHUB_STEP_SUMMARY
+        run: python .github/scripts/trx-summary.py "Unit test results" TestResults >> $env:GITHUB_STEP_SUMMARY
 
       - name: Upload test results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
-          name: test-results-windows
+          name: test-results
           path: TestResults/**/*.trx
           if-no-files-found: warn
 
@@ -133,14 +160,28 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-windows
+          name: coverage-unit
           path: TestResults/**/coverage.cobertura.xml
           if-no-files-found: warn
 
+      # Fork PRs get a read-only token and cannot create check runs; the step summary covers them.
+      - name: Unit Test Results
+        if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: Unit Test Results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          fail-on-error: 'true'
+
   ui-tests:
-    name: UI tests (Appium)
+    name: UI tests
     runs-on: windows-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      checks: write
+      actions: read
     steps:
       - uses: actions/checkout@v7
 
@@ -199,22 +240,113 @@ jobs:
         if: ${{ !cancelled() }}
         run: python .github/scripts/trx-summary.py "UI test results" TestResults >> $env:GITHUB_STEP_SUMMARY
 
-      - name: Upload UI test diagnostics
+      - name: UI Test Results
+        if: ${{ !cancelled() && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) }}
+        uses: dorny/test-reporter@v3
+        with:
+          name: UI Test Results
+          path: TestResults/**/*.trx
+          reporter: dotnet-trx
+          fail-on-error: 'true'
+
+      - name: Upload UI test results
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v7
         with:
           name: test-results-ui
+          path: TestResults/**/*.trx
+          if-no-files-found: warn
+
+      - name: Upload UI diagnostics
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: ui-diagnostics
           path: |
-            TestResults/**/*.trx
             appium.log
             tests/GameControllerForZwift.UITests/**/screenshot.png
           if-no-files-found: warn
 
-  coverage:
-    name: Upload coverage to Codecov
+  lint:
+    name: Lint
     runs-on: ubuntu-latest
-    needs: [lib, windows]
-    if: ${{ !cancelled() }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Restore
+        run: |
+          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet restore "$p"; done
+
+      - name: Verify formatting
+        run: |
+          for p in src/Application/GameControllerForZwift.Core \
+                   src/Infrastructure/GameControllerForZwift.Network \
+                   src/Infrastructure/GameControllerForZwift.Gamepad \
+                   $PORTABLE_TESTS tools/ZwiftLanProbe; do
+            dotnet format "$p" --verify-no-changes --severity error --no-restore --verbosity diagnostic
+          done
+
+      - name: Build portable projects (Linux)
+        run: |
+          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet build "$p" -c Release --no-restore; done
+
+  vulnerabilities:
+    name: Vulnerabilities
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          build-mode: manual
+          queries: security-and-quality
+
+      - name: Build
+        run: dotnet build GameControllerForZwift.sln -c Release
+
+      - uses: github/codeql-action/analyze@v4
+        with:
+          category: '/language:csharp'
+          output: sarif-results
+          upload: always
+
+      - name: Summarize CodeQL alerts
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: python .github/scripts/sarif-summary.py sarif-results
+
+      - name: Check NuGet packages for known vulnerabilities
+        shell: bash
+        run: |
+          dotnet list GameControllerForZwift.sln package --vulnerable --include-transitive --format json --output-version 1 > vulnerable.json
+          python .github/scripts/vuln-check.py vulnerable.json | tee -a "$GITHUB_STEP_SUMMARY"
+          exit "${PIPESTATUS[0]}"
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    needs: [unit-tests]
+    if: ${{ always() && needs.unit-tests.result != 'cancelled' }}
     timeout-minutes: 10
     steps:
       # Checkout gives Codecov the repository layout for path fixing.
@@ -224,7 +356,6 @@ jobs:
         with:
           pattern: coverage-*
           path: coverage
-          merge-multiple: false
 
       # Secrets are unavailable to fork PRs; for those, Codecov tokenless upload is used
       # (public repos, requires "Tokenless uploads" enabled in the Codecov org settings).
@@ -233,24 +364,3 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/**/coverage.cobertura.xml
           fail_ci_if_error: true
-
-  version-check:
-    name: Version is new
-    if: github.event_name == 'pull_request' && github.base_ref == 'main'
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Check that v<version> is not already tagged
-        run: |
-          csproj=src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
-          version="$(grep -oP '(?<=<Version>)[^<]+' "$csproj" | head -n1 | tr -d '[:space:]')"
-          if [ -z "$version" ]; then
-            echo "::error::Could not read <Version> from $csproj"; exit 1
-          fi
-          if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
-            echo "::error title=Version not bumped::Tag v${version} already exists. Update <Version> in $csproj before merging to main."
-            exit 1
-          fi
-          echo "Version v${version} is new; merging to main will allow a release to be drafted."
