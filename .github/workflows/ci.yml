@@ -153,21 +153,31 @@ jobs:
       # WinAppDriver is installed in its own foreground step (absolute paths, verbose msiexec log) so that a
       # failure stops the job with a clear message. appium-windows-driver >= 3 no longer bundles it.
       - name: Install WinAppDriver
+        id: wad
+        continue-on-error: true
         shell: pwsh
         run: |
-          $msi = Join-Path $env:RUNNER_TEMP 'WinAppDriver.msi'
-          $log = Join-Path $env:RUNNER_TEMP 'winappdriver-install.log'
-          Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile $msi
-          $p = Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /quiet /norestart /l*v `"$log`"" -Wait -PassThru
-          if ($p.ExitCode -notin 0, 3010) {
-            Write-Host "--- last 60 lines of $log ---"
-            if (Test-Path $log) { Get-Content $log -Tail 60 }
-            throw "WinAppDriver installation failed: msiexec exit code $($p.ExitCode)"
+          $candidates = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe")
+          $wad = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+          "wad=failed" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          if ($wad) {
+            Write-Host "WinAppDriver already installed at $wad"
+          } else {
+            $msi = Join-Path $env:RUNNER_TEMP 'WinAppDriver.msi'
+            $log = Join-Path $env:RUNNER_TEMP 'winappdriver-install.log'
+            Invoke-WebRequest -Uri https://github.com/microsoft/WinAppDriver/releases/download/v1.2.1/WindowsApplicationDriver_1.2.1.msi -OutFile $msi
+            $p = Start-Process msiexec.exe -ArgumentList "/i `"$msi`" /quiet /norestart /l*v `"$log`"" -Wait -PassThru
+            $wad = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
+            if ($p.ExitCode -notin 0, 3010 -and -not $wad) {
+              Write-Host "--- last 60 lines of $log ---"
+              if (Test-Path $log) { Get-Content $log -Tail 60 }
+              throw "WinAppDriver installation failed: msiexec exit code $($p.ExitCode)"
+            }
+            if (-not $wad) { throw 'WinAppDriver.exe not found after install' }
+            Write-Host "WinAppDriver installed at $wad (msiexec exit code $($p.ExitCode))"
           }
-          $wad = @("${env:ProgramFiles(x86)}\Windows Application Driver\WinAppDriver.exe", "$env:ProgramFiles\Windows Application Driver\WinAppDriver.exe") | Where-Object { Test-Path $_ } | Select-Object -First 1
-          if (-not $wad) { throw 'WinAppDriver.exe not found after install' }
-          Write-Host "WinAppDriver installed at $wad"
           "WINAPPDRIVER_PATH=$wad" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "wad=ok" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       # The Appium install (slow, mostly network bound) runs as a PowerShell job INSIDE this step: the
       # runner kills background processes that outlive their step ("Cleaning up orphan processes").
@@ -227,7 +237,9 @@ jobs:
         shell: pwsh
         env:
           UI_TOOLCHAIN: ${{ steps.unit-run.outputs.ui_toolchain }}
+          WAD_STATUS: ${{ steps.wad.outputs.wad }}
         run: |
+          if ($env:WAD_STATUS -ne 'ok') { throw "UI toolchain (WinAppDriver) install failed (status: '$env:WAD_STATUS'); see the Install WinAppDriver step log." }
           if ($env:UI_TOOLCHAIN -ne 'ok') { throw "UI toolchain installation did not succeed (status: '$env:UI_TOOLCHAIN'); see the unit test step log." }
           $wad = $env:WINAPPDRIVER_PATH
           if (-not $wad -or -not (Test-Path $wad)) {
@@ -343,10 +355,12 @@ jobs:
           UNIT_OUTCOME: ${{ steps.unit-run.outcome }}
           UI_OUTCOME: ${{ steps.ui-run.outcome }}
           TOOLCHAIN: ${{ steps.unit-run.outputs.ui_toolchain }}
+          WAD: ${{ steps.wad.outputs.wad }}
           UNIT_SKIPPED: ${{ steps.report-unit.outputs.skipped }}
           UI_SKIPPED: ${{ steps.report-ui.outputs.skipped }}
         run: |
           fail=0
+          if [ "$WAD" != ok ]; then echo "::error title=UI toolchain (WinAppDriver) install failed::UI toolchain (WinAppDriver) install failed (status: ${WAD:-none})."; fail=1; fi
           if [ "$TOOLCHAIN" != ok ]; then echo "::error title=UI toolchain (Appium) install failed::UI toolchain (Appium) install failed (status: ${TOOLCHAIN:-none})."; fail=1; fi
           if [ "$UNIT_OUTCOME" = failure ]; then echo "::error title=Unit tests failed::unit tests failed (unit/integration test step reported failure)."; fail=1; fi
           if [ "$UI_OUTCOME" = failure ]; then echo "::error title=UI tests failed::UI tests failed."; fail=1; fi
@@ -478,6 +492,14 @@ jobs:
         with:
           pattern: coverage-*
           path: coverage
+
+      - name: Check coverage files exist
+        shell: bash
+        run: |
+          if ! find coverage -name coverage.cobertura.xml 2>/dev/null | grep -q .; then
+            echo "::error title=Coverage skipped::Coverage skipped: unit tests did not produce coverage — see Run tests"
+            exit 1
+          fi
 
       # Secrets are unavailable to fork PRs; for those, Codecov tokenless upload is used
       # (public repos, requires "Tokenless uploads" enabled in the Codecov org settings).
