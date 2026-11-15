@@ -21,4 +21,4 @@ Build with the .NET 10 SDK on Windows (`dotnet build GameControllerForZwift.sln`
 
 ## What a pull request needs
 
-CI runs on every pull request and all checks must pass: build with no warnings, formatting, tests (none skipped), and coverage. If you change code that goes to `main`, bump `<Version>` in the app project. If you change behavior that riders or protocol readers rely on, update the matching docs page. The details are in [Contributing](https://VoltageSolutions.github.io/GameControllerForZwift/build/contributing/).
+CI runs on every pull request and all checks must pass: build with no warnings, formatting, tests (none skipped), and coverage. If you change code that goes to `main`, bump `<Version>` in `Directory.Build.props`. If you change behavior that riders or protocol readers rely on, update the matching docs page. The details are in [Contributing](https://VoltageSolutions.github.io/GameControllerForZwift/build/contributing/).

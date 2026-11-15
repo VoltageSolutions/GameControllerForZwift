@@ -27,7 +27,7 @@ flowchart LR
 
 ## Versioning
 
-The app's version lives in one place: the `<Version>` element in `src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj`.
+The app's version lives in one place: the `<Version>` element in `Directory.Build.props` at the root of the repository. Every project picks it up from there.
 
 - Every pull request into `main` that changes code must carry a **new** version.
 - Docs-only pull requests do not need a new version.

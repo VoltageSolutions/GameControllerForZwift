@@ -35,9 +35,7 @@ jobs:
         id: v
         shell: bash
         run: |
-          csproj=src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
-          version="$(grep -oP '(?<=<Version>)[^<]+' "$csproj" | head -n1 | tr -d '[:space:]')"
-          if [ -z "$version" ]; then echo "::error::Could not read <Version> from $csproj"; exit 1; fi
+          version="$(bash .github/scripts/version.sh get)" || { echo "::error::Could not read <Version> from Directory.Build.props"; exit 1; }
           echo "version=$version" >> "$GITHUB_OUTPUT"
           if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
             echo "skip=true" >> "$GITHUB_OUTPUT"

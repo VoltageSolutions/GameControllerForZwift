@@ -79,8 +79,7 @@ jobs:
         if: github.base_ref == 'main'
         shell: bash
         run: |
-          version="$(grep -oP '(?<=<Version>)[^<]+' "$APP_PROJECT" | head -n1 | tr -d '[:space:]')"
-          if [ -z "$version" ]; then echo "::error::Could not read <Version> from $APP_PROJECT"; exit 1; fi
+          version="$(bash .github/scripts/version.sh get)" || { echo "::error::Could not read <Version> from Directory.Build.props"; exit 1; }
           git fetch --no-tags origin main
           if git diff --name-only origin/main...HEAD | grep -vqE '^docs/|^zensical\.toml$|\.md$'; then
             docs_only=false
@@ -91,8 +90,8 @@ jobs:
             conclusion=success; title="Docs-only change — no new version needed"
             summary="This pull request only changes documentation, so no version bump is required."
           elif git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
-            conclusion=failure; title="Version v${version} already exists — bump <Version> in GameControllerForZwift.csproj"
-            summary="A tag and release for v${version} already exist. Update <Version> in src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj."
+            conclusion=failure; title="Version v${version} already exists: raise <Version> in Directory.Build.props"
+            summary="A tag and release for v${version} already exist. Raise <Version> in Directory.Build.props."
           else
             conclusion=success; title="New app version v${version}"
             summary="Merging to main will create a new tag and release for v${version}."

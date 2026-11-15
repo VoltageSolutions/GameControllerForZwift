@@ -7,7 +7,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
 	<AssemblyName>GameControllerForZwift</AssemblyName>
-	<Version>0.3.0</Version>
 	<NoWarn>$(NoWarn);WPF0001</NoWarn>
 	<RepositoryUrl>https://github.com/VoltageSolutions/GameControllerForZwift</RepositoryUrl>
 	<RepositoryType>git</RepositoryType>
