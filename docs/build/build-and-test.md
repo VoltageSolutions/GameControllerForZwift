@@ -82,6 +82,10 @@ dotnet format src/Infrastructure/GameControllerForZwift.Network --verify-no-chan
 
 CI runs this check on `Core`, `Network`, `Gamepad`, the portable test projects and `ZwiftLanProbe`.
 
+## ARM smoke test
+
+The `ARM smoke test` CI job runs the x64 builds from the `Build` job (framework-dependent and standalone) on a `windows-11-arm` runner. `.github/scripts/smoke-test-app.ps1` starts the app under x64 emulation and checks that its log shows SDL2 initialized and devices enumerated. The `Build` job also uploads both builds as the `app-win-x64` and `app-win-x64-standalone` artifacts (kept for 14 days), so you can copy them to a real ARM device.
+
 ## Optional: the build watcher
 
 `tools/dev/build-watcher.ps1` is a small helper for driving builds on a Windows machine from somewhere else, for example a remote session that can write files but has no shell there. Start it from the repo root:
