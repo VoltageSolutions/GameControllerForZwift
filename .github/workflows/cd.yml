@@ -54,12 +54,7 @@ jobs:
           cache: true
           cache-dependency-path: '**/*.csproj'
 
-      - name: Build
-        if: steps.v.outputs.skip != 'true'
-        run: |
-          dotnet restore GameControllerForZwift.sln
-          dotnet build GameControllerForZwift.sln -c Release --no-restore
-
+      # dotnet publish restores and builds the app project (and the libraries it references) itself.
       - name: Publish
         if: steps.v.outputs.skip != 'true'
         run: |
