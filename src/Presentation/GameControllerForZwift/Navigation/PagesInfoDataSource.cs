@@ -55,14 +55,9 @@ namespace GameControllerForZwift.UI.WPF.Navigation
         public ICollection<PagesInfoDataItem> GetAllPagesnfo()
         {
             var allPages = new ObservableCollection<PagesInfoDataItem>();
-            foreach (PagesInfoDataItem pagesInfoDataItem in PagesInfo)
+            foreach (PagesInfoDataItem item in PagesInfo.SelectMany(pagesInfoDataItem => pagesInfoDataItem.Items))
             {
-                var items = pagesInfoDataItem.Items;
-                foreach (PagesInfoDataItem item in items)
-                {
-                    allPages.Add(item);
-                }
-
+                allPages.Add(item);
             }
 
             return allPages;
@@ -70,7 +65,7 @@ namespace GameControllerForZwift.UI.WPF.Navigation
 
         public ICollection<PagesInfoDataItem> GetGroupedPagesInfo()
         {
-            return PagesInfo.Where(x => x.IsGroup == true).ToList();
+            return PagesInfo.Where(x => x.IsGroup).ToList();
         }
     }
 }

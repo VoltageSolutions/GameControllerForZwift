@@ -87,10 +87,9 @@ namespace GameControllerForZwift.Network.Output
         private static (ZwiftRideButton Mask, sbyte Zl, sbyte Zr) ComputeInput(OutputState state)
         {
             var mask = ZwiftRideButton.None;
-            foreach (var f in state.Pressed)
+            foreach (var f in state.Pressed.Where(ButtonMap.ContainsKey))
             {
-                if (ButtonMap.TryGetValue(f, out var b))
-                    mask |= b;
+                mask |= ButtonMap[f];
             }
             var (zl, zr) = PaddleMath.Compute(state.Steer, state.Brake);
             return (mask, zl, zr);

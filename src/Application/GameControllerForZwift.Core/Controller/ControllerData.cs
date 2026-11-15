@@ -66,8 +66,8 @@
 
         #region Trigger States
 
-        public bool LeftTriggerFullyPressed => LeftTrigger == Thresholds.TriggerMaxValue;
-        public bool RightTriggerFullyPressed => RightTrigger == Thresholds.TriggerMaxValue;
+        public bool LeftTriggerFullyPressed => LeftTrigger.Equals(Thresholds.TriggerMaxValue);
+        public bool RightTriggerFullyPressed => RightTrigger.Equals(Thresholds.TriggerMaxValue);
 
         #endregion
 

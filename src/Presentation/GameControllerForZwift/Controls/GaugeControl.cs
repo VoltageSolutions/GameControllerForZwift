@@ -7,9 +7,9 @@ namespace GameControllerForZwift.UI.WPF.Controls
 {
     public class GaugeControl : UserControl
     {
-        private Grid _grid;
-        private Rectangle _backgroundBar;
-        private Rectangle _fillBar;
+        private readonly Grid _grid;
+        private readonly Rectangle _backgroundBar;
+        private readonly Rectangle _fillBar;
 
         public static readonly DependencyProperty ValueProperty = DependencyProperty.Register(
             nameof(Value), typeof(double), typeof(GaugeControl),

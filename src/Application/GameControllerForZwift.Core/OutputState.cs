@@ -11,6 +11,6 @@ namespace GameControllerForZwift.Core
         public static OutputState Neutral { get; } = new(new HashSet<ZwiftFunction>(), 0, 0, null);
 
         /// <summary>True when nothing is pressed and both analog axes are at rest.</summary>
-        public bool IsNeutral => Pressed.Count == 0 && Steer == 0 && Brake == 0;
+        public bool IsNeutral => Pressed.Count == 0 && Steer.Equals(0.0) && Brake.Equals(0.0);
     }
 }

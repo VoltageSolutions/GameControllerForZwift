@@ -7,9 +7,9 @@ namespace GameControllerForZwift.UI.WPF.Controls
 {
     public class ThumbstickGraph : UserControl
     {
-        private Canvas _chartCanvas;
-        private List<Ellipse> _circles;
-        private Ellipse _plotPoint;
+        private readonly Canvas _chartCanvas;
+        private readonly List<Ellipse> _circles;
+        private readonly Ellipse _plotPoint;
 
         public static readonly DependencyProperty PositionProperty = DependencyProperty.Register(
             nameof(Position), typeof(Point), typeof(ThumbstickGraph),
@@ -179,10 +179,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
         public static bool IsOutsideOrigin(double origin, double position)
         {
             double factor = .1;
-            if ((Math.Abs(origin - position) / origin) > factor)
-                return true;
-            else
-                return false;
+            return (Math.Abs(origin - position) / origin) > factor;
         }
     }
 }

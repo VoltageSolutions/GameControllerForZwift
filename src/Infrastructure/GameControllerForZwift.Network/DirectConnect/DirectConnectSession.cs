@@ -366,7 +366,7 @@ public sealed partial class DirectConnectSession : IAsyncDisposable
         if (Interlocked.Exchange(ref _disposed, 1) != 0)
             return;
         try { _cts.Cancel(); } catch (ObjectDisposedException) { /* already disposed */ }
-        try { await _stream.DisposeAsync().ConfigureAwait(false); } catch (Exception ex) { LogStreamDisposeFailed(ex, _name); }
+        try { await _stream.DisposeAsync().ConfigureAwait(false); } catch (Exception ex) when (ex is IOException or ObjectDisposedException or System.Net.Sockets.SocketException) { LogStreamDisposeFailed(ex, _name); }
     }
 
     #region Logging

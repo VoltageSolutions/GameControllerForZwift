@@ -7,7 +7,7 @@ namespace GameControllerForZwift.Gamepad.Mapping
     public class ControllerProfileService : IControllerProfileService
     {
         #region Fields
-        private ControllerProfiles _profiles = new();
+        private readonly ControllerProfiles _profiles;
         private static readonly JsonSerializerOptions WriteIndentedOptions = new() { WriteIndented = true };
         private const string DefaultProfileName = "Default Profile";
         // todo - accept file service instead of doing string work itself
@@ -31,10 +31,9 @@ namespace GameControllerForZwift.Gamepad.Mapping
 
         public static ControllerProfiles LoadControllerProfiles(string jsonContent)
         {
-            if (string.IsNullOrEmpty(jsonContent))
-                return new ControllerProfiles();
-            else
-                return JsonSerializer.Deserialize<ControllerProfiles>(jsonContent) ?? new ControllerProfiles();
+            return string.IsNullOrEmpty(jsonContent)
+                ? new ControllerProfiles()
+                : JsonSerializer.Deserialize<ControllerProfiles>(jsonContent) ?? new ControllerProfiles();
         }
         public ControllerProfile? GetDefaultProfile()
         {
