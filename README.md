@@ -39,6 +39,10 @@ Game Controller for Zwift uses one controller at a time, and treats a pair of co
 1. Connect your controller and pick it in the app (use **Refresh List** if it is missing).
 1. In Zwift's pairing screen, choose **Voltage Gamepad** as the **Power Source** first, so Zwift fills in **Controls**. Then switch Power Source, Resistance and Cadence to your trainer, and keep Controls on Voltage Gamepad. Ride On!
 
+<p align="center">
+  <img src="docs/assets/images/pairing/paired-overview.png" width="600" alt="Zwift Paired Devices screen: the trainer is the Power Source, Resistance, Cadence and Heart Rate device, and Voltage Gamepad is connected under Controls.">
+</p>
+
 Full instructions are on the documentation site: [Install and first run](https://VoltageSolutions.github.io/GameControllerForZwift/use/install/), [Pair with Zwift](https://VoltageSolutions.github.io/GameControllerForZwift/use/pair-with-zwift/), [Map your controller](https://VoltageSolutions.github.io/GameControllerForZwift/use/map-your-controller/) and [Troubleshooting](https://VoltageSolutions.github.io/GameControllerForZwift/use/troubleshooting/).
 
 <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; max-width: 100%; padding: 16px;">
