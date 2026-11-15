@@ -58,6 +58,22 @@ jobs:
           ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
           ./.github/scripts/check-publish.ps1 -Path artifacts/standalone
 
+      - name: Upload x64 build (framework-dependent)
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-win-x64
+          path: artifacts/fd
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Upload x64 build (standalone)
+        uses: actions/upload-artifact@v7
+        with:
+          name: app-win-x64-standalone
+          path: artifacts/standalone
+          retention-days: 14
+          if-no-files-found: error
+
       - name: Evaluate version
         id: version
         if: github.base_ref == 'main'
@@ -114,6 +130,50 @@ jobs:
         if: steps.version.outputs.conclusion == 'failure'
         shell: bash
         run: echo "::error title=Version not bumped::${{ steps.version.outputs.title }}"; exit 1
+
+  # Runs the x64 build on Windows 11 on ARM (x64 emulation). Not part of the coverage chain.
+  arm-smoke:
+    name: ARM smoke test
+    runs-on: windows-11-arm
+    needs: [build]
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: app-win-x64-standalone
+          path: artifacts/standalone
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: app-win-x64
+          path: artifacts/fd
+
+      # Primary check: the self-contained build needs no runtime, so this only tests the emulation itself.
+      - name: Smoke test (standalone, x64 under emulation)
+        shell: pwsh
+        run: ./.github/scripts/smoke-test-app.ps1 -ExePath artifacts/standalone/GameControllerForZwift.exe -TimeoutSeconds 60 -Label standalone
+
+      # The framework-dependent build needs the x64 .NET 10 runtimes, but the ARM runner only has arm64 .NET.
+      # dotnet-install.ps1 with -Architecture x64 puts x64 Microsoft.NETCore.App and Microsoft.WindowsDesktop.App
+      # into their own folder. An x64 apphost looks for DOTNET_ROOT_X64 first (it wins over DOTNET_ROOT and the
+      # registry), so pointing that variable at the folder makes sure the x64 runtime is used, never the arm64 one.
+      - name: Install x64 .NET 10 runtimes
+        id: x64rt
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP 'dotnet-x64'
+          $script = Join-Path $env:RUNNER_TEMP 'dotnet-install.ps1'
+          Invoke-WebRequest -Uri https://dot.net/v1/dotnet-install.ps1 -OutFile $script
+          & $script -Runtime dotnet -Channel 10.0 -Architecture x64 -InstallDir $dir
+          & $script -Runtime windowsdesktop -Channel 10.0 -Architecture x64 -InstallDir $dir
+          Get-ChildItem (Join-Path $dir 'shared') | ForEach-Object { Write-Host "$($_.Name): $((Get-ChildItem $_.FullName).Name -join ', ')" }
+          "DOTNET_ROOT_X64=$dir" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
+      - name: Smoke test (framework-dependent, x64 under emulation)
+        shell: pwsh
+        run: ./.github/scripts/smoke-test-app.ps1 -ExePath artifacts/fd/GameControllerForZwift.exe -TimeoutSeconds 60 -Label framework-dependent
 
   tests:
     name: Run tests
@@ -314,7 +374,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: coverage-unit
-          path: TestResults/**/coverage.cobertura.xml
+          path: |
+            TestResults/**/coverage.cobertura.xml
+            !TestResults/**/In/**
           if-no-files-found: warn
 
       - name: Upload UI diagnostics

@@ -10,10 +10,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/baseline.yml"><img alt="Baseline Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/baseline.yml/badge.svg?branch=main"></a>
-  &nbsp;
-  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/cd.yml"><img alt="CD Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/cd.yml/badge.svg?branch=main"></a>
-  &nbsp;
   <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img alt="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/docs-deploy.yml/badge.svg?branch=main"></a>
   &nbsp;
   <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases"><img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"></a>
@@ -43,6 +39,10 @@ Game Controller for Zwift uses one controller at a time, and treats a pair of co
 1. Connect your controller and pick it in the app (use **Refresh List** if it is missing).
 1. In Zwift's pairing screen, choose **Voltage Gamepad** as the **Power Source** first, so Zwift fills in **Controls**. Then switch Power Source, Resistance and Cadence to your trainer, and keep Controls on Voltage Gamepad. Ride On!
 
+<p align="center">
+  <img src="docs/assets/images/pairing/paired-overview.png" width="600" alt="Zwift Paired Devices screen: the trainer is the Power Source, Resistance, Cadence and Heart Rate device, and Voltage Gamepad is connected under Controls.">
+</p>
+
 Full instructions are on the documentation site: [Install and first run](https://VoltageSolutions.github.io/GameControllerForZwift/use/install/), [Pair with Zwift](https://VoltageSolutions.github.io/GameControllerForZwift/use/pair-with-zwift/), [Map your controller](https://VoltageSolutions.github.io/GameControllerForZwift/use/map-your-controller/) and [Troubleshooting](https://VoltageSolutions.github.io/GameControllerForZwift/use/troubleshooting/).
 
 <div style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; max-width: 100%; padding: 16px;">
@@ -68,15 +68,9 @@ See [Build and test](https://VoltageSolutions.github.io/GameControllerForZwift/b
 
 The app presents itself to Zwift as a Zwift Ride controller using mDNS discovery and Wahoo Direct Connect (Bluetooth GATT over TCP). The [How it works](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/big-picture/) section documents the whole protocol, byte by byte, for anyone building a Zwift controller bridge in any language.
 
-## How to contribute
+## Contributing, credits and support
 
-### Ideas, Issues, or Bugs
-
-Post to the [Issues page](https://github.com/VoltageSolutions/GameControllerForZwift/issues).
-
-### Code
-
-This project follows a modified version of Git Flow where `main` always represents the latest version. Submit a PR to the current version branch. Once it is tested, the version branch is merged to `main`, which creates a new release. See [Contributing](https://VoltageSolutions.github.io/GameControllerForZwift/build/contributing/).
+Ideas, bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to post an issue and how the branch flow works.
 
 ### Credits
 

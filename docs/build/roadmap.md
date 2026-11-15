@@ -24,3 +24,27 @@ Today the network code is covered by unit and integration tests, and the final c
 - Consistent categories, levels and structured messages across the app.
 - Log retention, so old log files are cleaned up.
 - A clear rule for what is logged by default and what only at Debug level.
+
+## Native arm64 builds (SDL3)
+
+The app ships for x64 only and runs on Windows on ARM through emulation. A native arm64 build needs a native SDL library. SDL3 publishes official arm64 Windows binaries and SDL2 does not, so the plan is to move the gamepad code to SDL3 and then add an arm64 build to CI and releases.
+
+## Code signing for releases
+
+Release builds are not digitally signed yet, so Windows SmartScreen warns on first run. Code signing is in progress.
+
+## Release notes for each release
+
+Short, readable notes on what changed in every release.
+
+## A screenshot or short GIF in the README
+
+Show the app and a shifting demo right on the project page.
+
+## A simpler install
+
+Fewer steps between downloading the app and riding.
+
+## Issue and pull request templates
+
+Templates that ask for the details I need, such as the app version, the controller and the log file.

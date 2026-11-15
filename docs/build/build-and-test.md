@@ -25,8 +25,6 @@ Run the app:
 dotnet run --project src/Presentation/GameControllerForZwift
 ```
 
-There is also a solution filter, `GameControllerForZwift_TestsExcluded.slnf`, that loads the app, libraries and probe without the test projects.
-
 ### SDL2 download
 
 The app reads controllers through the native SDL2 library. `build/Sdl2.targets` (imported by the `Gamepad` project) takes care of it:
@@ -83,6 +81,10 @@ dotnet format src/Infrastructure/GameControllerForZwift.Network --verify-no-chan
 ```
 
 CI runs this check on `Core`, `Network`, `Gamepad`, the portable test projects and `ZwiftLanProbe`.
+
+## ARM smoke test
+
+The `ARM smoke test` CI job runs the x64 builds from the `Build` job (framework-dependent and standalone) on a `windows-11-arm` runner. `.github/scripts/smoke-test-app.ps1` starts the app under x64 emulation and checks that its log shows SDL2 initialized and devices enumerated. The `Build` job also uploads both builds as the `app-win-x64` and `app-win-x64-standalone` artifacts (kept for 14 days), so you can copy them to a real ARM device.
 
 ## Optional: the build watcher
 

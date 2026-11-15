@@ -15,14 +15,14 @@ Post them on the [Issues page](https://github.com/VoltageSolutions/GameControlle
 
 ```mermaid
 flowchart LR
-    f1["feature branch"] --> v["version branch<br/>for example v0.0.9"]
+    f1["feature branch"] --> v["version branch<br/>for example release/v0.2.0"]
     f2["feature branch"] --> v
     v -->|"tested, then merged"| m["main"]
-    m -->|"release"| r["GitHub release v0.0.9"]
+    m -->|"release"| r["GitHub release v0.2.0"]
 ```
 
 1. Create a feature branch for your change.
-2. Open a pull request into the current **version branch** (for example `v0.0.9`). If you are not sure which one, ask in your pull request.
+2. Open a pull request into the current **version branch** (for example `release/v0.2.0`). If you are not sure which one, ask in your pull request.
 3. Once the version is ready and tested, the version branch is merged into `main`. That merge creates the release.
 
 ## Versioning
