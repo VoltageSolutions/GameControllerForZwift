@@ -24,3 +24,23 @@ Today the network code is covered by unit and integration tests, and the final c
 - Consistent categories, levels and structured messages across the app.
 - Log retention, so old log files are cleaned up.
 - A clear rule for what is logged by default and what only at Debug level.
+
+## Code signing for releases
+
+Release builds are not digitally signed yet, so Windows SmartScreen warns on first run. Code signing is in progress.
+
+## Release notes for each release
+
+Short, readable notes on what changed in every release.
+
+## A screenshot or short GIF in the README
+
+Show the app and a shifting demo right on the project page.
+
+## A simpler install
+
+Fewer steps between downloading the app and riding.
+
+## Issue and pull request templates
+
+Templates that ask for the details I need, such as the app version, the controller and the log file.
