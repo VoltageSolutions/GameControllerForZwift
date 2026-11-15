@@ -16,6 +16,10 @@ Go to the [Releases page on GitHub](https://github.com/VoltageSolutions/GameCont
 
 Each release also has a `SHA256SUMS.txt` file. You can use it to check that your download is complete and unchanged.
 
+### Windows on ARM
+
+If your PC has an ARM processor (for example a Snapdragon laptop), the x64 release runs on it through the built-in x64 emulation of Windows 11. CI starts every build on a Windows 11 ARM machine to check this. The standalone zip needs nothing extra. The smaller zip needs the x64 version of the .NET 10 Desktop Runtime, which you can get from the [official .NET download page](https://dotnet.microsoft.com/download/dotnet/10.0). I suggest the **x64** installer, not the Arm64 one. I do not offer a native Arm64 build yet.
+
 ## 2. Unpack and start
 
 1. Right-click the zip file and choose **Extract All**.

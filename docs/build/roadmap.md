@@ -25,6 +25,10 @@ Today the network code is covered by unit and integration tests, and the final c
 - Log retention, so old log files are cleaned up.
 - A clear rule for what is logged by default and what only at Debug level.
 
+## Native arm64 builds (SDL3)
+
+The app ships for x64 only and runs on Windows on ARM through emulation. A native arm64 build needs a native SDL library. SDL3 publishes official arm64 Windows binaries and SDL2 does not, so the plan is to move the gamepad code to SDL3 and then add an arm64 build to CI and releases.
+
 ## Code signing for releases
 
 Release builds are not digitally signed yet, so Windows SmartScreen warns on first run. Code signing is in progress.
