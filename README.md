@@ -10,10 +10,6 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/baseline.yml"><img alt="Baseline Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/baseline.yml/badge.svg?branch=main"></a>
-  &nbsp;
-  <a href="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/cd.yml"><img alt="CD Workflow" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/cd.yml/badge.svg?branch=main"></a>
-  &nbsp;
   <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img alt="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/docs-deploy.yml/badge.svg?branch=main"></a>
   &nbsp;
   <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases"><img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"></a>
@@ -68,15 +64,9 @@ See [Build and test](https://VoltageSolutions.github.io/GameControllerForZwift/b
 
 The app presents itself to Zwift as a Zwift Ride controller using mDNS discovery and Wahoo Direct Connect (Bluetooth GATT over TCP). The [How it works](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/big-picture/) section documents the whole protocol, byte by byte, for anyone building a Zwift controller bridge in any language.
 
-## How to contribute
+## Contributing, credits and support
 
-### Ideas, Issues, or Bugs
-
-Post to the [Issues page](https://github.com/VoltageSolutions/GameControllerForZwift/issues).
-
-### Code
-
-This project follows a modified version of Git Flow where `main` always represents the latest version. Submit a PR to the current version branch. Once it is tested, the version branch is merged to `main`, which creates a new release. See [Contributing](https://VoltageSolutions.github.io/GameControllerForZwift/build/contributing/).
+Ideas, bug reports and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for how to post an issue and how the branch flow works.
 
 ### Credits
 

@@ -314,7 +314,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: coverage-unit
-          path: TestResults/**/coverage.cobertura.xml
+          path: |
+            TestResults/**/coverage.cobertura.xml
+            !TestResults/**/In/**
           if-no-files-found: warn
 
       - name: Upload UI diagnostics

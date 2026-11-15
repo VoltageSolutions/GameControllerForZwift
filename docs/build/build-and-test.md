@@ -25,8 +25,6 @@ Run the app:
 dotnet run --project src/Presentation/GameControllerForZwift
 ```
 
-There is also a solution filter, `GameControllerForZwift_TestsExcluded.slnf`, that loads the app, libraries and probe without the test projects.
-
 ### SDL2 download
 
 The app reads controllers through the native SDL2 library. `build/Sdl2.targets` (imported by the `Gamepad` project) takes care of it:
