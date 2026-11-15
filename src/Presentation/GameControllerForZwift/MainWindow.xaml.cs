@@ -77,24 +77,21 @@ namespace GameControllerForZwift.UI.WPF
 
             if (!disableFluentThemeWindowBackdrop)
             {
-                foreach (ResourceDictionary mergedDictionary in Application.Current.Resources.MergedDictionaries)
+                // Only when theme resources are loaded and a theme mode is active.
+                if (Application.Current.Resources.MergedDictionaries.Count > 0
+                    && Application.Current.ThemeMode != ThemeMode.None)
                 {
-                    if (Application.Current.ThemeMode != ThemeMode.None)
+                    if (SystemParameters.HighContrast)
                     {
-                        if (SystemParameters.HighContrast)
-                        {
-                            MinimizeButton.Visibility = Visibility.Visible;
-                            MaximizeButton.Visibility = Visibility.Visible;
-                            CloseButton.Visibility = Visibility.Visible;
-                        }
-                        else
-                        {
-                            MinimizeButton.Visibility = Visibility.Collapsed;
-                            MaximizeButton.Visibility = Visibility.Collapsed;
-                            CloseButton.Visibility = Visibility.Collapsed;
-                        }
-
-                        break;
+                        MinimizeButton.Visibility = Visibility.Visible;
+                        MaximizeButton.Visibility = Visibility.Visible;
+                        CloseButton.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        MinimizeButton.Visibility = Visibility.Collapsed;
+                        MaximizeButton.Visibility = Visibility.Collapsed;
+                        CloseButton.Visibility = Visibility.Collapsed;
                     }
                 }
             }
