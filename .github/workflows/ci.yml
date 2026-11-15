@@ -468,10 +468,29 @@ jobs:
         run: dotnet build $env:APP_PROJECT -c Release
 
       - uses: github/codeql-action/analyze@v4
+        id: analyze
         with:
           category: '/language:csharp'
           output: sarif-results
-          upload: always
+          upload: never
+
+      # WPF generates *.g.cs / *.g.i.cs files under obj/ that get compiled and analyzed. paths-ignore does not apply to
+      # compiled languages, so alerts in generated files are removed from the SARIF before it is uploaded.
+      - name: Filter generated files from SARIF
+        uses: advanced-security/filter-sarif@v1
+        with:
+          patterns: |
+            -**/*.g.cs
+            -**/*.g.i.cs
+            -**/obj/**
+          input: sarif-results/csharp.sarif
+          output: sarif-results/csharp.sarif
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: sarif-results/csharp.sarif
+          category: '/language:csharp'
 
       - name: Check NuGet packages for known vulnerabilities
         shell: pwsh

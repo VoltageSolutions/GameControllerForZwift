@@ -25,7 +25,7 @@ namespace GameControllerForZwift.UI.WPF.Views
 
         private void OpenHyperlink(object sender, System.Windows.Input.ExecutedRoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo("cmd", $"/c start {e.Parameter.ToString()}") { CreateNoWindow = true });
+            Process.Start(new ProcessStartInfo("cmd", $"/c start {e.Parameter}") { CreateNoWindow = true });
             e.Handled = true;
         }
     }

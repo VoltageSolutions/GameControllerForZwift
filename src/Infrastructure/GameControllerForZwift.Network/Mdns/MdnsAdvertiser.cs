@@ -179,7 +179,7 @@ namespace GameControllerForZwift.Network.Mdns
             lock (_gate)
             {
                 // Explicit goodbye first: every record of our profiles (PTR, SRV, TXT, A) re-sent with TTL 0 so Zwift drops the device at once.
-                try
+                BestEffort(() =>
                 {
                     if (_mdns != null && _serviceProfile != null)
                     {
@@ -189,16 +189,25 @@ namespace GameControllerForZwift.Network.Mdns
                         _mdns.SendAnswer(goodbye, false);
                         LogGoodbyeSent();
                     }
-                }
-                catch (Exception ex) { LogGoodbyeFailed(ex); }
-                try { if (_serviceProfile != null) _discovery?.Unadvertise(_serviceProfile); } catch (Exception ex) { LogUnadvertiseFailed(ex); }
-                try { _discovery?.Dispose(); } catch (Exception ex) { LogDiscoveryDisposeFailed(ex); }
-                try { _mdns?.Stop(); } catch (Exception ex) { LogStopFailed(ex); }
-                try { _mdns?.Dispose(); } catch (Exception ex) { LogDisposeFailed(ex); }
+                }, LogGoodbyeFailed);
+                BestEffort(() => { if (_serviceProfile != null) _discovery?.Unadvertise(_serviceProfile); }, LogUnadvertiseFailed);
+                BestEffort(() => _discovery?.Dispose(), LogDiscoveryDisposeFailed);
+                BestEffort(() => _mdns?.Stop(), LogStopFailed);
+                BestEffort(() => _mdns?.Dispose(), LogDisposeFailed);
                 _discovery = null;
                 _mdns = null;
                 _serviceProfile = null;
             }
+        }
+
+        /// <summary>
+        /// Runs one teardown step of the third-party mDNS library. Deliberate catch-all: shutdown must complete every remaining
+        /// step even when one fails, and the failure is only logged.
+        /// </summary>
+        private static void BestEffort(Action step, Action<Exception> onFailure)
+        {
+            try { step(); }
+            catch (Exception ex) { onFailure(ex); }
         }
 
         public ValueTask DisposeAsync()
@@ -227,9 +236,8 @@ namespace GameControllerForZwift.Network.Mdns
                     var text = (nic.Name + " " + nic.Description).ToLowerInvariant();
                     var isVirtual = VirtualAdapterMarkers.Any(m => text.Contains(m));
 
-                    foreach (var ua in props.UnicastAddresses)
+                    foreach (var ip in props.UnicastAddresses.Select(ua => ua.Address))
                     {
-                        var ip = ua.Address;
                         if (ip.AddressFamily != AddressFamily.InterNetwork) continue;
                         if (IPAddress.IsLoopback(ip) || ip.Equals(IPAddress.Any)) continue;
                         var b = ip.GetAddressBytes();

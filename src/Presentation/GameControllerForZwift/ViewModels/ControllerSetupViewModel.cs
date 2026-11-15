@@ -131,7 +131,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         {
             foreach (var vm in viewMappings)
             {
-                if (profile.Mappings.Where(m => m.Input == vm.SelectedInput).FirstOrDefault() is InputMapping inputMap)
+                foreach (var inputMap in profile.Mappings.Where(m => m.Input == vm.SelectedInput).Take(1))
                 {
                     vm.SetInputMapping(inputMap);
                 }

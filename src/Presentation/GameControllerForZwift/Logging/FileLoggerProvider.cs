@@ -100,7 +100,7 @@ public static class FileLoggerExtensions
     /// <summary>Adds a file logger writing <c>app-yyyyMMdd-HHmmss.log</c> into <paramref name="directory"/>.</summary>
     public static ILoggingBuilder AddFileLogger(this ILoggingBuilder builder, string directory)
     {
-        var path = Path.Combine(directory, $"app-{DateTime.Now:yyyyMMdd-HHmmss}.log");
+        var path = Path.Join(directory, $"app-{DateTime.Now:yyyyMMdd-HHmmss}.log");
         builder.Services.AddSingleton<ILoggerProvider>(new FileLoggerProvider(path));
         return builder;
     }

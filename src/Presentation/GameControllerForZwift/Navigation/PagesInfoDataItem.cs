@@ -36,6 +36,6 @@ namespace GameControllerForZwift.UI.WPF.Navigation
             return Title;
         }
 
-        private static Assembly _assembly = typeof(PagesInfoDataSource).Assembly;
+        private static readonly Assembly _assembly = typeof(PagesInfoDataSource).Assembly;
     }
 }

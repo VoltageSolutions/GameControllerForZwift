@@ -104,7 +104,7 @@ namespace GameControllerForZwift
                 //configure.ClearProviders(); // Optional: Removes default logging providers if you only want your custom one.
                 configure.AddCustomEventLogProvider(); // Add your custom provider
                 configure.SetMinimumLevel(LogLevel.Information);
-                configure.AddFileLogger(Path.Combine(AppContext.BaseDirectory, "logs"));
+                configure.AddFileLogger(Path.Join(AppContext.BaseDirectory, "logs"));
                 configure.AddFilter<FileLoggerProvider>("GameControllerForZwift.Network", LogLevel.Debug);
             });
 
@@ -123,7 +123,7 @@ namespace GameControllerForZwift
             {
                 var fileService = provider.GetRequiredService<IFileService>();
                 string appDirectory = AppContext.BaseDirectory;
-                string filePath = Path.Combine(appDirectory, "defaultprofile.json");
+                string filePath = Path.Join(appDirectory, "defaultprofile.json");
                 //string filePath = "./defaultprofile.json"; // Or fetch this from configuration
                 return new ControllerProfileService(fileService, filePath);
             });
@@ -146,7 +146,7 @@ namespace GameControllerForZwift
             {
                 var fileService = provider.GetRequiredService<IFileService>();
                 string appDirectory = AppContext.BaseDirectory;
-                string filePath = Path.Combine(appDirectory, "ACKNOWLEDGEMENTS.md");
+                string filePath = Path.Join(appDirectory, "ACKNOWLEDGEMENTS.md");
                 //string filePath = "./ACKNOWLEDGEMENTS.md"; // Or fetch this from configuration
                 return new AboutPageViewModel(fileService, filePath);
             });
