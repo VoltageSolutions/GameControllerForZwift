@@ -1,0 +1,94 @@
+name: Release Branch
+
+# Keeps the version in step with a release branch made by hand: when release/vX.Y.Z is created, <Version> in
+# Directory.Build.props on that branch is set to X.Y.Z. The version must be higher than the latest release
+# (versions never go backwards).
+#
+# Branches pushed by a workflow with GITHUB_TOKEN do not trigger `create` events. That is why the branch the
+# CD Workflow opens after each release never runs this workflow: that job sets the version itself.
+#
+# Run it by hand (workflow_dispatch) to try it: with dry_run (the default) it only reports what it would do.
+on:
+  create:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Release branch to check, for example release/v0.4.0 (it may not exist yet in a dry run)
+        type: string
+        required: true
+      dry_run:
+        description: Dry run (report only, never commit or push)
+        type: boolean
+        default: true
+
+concurrency:
+  group: release-branch-${{ inputs.branch || github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  set-version:
+    name: Set version from branch name
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.ref_type == 'branch' && startsWith(github.ref_name, 'release/'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      BRANCH: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name }}
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Set version
+        run: |
+          # Keep a copy of the helper: the branch checked out below may be older than this workflow.
+          vs="$RUNNER_TEMP/version.sh"
+          cp .github/scripts/version.sh "$vs"
+          if ! version="$(bash "$vs" from-branch "$BRANCH")"; then
+            echo "::error title=Bad release branch name::${BRANCH} is not named release/vX.Y.Z (for example release/v0.4.0). Delete it and create the branch again with a version in its name."
+            exit 1
+          fi
+          latest="$(bash "$vs" latest-tag)"
+          echo "Branch: ${BRANCH}"
+          echo "Version from the branch name: ${version}"
+          echo "Latest release tag: v${latest:-none}"
+          if [ -n "$latest" ] && ! bash "$vs" gt "$version" "$latest"; then
+            echo "::error title=Version goes backwards::${BRANCH} is for ${version}, which is not higher than the latest release v${latest}. Delete the branch and create one with a higher version."
+            exit 1
+          fi
+          echo "Comparison: ${version} is higher than v${latest:-none}"
+          if git ls-remote --exit-code --heads origin "refs/heads/${BRANCH}" > /dev/null; then
+            git fetch --no-tags origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}"
+            git switch -C "$BRANCH" "origin/${BRANCH}"
+          elif [ "$DRY_RUN" = true ]; then
+            echo "${BRANCH} does not exist on origin; reading Directory.Build.props from ${GITHUB_REF_NAME} instead."
+          else
+            echo "::error title=Branch not found::${BRANCH} does not exist on origin."
+            exit 1
+          fi
+          current="$(bash "$vs" get)"
+          echo "Version in Directory.Build.props: ${current}"
+          if [ "$current" = "$version" ]; then
+            echo "::notice title=Version already set::Directory.Build.props already has ${version}; nothing to commit."
+            echo "Directory.Build.props on ${BRANCH} already has ${version}; nothing to do." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [ "$DRY_RUN" = true ]; then
+            echo "Dry run: would set the version ${current} -> ${version}, commit \"Set version to ${version}\" and push to ${BRANCH}."
+            echo "Dry run: would set ${BRANCH} to version ${version} (now ${current}). Nothing was pushed." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          bash "$vs" set "$version"
+          git add Directory.Build.props
+          git -c user.name='github-actions[bot]' -c user.email='41898173+github-actions[bot]@users.noreply.github.com' \
+            commit -m "Set version to ${version}" -m "Matches the branch name ${BRANCH}."
+          git push origin "HEAD:refs/heads/${BRANCH}"
+          echo "::notice title=Version set::Set ${BRANCH} to version ${version}."
+          echo "Set ${BRANCH} to version ${version} (was ${current})." >> "$GITHUB_STEP_SUMMARY"

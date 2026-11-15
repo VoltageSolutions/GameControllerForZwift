@@ -59,13 +59,8 @@ namespace GameControllerForZwift.UI.WPF
         private void Toggle_TitleButtonVisibility()
         {
             var appContextBackdropData = AppContext.GetData("Switch.System.Windows.Appearance.DisableFluentThemeWindowBackdrop");
-            bool disableFluentThemeWindowBackdrop = false;
-
-            if (appContextBackdropData != null)
-            {
-                disableFluentThemeWindowBackdrop = bool.Parse(Convert.ToString(appContextBackdropData, System.Globalization.CultureInfo.InvariantCulture) ?? bool.FalseString);
-            }
-
+            bool disableFluentThemeWindowBackdrop = appContextBackdropData != null
+                && bool.Parse(Convert.ToString(appContextBackdropData, System.Globalization.CultureInfo.InvariantCulture) ?? bool.FalseString);
 
             if (!disableFluentThemeWindowBackdrop)
             {
@@ -73,7 +68,7 @@ namespace GameControllerForZwift.UI.WPF
                 {
                     if (Application.Current.ThemeMode != ThemeMode.None)
                     {
-                        if (SystemParameters.HighContrast == true)
+                        if (SystemParameters.HighContrast)
                         {
                             MinimizeButton.Visibility = Visibility.Visible;
                             MaximizeButton.Visibility = Visibility.Visible;
@@ -117,14 +112,7 @@ namespace GameControllerForZwift.UI.WPF
 
         private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
-            if (this.WindowState == WindowState.Maximized)
-            {
-                MainGrid.Margin = new Thickness(8);
-            }
-            else
-            {
-                MainGrid.Margin = default;
-            }
+            MainGrid.Margin = this.WindowState == WindowState.Maximized ? new Thickness(8) : default;
         }
 
         private void PagesTreeView_SelectedItemChanged()

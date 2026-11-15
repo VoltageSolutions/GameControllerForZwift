@@ -116,9 +116,8 @@ public sealed partial class DirectConnectServer : IZwiftRideLink
         try { listener?.Stop(); } catch (SocketException) { /* listener already closed */ }
         if (session is not null)
             await session.DisposeAsync().ConfigureAwait(false);
-        foreach (var t in new[] { accept, keepAlive, sessionTask })
+        foreach (var t in new[] { accept, keepAlive, sessionTask }.OfType<Task>())
         {
-            if (t is null) continue;
             try { await t.ConfigureAwait(false); } catch (Exception ex) when (ex is OperationCanceledException or ObjectDisposedException or SocketException or IOException) { /* expected while shutting down */ }
         }
         cts.Dispose();
@@ -231,16 +230,22 @@ public sealed partial class DirectConnectServer : IZwiftRideLink
     {
         try
         {
-            await session.RunAsync(ct).ConfigureAwait(false);
-        }
-        catch (Exception ex)
-        {
-            LogSessionError(ex, remote);
+            // Disposal order: the session first, then the client (declared first, so disposed last).
+            using (client)
+            await using (session.ConfigureAwait(false))
+            {
+                try
+                {
+                    await session.RunAsync(ct).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    LogSessionError(ex, remote);
+                }
+            }
         }
         finally
         {
-            await session.DisposeAsync().ConfigureAwait(false);
-            try { client.Dispose(); } catch (Exception ex) { LogClientDisposeFailed(ex); }
             bool wasCurrent;
             lock (_lock)
             {
@@ -341,9 +346,6 @@ public sealed partial class DirectConnectServer : IZwiftRideLink
 
     [LoggerMessage(Level = LogLevel.Debug, Message = "DIRCON session {Remote} ended with error")]
     private partial void LogSessionError(Exception exception, string remote);
-
-    [LoggerMessage(Level = LogLevel.Debug, Message = "Client dispose failed")]
-    private partial void LogClientDisposeFailed(Exception exception);
 
     [LoggerMessage(Level = LogLevel.Information, Message = "DIRCON client {Remote} disconnected")]
     private partial void LogClientDisconnected(string remote);

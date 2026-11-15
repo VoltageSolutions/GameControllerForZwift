@@ -1,7 +1,7 @@
 # Contributing
 
 !!! tldr "TL;DR"
-    Report ideas and bugs on the Issues page. For code, open a pull request into the current version branch, keep every check green, and bump `<Version>` for code changes that go to `main`.
+    Report ideas and bugs on the Issues page. For code, open a pull request into the current version branch, and keep every check green. The version is set for you on each release branch.
 
 Thank you for helping. Ideas, bug reports and pull requests are all welcome.
 
@@ -25,12 +25,17 @@ flowchart LR
 2. Open a pull request into the current **version branch** (for example `release/v0.2.0`). If you are not sure which one, ask in your pull request.
 3. Once the version is ready and tested, the version branch is merged into `main`. That merge creates the release.
 
-## Versioning
+## Versions and release branches
 
-The app's version lives in one place: the `<Version>` element in `src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj`.
+The app's version lives in one place: the `<Version>` element in `Directory.Build.props` at the root of the repository. Every project picks it up from there.
 
-- Every pull request into `main` that changes code must carry a **new** version.
-- Docs-only pull requests do not need a new version.
+- **After each release**, the branch for the next minor version is opened automatically, with the version already set. For example, releasing `v0.3.0` opens `release/v0.4.0` with version `0.4.0`.
+- **For a patch or major release**, I create `release/vX.Y.Z` by hand from `main` (for example `release/v0.3.1` or `release/v1.0.0`). A workflow sets the version to match the branch name. The version must be higher than the latest release, or the workflow fails.
+- **When I go to a new major version**, I delete the minor branch that was opened automatically and is no longer needed.
+- **The Version Check** on pull requests enforces this:
+    - Into a release branch, the version must match the branch name. If it does not, your branch is probably based on an older release branch.
+    - Into `main`, the version must be higher than the latest release and match the release branch name.
+    - Docs-only pull requests pass without a version change.
 - When the merge to `main` lands, the release `v<version>` is published.
 
 ## What a pull request needs
