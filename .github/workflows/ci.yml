@@ -74,27 +74,61 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+      # Version Check: runs for pull requests into main and into release branches (release/vX.Y.Z).
+      #   into main:      docs-only changes pass; otherwise the version must be higher than the latest release
+      #                   tag, and a release/vX.Y.Z head branch must carry version X.Y.Z.
+      #   into release/*: the version must match the base branch name (catches branches cut from an old release branch).
       - name: Evaluate version
         id: version
-        if: github.base_ref == 'main'
+        if: github.base_ref == 'main' || startsWith(github.base_ref, 'release/')
         shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          version="$(bash .github/scripts/version.sh get)" || { echo "::error::Could not read <Version> from Directory.Build.props"; exit 1; }
-          git fetch --no-tags origin main
-          if git diff --name-only origin/main...HEAD | grep -vqE '^docs/|^zensical\.toml$|\.md$'; then
+          vs=.github/scripts/version.sh
+          props=Directory.Build.props
+          version="$(bash "$vs" get)" || { echo "::error title=Version Check::Could not read <Version> from $props"; exit 1; }
+          git fetch --no-tags origin "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
+          if git diff --name-only "origin/${BASE_REF}...HEAD" | grep -vqE '^docs/|^zensical\.toml$|\.md$'; then
             docs_only=false
           else
             docs_only=true
           fi
+          conclusion=success
           if [ "$docs_only" = true ]; then
-            conclusion=success; title="Docs-only change — no new version needed"
-            summary="This pull request only changes documentation, so no version bump is required."
-          elif git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
-            conclusion=failure; title="Version v${version} already exists: raise <Version> in Directory.Build.props"
-            summary="A tag and release for v${version} already exist. Raise <Version> in Directory.Build.props."
+            title="Docs-only change: no new version needed"
+            summary="This pull request only changes documentation, so the version is not checked."
+          elif [ "$BASE_REF" = main ]; then
+            latest="$(bash "$vs" latest-tag)"
+            head_version=""
+            if [[ "$HEAD_REF" == release/* ]]; then
+              head_version="$(bash "$vs" from-branch "$HEAD_REF" 2>/dev/null)" || head_version=invalid
+            fi
+            if [ "$head_version" = invalid ]; then
+              conclusion=failure; title="Branch ${HEAD_REF} is not named release/vX.Y.Z"
+              summary="Release branches must be named release/vX.Y.Z so the version can be checked. Rename the branch and open the pull request again."
+            elif [ -n "$head_version" ] && [ "$head_version" != "$version" ]; then
+              conclusion=failure; title="Set <Version> in Directory.Build.props to ${head_version}"
+              summary="Branch ${HEAD_REF} is for version ${head_version}, but Directory.Build.props has ${version}. Change <Version> in Directory.Build.props to ${head_version}."
+            elif [ -n "$latest" ] && ! bash "$vs" gt "$version" "$latest"; then
+              conclusion=failure; title="Version ${version} is not higher than the latest release v${latest}: raise <Version> in Directory.Build.props"
+              summary="The latest release is v${latest}. Raise <Version> in Directory.Build.props above ${latest} (the release branch name must match it)."
+            else
+              title="New app version v${version}"
+              summary="Merging to main will create a new tag and release for v${version} (latest release: v${latest:-none})."
+            fi
           else
-            conclusion=success; title="New app version v${version}"
-            summary="Merging to main will create a new tag and release for v${version}."
+            if ! base_version="$(bash "$vs" from-branch "$BASE_REF" 2>/dev/null)"; then
+              conclusion=failure; title="Base branch ${BASE_REF} is not named release/vX.Y.Z"
+              summary="Pull requests go into a release branch named release/vX.Y.Z. Point this pull request at the current release branch."
+            elif [ "$base_version" != "$version" ]; then
+              conclusion=failure; title="Set <Version> in Directory.Build.props to ${base_version}"
+              summary="This pull request goes into ${BASE_REF}, but Directory.Build.props has ${version}. Your branch is probably based on an older release branch: merge or rebase it onto ${BASE_REF}, or change <Version> in Directory.Build.props to ${base_version}."
+            else
+              title="Version ${version} matches ${BASE_REF}"
+              summary="Directory.Build.props has ${version}, the version of ${BASE_REF}."
+            fi
           fi
           {
             echo "conclusion=$conclusion"
@@ -107,7 +141,7 @@ jobs:
           echo "$summary" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Version Check
-        if: github.base_ref == 'main' && github.event.pull_request.head.repo.full_name == github.repository
+        if: (github.base_ref == 'main' || startsWith(github.base_ref, 'release/')) && github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/github-script@v9
         env:
           V_CONCLUSION: ${{ steps.version.outputs.conclusion }}
@@ -128,7 +162,9 @@ jobs:
       - name: Fail on version error
         if: steps.version.outputs.conclusion == 'failure'
         shell: bash
-        run: echo "::error title=Version not bumped::${{ steps.version.outputs.title }}"; exit 1
+        env:
+          V_TITLE: ${{ steps.version.outputs.title }}
+        run: echo "::error title=Version Check failed::${V_TITLE}"; exit 1
 
   # Runs the x64 build on Windows 11 on ARM (x64 emulation). Not part of the coverage chain.
   arm-smoke:
