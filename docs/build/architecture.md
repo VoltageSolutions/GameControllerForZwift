@@ -60,7 +60,27 @@ All services are registered in `App.ConfigureServices` with `Microsoft.Extension
 | `MdnsAdvertiser` | `MdnsAdvertiser` |
 | `ZwiftRideOutputService` and `IOutputService` | The same `ZwiftRideOutputService` instance |
 | `IDataIntegrator` | `DataIntegrator` |
-| View models, pages and `MainWindow` | Registered for constructor injection |
+| View models and `MainWindow` | Registered for constructor injection. Page view models are singletons. Views are created by data templates. |
+
+## Navigation
+
+I keep one navigation history, and it lives in `NavigationService`. The service and the view models use no WPF types, which keeps a later WinUI 3 port simple.
+
+```mermaid
+flowchart LR
+    tree["Nav tree / Settings button /<br/>Back button, Alt+Left, mouse back"] --> vm["MainWindowViewModel"]
+    vm --> nav["NavigationService<br/>current view model + history"]
+    nav -->|"CurrentViewModel"| shell["ContentControl in MainWindow"]
+    shell -->|"implicit DataTemplate"| view["View (UserControl)"]
+    nav -.->|"changed: sync tree selection, no navigation"| tree
+```
+
+- Navigation is view model first. `NavigationService.NavigateTo` resolves a page view model from the container and makes it `CurrentViewModel`. The shell shows it in a `ContentControl`, and the data templates in `Resources/ViewTemplates.xaml` pick the matching view. There is no `Frame` and no second journal.
+- The history holds the previous pages only. Navigating pushes the page that was shown. Navigating to the page that is already shown does nothing, and there is no Forward.
+- `GoBack` pops the history. The shell then moves the tree selection to the page that is shown. That selection change never starts a navigation, and the service also ignores navigation requests made while it announces a change, so Back cannot add a history entry.
+- Back is disabled while the history is empty. Alt+Left and the mouse back button do the same as the Back button.
+- The page view models (`ControllerSetupViewModel`, `AboutPageViewModel`, `SettingsViewModel`) are singletons, so their state is kept when I leave a page and come back. The views are created again each time a page is shown.
+- The nav tree is described in `Navigation/PagesInfoData.json`, which names the view model of each item.
 
 ## Logging
 
