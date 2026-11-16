@@ -1,7 +1,9 @@
 using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.Controller;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.UI.WPF;
+using GameControllerForZwift.UI.WPF.Dialogs;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
@@ -27,6 +29,10 @@ namespace GameControllerForZwift.UnitTests
             services.AddLogging();
             services.AddSingleton(dataIntegrator);
             services.AddSingleton(profileService);
+            services.AddSingleton(Substitute.For<IConfigurationStore>());
+            services.AddSingleton(Substitute.For<IAppSettingsStore>());
+            services.AddSingleton(Substitute.For<IDialogService>());
+            services.AddSingleton<ControllerModelMatcher>();
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();

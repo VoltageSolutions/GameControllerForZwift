@@ -1,4 +1,6 @@
-﻿using GameControllerForZwift.UI.WPF.Navigation;
+﻿using GameControllerForZwift.Core.Configurations;
+using GameControllerForZwift.UI.WPF.Dialogs;
+using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
@@ -18,6 +20,9 @@ namespace GameControllerForZwift.UI.WPF.Tests
             _loggerMock = Substitute.For<ILogger<MainWindowViewModel>>();
             _viewModel = new MainWindowViewModel(_navigationServiceMock, _loggerMock);
         }
+
+        private static SettingsViewModel CreateSettingsViewModel() => new(
+            Substitute.For<IConfigurationStore>(), Substitute.For<IAppSettingsStore>(), Substitute.For<IDialogService>());
 
         [Fact]
         public void Constructor_InitializesPagesProperty()
@@ -112,7 +117,7 @@ namespace GameControllerForZwift.UI.WPF.Tests
             var changed = new List<string?>();
             _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
-            _navigationServiceMock.CurrentViewModel.Returns(new SettingsViewModel());
+            _navigationServiceMock.CurrentViewModel.Returns(CreateSettingsViewModel());
             _navigationServiceMock.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(
                 _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CurrentViewModel)));
 

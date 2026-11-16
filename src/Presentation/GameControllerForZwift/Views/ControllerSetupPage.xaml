@@ -43,6 +43,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!--Controller and Profile Row-->
@@ -61,6 +62,54 @@
                                 DisplayMemberPath="Name" 
                                 Margin="0,0,6,0" Height="37"/>
                             <Button Grid.Column="1" Content="Refresh List" Margin="6,0,0,0" Height="37" Command="{Binding ViewModel.RefreshControllerListCommand}"/>
+                        </Grid>
+                    </controls:Card>
+
+                    <!--Configuration Card (saved configurations, see docs/spec/saved-configurations.md)-->
+                    <controls:Card MinWidth="300" Title="Configuration" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" MinWidth="220"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox x:Name="ConfigurationComboBox" Grid.Column="0" HorizontalAlignment="Stretch"
+                                ItemsSource="{Binding ViewModel.Configurations}"
+                                SelectedItem="{Binding ViewModel.SelectedConfiguration}"
+                                DisplayMemberPath="DisplayName"
+                                Margin="0,0,6,0" Height="37"
+                                AutomationProperties.AutomationId="ConfigurationComboBox"
+                                AutomationProperties.Name="Configuration"/>
+                            <Button x:Name="SaveConfigurationButton" Grid.Column="1" Content="Save" Margin="6,0,0,0" Height="37" MinWidth="64"
+                                Command="{Binding ViewModel.SaveCommand}"
+                                AutomationProperties.AutomationId="SaveConfigurationButton"
+                                ToolTipService.ShowOnDisabled="True"
+                                ToolTip="Save changes to this configuration"/>
+                            <Button x:Name="SaveConfigurationAsButton" Grid.Column="2" Content="Save as..." Margin="6,0,0,0" Height="37"
+                                Command="{Binding ViewModel.SaveAsCommand}"
+                                AutomationProperties.AutomationId="SaveConfigurationAsButton"
+                                ToolTip="Save these mappings as a new configuration"/>
+                            <Button x:Name="DeleteConfigurationButton" Grid.Column="3" Content="Delete" Margin="6,0,0,0" Height="37"
+                                Command="{Binding ViewModel.DeleteCommand}"
+                                AutomationProperties.AutomationId="DeleteConfigurationButton"
+                                ToolTipService.ShowOnDisabled="True"
+                                ToolTip="Delete this configuration"/>
+                            <Button x:Name="MoreConfigurationActionsButton" Grid.Column="4" Margin="6,0,0,0" Height="37" MinWidth="40"
+                                Click="MoreConfigurationActionsButton_Click"
+                                AutomationProperties.AutomationId="MoreConfigurationActionsButton"
+                                AutomationProperties.Name="More configuration actions"
+                                ToolTip="More configuration actions">
+                                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="14" Text="&#xE712;" VerticalAlignment="Center"/>
+                                <Button.ContextMenu>
+                                    <ContextMenu x:Name="MoreConfigurationActionsMenu" AutomationProperties.AutomationId="MoreConfigurationActionsMenu">
+                                        <MenuItem Header="Import..." Command="{Binding ViewModel.ImportCommand}" AutomationProperties.AutomationId="ImportConfigurationMenuItem"/>
+                                        <MenuItem Header="Rename..." Command="{Binding ViewModel.RenameCommand}" AutomationProperties.AutomationId="RenameConfigurationMenuItem"/>
+                                        <MenuItem Header="Open folder" Command="{Binding ViewModel.OpenFolderCommand}" AutomationProperties.AutomationId="OpenConfigurationFolderMenuItem"/>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                            </Button>
                         </Grid>
                     </controls:Card>
 
@@ -89,8 +138,33 @@
                     </controls:Card>-->
                 </WrapPanel>
 
+                <!--Notice (non-blocking, hides itself after a few seconds)-->
+                <Border x:Name="ConfigurationNotice" Grid.Row="1" Margin="5" Padding="12,8" CornerRadius="6"
+                        HorizontalAlignment="Left" MinWidth="300"
+                        Background="{DynamicResource SystemFillColorSuccessBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1"
+                        Visibility="{Binding ViewModel.NoticeText, Converter={StaticResource NullToVisibilityConverter}}"
+                        AutomationProperties.AutomationId="ConfigurationNotice">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16"
+                                   Foreground="{DynamicResource SystemFillColorSuccessBrush}" Text="&#xE73E;" AutomationProperties.Name="Success"/>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding ViewModel.NoticeText}" TextWrapping="Wrap"
+                                   AutomationProperties.AutomationId="ConfigurationNoticeText" AutomationProperties.LiveSetting="Polite"/>
+                        <Button Grid.Column="2" Margin="12,0,0,0" Padding="6" Background="Transparent" BorderBrush="Transparent"
+                                Command="{Binding ViewModel.DismissNoticeCommand}"
+                                AutomationProperties.AutomationId="DismissConfigurationNoticeButton" AutomationProperties.Name="Dismiss" ToolTip="Dismiss">
+                            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="10" Text="&#xE711;"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
                 <!--Mapper Row-->
-                <WrapPanel Grid.Row="1" ItemHeight="Auto">
+                <WrapPanel Grid.Row="2" ItemHeight="Auto">
 
                     <!--Buttons Column-->
                     <!--<Grid MinWidth="200">

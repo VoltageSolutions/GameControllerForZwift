@@ -1,4 +1,5 @@
 using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.FileSystem;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Gamepad.Mapping;
@@ -9,6 +10,7 @@ using GameControllerForZwift.Network.Output;
 using GameControllerForZwift.Network.ZwiftRide;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
+using GameControllerForZwift.UI.WPF.Dialogs;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
@@ -48,6 +50,10 @@ namespace GameControllerForZwift
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
             Current.ThemeMode = ThemeMode.System;
+
+            // Refresh configuration lists when files change outside the app (CFG-006). Created here, on the UI thread, so
+            // its notifications are posted back to this thread.
+            ServiceProvider.GetRequiredService<ConfigurationFolderWatcher>().Start();
 
             // Start the Zwift Ride output (Direct Connect server + mDNS advertisement) in the background. It always runs and is the only output.
             {
@@ -118,6 +124,25 @@ namespace GameControllerForZwift
             services.AddSingleton(provider => new MdnsAdvertiser(provider.GetRequiredService<ILogger<MdnsAdvertiser>>()));
             services.AddSingleton<ZwiftRideOutputService>();
             services.AddSingleton<IOutputService>(provider => provider.GetRequiredService<ZwiftRideOutputService>());
+
+            // Saved configurations (docs/spec/saved-configurations.md)
+            services.AddSingleton(TimeProvider.System);
+            services.AddSingleton<ControllerModelMatcher>();
+            services.AddSingleton<IConfigurationStore>(provider => new ConfigurationStore(
+                provider.GetRequiredService<IFileService>(),
+                AppDataPaths.ConfigurationsFolder,
+                provider.GetRequiredService<ILogger<ConfigurationStore>>(),
+                provider.GetRequiredService<TimeProvider>()));
+            services.AddSingleton<IAppSettingsStore>(provider => new AppSettingsStore(
+                provider.GetRequiredService<IFileService>(),
+                AppDataPaths.SettingsFile,
+                provider.GetRequiredService<ILogger<AppSettingsStore>>()));
+            services.AddSingleton(provider => new ConfigurationFolderWatcher(
+                provider.GetRequiredService<IConfigurationStore>(),
+                SynchronizationContext.Current ?? new System.Windows.Threading.DispatcherSynchronizationContext(Current.Dispatcher),
+                TimeSpan.FromMilliseconds(400),
+                provider.GetRequiredService<ILogger<ConfigurationFolderWatcher>>()));
+            services.AddSingleton<IDialogService, DialogService>();
 
             services.AddSingleton<IControllerProfileService>(provider =>
             {

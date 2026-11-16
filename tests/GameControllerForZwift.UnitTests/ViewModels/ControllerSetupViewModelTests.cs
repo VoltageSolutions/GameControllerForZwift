@@ -1,13 +1,16 @@
 ﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.Controller;
+using GameControllerForZwift.Core.FileSystem;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using NSubstitute;
 
 namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
 {
-    public class ControllerSetupViewModelTests
+    public sealed class ControllerSetupViewModelTests : IDisposable
     {
+        private readonly TempFolder _temp = new();
         private readonly IDataIntegrator _dataIntegratorMock;
         private readonly IControllerProfileService _profileServiceMock;
         private readonly ControllerSetupViewModel _viewModel;
@@ -33,8 +36,17 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
                 }
             });
 
-            _viewModel = new ControllerSetupViewModel(_dataIntegratorMock, _profileServiceMock);
+            var fileService = new FileService();
+            _viewModel = new ControllerSetupViewModel(
+                _dataIntegratorMock,
+                _profileServiceMock,
+                new ConfigurationStore(fileService, _temp.Combine("Profiles")),
+                new AppSettingsStore(fileService, _temp.Combine("settings.json")),
+                new FakeDialogService(),
+                new ControllerModelMatcher());
         }
+
+        public void Dispose() => _temp.Dispose();
 
         [Fact]
         public void Constructor_ShouldInitializeDefaultValues()
