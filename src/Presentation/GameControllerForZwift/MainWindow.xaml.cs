@@ -1,5 +1,4 @@
 ﻿using GameControllerForZwift.UI.WPF.Navigation;
-using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Automation;
@@ -7,7 +6,6 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Navigation;
 using System.Windows.Shell;
 
 namespace GameControllerForZwift.UI.WPF
@@ -18,12 +16,14 @@ namespace GameControllerForZwift.UI.WPF
     public partial class MainWindow : Window
     {
         #region Fields
-        private readonly INavigationService _navigationService;
+        // True while the shell moves the tree selection to match the page that is shown. Selection changes made for that
+        // reason must never start a navigation, otherwise back would push the page again.
+        private bool _isSyncingSelection;
         public MainWindowViewModel ViewModel { get; }
         #endregion
 
         #region Constructor
-        public MainWindow(MainWindowViewModel mainWindowViewModel, INavigationService navigationService)
+        public MainWindow(MainWindowViewModel mainWindowViewModel)
         {
             ViewModel = mainWindowViewModel;
             DataContext = this;
@@ -31,11 +31,8 @@ namespace GameControllerForZwift.UI.WPF
             InitializeComponent();
             Toggle_TitleButtonVisibility();
 
-            _navigationService = navigationService;
-            _navigationService.Navigating += OnNavigating;
-            _navigationService.SetFrame(this.RootContentFrame);
-            //_navigationService.Navigate(typeof(HomePage));
-            _navigationService.Navigate(typeof(ControllerSetupPage));
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            ViewModel.NavigateToStartPage();
 
             WindowChrome.SetWindowChrome(
             this,
@@ -117,9 +114,14 @@ namespace GameControllerForZwift.UI.WPF
 
         private void PagesTreeView_SelectedItemChanged()
         {
+            if (_isSyncingSelection)
+            {
+                return;
+            }
+
             if (PagesTreeView.SelectedItem is PagesInfoDataItem navItem)
             {
-                _navigationService.Navigate(navItem.PageType);
+                ViewModel.NavigateToPage(navItem);
                 var tvi = PagesTreeView.ItemContainerGenerator.ContainerFromItem(navItem) as TreeViewItem;
                 if (tvi != null)
                 {
@@ -201,35 +203,79 @@ namespace GameControllerForZwift.UI.WPF
             }
         }
 
-        private void RootContentFrame_Navigated(object sender, NavigationEventArgs e)
+        private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            ViewModel.UpdateCanNavigateBack();
+            if (e.PropertyName == nameof(MainWindowViewModel.CurrentViewModel))
+            {
+                SyncTreeSelection(ViewModel.CurrentViewModel?.GetType());
+            }
         }
 
-        private void OnNavigating(object? sender, NavigatingEventArgs e)
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            List<PagesInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromPageType(e.PageType);
+            // Alt+Left is Back. With Alt held, WPF reports the key as Key.System and the real key as SystemKey.
+            if (e.Key == Key.System && e.SystemKey == Key.Left && Keyboard.Modifiers == ModifierKeys.Alt && TryGoBack())
+            {
+                e.Handled = true;
+            }
+
+            base.OnPreviewKeyDown(e);
+        }
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            // The mouse back button is Back.
+            if (e.ChangedButton == MouseButton.XButton1 && TryGoBack())
+            {
+                e.Handled = true;
+            }
+
+            base.OnPreviewMouseDown(e);
+        }
+
+        private bool TryGoBack()
+        {
+            if (!ViewModel.BackCommand.CanExecute(null))
+            {
+                return false;
+            }
+
+            ViewModel.BackCommand.Execute(null);
+            return true;
+        }
+
+        /// <summary>Selects the tree item of the page that is shown, without navigating.</summary>
+        private void SyncTreeSelection(Type? viewModelType)
+        {
+            List<PagesInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromViewModelType(viewModelType);
 
             if (list.Count > 0)
             {
-                TreeViewItem? selectedTreeViewItem = null;
-                ItemsControl itemsControl = PagesTreeView;
-                foreach (PagesInfoDataItem item in list)
+                _isSyncingSelection = true;
+                try
                 {
-                    var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-                    if (tvi != null)
+                    TreeViewItem? selectedTreeViewItem = null;
+                    ItemsControl itemsControl = PagesTreeView;
+                    foreach (PagesInfoDataItem item in list)
                     {
-                        tvi.IsExpanded = true;
-                        tvi.UpdateLayout();
-                        itemsControl = tvi;
-                        selectedTreeViewItem = tvi;
+                        var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+                        if (tvi != null)
+                        {
+                            tvi.IsExpanded = true;
+                            tvi.UpdateLayout();
+                            itemsControl = tvi;
+                            selectedTreeViewItem = tvi;
+                        }
+                    }
+
+                    if (selectedTreeViewItem != null)
+                    {
+                        selectedTreeViewItem.IsSelected = true;
                     }
                 }
-
-                if (selectedTreeViewItem != null)
+                finally
                 {
-                    selectedTreeViewItem.IsSelected = true;
-                    PagesTreeView_SelectedItemChanged();
+                    _isSyncingSelection = false;
                 }
             }
         }

@@ -1,157 +1,189 @@
 ﻿using GameControllerForZwift.UI.WPF.Navigation;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows.Controls;
-using NavigationService = GameControllerForZwift.UI.WPF.Navigation.NavigationService;
 
 namespace GameControllerForZwift.UI.WPF.Tests.Navigation
 {
     public class NavigationServiceTests
     {
-        private readonly ServiceCollection _serviceCollection;
-        private readonly IServiceProvider _serviceProvider;
-        private readonly NavigationService _navigationService;
-        private readonly Frame _frame;
+        private sealed class PageA { }
+
+        private sealed class PageB { }
+
+        private sealed class PageC { }
+
+        private readonly NavigationService _service;
+        private readonly PageA _pageA = new();
+        private readonly PageB _pageB = new();
+        private readonly PageC _pageC = new();
+        private readonly List<string?> _changes = new();
 
         public NavigationServiceTests()
         {
-            _serviceCollection = new ServiceCollection();
-            _serviceCollection.AddTransient<TestHomePage>();
-            _serviceCollection.AddTransient<TestSettingsPage>();
-            _serviceCollection.AddTransient<TestConfigPage>();
-            _serviceProvider = _serviceCollection.BuildServiceProvider();
-
-            _frame = new Frame();
-            _navigationService = new NavigationService(_serviceProvider);
-            // In current app, navigating back will cause actions where view subscribes to this event
-            _navigationService.Navigating += _navigationService_Navigating;
-            _navigationService.SetFrame(_frame);
+            var services = new ServiceCollection();
+            services.AddSingleton(_pageA);
+            services.AddSingleton(_pageB);
+            services.AddSingleton(_pageC);
+            _service = new NavigationService(services.BuildServiceProvider());
+            _service.PropertyChanged += (_, e) => _changes.Add(e.PropertyName);
         }
 
-        [WpfFact]
-        public void SetFrame_ShouldSetTheFrame()
+        [Fact]
+        public void NewService_HasNoCurrentViewModelAndCannotGoBack()
         {
-            // Arrange
-            var newFrame = new Frame();
-
-            // Act
-            _navigationService.SetFrame(newFrame);
-
-            // Assert
-            Assert.NotNull(newFrame);
+            Assert.Null(_service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
         }
 
-        [WpfFact]
-        public void Navigate_ShouldNavigateToDifferentPages()
+        [Fact]
+        public void NavigateTo_FirstPage_ShowsItWithEmptyHistory()
         {
-            // Arrange
-            var pageType1 = typeof(TestHomePage);
-            var pageType2 = typeof(TestSettingsPage);
+            _service.NavigateTo<PageA>();
 
-            // Act
-            _navigationService.Navigate(pageType1);
-            _navigationService.Navigate(pageType2);
-
-            // Assert
-            // Verify the current page type
-            Assert.Equal(pageType2, _navigationService.CurrentPageType); // Assuming CurrentPageType is public or accessible for testing
-                                                                         // Verify the navigation history
-            Assert.Equal(2, _navigationService.History.Count);
+            Assert.Same(_pageA, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
         }
 
-        [WpfFact]
-        public void Navigate_ShouldPushCurrentPageToHistory()
+        [Fact]
+        public void NavigateTo_PushesThePreviousPageOntoHistory()
         {
-            // Arrange
-            var pageType1 = typeof(TestHomePage);
-            var pageType2 = typeof(TestSettingsPage);
+            _service.NavigateTo<PageA>();
+            _service.NavigateTo<PageB>();
 
-            // Act
-            _navigationService.Navigate(pageType1);
-            _navigationService.Navigate(pageType2);
+            Assert.Same(_pageB, _service.CurrentViewModel);
+            Assert.True(_service.CanGoBack);
 
-            // Assert
-            _navigationService.NavigateBack();
-            // Go back one in history
-            //_navigationService.History.Pop();
-            // Original page should be here.
-            Assert.Equal(pageType1, _navigationService.History.Peek());
+            _service.GoBack();
+
+            Assert.Same(_pageA, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
         }
 
-        private void _navigationService_Navigating(object? sender, NavigatingEventArgs e)
+        [Fact]
+        public void NavigateTo_CurrentPage_IsNoOp()
         {
-            _navigationService.Navigate(e.PageType);
+            _service.NavigateTo<PageA>();
+            _changes.Clear();
+
+            _service.NavigateTo<PageA>();
+
+            Assert.False(_service.CanGoBack);
+            Assert.Empty(_changes);
         }
 
-        [WpfFact]
-        public void NavigateBack_ShouldNavigateToPreviousPage()
+        [Fact]
+        public void NavigateTo_NullType_Throws()
         {
-            // Arrange
-            var pageType1 = typeof(TestHomePage);
-            var pageType2 = typeof(TestSettingsPage);
-
-            _navigationService.Navigate(pageType1);
-            _navigationService.Navigate(pageType2);
-
-            // Act
-            _navigationService.NavigateBack();
-
-            // Assert
-            // Verify the current page type
-            Assert.Equal(pageType1, _navigationService.CurrentPageType);
-            // Verify the future stack
-            Assert.Single(_navigationService.Future);
-            Assert.Equal(pageType2, _navigationService.Future.Peek());
+            Assert.Throws<ArgumentNullException>(() => _service.NavigateTo(null!));
         }
 
-        [WpfFact]
-        public void NavigateForward_ShouldNavigateToNextPageInFuture()
+        [Fact]
+        public void GoBack_WalksTheHistoryInReverseOrder()
         {
-            // Arrange
-            var pageType1 = typeof(TestHomePage);
-            var pageType2 = typeof(TestSettingsPage);
+            _service.NavigateTo<PageA>();
+            _service.NavigateTo<PageB>();
+            _service.NavigateTo<PageC>();
 
-            // Act
-            _navigationService.Navigate(pageType1);
-            _navigationService.Navigate(pageType2);
-            _navigationService.NavigateBack();
-            _navigationService.NavigateForward();
+            _service.GoBack();
+            Assert.Same(_pageB, _service.CurrentViewModel);
+            Assert.True(_service.CanGoBack);
 
-            // Assert
-            Assert.Equal(pageType2, _navigationService.CurrentPageType);
+            _service.GoBack();
+            Assert.Same(_pageA, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
         }
 
-        [WpfFact]
-        public void Navigate_ShouldResolvePageFromServiceProvider()
+        [Fact]
+        public void GoBack_WithEmptyHistory_IsNoOp()
         {
-            // Arrange
-            var pageType = typeof(TestHomePage);
+            _service.NavigateTo<PageA>();
+            _changes.Clear();
 
-            // Act
-            _navigationService.Navigate(pageType);
+            _service.GoBack();
 
-            // Assert
-            var resolvedPage = _serviceProvider.GetRequiredService(pageType);
-            Assert.IsType<TestHomePage>(resolvedPage);
+            Assert.Same(_pageA, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
+            Assert.Empty(_changes);
         }
 
-        [WpfFact]
-        public void IsBackHistoryNonEmpty_ShouldReturnTrue_WhenHistoryIsNotEmpty()
+        [Fact]
+        public void GoBack_BeforeAnyNavigation_IsNoOp()
         {
-            // Arrange
-            var pageType = typeof(TestHomePage);
+            _service.GoBack();
 
-            // Act
-            _navigationService.Navigate(pageType);
-
-            // Assert
-            Assert.True(_navigationService.IsBackHistoryNonEmpty());
+            Assert.Null(_service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
         }
 
-        [WpfFact]
-        public void IsBackHistoryNonEmpty_ShouldReturnFalse_WhenHistoryIsEmpty()
+        [Fact]
+        public void NavigateTo_AfterGoBack_DoesNotKeepForwardEntries()
         {
-            // Assert
-            Assert.False(_navigationService.IsBackHistoryNonEmpty());
+            _service.NavigateTo<PageA>();
+            _service.NavigateTo<PageB>();
+            _service.GoBack();
+            _service.NavigateTo<PageC>();
+
+            _service.GoBack();
+
+            Assert.Same(_pageA, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
+        }
+
+        [Fact]
+        public void PropertyChanged_IsRaisedForCurrentViewModelAndCanGoBack()
+        {
+            _service.NavigateTo<PageA>();
+            _changes.Clear();
+
+            _service.NavigateTo<PageB>();
+
+            Assert.Contains(nameof(INavigationService.CurrentViewModel), _changes);
+            Assert.Contains(nameof(INavigationService.CanGoBack), _changes);
+
+            _changes.Clear();
+            _service.GoBack();
+
+            Assert.Contains(nameof(INavigationService.CurrentViewModel), _changes);
+            Assert.Contains(nameof(INavigationService.CanGoBack), _changes);
+        }
+
+        [Fact]
+        public void GoBack_WhenSelectionSyncNavigatesToTheShownPage_AddsNoHistoryEntry()
+        {
+            // The shell moves the nav selection when the page changes. A selection handler that navigates to the
+            // selected page must not push anything while the service announces the change.
+            _service.NavigateTo<PageA>();
+            _service.NavigateTo<PageB>();
+            _service.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(INavigationService.CurrentViewModel) && _service.CurrentViewModel is not null)
+                {
+                    _service.NavigateTo(_service.CurrentViewModel.GetType());
+                }
+            };
+
+            _service.GoBack();
+
+            Assert.Same(_pageA, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
+        }
+
+        [Fact]
+        public void NavigateTo_FromAChangeNotification_IsIgnored()
+        {
+            _service.NavigateTo<PageA>();
+            _service.NavigateTo<PageB>();
+            _service.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(INavigationService.CurrentViewModel))
+                {
+                    _service.NavigateTo<PageC>();
+                }
+            };
+
+            _service.GoBack();
+
+            Assert.Same(_pageA, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
         }
     }
 }

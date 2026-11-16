@@ -11,6 +11,7 @@
                 <ResourceDictionary Source="Resources/Images.xaml" />
                 <ResourceDictionary Source="Resources/CardStyles.xaml" />
                 <ResourceDictionary Source="Resources/ControllerMapping.xaml" />
+                <ResourceDictionary Source="Resources/ViewTemplates.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

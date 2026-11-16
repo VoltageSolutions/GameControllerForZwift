@@ -102,7 +102,6 @@
         Background="Transparent"
         BorderBrush="Transparent"
         Command="{Binding ViewModel.BackCommand}"
-        IsEnabled="{Binding ViewModel.CanNavigateback}"
         WindowChrome.IsHitTestVisibleInChrome="True"
         ToolTipService.ToolTip="Back">
                 <Button.Resources>
@@ -265,7 +264,7 @@
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8,0,0,0">
-                <Frame x:Name="RootContentFrame" NavigationUIVisibility="Hidden" Navigated="RootContentFrame_Navigated"/>
+                <ContentControl x:Name="RootContent" Content="{Binding ViewModel.CurrentViewModel}" IsTabStop="False" />
             </Border>
         </Grid>
     </Grid>
