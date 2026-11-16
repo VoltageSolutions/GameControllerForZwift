@@ -1,4 +1,6 @@
 ﻿using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.ViewModels;
+using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Automation;
@@ -20,6 +22,14 @@ namespace GameControllerForZwift.UI.WPF
         // reason must never start a navigation, otherwise back would push the page again.
         private bool _isSyncingSelection;
         public MainWindowViewModel ViewModel { get; }
+
+        // One view per page view model, created on first navigation and reused afterwards.
+        private readonly ViewCache _viewCache = new(new Dictionary<Type, Func<FrameworkElement>>
+        {
+            [typeof(ControllerSetupViewModel)] = () => new ControllerSetupPage(),
+            [typeof(AboutPageViewModel)] = () => new AboutPage(),
+            [typeof(SettingsViewModel)] = () => new SettingsPage(),
+        });
         #endregion
 
         #region Constructor
@@ -33,6 +43,7 @@ namespace GameControllerForZwift.UI.WPF
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.NavigateToStartPage();
+            ShowCurrentView();
 
             WindowChrome.SetWindowChrome(
             this,
@@ -207,8 +218,14 @@ namespace GameControllerForZwift.UI.WPF
         {
             if (e.PropertyName == nameof(MainWindowViewModel.CurrentViewModel))
             {
+                ShowCurrentView();
                 SyncTreeSelection(ViewModel.CurrentViewModel?.GetType());
             }
+        }
+
+        private void ShowCurrentView()
+        {
+            RootContent.Content = _viewCache.GetView(ViewModel.CurrentViewModel);
         }
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
@@ -262,7 +279,11 @@ namespace GameControllerForZwift.UI.WPF
                         if (tvi != null)
                         {
                             tvi.IsExpanded = true;
-                            tvi.UpdateLayout();
+                            if (item != list[^1])
+                            {
+                                // Realize the child containers before looking for the next level.
+                                tvi.UpdateLayout();
+                            }
                             itemsControl = tvi;
                             selectedTreeViewItem = tvi;
                         }

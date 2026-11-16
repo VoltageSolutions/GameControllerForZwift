@@ -42,7 +42,7 @@ namespace GameControllerForZwift.UI.WPF
 
         #region Navigation
 
-        /// <summary>The view model of the page being shown. The shell displays it through a data template.</summary>
+        /// <summary>The view model of the page being shown. The shell shows the matching view from its view cache.</summary>
         public object? CurrentViewModel => _navigationService.CurrentViewModel;
 
         /// <summary>True when there is a previous page to return to.</summary>

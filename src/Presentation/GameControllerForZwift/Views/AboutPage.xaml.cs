@@ -12,7 +12,7 @@ namespace GameControllerForZwift.UI.WPF.Views
     {
         #region Fields
 
-        /// <summary>The view model shown by this view. The data template assigns it as the DataContext.</summary>
+        /// <summary>The view model shown by this view. The view cache assigns it as the DataContext.</summary>
         public AboutPageViewModel ViewModel => (AboutPageViewModel)DataContext;
 
         #endregion

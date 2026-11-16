@@ -21,21 +21,9 @@ namespace GameControllerForZwift.UI.WPF.Views
     /// </summary>
     public partial class SettingsPage : UserControl
     {
-        // The view is created each time the page is shown, so it starts from the theme that is in effect rather than
-        // from the XAML default, and the first SelectionChanged raised while loading must not change the theme.
-        private bool _isInitializing = true;
-
         public SettingsPage()
         {
             InitializeComponent();
-
-            Change_ThemeMode.SelectedIndex = Application.Current.ThemeMode.Value switch
-            {
-                "Light" => 0,
-                "Dark" => 1,
-                _ => 2,
-            };
-            _isInitializing = false;
         }
 
         private void Services_Click(object sender, RoutedEventArgs e)
@@ -70,7 +58,7 @@ namespace GameControllerForZwift.UI.WPF.Views
 
         private void ThemeMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!_isInitializing && Change_ThemeMode.SelectedItem is ComboBoxItem selectedItem)
+            if (Change_ThemeMode.SelectedItem is ComboBoxItem selectedItem)
             {
                 string? selectedValue = selectedItem.Content?.ToString();
 

@@ -264,7 +264,7 @@
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8,0,0,0">
-                <ContentControl x:Name="RootContent" Content="{Binding ViewModel.CurrentViewModel}" IsTabStop="False" />
+                <ContentControl x:Name="RootContent" IsTabStop="False" />
             </Border>
         </Grid>
     </Grid>
