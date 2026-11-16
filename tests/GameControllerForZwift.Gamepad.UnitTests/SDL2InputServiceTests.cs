@@ -137,6 +137,10 @@ public class SDL2InputServiceTests
     {
         public string Name => "Stub";
 
+        public ushort VendorId => 0;
+
+        public ushort ProductId => 0;
+
         public ControllerData? ReadData() => data;
 
         public void Dispose()

@@ -80,7 +80,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
                         continue;
                     }
 
-                    var controller = new SDL2GameController(controllerHandle);
+                    var controller = new SDL2GameController(controllerHandle, info.Vendor, info.Product);
                     _controllers.Add(controller);
                     LogControllerConnected(controller.Name);
                 }

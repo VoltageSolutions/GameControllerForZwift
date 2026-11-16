@@ -41,6 +41,18 @@ namespace GameControllerForZwift.UnitTests
             {
                 return string.Empty;
             }
+
+            public void WriteFileContent(string filePath, string content) { }
+
+            public bool FileExists(string filePath) => false;
+
+            public void DeleteFile(string filePath) { }
+
+            public bool DirectoryExists(string directoryPath) => false;
+
+            public void CreateDirectory(string directoryPath) { }
+
+            public IReadOnlyList<string> GetFiles(string directoryPath, string searchPattern) => [];
         }
     }
 }
