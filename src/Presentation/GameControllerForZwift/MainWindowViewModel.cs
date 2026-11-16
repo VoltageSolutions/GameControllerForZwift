@@ -45,6 +45,9 @@ namespace GameControllerForZwift.UI.WPF
         /// <summary>The view model of the page being shown. The shell shows the matching view from its view cache.</summary>
         public object? CurrentViewModel => _navigationService.CurrentViewModel;
 
+        /// <summary>True while the Settings page is shown. It has no item in the navigation tree.</summary>
+        public bool IsSettingsShown => CurrentViewModel is SettingsViewModel;
+
         /// <summary>True when there is a previous page to return to.</summary>
         public bool CanGoBack => _navigationService.CanGoBack;
 
@@ -69,6 +72,7 @@ namespace GameControllerForZwift.UI.WPF
             {
                 case nameof(INavigationService.CurrentViewModel):
                     OnPropertyChanged(nameof(CurrentViewModel));
+                    OnPropertyChanged(nameof(IsSettingsShown));
                     break;
                 case nameof(INavigationService.CanGoBack):
                     OnPropertyChanged(nameof(CanGoBack));

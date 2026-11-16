@@ -1,6 +1,7 @@
 ﻿using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Automation;
@@ -9,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Shell;
+using System.Windows.Threading;
 
 namespace GameControllerForZwift.UI.WPF
 {
@@ -22,6 +24,7 @@ namespace GameControllerForZwift.UI.WPF
         // reason must never start a navigation, otherwise back would push the page again.
         private bool _isSyncingSelection;
         public MainWindowViewModel ViewModel { get; }
+        private readonly IServiceProvider _serviceProvider;
 
         // One view per page view model, created on first navigation and reused afterwards.
         private readonly ViewCache _viewCache = new(new Dictionary<Type, Func<FrameworkElement>>
@@ -33,9 +36,10 @@ namespace GameControllerForZwift.UI.WPF
         #endregion
 
         #region Constructor
-        public MainWindow(MainWindowViewModel mainWindowViewModel)
+        public MainWindow(MainWindowViewModel mainWindowViewModel, IServiceProvider serviceProvider)
         {
             ViewModel = mainWindowViewModel;
+            _serviceProvider = serviceProvider;
             DataContext = this;
 
             InitializeComponent();
@@ -44,6 +48,7 @@ namespace GameControllerForZwift.UI.WPF
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.NavigateToStartPage();
             ShowCurrentView();
+            ContentRendered += (_, _) => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, PrepareNextPage);
 
             WindowChrome.SetWindowChrome(
             this,
@@ -143,7 +148,7 @@ namespace GameControllerForZwift.UI.WPF
 
         private void PagesTreeView_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && PagesTreeView.SelectedItem is not null)
             {
                 SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem(((TreeView)sender).SelectedItem) as TreeViewItem);
             }
@@ -152,6 +157,10 @@ namespace GameControllerForZwift.UI.WPF
         private void PagesTreeView_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (e.OriginalSource is ToggleButton)
+            {
+                return;
+            }
+            if (PagesTreeView.SelectedItem is null)
             {
                 return;
             }
@@ -223,6 +232,43 @@ namespace GameControllerForZwift.UI.WPF
             }
         }
 
+        // Pages that have not been visited yet are built and laid out while the app is idle, one per idle turn, so the
+        // first visit is instant. The About page is the slow one: it converts the acknowledgements markdown into a
+        // FlowDocument and parses the ko-fi SVG.
+        private static readonly Type[] _pagesToPrepare = { typeof(AboutPageViewModel), typeof(SettingsViewModel) };
+        private int _nextPageToPrepare;
+
+        private void PrepareNextPage()
+        {
+            if (_nextPageToPrepare >= _pagesToPrepare.Length)
+            {
+                return;
+            }
+
+            object viewModel = _serviceProvider.GetRequiredService(_pagesToPrepare[_nextPageToPrepare++]);
+            if (_viewCache.GetView(viewModel) is FrameworkElement view && view.Parent is null)
+            {
+                var size = new Size(RootContent.ActualWidth, RootContent.ActualHeight);
+                view.Measure(size);
+                view.Arrange(new Rect(size));
+                view.UpdateLayout();
+            }
+
+            Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, PrepareNextPage);
+        }
+
+        private static void ClearSelection(ItemsControl parent)
+        {
+            foreach (object item in parent.Items)
+            {
+                if (parent.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem container)
+                {
+                    container.IsSelected = false;
+                    ClearSelection(container);
+                }
+            }
+        }
+
         private void ShowCurrentView()
         {
             RootContent.Content = _viewCache.GetView(ViewModel.CurrentViewModel);
@@ -266,7 +312,20 @@ namespace GameControllerForZwift.UI.WPF
         {
             List<PagesInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromViewModelType(viewModelType);
 
-            if (list.Count > 0)
+            if (list.Count == 0)
+            {
+                // The page has no tree item (Settings): show no selection. Navigation must not start from this.
+                _isSyncingSelection = true;
+                try
+                {
+                    ClearSelection(PagesTreeView);
+                }
+                finally
+                {
+                    _isSyncingSelection = false;
+                }
+            }
+            else
             {
                 _isSyncingSelection = true;
                 try

@@ -85,8 +85,8 @@ namespace GameControllerForZwift.UI.WPF.Tests
         {
             // Arrange
             var page = new object();
-            string? changed = null;
-            _viewModel.PropertyChanged += (_, e) => changed = e.PropertyName;
+            var changed = new List<string?>();
+            _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
             _navigationServiceMock.CurrentViewModel.Returns(page);
 
             // Act
@@ -94,8 +94,33 @@ namespace GameControllerForZwift.UI.WPF.Tests
                 _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CurrentViewModel)));
 
             // Assert
-            Assert.Equal(nameof(MainWindowViewModel.CurrentViewModel), changed);
+            Assert.Contains(nameof(MainWindowViewModel.CurrentViewModel), changed);
             Assert.Same(page, _viewModel.CurrentViewModel);
+        }
+
+        [Fact]
+        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmpty_ForSettingsBecauseItIsNotInTheTree()
+        {
+            // The real navigation tree has no Settings item, so the shell must show no tree selection for it.
+            Assert.Empty(_viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel)));
+            Assert.NotEmpty(_viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(ControllerSetupViewModel)));
+        }
+
+        [Fact]
+        public void IsSettingsShown_FollowsTheCurrentViewModel()
+        {
+            var changed = new List<string?>();
+            _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+
+            _navigationServiceMock.CurrentViewModel.Returns(new SettingsViewModel());
+            _navigationServiceMock.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(
+                _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CurrentViewModel)));
+
+            Assert.True(_viewModel.IsSettingsShown);
+            Assert.Contains(nameof(MainWindowViewModel.IsSettingsShown), changed);
+
+            _navigationServiceMock.CurrentViewModel.Returns(new object());
+            Assert.False(_viewModel.IsSettingsShown);
         }
 
         [Fact]

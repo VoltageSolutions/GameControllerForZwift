@@ -249,6 +249,17 @@
                         Command="{Binding ViewModel.SettingsCommand}"
                         Click="SettingsButton_Click"
                         DockPanel.Dock="Bottom">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Style.Triggers>
+                                    <!-- Settings is not in the tree, so the button shows it is the active page. -->
+                                    <DataTrigger Binding="{Binding ViewModel.IsSettingsShown}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock x:Name="SettingsIcon" Margin="0,4,0,0" FontFamily="{StaticResource SymbolThemeFontFamily}">&#xE713;</TextBlock>
                             <TextBlock Margin="8,0,0,0" Text="Settings" />
