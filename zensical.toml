@@ -32,6 +32,9 @@ nav = [
     "build/contributing.md",
     "build/roadmap.md",
   ] },
+  { "Spec" = [
+    "spec/saved-configurations.md",
+  ] },
 ]
 
 # Local-only material (private packet captures) is never part of the site.

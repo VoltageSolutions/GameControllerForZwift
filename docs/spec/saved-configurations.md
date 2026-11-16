@@ -115,6 +115,16 @@ A configuration bar sits above the mapping grid:
 - **CFG-037** Buttons that do not apply MUST be disabled, not hidden (Save and Delete on Default; Save when nothing changed).
 - **CFG-038** All dialogs MUST be usable with a game controller and keyboard as well as a mouse.
 
+## Implementation status (v0.4.0)
+
+Every requirement is implemented except one gap in CFG-038:
+
+- The app's own dialogs (confirm, unsaved changes, name, notices) work with a mouse, the keyboard (Tab, Enter, Escape) and the selected game controller (D-pad moves focus, A presses, B cancels).
+- **Gap:** the **Import...** file picker is the standard Windows Open dialog. It works with a mouse and keyboard but not with a game controller.
+- **Gap:** typing a name with a game controller needs the Windows touch keyboard; the name dialog itself does not offer one.
+
+The status stays Accepted until these are resolved or the requirement is relaxed.
+
 ## Out of scope for v0.4.0
 
 - Syncing configurations between machines (users copy files).
