@@ -50,12 +50,12 @@ namespace GameControllerForZwift.Core.Configurations
                 },
                 Mappings = ConfigurationMappings.Normalize(configuration.Mappings)
                     .OrderBy(kv => kv.Key)
-                    .Select(kv => (MappingFile?)new MappingFile
+                    .Select(kv => new MappingFile
                     {
                         Input = JsonSerializer.SerializeToElement(kv.Key, InputOptions),
                         Function = JsonSerializer.SerializeToElement(kv.Value, FunctionOptions),
                     })
-                    .ToList(),
+                    .ToList<MappingFile?>(),
                 Modified = configuration.Modified.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture),
             };
             return JsonSerializer.Serialize(file, WriteOptions);
@@ -102,13 +102,13 @@ namespace GameControllerForZwift.Core.Configurations
             var productId = ControllerModel.TryParseId(file.Controller.ProductId, out var pid) ? pid : (ushort)0;
             var controller = new ControllerModel(vendorId, productId, file.Controller.Name?.Trim() ?? string.Empty);
 
-            var mappings = new List<KeyValuePair<ControllerInput, ZwiftFunction>>();
-            foreach (var mapping in file.Mappings ?? [])
-            {
-                if (mapping is null || !TryReadInput(mapping.Input, out var input))
-                    continue;
-                mappings.Add(new(input, ReadFunction(mapping.Function)));
-            }
+            // A mapping whose input can't be read is skipped (CFG-009).
+            var mappings = (file.Mappings ?? [])
+                .OfType<MappingFile>()
+                .Select(mapping => (Readable: TryReadInput(mapping.Input, out var input), Input: input, mapping.Function))
+                .Where(entry => entry.Readable)
+                .Select(entry => new KeyValuePair<ControllerInput, ZwiftFunction>(entry.Input, ReadFunction(entry.Function)))
+                .ToList();
 
             var modified = DateTimeOffset.TryParse(file.Modified, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var parsed)
                 ? parsed

@@ -26,11 +26,8 @@ namespace GameControllerForZwift.Core.Configurations
         public ControllerModelMatcher(IEnumerable<IReadOnlyCollection<UsbId>> aliasGroups)
         {
             ArgumentNullException.ThrowIfNull(aliasGroups);
-            foreach (var group in aliasGroups)
+            foreach (var group in aliasGroups.Where(g => g.Count > 0))
             {
-                if (group.Count == 0)
-                    continue;
-
                 // The smallest pair stands for the whole group, so the key does not depend on the order of the list.
                 var canonical = group.OrderBy(id => id.VendorId).ThenBy(id => id.ProductId).First();
                 foreach (var id in group)
