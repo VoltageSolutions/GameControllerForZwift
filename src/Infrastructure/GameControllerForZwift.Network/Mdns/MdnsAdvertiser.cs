@@ -216,6 +216,15 @@ namespace GameControllerForZwift.Network.Mdns
             return ValueTask.CompletedTask;
         }
 
+        // Usable LAN IPv4 address: not loopback, not 0.0.0.0, not link-local (169.254.x.x).
+        internal static bool IsUsableIPv4(IPAddress ip)
+        {
+            if (ip.AddressFamily != AddressFamily.InterNetwork) return false;
+            if (IPAddress.IsLoopback(ip) || ip.Equals(IPAddress.Any)) return false;
+            var b = ip.GetAddressBytes();
+            return !(b[0] == 169 && b[1] == 254);
+        }
+
         /// <summary>
         /// This machine's IPv4 addresses to advertise: up, non-loopback, non-tunnel, non-link-local interfaces, skipping
         /// obviously virtual adapters; interfaces with an IPv4 default gateway are preferred.
@@ -236,14 +245,10 @@ namespace GameControllerForZwift.Network.Mdns
                     var text = (nic.Name + " " + nic.Description).ToLowerInvariant();
                     var isVirtual = VirtualAdapterMarkers.Any(m => text.Contains(m));
 
-                    foreach (var ip in props.UnicastAddresses.Select(ua => ua.Address))
-                    {
-                        if (ip.AddressFamily != AddressFamily.InterNetwork) continue;
-                        if (IPAddress.IsLoopback(ip) || ip.Equals(IPAddress.Any)) continue;
-                        var b = ip.GetAddressBytes();
-                        if (b[0] == 169 && b[1] == 254) continue; // link-local
-                        candidates.Add((ip, hasGateway, isVirtual));
-                    }
+                    candidates.AddRange(props.UnicastAddresses
+                        .Select(ua => ua.Address)
+                        .Where(IsUsableIPv4)
+                        .Select(ip => (ip, hasGateway, isVirtual)));
                 }
                 catch (NetworkInformationException)
                 {

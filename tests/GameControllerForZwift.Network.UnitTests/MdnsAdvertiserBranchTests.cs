@@ -53,4 +53,15 @@ public class MdnsAdvertiserBranchTests
         });
         Assert.Equal(addresses.Count, addresses.Distinct().Count());
     }
+
+    [Theory]
+    [InlineData("192.168.1.50", true)]
+    [InlineData("10.0.0.7", true)]
+    [InlineData("127.0.0.1", false)]
+    [InlineData("0.0.0.0", false)]
+    [InlineData("169.254.12.34", false)]
+    [InlineData("::1", false)]
+    [InlineData("fe80::1", false)]
+    public void IsUsableIPv4_AcceptsOnlyLanIPv4(string address, bool expected)
+        => Assert.Equal(expected, MdnsAdvertiser.IsUsableIPv4(IPAddress.Parse(address)));
 }
