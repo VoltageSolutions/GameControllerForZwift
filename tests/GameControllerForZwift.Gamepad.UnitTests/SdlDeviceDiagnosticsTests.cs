@@ -50,4 +50,24 @@ public class SdlDeviceDiagnosticsTests
         Assert.Contains("isGameController=False", line, StringComparison.Ordinal);
         Assert.EndsWith("skipped (no mapping)", line, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void FormatRemoval_WithSdlEvent_ShowsBothDelays()
+    {
+        string line = SdlDeviceDiagnostics.FormatRemoval(7, new DateTime(2026, 11, 17, 17, 6, 39, 199), 312, 500);
+
+        Assert.Equal(
+            "Device removal detected at 17:06:39.199: instance 7. SDL reported it 312 ms earlier; the previous check ran 500 ms earlier.",
+            line);
+    }
+
+    [Fact]
+    public void FormatRemoval_WithoutSdlEventOrPreviousCheck_SaysSo()
+    {
+        string line = SdlDeviceDiagnostics.FormatRemoval(3, new DateTime(2026, 11, 17, 8, 0, 0, 5), null, null);
+
+        Assert.Equal(
+            "Device removal detected at 08:00:00.005: instance 3. SDL queued no removal event for it; this is the first check.",
+            line);
+    }
 }

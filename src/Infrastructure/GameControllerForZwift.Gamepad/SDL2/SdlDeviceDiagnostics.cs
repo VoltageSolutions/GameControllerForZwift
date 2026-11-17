@@ -65,6 +65,27 @@ namespace GameControllerForZwift.Gamepad.SDL2
         }
 
         /// <summary>
+        /// Formats a one-line description of a detected device removal, for diagnosing how long removal takes.
+        /// </summary>
+        /// <param name="instanceId">The SDL instance id of the removed device.</param>
+        /// <param name="detectedAt">The local time the app noticed the removal.</param>
+        /// <param name="sdlReportedMsAgo">How long ago SDL queued its removal event, or null if there was no event.</param>
+        /// <param name="previousCheckMsAgo">How long ago the app checked before, or null if this is the first check.</param>
+        /// <returns>The diagnostic line.</returns>
+        public static string FormatRemoval(int instanceId, DateTime detectedAt, long? sdlReportedMsAgo, long? previousCheckMsAgo)
+        {
+            string sdl = sdlReportedMsAgo is long sdlMs
+                ? FormattableString.Invariant($"SDL reported it {sdlMs} ms earlier")
+                : "SDL queued no removal event for it";
+            string previous = previousCheckMsAgo is long previousMs
+                ? FormattableString.Invariant($"the previous check ran {previousMs} ms earlier")
+                : "this is the first check";
+
+            return FormattableString.Invariant(
+                $"Device removal detected at {detectedAt:HH:mm:ss.fff}: instance {instanceId}. {sdl}; {previous}.");
+        }
+
+        /// <summary>
         /// Formats raw SDL GUID bytes as lowercase hex, matching SDL's own GUID string.
         /// </summary>
         /// <param name="guid">The GUID bytes.</param>

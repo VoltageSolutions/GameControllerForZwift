@@ -50,8 +50,14 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         public List<string> Notices { get; } = [];
         public List<string> OpenedFolders { get; } = [];
 
+        /// <summary>
+        /// Gets or sets what runs while a dialog is open, for example a nested message loop like a modal window has.
+        /// </summary>
+        public Action? WhileOpen { get; set; }
+
         public bool Confirm(string title, string message, string confirmText)
         {
+            WhileOpen?.Invoke();
             Confirmations.Add(title);
             ConfirmMessages.Add(message);
             return ConfirmAnswers.Count > 0 && ConfirmAnswers.Dequeue();
@@ -60,12 +66,14 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         public UnsavedChangesChoice AskUnsavedChanges(string configurationName)
         {
             UnsavedChangesPrompts++;
+            WhileOpen?.Invoke();
             return UnsavedChangesAnswers.Count > 0 ? UnsavedChangesAnswers.Dequeue() : UnsavedChangesChoice.Cancel;
         }
 
         public string? PromptForName(string title, string message, string initialName, string confirmText, Func<string, string?> validate)
         {
             NamePrompts.Add((initialName, validate));
+            WhileOpen?.Invoke();
             return NameAnswers.Count > 0 ? NameAnswers.Dequeue() : null;
         }
 

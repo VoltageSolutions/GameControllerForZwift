@@ -829,8 +829,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         }
 
         /// <summary>
-        /// Tells bindings to read a property again, now and once the current input has been handled. A ComboBox ignores a
-        /// change raised while it is still pushing its own selection, so the second notification puts it back in sync.
+        /// Tells bindings to read a property again, now and once the current input has been handled, so a ComboBox that pushed
+        /// null or a stale item while its list was replaced reads the selection again. When the user's pick is refused, the
+        /// page shows the bound item again once the ComboBox has applied the pick (ControllerSetupPage.ShowBoundSelection).
         /// </summary>
         private void RaisePropertyChangedAgain(string propertyName)
         {

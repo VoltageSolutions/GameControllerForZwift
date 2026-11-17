@@ -118,6 +118,8 @@ namespace GameControllerForZwift
                 configure.SetMinimumLevel(LogLevel.Information);
                 configure.AddFileLogger(Path.Join(AppContext.BaseDirectory, "logs"));
                 configure.AddFilter<FileLoggerProvider>("GameControllerForZwift.Network", LogLevel.Debug);
+                // Logs when each controller removal is detected and how long SDL took to report it.
+                configure.AddFilter<FileLoggerProvider>("GameControllerForZwift.Gamepad.SDL2.SDL2InputService", LogLevel.Debug);
             });
 
             services.AddSingleton<IFileService, FileService>();

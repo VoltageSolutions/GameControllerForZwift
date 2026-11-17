@@ -9,7 +9,7 @@ last-updated: 2026-11-17
 # Controller detection
 
 !!! tldr "TL;DR"
-    The controller list on the Controller Setup page updates by itself. When you connect or disconnect a controller, the list changes within about half a second. There is no Refresh button. The controller you picked stays selected while other controllers come and go. If it disconnects, the app picks the next one. If none are left, the list shows "None selected".
+    The controller list on the Controller Setup page updates by itself. When you connect or disconnect a controller, the list changes within about half a second of Windows reporting it. There is no Refresh button. The controller you picked stays selected while other controllers come and go. If it disconnects, the app picks the next one. If none are left, the list shows "None selected".
 
 ## How to read this spec
 
@@ -38,6 +38,8 @@ Every controller you connect gets its own entry, even two of the same model. The
     - The app tells controllers apart by the SDL instance id of the connection, not by name or model. Two identical controllers are two entries with the same name.
     - A controller that disconnects and connects again is a new connection, so it goes to the end of the list.
     - The check runs on the UI thread, which also owns SDL. The app logs controllers only when the set of devices changes, so the log does not grow while nothing happens.
+    - The app cannot see a disconnect before Windows reports it. Windows reports a USB unplug at once. A Bluetooth controller that is turned off can take a few seconds to be reported, depending on the controller and its Bluetooth link.
+    - Each detected removal writes a debug line to the log with the time it was detected, how long before that SDL reported it, and when the previous check ran.
 
 ## Selection
 
@@ -49,7 +51,7 @@ The app keeps your choice. Connecting or disconnecting another controller never 
 |---|---|
 | The selected controller stays selected while other controllers connect or disconnect. | CTRL-004 |
 | If the selected controller disconnects and other controllers are still connected, the app selects the first controller in the list. | CTRL-005 |
-| If the selected controller disconnects and no controllers remain, the list is empty and shows "None selected". The configuration bar shows only Default, and Save as and Import are disabled (CFG-020, CFG-037). | CTRL-006 |
+| If the selected controller disconnects and no controllers remain, the list is empty and shows "None selected". The configuration list shows only Default, which is selected. Save, Save as, Delete, Import and Rename are disabled, and Open folder stays available (CFG-020, CFG-037). | CTRL-006 |
 | When a controller connects and nothing is selected, the app selects it. When a controller connects while another is selected, the selection stays. A returning controller does not take the selection back. | CTRL-007 |
 | A switch the app makes on its own follows CFG-024: with unsaved changes it asks Save, Don't save or Cancel. Cancel keeps your edits and their configuration list on screen, with no controller selected. | CTRL-008 |
 

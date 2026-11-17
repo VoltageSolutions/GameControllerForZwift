@@ -9,10 +9,15 @@ namespace GameControllerForZwift.Gamepad.SDL2
     {
         #region Fields
 
+        // Joystick and game controller events: SDL_JOYAXISMOTION (0x600) up to the end of that block.
+        private const SDL_EventType FirstJoystickEvent = (SDL_EventType)0x600;
+        private const SDL_EventType LastJoystickEvent = (SDL_EventType)0x6FF;
+
         private readonly ILogger<SDL2InputService> _logger;
         private readonly List<IController> _controllers = new();
         private readonly Dictionary<int, IController> _controllersByInstanceId = new();
         private HashSet<int>? _knownDeviceIds;
+        private long? _lastCheckTicks;
         private readonly Lock _sync = new();
         private bool _isInitialized;
         private bool _isDisposed;
@@ -55,6 +60,10 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 // HIDAPI (Joy-Cons, Switch Pro, 8BitDo in Switch mode) and DirectInput devices, which is
                 // what most Bluetooth controllers are, are only discovered while SDL pumps events.
                 RefreshDevices();
+                long checkTicks = Environment.TickCount64;
+                long? previousCheckMsAgo = checkTicks - _lastCheckTicks;
+                _lastCheckTicks = checkTicks;
+                Dictionary<int, uint> removalEvents = TakeJoystickEvents();
 
                 int numberOfDevices = Math.Max(SDL_NumJoysticks(), 0);
                 var present = new List<int>(numberOfDevices);
@@ -71,6 +80,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 }
 
                 _knownDeviceIds = [.. present];
+                LogRemovals(change.Removed, removalEvents, previousCheckMsAgo);
                 CloseDisconnected(change.Removed);
 
                 if (numberOfDevices < 1)
@@ -177,6 +187,52 @@ namespace GameControllerForZwift.Gamepad.SDL2
             SDL_JoystickUpdate();
         }
 
+        /// <summary>
+        /// Takes the joystick and game controller events out of the SDL event queue and returns, for each device removal
+        /// among them, the SDL tick count at which SDL queued it. Nothing else reads this queue, so draining it keeps it
+        /// from filling up, which would make SDL drop new events.
+        /// </summary>
+        private static Dictionary<int, uint> TakeJoystickEvents()
+        {
+            var removals = new Dictionary<int, uint>();
+            var events = new SDL_Event[64];
+            int count;
+            do
+            {
+                count = SDL_PeepEvents(events, events.Length, SDL_eventaction.SDL_GETEVENT, FirstJoystickEvent, LastJoystickEvent);
+                for (int i = 0; i < count; i++)
+                {
+                    if (events[i].type == SDL_EventType.SDL_JOYDEVICEREMOVED)
+                    {
+                        removals[events[i].jdevice.which] = events[i].jdevice.timestamp;
+                    }
+                }
+            }
+            while (count == events.Length);
+
+            return removals;
+        }
+
+        /// <summary>
+        /// Logs, at debug level, when each removal was detected and how long before that SDL reported it.
+        /// </summary>
+        private void LogRemovals(IReadOnlyList<int> instanceIds, Dictionary<int, uint> removalEvents, long? previousCheckMsAgo)
+        {
+            if (instanceIds.Count == 0 || !_logger.IsEnabled(LogLevel.Debug))
+            {
+                return;
+            }
+
+            DateTime detectedAt = DateTime.Now;
+            uint now = SDL_GetTicks();
+            foreach (int instanceId in instanceIds)
+            {
+                long? sdlReportedMsAgo = removalEvents.TryGetValue(instanceId, out uint queuedAt) ? unchecked(now - queuedAt) : null;
+                string line = SdlDeviceDiagnostics.FormatRemoval(instanceId, detectedAt, sdlReportedMsAgo, previousCheckMsAgo);
+                LogRemovalDetected(line);
+            }
+        }
+
         private static string GetLinkedVersion()
         {
             SDL_GetVersion(out SDL_version linked);
@@ -275,6 +331,9 @@ namespace GameControllerForZwift.Gamepad.SDL2
 
         [LoggerMessage(Level = LogLevel.Information, Message = "Controller disconnected: {Name}")]
         private partial void LogControllerDisconnected(string name);
+
+        [LoggerMessage(Level = LogLevel.Debug, Message = "{Line}")]
+        private partial void LogRemovalDetected(string line);
 
         [LoggerMessage(Level = LogLevel.Error, Message = "Attempted to read data from a null controller.")]
         private partial void LogNullController();
