@@ -19,13 +19,10 @@ namespace GameControllerForZwift.UI.WPF.Views
     /// <summary>
     /// Interaction logic for SettingsPage.xaml
     /// </summary>
-    public partial class SettingsPage : Page
+    public partial class SettingsPage : UserControl
     {
-        //public SettingsPageViewModel ViewModel { get; }
         public SettingsPage()
         {
-            //ViewModel = viewModel;
-            //DataContext = this;
             InitializeComponent();
         }
 

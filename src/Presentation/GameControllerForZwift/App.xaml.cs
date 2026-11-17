@@ -139,7 +139,9 @@ namespace GameControllerForZwift
             services.AddSingleton<INavigationService, NavigationService>();
 
             // GameControllerForZwift.UI.WPF
-            // ViewModels
+            // ViewModels. The page view models are singletons on purpose: navigation resolves them from the container, so
+            // their state (for example the selected controller) is kept when the user leaves a page and comes back.
+            // Views are not registered: the ViewCache in MainWindow creates one view per page view model.
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<AboutPageViewModel>();
             services.AddSingleton<AboutPageViewModel>(provider =>
@@ -151,13 +153,11 @@ namespace GameControllerForZwift
                 return new AboutPageViewModel(fileService, filePath);
             });
             services.AddSingleton<ControllerSetupViewModel>();
+            services.AddSingleton<SettingsViewModel>();
             services.AddTransient<ZwiftFunctionSelectorViewModel>();
 
             // Register MainWindow with DI so it can receive MainWindowViewModel
             services.AddTransient<InputMapper>();
-            services.AddSingleton<AboutPage>();
-            services.AddSingleton<SettingsPage>();
-            services.AddSingleton<ControllerSetupPage>();
             services.AddTransient<MainWindow>();
         }
 

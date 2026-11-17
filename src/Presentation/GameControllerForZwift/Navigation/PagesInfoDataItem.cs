@@ -10,14 +10,14 @@ namespace GameControllerForZwift.UI.WPF.Navigation
         public string Description { get; set; } = string.Empty;
         public string IconGlyph { get; set; } = string.Empty;
         //public string ImagePath { get; set; }
-        public string PageName { get; set; } = string.Empty;
+        public string ViewModelName { get; set; } = string.Empty;
         public bool IsGroup { get; set; }
 
-        public Type? PageType
+        public Type? ViewModelType
         {
             get
             {
-                return _assembly.GetType($"GameControllerForZwift.UI.WPF.Views.{PageName}");
+                return _assembly.GetType($"GameControllerForZwift.UI.WPF.ViewModels.{ViewModelName}");
             }
         }
 

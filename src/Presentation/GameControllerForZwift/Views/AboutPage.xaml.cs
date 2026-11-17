@@ -8,17 +8,19 @@ namespace GameControllerForZwift.UI.WPF.Views
     /// <summary>
     /// Interaction logic for AboutPage.xaml
     /// </summary>
-    public partial class AboutPage : Page
+    public partial class AboutPage : UserControl
     {
         #region Fields
-        public AboutPageViewModel ViewModel { get; }
-        #endregion
-        #region Constructor
-        public AboutPage(AboutPageViewModel viewModel)
-        {
-            ViewModel = viewModel;
-            DataContext = this;
 
+        /// <summary>The view model shown by this view. The view cache assigns it as the DataContext.</summary>
+        public AboutPageViewModel ViewModel => (AboutPageViewModel)DataContext;
+
+        #endregion
+
+        #region Constructor
+
+        public AboutPage()
+        {
             InitializeComponent();
         }
         #endregion

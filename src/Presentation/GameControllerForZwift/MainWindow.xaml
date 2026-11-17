@@ -102,7 +102,6 @@
         Background="Transparent"
         BorderBrush="Transparent"
         Command="{Binding ViewModel.BackCommand}"
-        IsEnabled="{Binding ViewModel.CanNavigateback}"
         WindowChrome.IsHitTestVisibleInChrome="True"
         ToolTipService.ToolTip="Back">
                 <Button.Resources>
@@ -250,6 +249,17 @@
                         Command="{Binding ViewModel.SettingsCommand}"
                         Click="SettingsButton_Click"
                         DockPanel.Dock="Bottom">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                <Style.Triggers>
+                                    <!-- Settings is not in the tree, so the button shows it is the active page. -->
+                                    <DataTrigger Binding="{Binding ViewModel.IsSettingsShown}" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentFillColorDefaultBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock x:Name="SettingsIcon" Margin="0,4,0,0" FontFamily="{StaticResource SymbolThemeFontFamily}">&#xE713;</TextBlock>
                             <TextBlock Margin="8,0,0,0" Text="Settings" />
@@ -265,7 +275,7 @@
                 BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
                 BorderThickness="1"
                 CornerRadius="8,0,0,0">
-                <Frame x:Name="RootContentFrame" NavigationUIVisibility="Hidden" Navigated="RootContentFrame_Navigated"/>
+                <ContentControl x:Name="RootContent" IsTabStop="False" />
             </Border>
         </Grid>
     </Grid>

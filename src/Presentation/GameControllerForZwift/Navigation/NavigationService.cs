@@ -1,130 +1,85 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
-using System.Windows.Controls;
 
 namespace GameControllerForZwift.UI.WPF.Navigation
 {
     /// <summary>
-    /// Service for navigating between pages.
+    /// Keeps the navigation history and the current view model. This is the single source of truth: the UI only
+    /// displays <see cref="CurrentViewModel"/> and never keeps a journal of its own.
     /// </summary>
-    public class NavigationService : INavigationService
+    /// <remarks>
+    /// View models are resolved from the service provider. The main page view models are registered as singletons, so
+    /// their state (for example the selected controller) is kept when the user comes back to the page.
+    /// The history holds the previous pages only, never the current one.
+    /// </remarks>
+    public sealed class NavigationService : ObservableObject, INavigationService
     {
-        private Frame? _frame;
-
-        private Type? _currentPageType;
-
-        private readonly Stack<Type> _history;
-        private readonly Stack<Type> _future;
-
         private readonly IServiceProvider _serviceProvider;
-
-        public event EventHandler<NavigatingEventArgs>? Navigating;
-
+        private readonly Stack<object> _history = new();
+        private object? _currentViewModel;
+        private bool _isNavigating;
 
         public NavigationService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-            _history = new Stack<Type>();
-            _future = new Stack<Type>();
         }
 
-        public Type? CurrentPageType { get { return _currentPageType; } }
-        public Stack<Type> History { get { return _history; } }
-        public Stack<Type> Future { get { return _future; } }
+        public object? CurrentViewModel => _currentViewModel;
 
-        public void SetFrame(Frame frame)
+        public bool CanGoBack => _history.Count > 0;
+
+        public void NavigateTo<TViewModel>() where TViewModel : class
         {
-            _frame = frame;
+            NavigateTo(typeof(TViewModel));
         }
 
-        // use this for navigating in ways that are specific to a feature-area that justifies clearing the future stack
-        public void NavigateTo(Type? type)
+        public void NavigateTo(Type viewModelType)
         {
-            if (type != null)
+            ArgumentNullException.ThrowIfNull(viewModelType);
+
+            // A listener that reacts to a change by navigating again (for example a selection sync) must not add history.
+            if (_isNavigating || _currentViewModel?.GetType() == viewModelType)
             {
-                _future.Clear();
-                RaiseNavigatingEvent(type);
+                return;
             }
-        }
 
-        // use this for major page changes with the left-hand navigation where going forward/back are both okay.
-        public void Navigate(Type? type)
-        {
-            if (type != null)
+            object target = _serviceProvider.GetRequiredService(viewModelType);
+            if (ReferenceEquals(target, _currentViewModel))
             {
-                _history.Push(type);
-                UpdateCurrentPage();
-                var page = _serviceProvider.GetRequiredService(type);
-                _frame?.Navigate(page);
+                return;
             }
-        }
 
-        public void UpdateCurrentPage()
-        {
-            // No current page when the _history stack is empty.
-            _currentPageType = _history.TryPeek(out var current) ? current : null;
-        }
-
-        public void NavigateBack()
-        {
-            if (_history.Count > 0)
+            if (_currentViewModel is not null)
             {
-                // Put the current item in the future
-                Type type = _history.Pop();
-                _future.Push(type);
-
-                // Navigate backwards
-                UpdateCurrentPage();
-                RaiseNavigatingEvent(_currentPageType);
-
-                /*
-                 In the current implementation, the following will happen:
-                NavigateBack 
-                    V
-                RaiseNavigatingEvent 
-                    V
-                Window ControlsList Treeview attempts to select appropriate item to show to user
-                    V
-                ControlsList calls Navigate
-                    V
-                The item we are navigating to gets added to the history again.
-
-
-                TODO - This behaves in weird ways if you use the Settings option. Refactor this.
-                 */
-
-                if (_history.Count > 0)
-                {
-                    _history.Pop();
-                    UpdateCurrentPage();
-                }
-
+                _history.Push(_currentViewModel);
             }
+
+            Show(target);
         }
 
-        public void NavigateForward()
+        public void GoBack()
         {
-            if (_future.Count > 0)
+            if (_isNavigating || _history.Count == 0)
             {
-                Type type = _future.Pop();
-                if (type != null)
-                {
-                    _history.Push(type);
-                    RaiseNavigatingEvent(type);
-                    _currentPageType = type;
-                }
+                return;
             }
+
+            Show(_history.Pop());
         }
 
-        public void RaiseNavigatingEvent(Type? type)
+        private void Show(object viewModel)
         {
-            Navigating?.Invoke(this, new NavigatingEventArgs(type));
-        }
-
-        public bool IsBackHistoryNonEmpty()
-        {
-            return _history.Count > 0;
+            _isNavigating = true;
+            try
+            {
+                _currentViewModel = viewModel;
+                OnPropertyChanged(nameof(CurrentViewModel));
+                OnPropertyChanged(nameof(CanGoBack));
+            }
+            finally
+            {
+                _isNavigating = false;
+            }
         }
     }
-
 }
