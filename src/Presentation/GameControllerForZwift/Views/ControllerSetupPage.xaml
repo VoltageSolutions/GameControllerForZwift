@@ -51,17 +51,19 @@
 
                     <!--Controller Selection Card-->
                     <controls:Card MinWidth="300" Title="Controller" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <!-- The list follows controllers as they connect and disconnect (docs/spec/controller-detection.md). -->
                         <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" 
-                                ItemsSource="{Binding ViewModel.Controllers}" 
+                            <ComboBox x:Name="ControllerComboBox" HorizontalAlignment="Stretch"
+                                ItemsSource="{Binding ViewModel.Controllers}"
                                 SelectedItem="{Binding ViewModel.SelectedController}"
-                                DisplayMemberPath="Name" 
-                                Margin="0,0,6,0" Height="37"/>
-                            <Button Grid.Column="1" Content="Refresh List" Margin="6,0,0,0" Height="37" Command="{Binding ViewModel.RefreshControllerListCommand}"/>
+                                DisplayMemberPath="Name"
+                                Height="37"
+                                AutomationProperties.AutomationId="ControllerComboBox"
+                                AutomationProperties.Name="Controller"/>
+                            <TextBlock x:Name="NoControllerText" Text="None selected"
+                                Margin="12,0,36,0" VerticalAlignment="Center" IsHitTestVisible="False"
+                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                Visibility="{Binding ViewModel.SelectedController, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Invert}"/>
                         </Grid>
                     </controls:Card>
 

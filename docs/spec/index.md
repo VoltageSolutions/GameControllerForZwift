@@ -24,3 +24,4 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 ## Specs
 
 - [Saved controller configurations](saved-configurations.md) (`CFG`): save, reload, rename, delete, import and share your button mappings.
+- [Controller detection](controller-detection.md) (`CTRL`): how the controller list follows controllers as they connect and disconnect, and which one is selected.

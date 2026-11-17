@@ -70,11 +70,11 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         }
 
         [Fact]
-        public void RefreshControllerListCommand_ShouldUpdateControllers()
+        public void DetectControllers_AsksForTheConnectedControllers()
         {
             // Act
             _dataIntegratorMock.Received(1).GetControllers();
-            _viewModel.RefreshControllerList();
+            _viewModel.DetectControllers();
 
             // Assert
             Assert.Equal(2, _viewModel.Controllers.Count);

@@ -35,6 +35,7 @@ nav = [
   { "Spec" = [
     "spec/index.md",
     "spec/saved-configurations.md",
+    "spec/controller-detection.md",
   ] },
 ]
 

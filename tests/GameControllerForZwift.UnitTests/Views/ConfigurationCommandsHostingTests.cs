@@ -150,7 +150,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
 
                     IController controller = Controller(Xbox);
                     _context.DataIntegrator.GetControllers().Returns([controller]);
-                    viewModel.RefreshControllerListCommand.Execute(null);
+                    viewModel.DetectControllers();
                     Pump(window);
                     var controllers = FindDescendants<ComboBox>(page).First(c => ReferenceEquals(c.ItemsSource, viewModel.Controllers));
                     controllers.SelectedItem = controller;
@@ -289,7 +289,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
 
                     var oneS = TestControllers.Create(0x045E, 0x02E0, "Xbox One S Controller");
                     _context.DataIntegrator.GetControllers().Returns([seriesX, oneS]);
-                    viewModel.RefreshControllerList();
+                    viewModel.DetectControllers();
                     Pump(window);
 
                     controllers.IsDropDownOpen = true;
@@ -311,6 +311,74 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     window.Close();
                 }
             });
+        }
+
+        [Fact]
+        public void NoController_ShowsNoneSelected_UntilOneConnects()
+        {
+            // CTRL-006, CTRL-007
+            TestApplication.Run(() =>
+            {
+                using ServiceProvider provider = CreateProvider();
+                MainWindow window = ShowWindow(provider);
+                try
+                {
+                    var viewModel = provider.GetRequiredService<ControllerSetupViewModel>();
+                    ControllerSetupPage page = ShowControllerSetup(window);
+                    var placeholder = Element<TextBlock>(page, "NoControllerText");
+                    Assert.Equal("None selected", placeholder.Text);
+                    Assert.Equal(Visibility.Visible, placeholder.Visibility);
+                    Assert.Null(page.FindName("RefreshListButton"));
+
+                    var controller = Controller(Xbox);
+                    _context.DataIntegrator.GetControllers().Returns([controller]);
+                    viewModel.DetectControllers();
+                    Pump(window);
+
+                    Assert.Equal(Visibility.Collapsed, placeholder.Visibility);
+                    Assert.Same(controller, Element<ComboBox>(page, "ControllerComboBox").SelectedItem);
+                }
+                finally
+                {
+                    window.Close();
+                }
+            });
+        }
+
+        [Fact]
+        public void ControllerDetection_RunsOnTheDispatcherUntilStopped()
+        {
+            // CTRL-002
+            TestApplication.Run(() =>
+            {
+                var viewModel = _context.CreateViewModel();
+                var controller = Controller(Xbox);
+                _context.DataIntegrator.GetControllers().Returns([controller]);
+
+                viewModel.StartControllerDetection();
+                Assert.True(viewModel.IsDetectingControllers);
+                Wait(ControllerSetupViewModel.ControllerDetectionInterval * 3);
+
+                Assert.Same(controller, viewModel.SelectedController);
+
+                viewModel.StopControllerDetection();
+                Assert.False(viewModel.IsDetectingControllers);
+                _context.DataIntegrator.GetControllers().Returns([]);
+                Wait(ControllerSetupViewModel.ControllerDetectionInterval * 2);
+
+                Assert.Same(controller, viewModel.SelectedController);
+            });
+        }
+
+        private static void Wait(TimeSpan duration)
+        {
+            var frame = new DispatcherFrame();
+            _ = new DispatcherTimer(duration, DispatcherPriority.Normal, (sender, _) =>
+            {
+                ((DispatcherTimer)sender!).Stop();
+                frame.Continue = false;
+            }, Dispatcher.CurrentDispatcher);
+            Dispatcher.PushFrame(frame);
         }
 
         private static void OpenAndCloseDropDown(ComboBox comboBox, Window window)

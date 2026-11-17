@@ -8,6 +8,7 @@ using GameControllerForZwift.UI.WPF.Dialogs;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
 {
@@ -19,6 +20,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         /// The notice shown after a successful import (CFG-031).
         /// </summary>
         public const string ImportNotice = "Saved a copy to your configurations.";
+
+        /// <summary>
+        /// How often the app checks for controllers that connected or disconnected (CTRL-002).
+        /// </summary>
+        public static readonly TimeSpan ControllerDetectionInterval = TimeSpan.FromMilliseconds(500);
 
         [ObservableProperty]
         private string _title = "Controller Setup";
@@ -49,6 +55,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private bool _isRebuildingList;
         private bool _isApplyingMappings;
         private int _ownStoreChanges;
+        private DispatcherTimer? _detectionTimer;
+        private bool _isDetectingControllers;
 
         [ObservableProperty]
         private ControllerData? _currentControllerValues;
@@ -120,12 +128,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _configurationStore.Changed += ConfigurationStore_Changed;
             _dataIntegrator.InputPolled += _dataIntegrator_InputChanged;
 
-            // Auto setup the first controller
-            RefreshControllerList();
-            if (Controllers.Count > 0)
-            {
-                SelectedController = Controllers.First();
-            }
+            // Lists the connected controllers and selects the first one (CTRL-007).
+            DetectControllers();
         }
 
         #endregion
@@ -143,7 +147,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 if (ReferenceEquals(_selectedController, value))
                     return;
 
-                // A null comes from the list being refreshed; it does not change which configurations apply.
+                // A null (no controller selected) does not change which configurations apply.
                 var newModel = value is null ? null : ControllerModel.From(value);
                 bool modelChanges = newModel is not null && (_currentModel is null || !_matcher.Matches(_currentModel, newModel));
 
@@ -228,24 +232,88 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Commands
         /// <summary>
-        /// Updates the controller list from the controllers connected now. Controllers that stay connected keep their entry,
-        /// so the selection is not lost.
+        /// Updates the controller list from the controllers connected now (CTRL-001 to CTRL-008). Controllers that stay
+        /// connected keep their entry. The selected controller stays selected while it is connected. Nothing on screen
+        /// changes when no controller connected or disconnected.
         /// </summary>
-        [RelayCommand]
-        public void RefreshControllerList()
+        public void DetectControllers()
         {
-            var change = ControllerListChange.Between(Controllers, _dataIntegrator.GetControllers());
-            if (!change.HasChanges)
+            // A prompt opened by an automatic switch (CFG-024) runs a nested message loop, so the timer can tick meanwhile.
+            if (_isDetectingControllers)
                 return;
 
-            foreach (var controller in change.Added)
-                Controllers.Add(controller);
+            _isDetectingControllers = true;
+            try
+            {
+                var change = ControllerListChange.Between(Controllers, _dataIntegrator.GetControllers());
+                if (!change.HasChanges)
+                    return;
 
-            if (ControllerListChange.Contains(change.Removed, _selectedController))
-                SelectedController = null;
+                // New entries go in first, so the selection can move to one before the old selected entry is removed.
+                foreach (var controller in change.Added)
+                    Controllers.Add(controller);
 
-            foreach (var controller in change.Removed)
-                RemoveController(controller);
+                var previous = _selectedController;
+                var next = ControllerSelection.Choose(previous, change);
+                if (next is not null && !ReferenceEquals(next, previous))
+                {
+                    SelectedController = next;
+
+                    // CTRL-008: the user canceled the switch; the disconnected controller is no longer selectable.
+                    if (ReferenceEquals(_selectedController, previous) && previous is not null)
+                        SelectedController = null;
+                }
+                else if (next is null && change.Result.Count == 0)
+                {
+                    ClearControllerSelection();
+                }
+
+                foreach (var controller in change.Removed)
+                    RemoveController(controller);
+            }
+            finally
+            {
+                _isDetectingControllers = false;
+            }
+        }
+
+        /// <summary>
+        /// Starts checking for controllers that connect or disconnect, every <see cref="ControllerDetectionInterval"/>, on the
+        /// calling thread (CTRL-002). Call it on the UI thread: that thread owns SDL and the controller list.
+        /// </summary>
+        public void StartControllerDetection()
+        {
+            _detectionTimer ??= new DispatcherTimer(ControllerDetectionInterval, DispatcherPriority.Background,
+                (_, _) => DetectControllers(), Dispatcher.CurrentDispatcher);
+            _detectionTimer.Start();
+        }
+
+        /// <summary>
+        /// Stops checking for controllers.
+        /// </summary>
+        public void StopControllerDetection() => _detectionTimer?.Stop();
+
+        /// <summary>
+        /// Gets a value indicating whether the app checks for controllers that connect or disconnect.
+        /// </summary>
+        public bool IsDetectingControllers => _detectionTimer?.IsEnabled == true;
+
+        /// <summary>
+        /// Shows no controller after the last one disconnected (CTRL-006): only Default is listed, and Save as and Import are
+        /// disabled. Unsaved changes are handled first (CFG-024). If the user cancels, the edits and their configuration list stay.
+        /// </summary>
+        private void ClearControllerSelection()
+        {
+            if (_selectedController is null && _currentModel is null)
+                return;
+
+            bool leave = ConfirmLeaveUnsavedChanges(_currentModel);
+            SelectedController = null;
+            if (!leave)
+                return;
+
+            _currentModel = null;
+            LoadConfigurationsForCurrentController();
         }
 
         private void RemoveController(IController controller)
