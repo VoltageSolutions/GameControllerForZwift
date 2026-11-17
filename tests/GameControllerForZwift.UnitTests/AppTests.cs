@@ -7,6 +7,7 @@ using NSubstitute;
 
 namespace GameControllerForZwift.UnitTests
 {
+    [Collection(WpfWindows.Name)]
     public class AppTests
     {
         [WpfFact]
@@ -14,7 +15,7 @@ namespace GameControllerForZwift.UnitTests
         {
             // Arrange
             var services = new ServiceCollection();
-            var app = new App();
+            TestApplication.Run(() => { });
 
             // Act
             var configureServicesMethod = typeof(App)

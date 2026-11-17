@@ -71,6 +71,21 @@ namespace GameControllerForZwift.UI.WPF.Tests.Navigation
         }
 
         [Fact]
+        public void NavigateTo_AnotherTypeResolvingToTheShownInstance_IsNoOp()
+        {
+            var services = new ServiceCollection();
+            services.AddSingleton(_pageA);
+            services.AddSingleton<object>(_pageA);
+            var service = new NavigationService(services.BuildServiceProvider());
+            service.NavigateTo<PageA>();
+
+            service.NavigateTo<object>();
+
+            Assert.Same(_pageA, service.CurrentViewModel);
+            Assert.False(service.CanGoBack);
+        }
+
+        [Fact]
         public void NavigateTo_NullType_Throws()
         {
             Assert.Throws<ArgumentNullException>(() => _service.NavigateTo(null!));

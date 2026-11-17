@@ -3,8 +3,8 @@
 namespace GameControllerForZwift.UI.WPF.Navigation
 {
     /// <summary>
-    /// Owns the one and only navigation history of the app. It works with view models only (no WPF types), so the
-    /// shell can show <see cref="CurrentViewModel"/> however the UI framework prefers.
+    /// Owns the one and only navigation history of the app. It works with view models only (no WPF types). The
+    /// shell shows the view that matches <see cref="CurrentViewModel"/>.
     /// </summary>
     /// <remarks>
     /// <see cref="INotifyPropertyChanged.PropertyChanged"/> is raised for <see cref="CurrentViewModel"/> and

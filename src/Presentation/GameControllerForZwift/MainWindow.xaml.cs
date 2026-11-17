@@ -276,13 +276,21 @@ namespace GameControllerForZwift.UI.WPF
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            // Alt+Left is Back. With Alt held, WPF reports the key as Key.System and the real key as SystemKey.
-            if (e.Key == Key.System && e.SystemKey == Key.Left && Keyboard.Modifiers == ModifierKeys.Alt && TryGoBack())
+            if (IsBackKeyGesture(e.Key, e.SystemKey, Keyboard.Modifiers) && TryGoBack())
             {
                 e.Handled = true;
             }
 
             base.OnPreviewKeyDown(e);
+        }
+
+        /// <summary>
+        /// True for Alt+Left. With Alt held, WPF reports the key as <see cref="Key.System"/> and the real key as the
+        /// system key.
+        /// </summary>
+        public static bool IsBackKeyGesture(Key key, Key systemKey, ModifierKeys modifiers)
+        {
+            return key == Key.System && systemKey == Key.Left && modifiers == ModifierKeys.Alt;
         }
 
         protected override void OnPreviewMouseDown(MouseButtonEventArgs e)

@@ -73,7 +73,7 @@
 
                             <TextBlock Grid.Row="0" Text="Donate to this project on ko-fi" Margin="0,0,0,6"/>
                             <!-- The logo is 738 x 202, so the width keeps the aspect ratio. Without it the image stretches the whole card. -->
-                            <svg:SVGImage Grid.Row="1" Source="Assets/kofi_logo.svg" Width="186" Height="51" HorizontalAlignment="Left"/>
+                            <svg:SVGImage Grid.Row="1" Source="pack://application:,,,/GameControllerForZwift;component/Assets/kofi_logo.svg" Width="186" Height="51" HorizontalAlignment="Left"/>
 
                         </Grid>
                     </Button>

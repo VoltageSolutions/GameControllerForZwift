@@ -3,9 +3,9 @@
 namespace GameControllerForZwift.UI.WPF.Navigation
 {
     /// <summary>
-    /// Creates the view of a page view model once, on first use, and returns the same instance afterwards. This is the
-    /// lifetime the pages always had. Re-creating views is avoided because they share objects with their singleton
-    /// view models (for example a FlowDocument, which can only have one parent), and it keeps state such as scroll position.
+    /// Creates the view for a page view model on first use and returns the same instance afterwards. The views share
+    /// objects with their singleton view models (for example a FlowDocument, which can only have one parent), and
+    /// reusing them keeps state such as scroll position.
     /// </summary>
     public sealed class ViewCache
     {
