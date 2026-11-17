@@ -33,6 +33,7 @@ nav = [
     "build/roadmap.md",
   ] },
   { "Spec" = [
+    "spec/index.md",
     "spec/saved-configurations.md",
   ] },
 ]
