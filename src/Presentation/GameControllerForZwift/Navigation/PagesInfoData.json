@@ -2,13 +2,13 @@
   {
     "UniqueId": "ControllerSetup",
     "Title": "Controller Setup",
-    "PageName": "ControllerSetupPage",
+    "ViewModelName": "ControllerSetupViewModel",
     "IconGlyph": "\uE7FC"
   },
   {
     "UniqueId": "About",
     "Title": "About",
-    "PageName": "AboutPage",
+    "ViewModelName": "AboutPageViewModel",
     "IconGlyph": "\uE946"
   }
 ]

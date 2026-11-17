@@ -60,7 +60,20 @@ All services are registered in `App.ConfigureServices` with `Microsoft.Extension
 | `MdnsAdvertiser` | `MdnsAdvertiser` |
 | `ZwiftRideOutputService` and `IOutputService` | The same `ZwiftRideOutputService` instance |
 | `IDataIntegrator` | `DataIntegrator` |
-| View models, pages and `MainWindow` | Registered for constructor injection |
+| View models and `MainWindow` | Registered for constructor injection. Page view models are singletons. Views are created once by `ViewCache`. |
+
+## Navigation
+
+Navigation runs through one history in `NavigationService`, and the shell only displays the current view model.
+
+```mermaid
+flowchart LR
+    tree["Nav tree / Settings button /<br/>Back button, Alt+Left, mouse back"] --> vm["MainWindowViewModel"]
+    vm --> nav["NavigationService<br/>current view model + history"]
+    nav -->|"CurrentViewModel"| shell["ContentControl in MainWindow"]
+    shell -->|"ViewCache"| view["View (UserControl)"]
+    nav -.->|"changed: sync tree selection, no navigation"| tree
+```
 
 ## Logging
 

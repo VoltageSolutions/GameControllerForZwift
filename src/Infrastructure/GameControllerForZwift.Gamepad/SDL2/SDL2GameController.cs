@@ -22,7 +22,17 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// Initializes a new instance of the <see cref="SDL2GameController"/> class.
         /// </summary>
         /// <param name="handle">The SDL2 game controller handle.</param>
-        public SDL2GameController(IntPtr handle)
+        public SDL2GameController(IntPtr handle) : this(handle, 0, 0)
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SDL2GameController"/> class.
+        /// </summary>
+        /// <param name="handle">The SDL2 game controller handle.</param>
+        /// <param name="vendorId">The USB vendor ID SDL reported for the device, or 0 if unknown.</param>
+        /// <param name="productId">The USB product ID SDL reported for the device, or 0 if unknown.</param>
+        public SDL2GameController(IntPtr handle, ushort vendorId, ushort productId)
         {
             if (handle == IntPtr.Zero)
             {
@@ -32,6 +42,8 @@ namespace GameControllerForZwift.Gamepad.SDL2
             _handle = handle;
 
             Name = SDL_GameControllerName(handle) ?? "Unknown Controller";
+            VendorId = vendorId;
+            ProductId = productId;
         }
 
         #endregion
@@ -42,6 +54,16 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// Gets the name of the game controller.
         /// </summary>
         public string Name { get; }
+
+        /// <summary>
+        /// Gets the USB vendor ID, or 0 if unknown.
+        /// </summary>
+        public ushort VendorId { get; }
+
+        /// <summary>
+        /// Gets the USB product ID, or 0 if unknown.
+        /// </summary>
+        public ushort ProductId { get; }
 
         #endregion
 

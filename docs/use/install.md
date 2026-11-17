@@ -39,7 +39,7 @@ The first time the app runs, Windows Firewall asks whether the app may use the n
 ## 3. Connect your game controller
 
 1. Connect your controller to Windows with a USB cable or Bluetooth.
-2. In the app, choose your controller from the list. If you do not see it, click **Refresh List**.
+2. In the app, choose your controller from the list. The list updates by itself within about half a second when you connect or disconnect a controller. If you have only one controller, the app selects it for you.
 3. Press some buttons. The matching row in the app lights up while you press it.
 
 The app uses one controller at a time. If you connect left and right Nintendo Joy-Cons to your computer, the app will count them as a single controller.

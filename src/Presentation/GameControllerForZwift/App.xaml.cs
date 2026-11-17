@@ -1,4 +1,5 @@
 using GameControllerForZwift.Core;
+using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.FileSystem;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.Gamepad.Mapping;
@@ -9,6 +10,7 @@ using GameControllerForZwift.Network.Output;
 using GameControllerForZwift.Network.ZwiftRide;
 using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
+using GameControllerForZwift.UI.WPF.Dialogs;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
@@ -49,6 +51,13 @@ namespace GameControllerForZwift
             mainWindow.Show();
             Current.ThemeMode = ThemeMode.System;
 
+            // Refresh configuration lists when files change outside the app (CFG-006). Created here, on the UI thread, so
+            // its notifications are posted back to this thread.
+            ServiceProvider.GetRequiredService<ConfigurationFolderWatcher>().Start();
+
+            // Lists controllers as they connect and disconnect (CTRL-002). Started here, on the UI thread, which owns SDL.
+            ServiceProvider.GetRequiredService<ControllerSetupViewModel>().StartControllerDetection();
+
             // Start the Zwift Ride output (Direct Connect server + mDNS advertisement) in the background. It always runs and is the only output.
             {
                 var output = ServiceProvider.GetRequiredService<ZwiftRideOutputService>();
@@ -71,6 +80,9 @@ namespace GameControllerForZwift
         {
             try
             {
+                // Stop asking SDL for controllers before the input service shuts SDL down.
+                ServiceProvider?.GetService<ControllerSetupViewModel>()?.StopControllerDetection();
+
                 if (ServiceProvider is IAsyncDisposable provider)
                 {
                     // Disposes ZwiftRideOutputService (stops mDNS + Direct Connect server) among other singletons.
@@ -106,6 +118,8 @@ namespace GameControllerForZwift
                 configure.SetMinimumLevel(LogLevel.Information);
                 configure.AddFileLogger(Path.Join(AppContext.BaseDirectory, "logs"));
                 configure.AddFilter<FileLoggerProvider>("GameControllerForZwift.Network", LogLevel.Debug);
+                // Logs when each controller removal is detected and how long SDL took to report it.
+                configure.AddFilter<FileLoggerProvider>("GameControllerForZwift.Gamepad.SDL2.SDL2InputService", LogLevel.Debug);
             });
 
             services.AddSingleton<IFileService, FileService>();
@@ -118,6 +132,25 @@ namespace GameControllerForZwift
             services.AddSingleton(provider => new MdnsAdvertiser(provider.GetRequiredService<ILogger<MdnsAdvertiser>>()));
             services.AddSingleton<ZwiftRideOutputService>();
             services.AddSingleton<IOutputService>(provider => provider.GetRequiredService<ZwiftRideOutputService>());
+
+            // Saved configurations (docs/spec/saved-configurations.md)
+            services.AddSingleton(TimeProvider.System);
+            services.AddSingleton<ControllerModelMatcher>();
+            services.AddSingleton<IConfigurationStore>(provider => new ConfigurationStore(
+                provider.GetRequiredService<IFileService>(),
+                AppDataPaths.ConfigurationsFolder,
+                provider.GetRequiredService<ILogger<ConfigurationStore>>(),
+                provider.GetRequiredService<TimeProvider>()));
+            services.AddSingleton<IAppSettingsStore>(provider => new AppSettingsStore(
+                provider.GetRequiredService<IFileService>(),
+                AppDataPaths.SettingsFile,
+                provider.GetRequiredService<ILogger<AppSettingsStore>>()));
+            services.AddSingleton(provider => new ConfigurationFolderWatcher(
+                provider.GetRequiredService<IConfigurationStore>(),
+                SynchronizationContext.Current ?? new System.Windows.Threading.DispatcherSynchronizationContext(Current.Dispatcher),
+                TimeSpan.FromMilliseconds(400),
+                provider.GetRequiredService<ILogger<ConfigurationFolderWatcher>>()));
+            services.AddSingleton<IDialogService, DialogService>();
 
             services.AddSingleton<IControllerProfileService>(provider =>
             {
@@ -139,25 +172,23 @@ namespace GameControllerForZwift
             services.AddSingleton<INavigationService, NavigationService>();
 
             // GameControllerForZwift.UI.WPF
-            // ViewModels
+            // ViewModels. The page view models are singletons on purpose: navigation resolves them from the container, so
+            // their state (for example the selected controller) is kept when the user leaves a page and comes back.
+            // Views are not registered: the ViewCache in MainWindow creates one view per page view model.
             services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<AboutPageViewModel>();
             services.AddSingleton<AboutPageViewModel>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();
                 string appDirectory = AppContext.BaseDirectory;
                 string filePath = Path.Join(appDirectory, "ACKNOWLEDGEMENTS.md");
-                //string filePath = "./ACKNOWLEDGEMENTS.md"; // Or fetch this from configuration
                 return new AboutPageViewModel(fileService, filePath);
             });
             services.AddSingleton<ControllerSetupViewModel>();
+            services.AddSingleton<SettingsViewModel>();
             services.AddTransient<ZwiftFunctionSelectorViewModel>();
 
             // Register MainWindow with DI so it can receive MainWindowViewModel
             services.AddTransient<InputMapper>();
-            services.AddSingleton<AboutPage>();
-            services.AddSingleton<SettingsPage>();
-            services.AddSingleton<ControllerSetupPage>();
             services.AddTransient<MainWindow>();
         }
 

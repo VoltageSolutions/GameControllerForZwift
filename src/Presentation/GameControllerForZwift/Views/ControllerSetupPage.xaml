@@ -1,4 +1,4 @@
-﻿<Page x:Class="GameControllerForZwift.UI.WPF.Views.ControllerSetupPage"
+﻿<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.ControllerSetupPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -8,14 +8,15 @@
       xmlns:converters="clr-namespace:GameControllerForZwift.UI.WPF.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-      Title="ControllerSetupPage">
-    <Page.Resources>
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}">
+    <UserControl.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
         <converters:DoubleToPointConverter x:Key="DoubleToPointConverter"/>
         <converters:DynamicControllerBindingConverter x:Key="DynamicControllerBindingConverter"/>
-    </Page.Resources>
-    <ScrollViewer>
+    </UserControl.Resources>
+    <!-- The root child binds to this view, which exposes the view model (DataContext) as ViewModel. -->
+    <ScrollViewer
+        DataContext="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -42,6 +43,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!--Controller and Profile Row-->
@@ -49,17 +51,81 @@
 
                     <!--Controller Selection Card-->
                     <controls:Card MinWidth="300" Title="Controller" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <!-- The list follows controllers as they connect and disconnect (docs/spec/controller-detection.md). -->
                         <Grid>
+                            <ComboBox x:Name="ControllerComboBox" HorizontalAlignment="Stretch"
+                                ItemsSource="{Binding ViewModel.Controllers}"
+                                SelectedItem="{Binding ViewModel.SelectedController}"
+                                SelectionChanged="SelectionComboBox_SelectionChanged"
+                                DisplayMemberPath="Name"
+                                Height="37"
+                                AutomationProperties.AutomationId="ControllerComboBox"
+                                AutomationProperties.Name="Controller"/>
+                            <TextBlock x:Name="NoControllerText" Text="None selected"
+                                Margin="12,0,36,0" VerticalAlignment="Center" IsHitTestVisible="False"
+                                Foreground="{DynamicResource TextFillColorSecondaryBrush}"
+                                Visibility="{Binding ViewModel.SelectedController, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Invert}"/>
+                        </Grid>
+                    </controls:Card>
+
+                    <!--Configuration Card (saved configurations, see docs/spec/saved-configurations.md)-->
+                    <controls:Card MinWidth="300" Title="Configuration" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*" MinWidth="220"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" 
-                                ItemsSource="{Binding ViewModel.Controllers}" 
-                                SelectedItem="{Binding ViewModel.SelectedController}"
-                                DisplayMemberPath="Name" 
-                                Margin="0,0,6,0" Height="37"/>
-                            <Button Grid.Column="1" Content="Refresh List" Margin="6,0,0,0" Height="37" Command="{Binding ViewModel.RefreshControllerListCommand}"/>
+                            <ComboBox x:Name="ConfigurationComboBox" Grid.Column="0" HorizontalAlignment="Stretch"
+                                ItemsSource="{Binding ViewModel.Configurations}"
+                                SelectedItem="{Binding ViewModel.SelectedConfiguration}"
+                                SelectionChanged="SelectionComboBox_SelectionChanged"
+                                DisplayMemberPath="DisplayName"
+                                Margin="0,0,6,0" Height="37"
+                                AutomationProperties.AutomationId="ConfigurationComboBox"
+                                AutomationProperties.Name="Configuration"/>
+                            <Button x:Name="SaveConfigurationButton" Grid.Column="1" Content="Save" Margin="6,0,0,0" Height="37" MinWidth="64"
+                                Command="{Binding ViewModel.SaveCommand}"
+                                AutomationProperties.AutomationId="SaveConfigurationButton"
+                                ToolTipService.ShowOnDisabled="True"
+                                ToolTip="Save changes to this configuration"/>
+                            <Button x:Name="SaveConfigurationAsButton" Grid.Column="2" Content="Save as..." Margin="6,0,0,0" Height="37"
+                                Command="{Binding ViewModel.SaveAsCommand}"
+                                AutomationProperties.AutomationId="SaveConfigurationAsButton"
+                                ToolTip="Save these mappings as a new configuration"/>
+                            <Button x:Name="DeleteConfigurationButton" Grid.Column="3" Content="Delete" Margin="6,0,0,0" Height="37"
+                                Command="{Binding ViewModel.DeleteCommand}"
+                                AutomationProperties.AutomationId="DeleteConfigurationButton"
+                                ToolTipService.ShowOnDisabled="True"
+                                ToolTip="Delete this configuration"/>
+                            <Button x:Name="MoreConfigurationActionsButton" Grid.Column="4" Margin="6,0,0,0" Height="37" MinWidth="40"
+                                Click="MoreConfigurationActionsButton_Click"
+                                AutomationProperties.AutomationId="MoreConfigurationActionsButton"
+                                AutomationProperties.Name="More configuration actions"
+                                ToolTip="More configuration actions">
+                                <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="14" Text="&#xE712;" VerticalAlignment="Center"/>
+                                <!-- A context menu is not in the page's visual tree. It takes the data context of the button it opens
+                                     from, which is this view, so its items bind ViewModel like the rest of the page. -->
+                                <Button.ContextMenu>
+                                    <ContextMenu x:Name="MoreConfigurationActionsMenu" AutomationProperties.AutomationId="MoreConfigurationActionsMenu"
+                                        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                                        <MenuItem Header="Import..." Command="{Binding ViewModel.ImportCommand}" AutomationProperties.AutomationId="ImportConfigurationMenuItem"/>
+                                        <MenuItem Header="Rename..." Command="{Binding ViewModel.RenameCommand}" AutomationProperties.AutomationId="RenameConfigurationMenuItem"/>
+                                        <MenuItem Header="Open folder" Command="{Binding ViewModel.OpenFolderCommand}" AutomationProperties.AutomationId="OpenConfigurationFolderMenuItem"/>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                            </Button>
+                            <CheckBox x:Name="ShowOtherControllersConfigurationsCheckBox" Grid.Row="1" Grid.ColumnSpan="5" Margin="0,8,0,0"
+                                Content="Show configurations from other controllers"
+                                IsChecked="{Binding ViewModel.ShowOtherControllersConfigurations}"
+                                AutomationProperties.AutomationId="ShowOtherControllersConfigurationsCheckBox"
+                                ToolTip="List the configurations saved for other controllers. Picking one saves a copy for this controller."/>
                         </Grid>
                     </controls:Card>
 
@@ -88,8 +154,33 @@
                     </controls:Card>-->
                 </WrapPanel>
 
+                <!--Notice (non-blocking, hides itself after a few seconds)-->
+                <Border x:Name="ConfigurationNotice" Grid.Row="1" Margin="5" Padding="12,8" CornerRadius="6"
+                        HorizontalAlignment="Left" MinWidth="300"
+                        Background="{DynamicResource SystemFillColorSuccessBackgroundBrush}"
+                        BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}" BorderThickness="1"
+                        Visibility="{Binding ViewModel.NoticeText, Converter={StaticResource NullToVisibilityConverter}}"
+                        AutomationProperties.AutomationId="ConfigurationNotice">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="0,0,10,0" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="16"
+                                   Foreground="{DynamicResource SystemFillColorSuccessBrush}" Text="&#xE73E;" AutomationProperties.Name="Success"/>
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{Binding ViewModel.NoticeText}" TextWrapping="Wrap"
+                                   AutomationProperties.AutomationId="ConfigurationNoticeText" AutomationProperties.LiveSetting="Polite"/>
+                        <Button Grid.Column="2" Margin="12,0,0,0" Padding="6" Background="Transparent" BorderBrush="Transparent"
+                                Command="{Binding ViewModel.DismissNoticeCommand}"
+                                AutomationProperties.AutomationId="DismissConfigurationNoticeButton" AutomationProperties.Name="Dismiss" ToolTip="Dismiss">
+                            <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="10" Text="&#xE711;"/>
+                        </Button>
+                    </Grid>
+                </Border>
+
                 <!--Mapper Row-->
-                <WrapPanel Grid.Row="1" ItemHeight="Auto">
+                <WrapPanel Grid.Row="2" ItemHeight="Auto">
 
                     <!--Buttons Column-->
                     <!--<Grid MinWidth="200">
@@ -210,4 +301,4 @@
             </Grid>
         </Grid>
     </ScrollViewer>
-</Page>
+</UserControl>

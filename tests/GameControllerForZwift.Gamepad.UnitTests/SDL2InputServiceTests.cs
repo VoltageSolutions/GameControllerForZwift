@@ -65,6 +65,35 @@ public class SDL2InputServiceTests
     }
 
     [Fact]
+    public void GetControllers_WhenNothingChanged_ReturnsTheSameInstancesAndDoesNotLogAgain()
+    {
+        // CTRL-003: polling with no device change neither reopens controllers nor writes to the log.
+        var logger = new CapturingLogger();
+        using var service = new SDL2InputService(logger);
+
+        IController[] first = service.GetControllers().ToArray();
+        int messagesAfterFirst = logger.Messages.Count;
+        IController[] second = service.GetControllers().ToArray();
+
+        Assert.Equal(first.Length, second.Length);
+        for (int i = 0; i < first.Length; i++)
+        {
+            Assert.Same(first[i], second[i]);
+        }
+
+        Assert.Equal(messagesAfterFirst, logger.Messages.Count);
+    }
+
+    [Fact]
+    public void GetControllers_AfterDispose_ReturnsEmpty()
+    {
+        var service = new SDL2InputService(new CapturingLogger());
+        service.Dispose();
+
+        Assert.Empty(service.GetControllers());
+    }
+
+    [Fact]
     public void GetControllers_ReturnsSnapshotThatLaterRefreshDoesNotMutate()
     {
         using var service = new SDL2InputService(new CapturingLogger());
@@ -136,6 +165,10 @@ public class SDL2InputServiceTests
     private sealed class StubController(ControllerData? data) : IController
     {
         public string Name => "Stub";
+
+        public ushort VendorId => 0;
+
+        public ushort ProductId => 0;
 
         public ControllerData? ReadData() => data;
 

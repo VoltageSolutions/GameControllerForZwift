@@ -1,5 +1,7 @@
 ﻿using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Automation;
@@ -7,8 +9,8 @@ using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Navigation;
 using System.Windows.Shell;
+using System.Windows.Threading;
 
 namespace GameControllerForZwift.UI.WPF
 {
@@ -18,24 +20,35 @@ namespace GameControllerForZwift.UI.WPF
     public partial class MainWindow : Window
     {
         #region Fields
-        private readonly INavigationService _navigationService;
+        // True while the shell moves the tree selection to match the page that is shown. Selection changes made for that
+        // reason must never start a navigation, otherwise back would push the page again.
+        private bool _isSyncingSelection;
         public MainWindowViewModel ViewModel { get; }
+        private readonly IServiceProvider _serviceProvider;
+
+        // One view per page view model, created on first navigation and reused afterwards.
+        private readonly ViewCache _viewCache = new(new Dictionary<Type, Func<FrameworkElement>>
+        {
+            [typeof(ControllerSetupViewModel)] = () => new ControllerSetupPage(),
+            [typeof(AboutPageViewModel)] = () => new AboutPage(),
+            [typeof(SettingsViewModel)] = () => new SettingsPage(),
+        });
         #endregion
 
         #region Constructor
-        public MainWindow(MainWindowViewModel mainWindowViewModel, INavigationService navigationService)
+        public MainWindow(MainWindowViewModel mainWindowViewModel, IServiceProvider serviceProvider)
         {
             ViewModel = mainWindowViewModel;
+            _serviceProvider = serviceProvider;
             DataContext = this;
 
             InitializeComponent();
             Toggle_TitleButtonVisibility();
 
-            _navigationService = navigationService;
-            _navigationService.Navigating += OnNavigating;
-            _navigationService.SetFrame(this.RootContentFrame);
-            //_navigationService.Navigate(typeof(HomePage));
-            _navigationService.Navigate(typeof(ControllerSetupPage));
+            ViewModel.PropertyChanged += ViewModel_PropertyChanged;
+            ViewModel.NavigateToStartPage();
+            ShowCurrentView();
+            ContentRendered += (_, _) => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, PrepareNextPage);
 
             WindowChrome.SetWindowChrome(
             this,
@@ -62,29 +75,33 @@ namespace GameControllerForZwift.UI.WPF
             bool disableFluentThemeWindowBackdrop = appContextBackdropData != null
                 && bool.Parse(Convert.ToString(appContextBackdropData, System.Globalization.CultureInfo.InvariantCulture) ?? bool.FalseString);
 
-            if (!disableFluentThemeWindowBackdrop)
-            {
-                foreach (ResourceDictionary mergedDictionary in Application.Current.Resources.MergedDictionaries)
-                {
-                    if (Application.Current.ThemeMode != ThemeMode.None)
-                    {
-                        if (SystemParameters.HighContrast)
-                        {
-                            MinimizeButton.Visibility = Visibility.Visible;
-                            MaximizeButton.Visibility = Visibility.Visible;
-                            CloseButton.Visibility = Visibility.Visible;
-                        }
-                        else
-                        {
-                            MinimizeButton.Visibility = Visibility.Collapsed;
-                            MaximizeButton.Visibility = Visibility.Collapsed;
-                            CloseButton.Visibility = Visibility.Collapsed;
-                        }
+            Visibility? captionButtons = GetCaptionButtonVisibility(
+                disableFluentThemeWindowBackdrop,
+                Application.Current.Resources.MergedDictionaries.Count > 0,
+                Application.Current.ThemeMode != ThemeMode.None,
+                SystemParameters.HighContrast);
 
-                        break;
-                    }
-                }
+            if (captionButtons is Visibility visibility)
+            {
+                MinimizeButton.Visibility = visibility;
+                MaximizeButton.Visibility = visibility;
+                CloseButton.Visibility = visibility;
             }
+        }
+
+        /// <summary>
+        /// Returns the visibility of the custom caption buttons, or null to leave them as they are. The buttons are
+        /// changed only when the Fluent backdrop is enabled, theme resources are loaded and a theme mode is set; they
+        /// are visible in high contrast and collapsed otherwise.
+        /// </summary>
+        public static Visibility? GetCaptionButtonVisibility(bool backdropDisabled, bool hasThemeResources, bool themeModeSet, bool highContrast)
+        {
+            if (backdropDisabled || !hasThemeResources || !themeModeSet)
+            {
+                return null;
+            }
+
+            return highContrast ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion
@@ -117,9 +134,14 @@ namespace GameControllerForZwift.UI.WPF
 
         private void PagesTreeView_SelectedItemChanged()
         {
+            if (_isSyncingSelection)
+            {
+                return;
+            }
+
             if (PagesTreeView.SelectedItem is PagesInfoDataItem navItem)
             {
-                _navigationService.Navigate(navItem.PageType);
+                ViewModel.NavigateToPage(navItem);
                 var tvi = PagesTreeView.ItemContainerGenerator.ContainerFromItem(navItem) as TreeViewItem;
                 if (tvi != null)
                 {
@@ -130,7 +152,7 @@ namespace GameControllerForZwift.UI.WPF
 
         private void PagesTreeView_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && PagesTreeView.SelectedItem is not null)
             {
                 SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem(((TreeView)sender).SelectedItem) as TreeViewItem);
             }
@@ -139,6 +161,10 @@ namespace GameControllerForZwift.UI.WPF
         private void PagesTreeView_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             if (e.OriginalSource is ToggleButton)
+            {
+                return;
+            }
+            if (PagesTreeView.SelectedItem is null)
             {
                 return;
             }
@@ -201,35 +227,147 @@ namespace GameControllerForZwift.UI.WPF
             }
         }
 
-        private void RootContentFrame_Navigated(object sender, NavigationEventArgs e)
+        private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            ViewModel.UpdateCanNavigateBack();
+            if (e.PropertyName == nameof(MainWindowViewModel.CurrentViewModel))
+            {
+                ShowCurrentView();
+                SyncTreeSelection(ViewModel.CurrentViewModel?.GetType());
+            }
         }
 
-        private void OnNavigating(object? sender, NavigatingEventArgs e)
-        {
-            List<PagesInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromPageType(e.PageType);
+        // Pages that have not been visited yet are built and laid out while the app is idle, one per idle turn, so the
+        // first visit is instant. The About page is the slow one: it converts the acknowledgements markdown into a
+        // FlowDocument and parses the ko-fi SVG.
+        private static readonly Type[] _pagesToPrepare = { typeof(AboutPageViewModel), typeof(SettingsViewModel) };
+        private int _nextPageToPrepare;
 
-            if (list.Count > 0)
+        private void PrepareNextPage()
+        {
+            if (_nextPageToPrepare >= _pagesToPrepare.Length)
             {
-                TreeViewItem? selectedTreeViewItem = null;
-                ItemsControl itemsControl = PagesTreeView;
-                foreach (PagesInfoDataItem item in list)
+                return;
+            }
+
+            object viewModel = _serviceProvider.GetRequiredService(_pagesToPrepare[_nextPageToPrepare++]);
+            if (_viewCache.GetView(viewModel) is FrameworkElement view && view.Parent is null)
+            {
+                var size = new Size(RootContent.ActualWidth, RootContent.ActualHeight);
+                view.Measure(size);
+                view.Arrange(new Rect(size));
+                view.UpdateLayout();
+            }
+
+            Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, PrepareNextPage);
+        }
+
+        private static void ClearSelection(ItemsControl parent)
+        {
+            foreach (object item in parent.Items)
+            {
+                if (parent.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem container)
                 {
-                    var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-                    if (tvi != null)
+                    container.IsSelected = false;
+                    ClearSelection(container);
+                }
+            }
+        }
+
+        private void ShowCurrentView()
+        {
+            RootContent.Content = _viewCache.GetView(ViewModel.CurrentViewModel);
+        }
+
+        protected override void OnPreviewKeyDown(KeyEventArgs e)
+        {
+            if (IsBackKeyGesture(e.Key, e.SystemKey, Keyboard.Modifiers) && TryGoBack())
+            {
+                e.Handled = true;
+            }
+
+            base.OnPreviewKeyDown(e);
+        }
+
+        /// <summary>
+        /// True for Alt+Left. With Alt held, WPF reports the key as <see cref="Key.System"/> and the real key as the
+        /// system key.
+        /// </summary>
+        public static bool IsBackKeyGesture(Key key, Key systemKey, ModifierKeys modifiers)
+        {
+            return key == Key.System && systemKey == Key.Left && modifiers == ModifierKeys.Alt;
+        }
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            // The mouse back button is Back.
+            if (e.ChangedButton == MouseButton.XButton1 && TryGoBack())
+            {
+                e.Handled = true;
+            }
+
+            base.OnPreviewMouseDown(e);
+        }
+
+        private bool TryGoBack()
+        {
+            if (!ViewModel.BackCommand.CanExecute(null))
+            {
+                return false;
+            }
+
+            ViewModel.BackCommand.Execute(null);
+            return true;
+        }
+
+        /// <summary>Selects the tree item of the page that is shown, without navigating.</summary>
+        private void SyncTreeSelection(Type? viewModelType)
+        {
+            List<PagesInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromViewModelType(viewModelType);
+
+            if (list.Count == 0)
+            {
+                // The page has no tree item (Settings): show no selection. Navigation must not start from this.
+                _isSyncingSelection = true;
+                try
+                {
+                    ClearSelection(PagesTreeView);
+                }
+                finally
+                {
+                    _isSyncingSelection = false;
+                }
+            }
+            else
+            {
+                _isSyncingSelection = true;
+                try
+                {
+                    TreeViewItem? selectedTreeViewItem = null;
+                    ItemsControl itemsControl = PagesTreeView;
+                    foreach (PagesInfoDataItem item in list)
                     {
-                        tvi.IsExpanded = true;
-                        tvi.UpdateLayout();
-                        itemsControl = tvi;
-                        selectedTreeViewItem = tvi;
+                        var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
+                        if (tvi != null)
+                        {
+                            tvi.IsExpanded = true;
+                            if (item != list[^1])
+                            {
+                                // Realize the child containers before looking for the next level.
+                                tvi.UpdateLayout();
+                            }
+                            itemsControl = tvi;
+                            selectedTreeViewItem = tvi;
+                        }
+                    }
+
+                    if (selectedTreeViewItem != null)
+                    {
+                        selectedTreeViewItem.IsSelected = true;
                     }
                 }
-
-                if (selectedTreeViewItem != null)
+                finally
                 {
-                    selectedTreeViewItem.IsSelected = true;
-                    PagesTreeView_SelectedItemChanged();
+                    _isSyncingSelection = false;
                 }
             }
         }

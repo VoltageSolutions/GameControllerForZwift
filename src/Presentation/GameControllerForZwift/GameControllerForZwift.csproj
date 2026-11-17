@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="GameControllerForZwift.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
 		<None Include="..\..\..\ACKNOWLEDGEMENTS.md">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>

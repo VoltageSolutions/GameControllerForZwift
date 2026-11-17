@@ -1,5 +1,7 @@
-﻿using GameControllerForZwift.UI.WPF.Navigation;
-using GameControllerForZwift.UI.WPF.Views;
+﻿using GameControllerForZwift.Core.Configurations;
+using GameControllerForZwift.UI.WPF.Dialogs;
+using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.ViewModels;
 using Microsoft.Extensions.Logging;
 using NSubstitute;
 using System.Collections.ObjectModel;
@@ -19,6 +21,9 @@ namespace GameControllerForZwift.UI.WPF.Tests
             _viewModel = new MainWindowViewModel(_navigationServiceMock, _loggerMock);
         }
 
+        private static SettingsViewModel CreateSettingsViewModel() => new(
+            Substitute.For<IConfigurationStore>(), Substitute.For<IAppSettingsStore>(), Substitute.For<IDialogService>());
+
         [Fact]
         public void Constructor_InitializesPagesProperty()
         {
@@ -36,60 +41,132 @@ namespace GameControllerForZwift.UI.WPF.Tests
             _viewModel.SettingsCommand.Execute(null);
 
             // Assert
-            _navigationServiceMock.Received(1).Navigate(typeof(SettingsPage));
+            _navigationServiceMock.Received(1).NavigateTo<SettingsViewModel>();
         }
 
         [Fact]
-        public void BackCommand_InvokesNavigateBack()
+        public void BackCommand_InvokesGoBack_WhenHistoryIsNotEmpty()
         {
+            // Arrange
+            _navigationServiceMock.CanGoBack.Returns(true);
+
             // Act
             _viewModel.BackCommand.Execute(null);
 
             // Assert
-            _navigationServiceMock.Received(1).NavigateBack();
+            _navigationServiceMock.Received(1).GoBack();
         }
 
         [Fact]
-        public void ForwardCommand_InvokesNavigateForward()
-        {
-            // Act
-            _viewModel.ForwardCommand.Execute(null);
-
-            // Assert
-            _navigationServiceMock.Received(1).NavigateForward();
-        }
-
-        [Fact]
-        public void UpdateCanNavigateBack_SetsCanNavigatebackToTrue_WhenBackHistoryIsNonEmpty()
+        public void BackCommand_CannotExecute_WhenHistoryIsEmpty()
         {
             // Arrange
-            _navigationServiceMock.IsBackHistoryNonEmpty().Returns(true);
+            _navigationServiceMock.CanGoBack.Returns(false);
 
-            // Act
-            _viewModel.UpdateCanNavigateBack();
-
-            // Assert
-            Assert.True(_viewModel.CanNavigateback);
+            // Act & Assert
+            Assert.False(_viewModel.BackCommand.CanExecute(null));
         }
 
         [Fact]
-        public void UpdateCanNavigateBack_SetsCanNavigatebackToFalse_WhenBackHistoryIsEmpty()
+        public void BackCommand_CanExecuteChanges_WhenNavigationServiceReportsCanGoBackChange()
         {
             // Arrange
-            _navigationServiceMock.IsBackHistoryNonEmpty().Returns(false);
+            bool raised = false;
+            _viewModel.BackCommand.CanExecuteChanged += (_, _) => raised = true;
+            _navigationServiceMock.CanGoBack.Returns(true);
 
             // Act
-            _viewModel.UpdateCanNavigateBack();
+            _navigationServiceMock.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(
+                _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CanGoBack)));
 
             // Assert
-            Assert.False(_viewModel.CanNavigateback);
+            Assert.True(raised);
+            Assert.True(_viewModel.CanGoBack);
+            Assert.True(_viewModel.BackCommand.CanExecute(null));
         }
 
         [Fact]
-        public void GetNavigationItemHierarchyFromPageType_ReturnsCorrectHierarchy_WhenPageTypeExists()
+        public void CurrentViewModel_RaisesPropertyChanged_WhenNavigationServiceChangesPage()
         {
             // Arrange
-            var childItem = new PagesInfoDataItem { Title = "Child", PageName = nameof(SettingsPage) };
+            var page = new object();
+            var changed = new List<string?>();
+            _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+            _navigationServiceMock.CurrentViewModel.Returns(page);
+
+            // Act
+            _navigationServiceMock.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(
+                _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CurrentViewModel)));
+
+            // Assert
+            Assert.Contains(nameof(MainWindowViewModel.CurrentViewModel), changed);
+            Assert.Same(page, _viewModel.CurrentViewModel);
+        }
+
+        [Fact]
+        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmpty_ForSettingsBecauseItIsNotInTheTree()
+        {
+            // The real navigation tree has no Settings item, so the shell must show no tree selection for it.
+            Assert.Empty(_viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel)));
+            Assert.NotEmpty(_viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(ControllerSetupViewModel)));
+        }
+
+        [Fact]
+        public void IsSettingsShown_FollowsTheCurrentViewModel()
+        {
+            var changed = new List<string?>();
+            _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+
+            _navigationServiceMock.CurrentViewModel.Returns(CreateSettingsViewModel());
+            _navigationServiceMock.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(
+                _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CurrentViewModel)));
+
+            Assert.True(_viewModel.IsSettingsShown);
+            Assert.Contains(nameof(MainWindowViewModel.IsSettingsShown), changed);
+
+            _navigationServiceMock.CurrentViewModel.Returns(new object());
+            Assert.False(_viewModel.IsSettingsShown);
+        }
+
+        [Fact]
+        public void NavigateToStartPage_NavigatesToControllerSetup()
+        {
+            // Act
+            _viewModel.NavigateToStartPage();
+
+            // Assert
+            _navigationServiceMock.Received(1).NavigateTo<ControllerSetupViewModel>();
+        }
+
+        [Fact]
+        public void NavigateToPage_NavigatesToTheItemsViewModelType()
+        {
+            // Arrange
+            var item = new PagesInfoDataItem { ViewModelName = nameof(AboutPageViewModel) };
+
+            // Act
+            _viewModel.NavigateToPage(item);
+
+            // Assert
+            _navigationServiceMock.Received(1).NavigateTo(Arg.Is<Type>(t => t == item.ViewModelType));
+        }
+
+        [Fact]
+        public void NavigateToPage_DoesNothing_ForNullOrUnknownItem()
+        {
+            // Act
+            _viewModel.NavigateToPage(null);
+            _viewModel.NavigateToPage(new PagesInfoDataItem { ViewModelName = "DoesNotExist" });
+
+            // Assert
+            _navigationServiceMock.DidNotReceiveWithAnyArgs().NavigateTo(default!);
+        }
+
+        [Fact]
+        public void GetNavigationItemHierarchyFromViewModelType_ReturnsCorrectHierarchy_WhenPageTypeExists()
+        {
+            // Arrange
+            var childItem = new PagesInfoDataItem { Title = "Child", ViewModelName = nameof(SettingsViewModel) };
             var parentItem = new PagesInfoDataItem
             {
                 Title = "Parent",
@@ -99,7 +176,7 @@ namespace GameControllerForZwift.UI.WPF.Tests
             _viewModel.Pages = new List<PagesInfoDataItem> { parentItem };
 
             // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(SettingsPage));
+            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel));
 
             // Assert
             Assert.NotNull(result);
@@ -109,29 +186,29 @@ namespace GameControllerForZwift.UI.WPF.Tests
         }
 
         [Fact]
-        public void GetNavigationItemHierarchyFromPageType_ReturnsEmptyList_WhenPageTypeDoesNotExist()
+        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmptyList_WhenPageTypeDoesNotExist()
         {
             // Arrange
-            var item = new PagesInfoDataItem { Title = "Item", PageName = nameof(SettingsPage) };
+            var item = new PagesInfoDataItem { Title = "Item", ViewModelName = nameof(SettingsViewModel) };
             _viewModel.Pages = new List<PagesInfoDataItem> { item };
 
             // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(AboutPage));
+            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(AboutPageViewModel));
 
             // Assert
             Assert.Empty(result);
         }
 
         [Fact]
-        public void GetNavigationItemHierarchyFromPageType_ReturnsSingleItem_WhenPageIsAtTopLevel()
+        public void GetNavigationItemHierarchyFromViewModelType_ReturnsSingleItem_WhenPageIsAtTopLevel()
         {
             // Arrange
-            var other = new PagesInfoDataItem { Title = "Other", PageName = nameof(AboutPage) };
-            var top = new PagesInfoDataItem { Title = "Top", PageName = nameof(SettingsPage) };
+            var other = new PagesInfoDataItem { Title = "Other", ViewModelName = nameof(AboutPageViewModel) };
+            var top = new PagesInfoDataItem { Title = "Top", ViewModelName = nameof(SettingsViewModel) };
             _viewModel.Pages = new List<PagesInfoDataItem> { other, top };
 
             // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(SettingsPage));
+            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel));
 
             // Assert
             Assert.Single(result);
@@ -139,11 +216,11 @@ namespace GameControllerForZwift.UI.WPF.Tests
         }
 
         [Fact]
-        public void GetNavigationItemHierarchyFromPageType_ReturnsFullHierarchy_WhenPageIsNestedTwoLevelsDeep()
+        public void GetNavigationItemHierarchyFromViewModelType_ReturnsFullHierarchy_WhenPageIsNestedTwoLevelsDeep()
         {
             // Arrange
-            var grandchild = new PagesInfoDataItem { Title = "Grandchild", PageName = nameof(SettingsPage) };
-            var sibling = new PagesInfoDataItem { Title = "Sibling", PageName = nameof(AboutPage) };
+            var grandchild = new PagesInfoDataItem { Title = "Grandchild", ViewModelName = nameof(SettingsViewModel) };
+            var sibling = new PagesInfoDataItem { Title = "Sibling", ViewModelName = nameof(AboutPageViewModel) };
             var child = new PagesInfoDataItem
             {
                 Title = "Child",
@@ -157,17 +234,17 @@ namespace GameControllerForZwift.UI.WPF.Tests
             _viewModel.Pages = new List<PagesInfoDataItem> { parent };
 
             // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(SettingsPage));
+            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel));
 
             // Assert
             Assert.Equal(new[] { parent, child, grandchild }, result);
         }
 
         [Fact]
-        public void GetNavigationItemHierarchyFromPageType_ReturnsEmptyList_WhenNestedTreeDoesNotContainPageType()
+        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmptyList_WhenNestedTreeDoesNotContainPageType()
         {
             // Arrange
-            var grandchild = new PagesInfoDataItem { Title = "Grandchild", PageName = nameof(AboutPage) };
+            var grandchild = new PagesInfoDataItem { Title = "Grandchild", ViewModelName = nameof(AboutPageViewModel) };
             var child = new PagesInfoDataItem
             {
                 Title = "Child",
@@ -181,17 +258,17 @@ namespace GameControllerForZwift.UI.WPF.Tests
             _viewModel.Pages = new List<PagesInfoDataItem> { parent };
 
             // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromPageType(typeof(SettingsPage));
+            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel));
 
             // Assert
             Assert.Empty(result);
         }
 
         [Fact]
-        public void GetNavigationItemHierarchyFromPageType_ReturnsEmptyList_WhenPageTypeIsNull()
+        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmptyList_WhenPageTypeIsNull()
         {
             // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromPageType(null);
+            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(null);
 
             // Assert
             Assert.Empty(result);
