@@ -1,0 +1,93 @@
+---
+id: SPEC-UX-VOICE
+title: Voice and copy
+status: Draft
+last-updated: 2026-11-17
+---
+
+# Voice and copy
+
+!!! tldr "TL;DR"
+    Plain, warm, second person. Name things after what they mean to the rider, not after how the app works inside. Sentence case everywhere. The app is "Voltage Gamepad". A saved set of mappings is a "layout".
+
+In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+
+## The voice
+
+The app talks like a friendly person next to you. It says what is happening and what to do. It does not use jargon.
+
+*Example: not "Controller connected" but "Your Xbox controller is here". Not "Zwift linked" but "Zwift can see your controller".*
+
+| Rule | ID |
+|---|---|
+| Copy must be plain, warm and in the second person ("you", "your"). | UX-W-001 |
+| Copy must be in sentence case. All caps must not be used. | UX-W-002 |
+| Copy must name things after what they mean to the rider, not after internal terms. | UX-W-003 |
+| Every sentence should be short. A rider should be able to say it out loud. | UX-W-004 |
+| Copy must not use marketing claims. | UX-W-005 |
+| Copy must not make claims the app cannot verify. | UX-W-006 |
+
+## Avoid and use
+
+| Avoid | Use |
+|---|---|
+| Config: Climbing | Climbing layout |
+| Not mapped, No Action Configured | No action |
+| Zwift linked | Zwift can see your controller |
+| Last press | You just pressed |
+| Controller connected | Your Xbox controller is here, or Awake and connected |
+| Unsaved | Unsaved changes |
+| Profile, Configuration | Layout |
+| Mapped, Unmapped | Free button |
+
+| Rule | ID |
+|---|---|
+| Copy should use the "Use" column wording for these concepts. | UX-W-007 |
+
+## Names
+
+| Thing | Name | ID |
+|---|---|---|
+| The app as Zwift sees it, and in copy | **Voltage Gamepad** | UX-W-008 |
+| A saved set of mappings | **Layout** (the `CFG` spec calls it "configuration") | UX-W-009 |
+| The built-in layout | **Default** | UX-W-010 |
+| A button with no mapping | **Free button** (and the function "No action") | UX-W-011 |
+| Zwift's pairing screen | **Paired Devices** | UX-W-012 |
+
+| Rule | ID |
+|---|---|
+| The UI must say "layout", never "configuration", "config" or "profile". | UX-W-013 |
+| Copy that tells you what to pick in Zwift must name **Voltage Gamepad**. | UX-W-014 |
+| Copy must use the Zwift Ride function names (Shift up, Shift down, Steer left, Steer right, Brake, Navigate up, Navigate down, Select, Back, Power-up, Ride On, No action). | UX-W-015 |
+
+## Suggested copy for key states
+
+| State | Copy |
+|---|---|
+| Home, ready | "Ready when you are" |
+| Setup, first screen | "Press any button on your controller." |
+| Choose controller | "Press any button on the one you want." |
+| Controller found | "Your Xbox controller is here." |
+| No controller | "Wake your controller" |
+| Looking for it | "Looking for your controller..." |
+| Zwift connected | "Zwift can see your controller" |
+| Zwift not connected | "Zwift isn't connected yet" |
+| Waiting for Zwift | "Waiting for Zwift..." |
+| Shift test | "Did your gear change?" with "Yes, it shifted" and "Not yet" |
+| Connection lost | "Your controller is fine" |
+| Unsaved layout | "Unsaved changes" |
+| Saved layout copy | "Saved a copy to your layouts." |
+| Name already used | "You already have a layout called Climbing. Try another name." |
+| Donation ask | "Chip in on Ko-fi" and "Maybe later" |
+
+| Rule | ID |
+|---|---|
+| Screens must use the suggested copy above unless a screen spec gives its own wording. | UX-W-016 |
+
+??? note "Edge cases"
+    - Translated labels can be longer. The button rules in the [visual system](visual-system.md) make long labels move to their own line rather than break.
+    - Where a problem is shown, the copy says what is fine too, such as "Your controller is fine" when Zwift lost the connection.
+
+## Implementation status
+
+Not implemented yet. The current Windows app uses "Controller Setup", "Refresh List", "Use system setting" and technical function names, and shows Windows-style labels. It has no copy for Zwift status, setup or layouts.
