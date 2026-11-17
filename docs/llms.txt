@@ -1,0 +1,35 @@
+# Game Controller for Zwift
+
+> A Windows app that lets you ride Zwift with a game controller you already own, by appearing to Zwift as a Zwift Ride controller over your local network.
+
+The app reads Xbox, PlayStation, Nintendo and other controllers through SDL2, maps their inputs to Zwift functions such as shifting and steering, and connects to Zwift with mDNS and Wahoo Direct Connect. It is open source (.NET 10, WPF). The specs describe how each feature must behave, and the protocol pages document how Zwift controllers talk to Zwift.
+
+## Specs
+
+- [Spec overview](https://VoltageSolutions.github.io/GameControllerForZwift/spec/): what the specs are and how to read them.
+- [Saved controller configurations](https://VoltageSolutions.github.io/GameControllerForZwift/spec/saved-configurations/): saving, selecting, renaming, deleting, importing and sharing button mappings.
+
+## How it works
+
+- [The big picture](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/big-picture/): how a controller press becomes a Zwift action.
+- [mDNS discovery](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/mdns/): how Zwift finds the app on the network.
+- [Wahoo Direct Connect](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/direct-connect/): the TCP link between Zwift and the app.
+- [Zwift controller protocol](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/zwift-protocol/): handshake, replies and keypad frames.
+- [Button reference](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/button-reference/): every Zwift Ride button and how it is encoded.
+- [Additional learnings](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/additional-learnings/): smaller findings and gotchas.
+- [Glossary](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/glossary/): terms used across the docs.
+
+## Use
+
+- [Install and first run](https://VoltageSolutions.github.io/GameControllerForZwift/use/install/): get the app running.
+- [Pair with Zwift](https://VoltageSolutions.github.io/GameControllerForZwift/use/pair-with-zwift/): connect the app to Zwift.
+- [Map your controller](https://VoltageSolutions.github.io/GameControllerForZwift/use/map-your-controller/): choose what each button does.
+- [Troubleshooting](https://VoltageSolutions.github.io/GameControllerForZwift/use/troubleshooting/): fixes for common problems and how to share the log file.
+
+## Build
+
+- [Architecture](https://VoltageSolutions.github.io/GameControllerForZwift/build/architecture/): projects and how input flows.
+- [Build and test](https://VoltageSolutions.github.io/GameControllerForZwift/build/build-and-test/): SDK, build, tests and code quality checks.
+- [ZwiftLanProbe](https://VoltageSolutions.github.io/GameControllerForZwift/build/probe/): a console tool for testing the network side.
+- [Contributing](https://VoltageSolutions.github.io/GameControllerForZwift/build/contributing/): branch flow, versions and pull requests.
+- [Roadmap](https://VoltageSolutions.github.io/GameControllerForZwift/build/roadmap/): planned work.

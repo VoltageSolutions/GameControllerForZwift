@@ -1,0 +1,58 @@
+# AGENTS.md
+
+Guidance for AI coding agents (Codex, Copilot, Cursor, Gemini CLI, Jules, Claude Code and others) working in this repo. Humans should read [CONTRIBUTING.md](CONTRIBUTING.md) and the [docs site](https://VoltageSolutions.github.io/GameControllerForZwift/).
+
+## What this is
+
+Game Controller for Zwift is a Windows WPF app (.NET 10) that turns a game controller into a Zwift Ride controller over the local network. The app reads the controller with SDL2, maps inputs to Zwift functions, and talks to Zwift over mDNS and Wahoo Direct Connect.
+
+| Project | Path | Role |
+|---|---|---|
+| `GameControllerForZwift.Core` | `src/Application/` | Domain types, mapping, saved configurations, `DataIntegrator`. No UI or network code. |
+| `GameControllerForZwift.Gamepad` | `src/Infrastructure/` | Reads controllers through SDL2. |
+| `GameControllerForZwift.Network` | `src/Infrastructure/` | mDNS advertising, Direct Connect server, Zwift Ride protocol. |
+| `GameControllerForZwift` | `src/Presentation/` | The WPF app: pages, view models, dialogs, dependency injection. |
+| Tests | `tests/` | Unit, integration and UI tests (xUnit, NSubstitute). |
+| `ZwiftLanProbe` | `tools/ZwiftLanProbe/` | Console tool that runs the network side on its own. |
+
+## Build, test and format
+
+The full solution builds on Windows only. Core, Gamepad, Network, their tests and the probe also build on Linux and macOS.
+
+```powershell
+dotnet build GameControllerForZwift.sln
+dotnet test tests/GameControllerForZwift.Core.UnitTests
+dotnet test tests/GameControllerForZwift.Gamepad.UnitTests
+dotnet test tests/GameControllerForZwift.Network.UnitTests
+dotnet test tests/GameControllerForZwift.Network.IntegrationTests
+dotnet test tests/GameControllerForZwift.UnitTests
+dotnet format src/Application/GameControllerForZwift.Core --verify-no-changes --severity error
+```
+
+- `GameControllerForZwift.UnitTests` (WPF) needs Windows.
+- `GameControllerForZwift.UITests` needs WinAppDriver and Appium. CI runs it. Skip it locally.
+- Run `dotnet format <project> --verify-no-changes --severity error` on any project you change. CI checks Core, Network, Gamepad, the portable test projects and ZwiftLanProbe.
+- Docs build: `pip install -r docs/requirements.txt`, then `zensical build --clean --strict`. It must pass with no issues.
+
+## Source of truth
+
+- Read `docs/spec/` before you change behavior. Each rule has an ID such as `CFG-015`.
+- Reference the requirement IDs in tests (for example in the test name or a comment).
+- When behavior changes, update the spec in the same change.
+- Protocol and network details are in `docs/how-it-works/`. Layout and project roles are in `docs/build/architecture.md`.
+
+## Conventions
+
+- `TreatWarningsAsErrors` is on and analyzers are at `latest-recommended`. Leave zero warnings.
+- The version lives only in `Directory.Build.props`. Do not change it by hand. Release branches are `release/vX.Y.Z`, and `.github/scripts/version.sh` automates the version.
+- The repo stores LF. Windows working trees use CRLF. `*.sh` files always stay LF (see `.gitattributes`).
+- Docs voice: first person singular ("I", "me"), US spelling, short sentences, no em dashes. Pages start with a TL;DR callout.
+- Keep private data out of the repo: no machine names, IP addresses, MAC addresses, serial numbers or local user paths. Packet captures stay in the git-ignored `docs/captures/`.
+- When an AI helped with a commit, end the message with a `Co-Authored-By` trailer. Do not add links to AI sessions.
+
+## Branch flow
+
+- Feature branches open pull requests into the current `release/vX.Y.Z` branch, not `main`.
+- A release branch is merged into `main` by pull request, and that publishes the release.
+- Dependabot pull requests are re-pointed to the release branch.
+- Do not push or open pull requests unless asked.
