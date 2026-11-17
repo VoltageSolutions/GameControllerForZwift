@@ -32,6 +32,11 @@ nav = [
     "build/contributing.md",
     "build/roadmap.md",
   ] },
+  { "Spec" = [
+    "spec/index.md",
+    "spec/saved-configurations.md",
+    "spec/controller-detection.md",
+  ] },
 ]
 
 # Local-only material (private packet captures) is never part of the site.

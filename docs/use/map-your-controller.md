@@ -1,12 +1,9 @@
 # Map your controller
 
 !!! tldr "TL;DR"
-    Pick a Zwift function for each controller input on the **Controller Setup** page. The functions match the buttons and paddles of a Zwift Ride: navigation, select, back, power-up, Ride On, shift up and down, steer left and right, and brake. Sticks and triggers give partial steering and braking. Changes apply immediately, but the app does not save them yet, so it starts with the default mapping each time.
+    Pick a Zwift function for each controller input on the **Controller Setup** page. The functions match the buttons and paddles of a Zwift Ride: navigation, select, back, power-up, Ride On, shift up and down, steer left and right, and brake. Sticks and triggers give partial steering and braking. Changes apply immediately. Save them as a named configuration to keep them for next time.
 
 Each button, stick direction and trigger on your controller can do one Zwift function. You choose the function from the drop-down next to each input on the **Controller Setup** page. Changes take effect straight away.
-
-!!! note "Mappings reset when the app restarts"
-    The app does not save your changes yet. Each time it starts, it loads the default mapping shown below. Saving them is on the [roadmap](../build/roadmap.md#save-mapping-changes).
 
 ## The functions you can choose
 
@@ -33,6 +30,23 @@ The shift directions follow Zwift's **Sequential** shift style for the Zwift Rid
 
 !!! tip "Press and hold"
     Some buttons do more when you hold them. This is Zwift's own behavior for the Zwift Ride, and the app passes your hold straight through. For example, holding **Ride On (Z)** sends Ride Ons to several nearby riders, and holding **Power-up (Y)** skips the current workout block.
+
+## Save and load configurations
+
+I keep my mappings as named configurations, for example one for climbing and one for flat rides. The configuration bar sits at the top of the **Controller Setup** page.
+
+- **Save as...** saves the current mappings under a new name and selects it.
+- **Save** writes my changes to the selected configuration. A dot after the name, like `Climbing •`, means I have unsaved changes.
+- **Delete** removes the selected configuration after I confirm.
+- The **...** menu has **Import...**, **Rename...** and **Open folder**.
+
+**Default** is the built-in mapping shown below. I can change mappings while it is selected, but I can't overwrite, rename or delete it, so I use **Save as...** to keep my changes.
+
+Configurations belong to a controller model, so a second controller of the same model sees them too. When I start the app, it selects the configuration I used last for that controller.
+
+To reuse a configuration I made for another controller, I check **Show configurations from other controllers**. The list then also shows those configurations, with the controller name in parentheses, for example `Climbing (Xbox Series X Controller)`. When I pick one, the app asks whether to use it with this controller and saves a copy for it. The original stays with the other controller.
+
+Each configuration is a JSON file in `%LOCALAPPDATA%\GameControllerForZwift\Profiles`. To share one, I click **Open folder** and send the file. To use a file someone sent me, I click **Import...**. To remove every saved configuration at once, I go to **Settings** and click **Delete all**.
 
 ## Analog sticks and triggers
 

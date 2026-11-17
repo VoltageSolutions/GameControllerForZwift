@@ -78,6 +78,31 @@
                     </Border>
                 </Grid>
 
+                <TextBlock x:Name="ConfigurationsSectionTitle" Text="Saved configurations" FontWeight="SemiBold" Margin="10" FontSize="14"/>
+                <Grid Background="Transparent" Margin="0,0,0,20">
+                    <Border Background="{DynamicResource ExpanderHeaderBackground}" BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}" BorderThickness="{StaticResource ExpanderBorderThemeThickness}" Padding="{StaticResource ExpanderPadding}" CornerRadius="{DynamicResource ControlCornerRadius}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock x:Name="DeleteConfigurationsIcon" AutomationProperties.Name="Delete icon" Grid.Column="0" Width="20" Height="20" Margin="10,5,10,5" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE74D;" FontSize="20"/>
+
+                            <StackPanel
+                                Grid.Column="1"
+                                Margin="12"
+                                Orientation="Vertical">
+                                <TextBlock Text="Delete all saved configurations" FontSize="14"/>
+                                <TextBlock Opacity="0.7" FontSize="12" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap">Removes every configuration you saved or imported. The Default configuration stays.</TextBlock>
+                            </StackPanel>
+
+                            <Button x:Name="DeleteAllConfigurationsButton" Grid.Column="2" MinWidth="120" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center" Content="Delete all" Command="{Binding DeleteAllConfigurationsCommand}" AutomationProperties.AutomationId="DeleteAllConfigurationsButton" AutomationProperties.Name="Delete all saved configurations"/>
+                        </Grid>
+                    </Border>
+                </Grid>
+
                 <!-- <TextBlock Text="About" FontWeight="SemiBold" Margin="10" FontSize="14"/>
                 <Expander AutomationProperties.Name="Game Controller For Zwift">
                     <Expander.Header>

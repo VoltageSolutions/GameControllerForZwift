@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using GameControllerForZwift.UI.WPF.ViewModels;
 
 namespace GameControllerForZwift.UI.WPF.Views
 {
@@ -21,6 +22,9 @@ namespace GameControllerForZwift.UI.WPF.Views
     /// </summary>
     public partial class SettingsPage : UserControl
     {
+        /// <summary>The view model shown by this view. The view cache assigns it as the DataContext.</summary>
+        public SettingsViewModel ViewModel => (SettingsViewModel)DataContext;
+
         public SettingsPage()
         {
             InitializeComponent();
