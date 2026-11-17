@@ -67,8 +67,7 @@ namespace GameControllerForZwift.UI.WPF.Views
             if (sender is not Button { ContextMenu: { } menu } button)
                 return;
 
-            // A context menu is not in the page's visual tree, so give it the page's data context for the command bindings.
-            menu.DataContext = DataContext;
+            // The menu's DataContext binding reads the placement target's DataContext, so the command bindings resolve.
             menu.PlacementTarget = button;
             menu.Placement = PlacementMode.Bottom;
             menu.IsOpen = true;

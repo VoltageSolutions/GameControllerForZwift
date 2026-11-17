@@ -69,7 +69,13 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             return NameAnswers.Count > 0 ? NameAnswers.Dequeue() : null;
         }
 
-        public string? PickConfigurationFile() => PickedFiles.Count > 0 ? PickedFiles.Dequeue() : null;
+        public int FilePickPrompts { get; private set; }
+
+        public string? PickConfigurationFile()
+        {
+            FilePickPrompts++;
+            return PickedFiles.Count > 0 ? PickedFiles.Dequeue() : null;
+        }
 
         public void ShowError(string title, string message) => Errors.Add(title + ": " + message);
 

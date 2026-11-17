@@ -102,8 +102,11 @@
                                 AutomationProperties.Name="More configuration actions"
                                 ToolTip="More configuration actions">
                                 <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="14" Text="&#xE712;" VerticalAlignment="Center"/>
+                                <!-- A context menu is not in the page's visual tree. It takes the data context of the button it opens
+                                     from, which is this view, so its items bind ViewModel like the rest of the page. -->
                                 <Button.ContextMenu>
-                                    <ContextMenu x:Name="MoreConfigurationActionsMenu" AutomationProperties.AutomationId="MoreConfigurationActionsMenu">
+                                    <ContextMenu x:Name="MoreConfigurationActionsMenu" AutomationProperties.AutomationId="MoreConfigurationActionsMenu"
+                                        DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                                         <MenuItem Header="Import..." Command="{Binding ViewModel.ImportCommand}" AutomationProperties.AutomationId="ImportConfigurationMenuItem"/>
                                         <MenuItem Header="Rename..." Command="{Binding ViewModel.RenameCommand}" AutomationProperties.AutomationId="RenameConfigurationMenuItem"/>
                                         <MenuItem Header="Open folder" Command="{Binding ViewModel.OpenFolderCommand}" AutomationProperties.AutomationId="OpenConfigurationFolderMenuItem"/>
