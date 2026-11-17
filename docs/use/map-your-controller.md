@@ -44,6 +44,8 @@ I keep my mappings as named configurations, for example one for climbing and one
 
 Configurations belong to a controller model, so a second controller of the same model sees them too. When I start the app, it selects the configuration I used last for that controller.
 
+To reuse a configuration I made for another controller, I check **Show configurations from other controllers**. The list then also shows those configurations, with the controller name in parentheses, for example `Climbing (Xbox Series X Controller)`. When I pick one, the app asks whether to use it with this controller and saves a copy for it. The original stays with the other controller.
+
 Each configuration is a JSON file in `%LOCALAPPDATA%\GameControllerForZwift\Profiles`. To share one, I click **Open folder** and send the file. To use a file someone sent me, I click **Import...**. To remove every saved configuration at once, I go to **Settings** and click **Delete all**.
 
 ## Analog sticks and triggers

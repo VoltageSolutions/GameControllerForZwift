@@ -19,5 +19,15 @@ namespace GameControllerForZwift.Core.Configurations
         /// Removes every last-used entry (CFG-036).
         /// </summary>
         void ClearLastUsed();
+
+        /// <summary>
+        /// Returns whether the configuration list also shows the configurations of other controller models (CFG-039). False if unset.
+        /// </summary>
+        bool GetShowOtherControllersConfigurations();
+
+        /// <summary>
+        /// Records whether the configuration list also shows the configurations of other controller models (CFG-039).
+        /// </summary>
+        void SetShowOtherControllersConfigurations(bool show);
     }
 }

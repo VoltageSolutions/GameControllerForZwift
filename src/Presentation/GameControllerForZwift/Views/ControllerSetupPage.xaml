@@ -70,6 +70,10 @@
                     <!--Configuration Card (saved configurations, see docs/spec/saved-configurations.md)-->
                     <controls:Card MinWidth="300" Title="Configuration" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" MinWidth="220"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -115,6 +119,11 @@
                                     </ContextMenu>
                                 </Button.ContextMenu>
                             </Button>
+                            <CheckBox x:Name="ShowOtherControllersConfigurationsCheckBox" Grid.Row="1" Grid.ColumnSpan="5" Margin="0,8,0,0"
+                                Content="Show configurations from other controllers"
+                                IsChecked="{Binding ViewModel.ShowOtherControllersConfigurations}"
+                                AutomationProperties.AutomationId="ShowOtherControllersConfigurationsCheckBox"
+                                ToolTip="List the configurations saved for other controllers. Picking one saves a copy for this controller."/>
                         </Grid>
                     </controls:Card>
 

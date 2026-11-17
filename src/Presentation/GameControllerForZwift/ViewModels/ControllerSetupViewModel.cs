@@ -57,6 +57,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private int _ownStoreChanges;
         private DispatcherTimer? _detectionTimer;
         private bool _isDetectingControllers;
+        private bool _showOtherControllersConfigurations;
 
         [ObservableProperty]
         private ControllerData? _currentControllerValues;
@@ -120,6 +121,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _leftStickFunctionMappings = CreateLeftStickMappings();
             _rightStickFunctionMappings = CreateRightStickMappings();
             _shoulderFunctionMappings = CreateShoulderMappings();
+
+            _showOtherControllersConfigurations = _appSettings.GetShowOtherControllersConfigurations();
 
             // Load default profile and apply it
             _defaultMappings = ConfigurationMappings.FromProfile(_profileService.GetDefaultProfile());
@@ -197,6 +200,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 if (_isRebuildingList || value is null || ReferenceEquals(value, _selectedConfiguration))
                     return;
 
+                // CFG-040: a configuration of another controller is used through a copy for this one.
+                if (value.IsFromOtherController)
+                {
+                    UseCopyOfOtherControllersConfiguration(value.Configuration!);
+                    RaisePropertyChangedAgain(nameof(SelectedConfiguration));
+                    return;
+                }
+
                 var id = value.Id;
                 if (!ConfirmLeaveUnsavedChanges(_currentModel))
                 {
@@ -220,6 +231,23 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
                 RaisePropertyChangedAgain(nameof(SelectedConfiguration));
                 RememberLastUsed(_currentModel, _selectedConfiguration?.Id ?? Guid.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the configuration list also shows the saved configurations of other
+        /// controller models (CFG-039). The choice is kept in settings.json.
+        /// </summary>
+        public bool ShowOtherControllersConfigurations
+        {
+            get => _showOtherControllersConfigurations;
+            set
+            {
+                if (!SetProperty(ref _showOtherControllersConfigurations, value))
+                    return;
+
+                _appSettings.SetShowOtherControllersConfigurations(value);
+                SetConfigurationList(BuildConfigurationItems(), _selectedConfiguration?.Id ?? Guid.Empty, applyMappings: false);
             }
         }
 
@@ -383,7 +411,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             if (item?.Configuration is null)
                 return;
 
-            var otherNames = _configurations.Where(i => !i.IsDefault && i.Id != item.Id).Select(i => i.Name).ToList();
+            var otherNames = OwnSavedItems().Where(i => i.Id != item.Id).Select(i => i.Name).ToList();
             var name = _dialogs.PromptForName("Rename configuration", "Enter a new name for this configuration.", item.Name, "Rename",
                 text => ConfigurationNames.Validate(text, otherNames));
             if (name is null || ConfigurationNames.Validate(name, otherNames) is not null)
@@ -431,45 +459,73 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             }
 
             // CFG-033: a configuration made for another controller model is only used for this one if the user agrees.
-            if (!_matcher.Matches(imported.Controller, model))
+            SaveCopyAndSelect(imported, model,
+                "Use for this controller?",
+                $"'{imported.Name}' was made for {imported.Controller.DisplayName}. Use it for {model.DisplayName}?",
+                "Name the imported configuration", "Import", "Couldn't import the configuration");
+        }
+
+        /// <summary>
+        /// Saves a copy of another controller model's configuration for the selected controller and selects it, if the user
+        /// agrees (CFG-040). The original stays with its own controller.
+        /// </summary>
+        private void UseCopyOfOtherControllersConfiguration(SavedConfiguration source)
+        {
+            var model = _currentModel;
+            if (model is null)
+                return;
+
+            SaveCopyAndSelect(source, model,
+                $"Use {source.Name} with this controller?",
+                $"'{source.Name}' was made for {source.Controller.DisplayName}. Save a copy for {model.DisplayName} and use it?",
+                "Name the copy", "Save copy", "Couldn't copy the configuration");
+        }
+
+        /// <summary>
+        /// Saves a configuration into the config folder for the given controller model and selects it (CFG-030 to CFG-033,
+        /// CFG-040). A configuration of another model is only used if the user agrees. A name that is taken gets a new one.
+        /// Unsaved changes are handled before the switch (CFG-024). Returns false if the user stopped or saving failed.
+        /// </summary>
+        private bool SaveCopyAndSelect(SavedConfiguration source, ControllerModel model, string confirmTitle, string confirmMessage,
+            string nameTitle, string nameConfirmText, string errorTitle)
+        {
+            var copy = source;
+            if (!_matcher.Matches(copy.Controller, model))
             {
-                if (!_dialogs.Confirm("Use for this controller?",
-                    $"'{imported.Name}' was made for {imported.Controller.DisplayName}. Use it for {model.DisplayName}?",
-                    "Use it"))
-                {
-                    return;
-                }
-                imported = imported with { Id = Guid.NewGuid(), Controller = model };
+                if (!_dialogs.Confirm(confirmTitle, confirmMessage, "Use it"))
+                    return false;
+                copy = copy with { Id = Guid.NewGuid(), Controller = model };
             }
 
-            // Importing a file that is already in the folder (or a copy of one) must not create a second file with the same id.
-            if (LoadAllSafely().Any(c => c.Id == imported.Id))
-                imported = imported with { Id = Guid.NewGuid() };
+            // A file that is already in the folder (or a copy of one) must not create a second file with the same id.
+            if (LoadAllSafely().Any(c => c.Id == copy.Id))
+                copy = copy with { Id = Guid.NewGuid() };
 
             // CFG-032: a name that collides gets a new one, pre-filled with a suggestion.
-            var existingNames = _configurations.Where(i => !i.IsDefault).Select(i => i.Name).ToList();
-            if (ConfigurationNames.Validate(imported.Name, existingNames) is not null)
+            var existingNames = OwnSavedItems().Select(i => i.Name).ToList();
+            if (ConfigurationNames.Validate(copy.Name, existingNames) is not null)
             {
-                var suggestion = ConfigurationNames.SuggestUnique(imported.Name, existingNames);
-                var name = _dialogs.PromptForName("Name the imported configuration",
-                    $"A configuration named '{imported.Name}' already exists for this controller. Choose another name.",
-                    suggestion, "Import", text => ConfigurationNames.Validate(text, existingNames));
+                var suggestion = ConfigurationNames.SuggestUnique(copy.Name, existingNames);
+                var name = _dialogs.PromptForName(nameTitle,
+                    $"A configuration named '{copy.Name}' already exists for this controller. Choose another name.",
+                    suggestion, nameConfirmText, text => ConfigurationNames.Validate(text, existingNames));
                 if (name is null || ConfigurationNames.Validate(name, existingNames) is not null)
-                    return;
-                imported = imported with { Name = ConfigurationNames.Normalize(name) };
+                    return false;
+                copy = copy with { Name = ConfigurationNames.Normalize(name) };
             }
 
-            // Selecting the import switches configuration, so unsaved changes are handled first (CFG-024).
+            // Selecting the copy switches configuration, so unsaved changes are handled first (CFG-024).
             if (!ConfirmLeaveUnsavedChanges(model))
-                return;
+                return false;
 
             SavedConfiguration? saved = null;
-            if (!TryChangeStore("Couldn't import the configuration", () => saved = _configurationStore.Save(imported with { FilePath = null })))
-                return;
+            if (!TryChangeStore(errorTitle, () => saved = _configurationStore.Save(copy with { FilePath = null })))
+                return false;
 
             SetConfigurationList(BuildConfigurationItems(), saved!.Id, applyMappings: true);
             RememberLastUsed(model, saved.Id);
             NoticeText = ImportNotice;
+            return true;
         }
 
         /// <summary>
@@ -547,7 +603,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             var selectedId = Guid.Empty;
             if (items.Count > 1 && _currentModel is not null
                 && _appSettings.GetLastUsed(_matcher.GetKey(_currentModel)) is Guid lastUsed
-                && items.Any(i => i.Id == lastUsed))
+                && items.Any(i => i.Id == lastUsed && !i.IsFromOtherController))
             {
                 selectedId = lastUsed;
             }
@@ -562,13 +618,31 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 return items;
 
             var model = _currentModel;
-            items.AddRange(LoadAllSafely()
+            var all = LoadAllSafely();
+            items.AddRange(all
                 .Where(c => _matcher.Matches(c.Controller, model))
                 .OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
                 .ThenBy(c => c.Id)
                 .Select(c => new ConfigurationItem(c.Name, c.Mappings, c)));
+
+            // CFG-039: after this controller's entries, the other models' configurations by name, labeled with their controller.
+            if (_showOtherControllersConfigurations)
+            {
+                items.AddRange(all
+                    .Where(c => !_matcher.Matches(c.Controller, model))
+                    .OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(c => c.Controller.DisplayName, StringComparer.OrdinalIgnoreCase)
+                    .ThenBy(c => c.Id)
+                    .Select(c => new ConfigurationItem(c.Name, c.Mappings, c, isFromOtherController: true)));
+            }
+
             return items;
         }
+
+        /// <summary>
+        /// Returns the saved configurations of the selected controller model, without Default and other models' entries.
+        /// </summary>
+        private IEnumerable<ConfigurationItem> OwnSavedItems() => _configurations.Where(i => !i.IsDefault && !i.IsFromOtherController);
 
         private IReadOnlyList<SavedConfiguration> LoadAllSafely()
         {
@@ -639,7 +713,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 return false;
 
             var existingNames = (ReferenceEquals(model, _currentModel)
-                    ? _configurations.Where(i => !i.IsDefault).Select(i => i.Configuration!)
+                    ? OwnSavedItems().Select(i => i.Configuration!)
                     : LoadAllSafely().Where(c => _matcher.Matches(c.Controller, model)))
                 .Select(c => c.Name)
                 .ToList();

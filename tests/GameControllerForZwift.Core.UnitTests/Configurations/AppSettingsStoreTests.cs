@@ -36,6 +36,33 @@ namespace GameControllerForZwift.Core.Tests.Configurations
         }
 
         [Fact]
+        public void CFG039_ShowOtherControllers_IsOffByDefaultAndPersistsAcrossInstances()
+        {
+            var store = new AppSettingsStore(new FileService(), _path);
+            Assert.False(store.GetShowOtherControllersConfigurations());
+
+            store.SetLastUsed("045E:0B13", Guid.NewGuid());
+            store.SetShowOtherControllersConfigurations(true);
+            var reloaded = new AppSettingsStore(new FileService(), _path);
+
+            Assert.True(reloaded.GetShowOtherControllersConfigurations());
+            Assert.NotNull(reloaded.GetLastUsed("045E:0B13"));
+            Assert.Contains("\"showConfigurationsFromOtherControllers\": true", File.ReadAllText(_path), StringComparison.Ordinal);
+
+            reloaded.SetShowOtherControllersConfigurations(false);
+            Assert.False(new AppSettingsStore(new FileService(), _path).GetShowOtherControllersConfigurations());
+        }
+
+        [Fact]
+        public void CFG039_ShowOtherControllers_NotABoolean_IsOff()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
+            File.WriteAllText(_path, """{ "showConfigurationsFromOtherControllers": "yes" }""");
+
+            Assert.False(new AppSettingsStore(new FileService(), _path).GetShowOtherControllersConfigurations());
+        }
+
+        [Fact]
         public void SetLastUsed_NullRemovesEntry()
         {
             var store = new AppSettingsStore(new FileService(), _path);

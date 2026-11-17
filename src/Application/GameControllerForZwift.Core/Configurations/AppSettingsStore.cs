@@ -12,6 +12,7 @@ namespace GameControllerForZwift.Core.Configurations
     public sealed partial class AppSettingsStore : IAppSettingsStore
     {
         private const string LastUsedProperty = "lastUsedConfigurations";
+        private const string ShowOtherControllersProperty = "showConfigurationsFromOtherControllers";
         private static readonly JsonSerializerOptions WriteOptions = new() { WriteIndented = true };
 
         private readonly IFileService _fileService;
@@ -80,6 +81,24 @@ namespace GameControllerForZwift.Core.Configurations
             }
         }
 
+        public bool GetShowOtherControllersConfigurations()
+        {
+            lock (_sync)
+            {
+                return Load()[ShowOtherControllersProperty] is JsonValue v && v.TryGetValue<bool>(out var show) && show;
+            }
+        }
+
+        public void SetShowOtherControllersConfigurations(bool show)
+        {
+            lock (_sync)
+            {
+                var root = Load();
+                root[ShowOtherControllersProperty] = show;
+                Write(root);
+            }
+        }
+
         private JsonObject Load()
         {
             try
@@ -103,7 +122,7 @@ namespace GameControllerForZwift.Core.Configurations
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                // Losing the last-used entry is not worth interrupting the user; the Default is selected instead.
+                // Losing a setting is not worth interrupting the user; the app uses the default value instead.
                 LogWriteFailed(FilePath, ex.Message);
             }
         }

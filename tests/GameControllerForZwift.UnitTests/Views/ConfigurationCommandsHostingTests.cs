@@ -370,6 +370,36 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
             });
         }
 
+        [Fact]
+        public void ShowOtherControllersCheckBox_IsBoundToTheViewModel()
+        {
+            // CFG-039
+            TestApplication.Run(() =>
+            {
+                using ServiceProvider provider = CreateProvider(Controller(Xbox));
+                MainWindow window = ShowWindow(provider);
+                try
+                {
+                    var viewModel = provider.GetRequiredService<ControllerSetupViewModel>();
+                    ControllerSetupPage page = ShowControllerSetup(window);
+                    var checkBox = Element<CheckBox>(page, "ShowOtherControllersConfigurationsCheckBox");
+                    Assert.Equal("ShowOtherControllersConfigurationsCheckBox", System.Windows.Automation.AutomationProperties.GetAutomationId(checkBox));
+                    Assert.Equal("Show configurations from other controllers", checkBox.Content);
+                    Assert.False(checkBox.IsChecked);
+
+                    checkBox.IsChecked = true;
+                    Pump(window);
+
+                    Assert.True(viewModel.ShowOtherControllersConfigurations);
+                    Assert.True(_context.Settings.GetShowOtherControllersConfigurations());
+                }
+                finally
+                {
+                    window.Close();
+                }
+            });
+        }
+
         private static void Wait(TimeSpan duration)
         {
             var frame = new DispatcherFrame();

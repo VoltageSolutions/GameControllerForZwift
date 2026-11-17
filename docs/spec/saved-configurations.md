@@ -3,7 +3,7 @@ id: SPEC-CFG
 title: Saved controller configurations
 status: Accepted
 target: Windows v0.4.0
-last-updated: 2026-11-16
+last-updated: 2026-11-17
 ---
 
 # Saved controller configurations
@@ -117,7 +117,7 @@ When you pick a controller, the app shows Default first and then your saved conf
 
 | Rule | ID |
 |---|---|
-| Default is listed first, then saved configs sorted by name (ignoring case). | CFG-015 |
+| Default is listed first, then saved configs sorted by name (ignoring case). Configurations of other controllers follow when CFG-039 is on. | CFG-015 |
 | The last-used config for that controller model is selected. | CFG-017 |
 | If there's nothing saved, or the last-used one is gone, Default is selected. | CFG-016, 018 |
 | After any save, rename, delete or import, the list refreshes and your selection stays put. | CFG-019 |
@@ -137,6 +137,36 @@ flowchart TD
     - The refresh in CFG-019 also covers save as, folder changes and import. Matching is by `id`. If the selected config was deleted, Default is selected.
     - If two saved configs have the same name ignoring case (for example from files copied in by hand), the app sorts them by `id` after the name so the order is stable.
     - Edits you have not saved stay on screen when the list refreshes because of a folder change. They are not replaced by the file's contents.
+
+### Configurations from other controllers
+
+Under the drop-down sits a checkbox, **Show configurations from other controllers**. When you check it, the list also shows the configurations you saved for other controller models, after your own. Picking one asks whether to use it with this controller. If you agree, the app saves a copy for this controller and selects the copy.
+
+*Example: you saved "Climbing" for your Xbox Series X controller. Today you ride with a DualSense. You check the box, and the list reads:*
+
+```
+Default
+SRAM Style
+Shimano Style
+Climbing (Xbox Series X Controller)
+```
+
+*You pick "Climbing (Xbox Series X Controller)" and answer Use it. A new "Climbing" for the DualSense appears and is selected. The Xbox controller keeps its own "Climbing".*
+
+| Rule | ID |
+|---|---|
+| A checkbox **Show configurations from other controllers** is unchecked by default and its state is kept in `settings.json`. When it is checked, the list shows, after this controller's entries, the saved configurations of other controller models, sorted by name (ignoring case), each followed by its controller name in parentheses. | CFG-039 |
+| Selecting a configuration of another controller asks "Use Climbing with this controller?". On yes, the app saves a copy for the selected controller model with a new `id` and selects it. On no, the previous selection stays. | CFG-040 |
+| The original configuration stays with its own controller model and is not changed. | CFG-041 |
+| If the copy's name is already used for this controller, the app asks for a new name as in CFG-032. With unsaved changes, the app asks Save, Don't save or Cancel (CFG-024) before it switches. Cancel in either prompt saves nothing and keeps the previous selection. | CFG-042 |
+
+??? note "Edge cases"
+    - Two configurations of other controllers with the same name are sorted by controller name, then by `id`.
+    - A configuration of another controller is never the last-used one. The copy is, once you select it.
+    - After the copy is saved, the app shows the notice "Saved a copy to your configurations." (CFG-031).
+    - Name checks for Save as, Rename and Import only look at this controller's configurations (CFG-027). Entries of other controllers do not block a name.
+    - With no controller selected (CTRL-006), the list shows only Default, even when the box is checked.
+    - A controller model in the alias list (CFG-013) counts as the same model, so its configurations are listed as this controller's own.
 
 ## Editing and saving
 
@@ -265,7 +295,7 @@ A configuration bar sits above the mapping grid. The drop-down picks the configu
 
 ```
 [ Climbing •          v ]  [Save] [Save as...] [Delete]  [...]
-                                                          Import...
+[ ] Show configurations from other controllers            Import...
                                                           Rename...
                                                           Open folder
 ```
