@@ -11,6 +11,8 @@ namespace GameControllerForZwift.Gamepad.SDL2
 
         private readonly ILogger<SDL2InputService> _logger;
         private readonly List<IController> _controllers = new();
+        private readonly Dictionary<int, IController> _controllersByInstanceId = new();
+        private HashSet<int>? _knownDeviceIds;
         private readonly Lock _sync = new();
         private bool _isInitialized;
         private bool _isDisposed;
@@ -34,23 +36,42 @@ namespace GameControllerForZwift.Gamepad.SDL2
         #region Public Methods
 
         /// <summary>
-        /// Gets the currently connected game controllers.
+        /// Gets the currently connected game controllers. A controller that stays connected is returned as the same
+        /// instance on every call. Only devices that connected since the last call are opened, and only devices that
+        /// disconnected are closed, so calling this often is cheap.
         /// </summary>
-        /// <returns>A collection of <see cref="IController"/> instances.</returns>
+        /// <returns>The connected controllers: the ones already open in the order they connected, then new ones in SDL order.</returns>
         public IEnumerable<IController> GetControllers()
         {
             EnsureInitialized();
 
             lock (_sync)
             {
-                // Dispose of any existing controllers to avoid orphans.
-                DisposeControllers();
+                if (_isDisposed)
+                {
+                    return Array.Empty<IController>();
+                }
 
                 // HIDAPI (Joy-Cons, Switch Pro, 8BitDo in Switch mode) and DirectInput devices, which is
                 // what most Bluetooth controllers are, are only discovered while SDL pumps events.
                 RefreshDevices();
 
-                int numberOfDevices = SDL_NumJoysticks();
+                int numberOfDevices = Math.Max(SDL_NumJoysticks(), 0);
+                var present = new List<int>(numberOfDevices);
+                for (int i = 0; i < numberOfDevices; i++)
+                {
+                    present.Add(SDL_JoystickGetDeviceInstanceID(i));
+                }
+
+                bool firstEnumeration = _knownDeviceIds is null;
+                SdlDeviceChange change = SdlDeviceSet.Diff(_knownDeviceIds ?? [], present);
+                if (!firstEnumeration && !change.HasChanges)
+                {
+                    return _controllers.ToList();
+                }
+
+                _knownDeviceIds = [.. present];
+                CloseDisconnected(change.Removed);
 
                 if (numberOfDevices < 1)
                 {
@@ -59,9 +80,15 @@ namespace GameControllerForZwift.Gamepad.SDL2
                 }
 
                 LogEnumerating(numberOfDevices);
+                var added = change.Added.ToHashSet();
 
                 for (int i = 0; i < numberOfDevices; i++)
                 {
+                    if (!added.Contains(present[i]))
+                    {
+                        continue;
+                    }
+
                     SdlDeviceInfo info = DescribeDevice(i);
                     bool include = SdlDeviceDiagnostics.ShouldInclude(info, out string? skipReason);
                     string deviceLine = SdlDeviceDiagnostics.Format(info, skipReason);
@@ -82,10 +109,11 @@ namespace GameControllerForZwift.Gamepad.SDL2
 
                     var controller = new SDL2GameController(controllerHandle, info.Vendor, info.Product);
                     _controllers.Add(controller);
+                    _controllersByInstanceId[present[i]] = controller;
                     LogControllerConnected(controller.Name);
                 }
 
-                // Return a snapshot so later refreshes cannot mutate what callers are enumerating.
+                // Return a snapshot so later calls cannot mutate what callers are enumerating.
                 return _controllers.ToList();
             }
         }
@@ -188,6 +216,26 @@ namespace GameControllerForZwift.Gamepad.SDL2
         }
 
         /// <summary>
+        /// Closes the controllers whose devices disconnected.
+        /// </summary>
+        /// <param name="instanceIds">The SDL instance ids of the disconnected devices.</param>
+        private void CloseDisconnected(IReadOnlyList<int> instanceIds)
+        {
+            foreach (int instanceId in instanceIds)
+            {
+                // Skipped devices (plain joysticks, failed opens) were never opened, so there is nothing to close.
+                if (!_controllersByInstanceId.Remove(instanceId, out IController? controller))
+                {
+                    continue;
+                }
+
+                _controllers.Remove(controller);
+                controller.Dispose();
+                LogControllerDisconnected(controller.Name);
+            }
+        }
+
+        /// <summary>
         /// Disposes of all currently tracked controllers.
         /// </summary>
         private void DisposeControllers()
@@ -199,6 +247,8 @@ namespace GameControllerForZwift.Gamepad.SDL2
             }
 
             _controllers.Clear();
+            _controllersByInstanceId.Clear();
+            _knownDeviceIds = null;
         }
 
         #endregion
@@ -222,6 +272,9 @@ namespace GameControllerForZwift.Gamepad.SDL2
 
         [LoggerMessage(Level = LogLevel.Information, Message = "Controller connected: {Name}")]
         private partial void LogControllerConnected(string name);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Controller disconnected: {Name}")]
+        private partial void LogControllerDisconnected(string name);
 
         [LoggerMessage(Level = LogLevel.Error, Message = "Attempted to read data from a null controller.")]
         private partial void LogNullController();

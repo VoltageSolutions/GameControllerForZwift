@@ -270,6 +270,57 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
             });
         }
 
+        [Fact]
+        public void ControllerConnectsAfterTheDropDownWasOpened_DropDownShowsBothControllers()
+        {
+            // CTRL-001: the second controller must be visible in the drop-down, not just present in its items.
+            TestApplication.Run(() =>
+            {
+                var seriesX = Controller(Xbox);
+                using ServiceProvider provider = CreateProvider(seriesX);
+                MainWindow window = ShowWindow(provider);
+                try
+                {
+                    var viewModel = provider.GetRequiredService<ControllerSetupViewModel>();
+                    ControllerSetupPage page = ShowControllerSetup(window);
+                    var controllers = FindDescendants<ComboBox>(page).First(c => ReferenceEquals(c.ItemsSource, viewModel.Controllers));
+                    Assert.Same(seriesX, controllers.SelectedItem);
+                    OpenAndCloseDropDown(controllers, window);
+
+                    var oneS = TestControllers.Create(0x045E, 0x02E0, "Xbox One S Controller");
+                    _context.DataIntegrator.GetControllers().Returns([seriesX, oneS]);
+                    viewModel.RefreshControllerList();
+                    Pump(window);
+
+                    controllers.IsDropDownOpen = true;
+                    Pump(window);
+                    var popup = Assert.IsType<Popup>(controllers.Template.FindName("PART_Popup", controllers));
+                    var scrollViewer = FindDescendants<ScrollViewer>(popup.Child).First();
+                    var rowHeight = ((FrameworkElement)controllers.ItemContainerGenerator.ContainerFromIndex(0)).ActualHeight;
+                    double extent = scrollViewer.ExtentHeight;
+                    controllers.IsDropDownOpen = false;
+                    Pump(window);
+
+                    Assert.Equal(2, controllers.Items.Count);
+                    Assert.True(extent >= 2 * rowHeight, $"The drop-down shows {extent} of {2 * rowHeight} for two rows.");
+                    Assert.Same(seriesX, controllers.SelectedItem);
+                    Assert.Same(seriesX, viewModel.SelectedController);
+                }
+                finally
+                {
+                    window.Close();
+                }
+            });
+        }
+
+        private static void OpenAndCloseDropDown(ComboBox comboBox, Window window)
+        {
+            comboBox.IsDropDownOpen = true;
+            Pump(window);
+            comboBox.IsDropDownOpen = false;
+            Pump(window);
+        }
+
         private static IEnumerable<T> FindDescendants<T>(DependencyObject root) where T : DependencyObject
         {
             for (int i = 0; i < System.Windows.Media.VisualTreeHelper.GetChildrenCount(root); i++)

@@ -5,6 +5,7 @@ using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.UI.WPF.Dialogs;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 
@@ -49,8 +50,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private bool _isApplyingMappings;
         private int _ownStoreChanges;
 
-        [ObservableProperty]
-        private List<IController> _controllers = new();
         [ObservableProperty]
         private ControllerData? _currentControllerValues;
 
@@ -168,6 +167,12 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         }
 
         /// <summary>
+        /// Gets the connected controllers. The list is updated in place, so a controller that stays connected keeps its
+        /// entry and stays selected while others come and go.
+        /// </summary>
+        public ObservableCollection<IController> Controllers { get; } = [];
+
+        /// <summary>
         /// Gets the configurations for the selected controller: Default first, then saved ones by name (CFG-015).
         /// </summary>
         public List<ConfigurationItem> Configurations
@@ -222,10 +227,34 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #endregion
 
         #region Commands
+        /// <summary>
+        /// Updates the controller list from the controllers connected now. Controllers that stay connected keep their entry,
+        /// so the selection is not lost.
+        /// </summary>
         [RelayCommand]
         public void RefreshControllerList()
         {
-            Controllers = _dataIntegrator.GetControllers().ToList();
+            var change = ControllerListChange.Between(Controllers, _dataIntegrator.GetControllers());
+            if (!change.HasChanges)
+                return;
+
+            foreach (var controller in change.Added)
+                Controllers.Add(controller);
+
+            if (ControllerListChange.Contains(change.Removed, _selectedController))
+                SelectedController = null;
+
+            foreach (var controller in change.Removed)
+                RemoveController(controller);
+        }
+
+        private void RemoveController(IController controller)
+        {
+            for (int i = Controllers.Count - 1; i >= 0; i--)
+            {
+                if (ReferenceEquals(Controllers[i], controller))
+                    Controllers.RemoveAt(i);
+            }
         }
 
         //[RelayCommand]
