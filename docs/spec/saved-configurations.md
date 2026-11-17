@@ -74,7 +74,7 @@ Each file is plain JSON. This is a complete example:
 }
 ```
 
-The file says which controller model it is for, which input does what, and when it last changed. A version number lets future versions of the app change the format safely.
+The file says which controller model it is for, which input does what, and when it last changed. The file carries a format version. The app refuses a file with a version newer than it understands.
 
 *Example: a friend with a newer version of the app sends you a file with `formatVersion` 2. Your app refuses it and tells you to update, instead of guessing.*
 
@@ -288,11 +288,11 @@ Every requirement is implemented except one gap in CFG-038:
 - **Gap:** the **Import...** file picker is the standard Windows Open dialog. It works with a mouse and keyboard but not with a game controller.
 - **Gap:** typing a name with a game controller needs the Windows touch keyboard. The name dialog does not offer one.
 
-The status stays Accepted until these are resolved or the requirement is relaxed.
+The status is Accepted because of these gaps. Implemented means a spec has none.
 
-## Out of scope for v0.4.0
+## Out of scope
 
 - Syncing configurations between machines (you copy files).
-- Per-configuration deadzones or curves (current deadzones stay global).
+- Per-configuration deadzones or curves (deadzones are global).
 - Sharing configurations online.
-- Moving `logs\` into the app data folder (a separate change).
+- Log files. They are not stored in the app data folder.
