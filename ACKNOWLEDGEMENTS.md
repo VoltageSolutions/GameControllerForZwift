@@ -13,7 +13,6 @@ This application is made possible through the use of open source libraries. The 
 - [Markdig](https://github.com/xoofx/markdig) - Copyright (c) 2018-2019, Alexandre Mutel - *BSD-2-Clause*
 - [Makaretu.Dns.Multicast.New](https://github.com/richardschneider/net-mdns) - *MIT License*
 - [markdig.WPF](https://github.com/Logikgate/markdig-wpf) - Copyright (c) 2016-2021 Nicolas Musset - *MIT License*
-- [Microsoft.Extensions (DependencyInjection and Logging)](https://github.com/dotnet/runtime) - Copyright (c) .NET Foundation and Contributors - *MIT License*
 - [Sayers.SDL2.Core](https://github.com/JeremySayers/Sayers.SDL2.Core)
 - [SDL2-CS](https://github.com/flibitijibibo/SDL2-CS) - Copyright (c) 2013-2024 Ethan Lee.
 - [SDL2](https://www.libsdl.org/) - *zlib*
