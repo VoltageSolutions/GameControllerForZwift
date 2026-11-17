@@ -168,13 +168,11 @@ namespace GameControllerForZwift
             // their state (for example the selected controller) is kept when the user leaves a page and comes back.
             // Views are not registered: the ViewCache in MainWindow creates one view per page view model.
             services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<AboutPageViewModel>();
             services.AddSingleton<AboutPageViewModel>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();
                 string appDirectory = AppContext.BaseDirectory;
                 string filePath = Path.Join(appDirectory, "ACKNOWLEDGEMENTS.md");
-                //string filePath = "./ACKNOWLEDGEMENTS.md"; // Or fetch this from configuration
                 return new AboutPageViewModel(fileService, filePath);
             });
             services.AddSingleton<ControllerSetupViewModel>();
