@@ -75,26 +75,33 @@ namespace GameControllerForZwift.UI.WPF
             bool disableFluentThemeWindowBackdrop = appContextBackdropData != null
                 && bool.Parse(Convert.ToString(appContextBackdropData, System.Globalization.CultureInfo.InvariantCulture) ?? bool.FalseString);
 
-            if (!disableFluentThemeWindowBackdrop)
+            Visibility? captionButtons = GetCaptionButtonVisibility(
+                disableFluentThemeWindowBackdrop,
+                Application.Current.Resources.MergedDictionaries.Count > 0,
+                Application.Current.ThemeMode != ThemeMode.None,
+                SystemParameters.HighContrast);
+
+            if (captionButtons is Visibility visibility)
             {
-                // Only when theme resources are loaded and a theme mode is active.
-                if (Application.Current.Resources.MergedDictionaries.Count > 0
-                    && Application.Current.ThemeMode != ThemeMode.None)
-                {
-                    if (SystemParameters.HighContrast)
-                    {
-                        MinimizeButton.Visibility = Visibility.Visible;
-                        MaximizeButton.Visibility = Visibility.Visible;
-                        CloseButton.Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        MinimizeButton.Visibility = Visibility.Collapsed;
-                        MaximizeButton.Visibility = Visibility.Collapsed;
-                        CloseButton.Visibility = Visibility.Collapsed;
-                    }
-                }
+                MinimizeButton.Visibility = visibility;
+                MaximizeButton.Visibility = visibility;
+                CloseButton.Visibility = visibility;
             }
+        }
+
+        /// <summary>
+        /// Returns the visibility of the custom caption buttons, or null to leave them as they are. The buttons are
+        /// changed only when the Fluent backdrop is enabled, theme resources are loaded and a theme mode is set; they
+        /// are visible in high contrast and collapsed otherwise.
+        /// </summary>
+        public static Visibility? GetCaptionButtonVisibility(bool backdropDisabled, bool hasThemeResources, bool themeModeSet, bool highContrast)
+        {
+            if (backdropDisabled || !hasThemeResources || !themeModeSet)
+            {
+                return null;
+            }
+
+            return highContrast ? Visibility.Visible : Visibility.Collapsed;
         }
 
         #endregion

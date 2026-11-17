@@ -217,7 +217,7 @@ namespace GameControllerForZwift.Network.Mdns
         }
 
         // Usable LAN IPv4 address: not loopback, not 0.0.0.0, not link-local (169.254.x.x).
-        private static bool IsUsableIPv4(IPAddress ip)
+        internal static bool IsUsableIPv4(IPAddress ip)
         {
             if (ip.AddressFamily != AddressFamily.InterNetwork) return false;
             if (IPAddress.IsLoopback(ip) || ip.Equals(IPAddress.Any)) return false;
