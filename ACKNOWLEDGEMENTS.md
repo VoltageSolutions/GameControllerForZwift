@@ -34,7 +34,7 @@ THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 **SIL Open Font License 1.1**
 
-Figtree is licensed under the SIL Open Font License, Version 1.1. The full license text ships with the app in `Assets/Fonts/OFL.txt` and is available at [openfontlicense.org](https://openfontlicense.org).
+Figtree is licensed under the SIL Open Font License, Version 1.1. The full license text ships with the app as `Figtree-OFL.txt` and is available at [openfontlicense.org](https://openfontlicense.org).
 
 **zlib license**
 

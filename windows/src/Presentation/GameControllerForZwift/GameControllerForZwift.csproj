@@ -45,8 +45,10 @@
     <Resource Include="Assets\Fonts\Figtree-SemiBold.ttf" />
     <Resource Include="Assets\Fonts\Figtree-Bold.ttf" />
     <Resource Include="Assets\Fonts\Figtree-ExtraBold.ttf" />
+    <!-- Release zips are flattened, so the license lands next to the exe. -->
     <None Update="Assets\Fonts\OFL.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Figtree-OFL.txt</TargetPath>
     </None>
     <Resource Include="Assets\logo.ico" />
     <Resource Include="Assets\logo.png" />

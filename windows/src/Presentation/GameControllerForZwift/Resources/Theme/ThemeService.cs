@@ -37,11 +37,13 @@ namespace GameControllerForZwift.UI.WPF.Theme
         private ResourceDictionary? _tokens;
         private bool _listening;
 
+        /// <summary>Creates a theme service for the current application that reads the Windows state.</summary>
         public ThemeService()
             : this(Application.Current, ReadSystemUsesLightTheme, () => SystemParameters.HighContrast, null)
         {
         }
 
+        /// <summary>Creates a theme service with the given sources for the Windows state.</summary>
         /// <param name="application">The application whose resources get the tokens.</param>
         /// <param name="systemUsesLightTheme">Reads whether Windows apps use light mode.</param>
         /// <param name="highContrast">Reads whether a Windows contrast theme is on.</param>
