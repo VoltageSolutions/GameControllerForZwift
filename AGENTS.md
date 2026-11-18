@@ -60,3 +60,4 @@ dotnet format windows/src/Application/GameControllerForZwift.Core --verify-no-ch
 - A release branch is merged into `main` by pull request, and that publishes the release.
 - Dependabot pull requests are re-pointed to the release branch.
 - Do not push or open pull requests unless asked.
+- A pull request that changes the UI embeds screenshots in its description: each changed screen in light and dark mode, plus the states or window sizes that matter, about six. Upload them as GitHub attachments in the description, never as files in the repository or on a branch.
