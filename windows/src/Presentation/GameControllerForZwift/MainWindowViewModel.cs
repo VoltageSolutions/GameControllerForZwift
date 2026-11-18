@@ -72,11 +72,7 @@ namespace GameControllerForZwift.UI.WPF
 
         private readonly INavigationService _navigationService;
         private readonly ZwiftStatus _zwiftStatus;
-#if DEBUG
-        private readonly bool _showsStyleGallery = true;
-#else
         private readonly bool _showsStyleGallery;
-#endif
 
         public MainWindowViewModel(INavigationService navigationService, ZwiftStatus? zwiftStatus = null)
         {
@@ -85,6 +81,7 @@ namespace GameControllerForZwift.UI.WPF
             _navigationService.PropertyChanged += OnNavigationServicePropertyChanged;
             _zwiftStatus = zwiftStatus ?? new ZwiftStatus();
             _zwiftStatus.PropertyChanged += OnZwiftStatusPropertyChanged;
+            _showsStyleGallery = BuildInfo.IsDebug;
 
             Tabs =
             [
