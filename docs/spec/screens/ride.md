@@ -1,7 +1,6 @@
 ---
 id: SPEC-SCR-RIDE
 title: Ride screens
-status: Draft
 last-updated: 2026-11-17
 ---
 

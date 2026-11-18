@@ -1,7 +1,6 @@
 ---
 id: SPEC-SCR-BTN
 title: Buttons screens
-status: Draft
 last-updated: 2026-11-17
 ---
 

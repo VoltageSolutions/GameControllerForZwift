@@ -1,7 +1,6 @@
 ---
 id: SPEC-UX-INPUT
 title: Controller input
-status: Draft
 last-updated: 2026-11-17
 ---
 
@@ -61,9 +60,9 @@ The app detects your controller family and shows the matching glyphs. You are ne
 
 | Family | Face buttons shown |
 |---|---|
-| Xbox | A, B, X, Y |
-| PlayStation | ✕, ○, □, △ |
-| Nintendo | A, B, X, Y, with A and B in the swapped positions |
+| Xbox | <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">A</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">B</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">X</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">Y</span> |
+| PlayStation | <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">✕</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">○</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">□</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">△</span> |
+| Nintendo | <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">A</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">B</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">X</span>, <span style="display:inline-block;width:1.4em;text-align:center;font-size:1.1em;line-height:1">Y</span>, with A and B in the swapped positions |
 
 | Rule | ID |
 |---|---|

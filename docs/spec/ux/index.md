@@ -1,7 +1,6 @@
 ---
 id: SPEC-UX
 title: UX overview
-status: Draft
 last-updated: 2026-11-17
 ---
 

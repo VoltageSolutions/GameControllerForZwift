@@ -1,7 +1,6 @@
 ---
 id: SPEC-UX-PRINCIPLES
 title: Design principles
-status: Draft
 last-updated: 2026-11-17
 ---
 

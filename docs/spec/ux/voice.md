@@ -1,7 +1,6 @@
 ---
 id: SPEC-UX-VOICE
 title: Voice and copy
-status: Draft
 last-updated: 2026-11-17
 ---
 

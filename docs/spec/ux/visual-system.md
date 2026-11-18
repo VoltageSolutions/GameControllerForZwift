@@ -1,7 +1,6 @@
 ---
 id: SPEC-UX-VISUAL
 title: Visual system
-status: Draft
 last-updated: 2026-11-17
 ---
 

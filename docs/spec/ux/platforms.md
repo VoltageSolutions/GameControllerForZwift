@@ -1,14 +1,13 @@
 ---
 id: SPEC-UX-PLATFORMS
 title: Platforms
-status: Draft
 last-updated: 2026-11-17
 ---
 
 # Platforms
 
 !!! tldr "TL;DR"
-    Screens, content, tokens, and voice are the same on every platform. Only the shell adapts: pairing, the Float and Mini windows, background input, and a few platform states. Windows is the shipping platform.
+    Screens, content, tokens, and voice are the same on every platform. Only the shell adapts: pairing, the Float and Mini windows, background input, and a few platform states. Windows is the main platform.
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -29,7 +28,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 ## The platform shell
 
-| | Android | Windows (shipping) | iOS | Linux |
+| | Android | Windows | iOS | Linux |
 |---|---|---|---|---|
 | **Role** | Bridge on phone or tablet. Can sit beside Zwift on a tablet. | Main platform, beside Zwift on the same PC. | Second device only (input goes to the app on screen). | Bridge or maker setup. Zwift is not native. |
 | **Pairing** | Companion-device dialog. Fallback is Bluetooth settings. | Hand off to Windows Bluetooth settings. | Instructions plus "Open Settings" (apps cannot pair). | Instructions. No universal settings link. |

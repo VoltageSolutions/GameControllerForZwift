@@ -1,7 +1,6 @@
 ---
 id: SPEC-UX-ACCESS
 title: Accessibility
-status: Draft
 last-updated: 2026-11-17
 ---
 

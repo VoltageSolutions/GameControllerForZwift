@@ -1,7 +1,6 @@
 ---
 id: SPEC-UX-NAV
 title: Navigation
-status: Draft
 last-updated: 2026-11-17
 ---
 

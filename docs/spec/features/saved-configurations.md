@@ -1,7 +1,6 @@
 ---
 id: SPEC-CFG
 title: Saved controller configurations
-status: Accepted
 target: Windows v0.4.0
 last-updated: 2026-11-17
 ---

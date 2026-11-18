@@ -1,7 +1,7 @@
 # Spec
 
 !!! tldr "TL;DR"
-    The specs describe, in plain language, how the app must look and behave. Every rule has an ID that tests, issues, and code point to. Each spec has a status: Draft, Accepted, or Implemented.
+    The specs describe, in plain language, how the app must look and behave. Every rule has an ID that tests, issues, and code point to.
 
 ## What the specs are
 
@@ -16,16 +16,6 @@ Each rule has a requirement ID such as `CFG-015` or `UX-V-012`. Tests and code r
 | **must** | The rule is required. |
 | **should** | The rule is expected unless there is a good reason to do otherwise. |
 | **may** | The rule is optional. |
-
-## Statuses
-
-Every spec has a status in its front matter.
-
-| Status | Meaning |
-|---|---|
-| Draft | I am still working out what this part should do. |
-| Accepted | The behavior is agreed. The work may be in progress or have known gaps. |
-| Implemented | The app does everything the spec says. |
 
 ## How to read a spec
 

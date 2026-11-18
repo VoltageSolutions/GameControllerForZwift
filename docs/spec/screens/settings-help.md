@@ -1,7 +1,6 @@
 ---
 id: SPEC-SCR-SET
 title: Settings, help, credits, and support
-status: Draft
 last-updated: 2026-11-17
 ---
 
