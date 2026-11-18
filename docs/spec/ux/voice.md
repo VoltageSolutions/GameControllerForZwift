@@ -20,12 +20,13 @@ The app talks like a friendly person next to you. It says what is happening and 
 | Rule | ID |
 |---|---|
 | Copy must be plain, warm, and in the second person ("you", "your"). | UX-W-001 |
-| Copy must be in sentence case. All caps must not be used. | UX-W-002 |
+| Copy must use sentence case. It must not use all caps. | UX-W-002 |
 | Copy must name things after what they mean to the rider, not after internal terms. | UX-W-003 |
 | Every sentence should be short. A rider should be able to say it out loud. | UX-W-004 |
 | Copy must not use marketing claims. | UX-W-005 |
 | Copy must not make claims the app cannot verify. | UX-W-006 |
 | Copy and docs must use the serial (Oxford) comma in lists of three or more, as in "Settings, Help and feedback, Credits, and Support this project". | UX-W-017 |
+| Copy and docs must use active voice with a clear actor. Write "The app must always announce connection problems." Do not write "Connection problems must always be announced." | UX-W-018 |
 
 ## Avoid and use
 

@@ -65,7 +65,7 @@ Default is listed first and is locked. Saved mappings follow, sorted by name. Th
 | The picker must list Default first, then saved mappings by name, and select the last-used one. See `CFG-015` to `CFG-019`. | SCR-BTN-011 |
 | Default must show as locked. It cannot be overwritten, renamed, or deleted. See `CFG-020`. | SCR-BTN-012 |
 | The selected mapping must show "Unsaved changes" in words when its mappings differ from what is saved. See `CFG-021`. | SCR-BTN-013 |
-| Buttons that do not apply must be disabled, not hidden. See `CFG-037`. | SCR-BTN-014 |
+| The app must disable buttons that do not apply instead of hiding them. See `CFG-037`. | SCR-BTN-014 |
 | The picker must offer **Import a mapping**. See `CFG-030`. | SCR-BTN-015 |
 | On desktop the picker must offer **Open folder**. See `CFG-034`. | SCR-BTN-016 |
 | On phone the picker must offer **Share** in its place. Sharing a mapping hands the mapping's file to the system share sheet. | SCR-BTN-017 |
@@ -152,7 +152,7 @@ Sticks and triggers are analog. A small tilt steers a little. A light squeeze br
 | Each stick must show its live position and the dead zone. | SCR-BTN-039 |
 | Each stick must have a row per direction (left, right, up, down) and each stick click must have its own row. | SCR-BTN-040 |
 | Each trigger must show a live fill. | SCR-BTN-041 |
-| The screen must show a brake caution: "Even a light squeeze can stop you." It must show where the brake function is chosen or assigned. | SCR-BTN-042 |
+| The screen must show a brake caution: "Even a light squeeze can stop you." It must show where you choose or assign the brake function. | SCR-BTN-042 |
 | **Advanced** (dead zones and curves) must be a section at the bottom of this tab. | SCR-BTN-043 |
 
 ??? note "Edge cases"

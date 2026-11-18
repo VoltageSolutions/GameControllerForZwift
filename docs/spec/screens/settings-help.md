@@ -79,7 +79,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | Rule | ID |
 |---|---|
 | The screen must offer Ko-fi, a star on GitHub, telling a friend, and contributing. | SCR-SET-022 |
-| The pitch must be short, honest, and framed as supporting the project. It must not make claims the app cannot verify. | SCR-SET-023 |
+| The pitch must be short and honest, and it must frame the ask as supporting the project. It must not make claims the app cannot verify. | SCR-SET-023 |
 | Only one action may use the accent fill (Chip in on Ko-fi). | SCR-SET-024 |
 | The screen must follow the platform's donation rules (see [Platforms](../ux/platforms.md)). | SCR-SET-025 |
 

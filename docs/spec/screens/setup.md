@@ -46,7 +46,7 @@ The first screen does something: it asks you to press any button, and the contro
 |---|---|
 | The first screen must say "Press any button on your controller." and light the pressed button on the illustration. | SCR-SETUP-001 |
 | The screen must have one main action, Continue, enabled after the first press. | SCR-SETUP-002 |
-| The first press must be announced (`SetupPressAnyButtonStatus`). | SCR-SETUP-003 |
+| The app must announce the first press (`SetupPressAnyButtonStatus`). | SCR-SETUP-003 |
 | The screen must offer "Pair a new Bluetooth controller" (`SetupPairBluetoothButton`). | SCR-SETUP-004 |
 | The screen must not show a controller hint bar. A controller press only finds a button. | SCR-SETUP-005 |
 | The screen must not use a drop-down list or a "Refresh list" button to pick a controller. | SCR-SETUP-006 |
@@ -60,7 +60,7 @@ The app uses one controller at a time. A left and right Joy-Con pair counts as o
 | Rule | ID |
 |---|---|
 | The screen must appear only when more than one controller is connected. | SCR-SETUP-007 |
-| It must say "Press any button on the one you want." and pick the controller that is pressed. | SCR-SETUP-008 |
+| It must say "Press any button on the one you want." and pick the controller you press. | SCR-SETUP-008 |
 | A left and right Joy-Con used together count as one controller. | SCR-SETUP-009 |
 
 ## Pair a new Bluetooth controller
@@ -130,7 +130,7 @@ The first time, Zwift also runs a short Zwift Ride tutorial.
 | Step 1 must tick when the handshake completes. | SCR-SETUP-019 |
 | Step 2 may tick when the app can see that Zwift subscribed to Controls. It must not tick unless the app knows. | SCR-SETUP-020 |
 | Step 3 must never tick, because the app cannot detect it. It must stay as the last instruction. | SCR-SETUP-021 |
-| The current step ("Step 2 of 3") must be announced as a live region (`SetupZwiftStatus`). | SCR-SETUP-022 |
+| The app must announce the current step ("Step 2 of 3") as a live region (`SetupZwiftStatus`). | SCR-SETUP-022 |
 | The screen must mention the one-time Zwift Ride tutorial. | SCR-SETUP-023 |
 | The screen must say that Zwift may run on this computer or on another device on the same network. | SCR-SETUP-024 |
 

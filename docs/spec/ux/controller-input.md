@@ -13,7 +13,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 ## One meaning per screen
 
-Your controller does different jobs in different places. To keep that clear, each kind of screen gives it one job, and the screen never mixes two. The app does not use the controller to move around its own screens or answer its own dialogs. You use touch, mouse, or keyboard for that.
+Your controller does different jobs in different places. To keep that clear, each kind of screen gives it one job, and the screen never mixes two. You use touch, mouse, or keyboard to move around the app and answer its dialogs.
 
 | Where | What a press means |
 |---|---|
@@ -69,7 +69,7 @@ The app detects your controller family and shows the matching glyphs. You are ne
 |---|---|
 | The app must detect the controller family automatically and must not ask you to choose it. | UX-C-009 |
 | Every button label and hint must use the glyphs of the detected family. | UX-C-010 |
-| For Nintendo controllers, A and B must be shown in Nintendo's swapped positions. | UX-C-011 |
+| For Nintendo controllers, the app must show A and B in Nintendo's swapped positions. | UX-C-011 |
 | For a controller of an unknown family, the app must assume the Xbox layout and use Xbox names. It must not fall back to generic button names. | UX-C-012 |
 
 ## Focus in dialogs

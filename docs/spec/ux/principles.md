@@ -39,8 +39,8 @@ You ride sweaty, at arm's length, with Zwift full screen. The riding screen has 
 
 | Rule | ID |
 |---|---|
-| Each riding screen must have one big readout that can be read at arm's length. | UX-P-007 |
-| State must always be said in words, such as "Awake and connected", "Unsaved changes", or "Zwift can see your controller". Color or an icon alone must never carry state. | UX-P-008 |
+| Each riding screen must have one big readout that you can read at arm's length. | UX-P-007 |
+| The app must always say state in words, such as "Awake and connected", "Unsaved changes", or "Zwift can see your controller". Color or an icon alone must never carry state. | UX-P-008 |
 | Wherever focus moves, the focus ring must be the most visible element on screen. | UX-P-009 |
 
 ## Controller input

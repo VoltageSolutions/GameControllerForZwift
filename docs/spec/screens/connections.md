@@ -30,7 +30,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | The screen must offer **Use a different controller** and **Pair a new Bluetooth controller**. Both must follow [Setup screens](setup.md). | SCR-CONN-002 |
 | With no controller, the screen must show the same "Wake your controller" state as Ride. | SCR-CONN-003 |
 | The Zwift card must say "Zwift can see your controller" or "Zwift isn't connected yet", based on `IsZwiftConnected`. | SCR-CONN-004 |
-| The card must show a live-updating status that is announced as a live region. | SCR-CONN-005 |
+| The card must show a live-updating status, and the app must announce it as a live region. | SCR-CONN-005 |
 | When Zwift is not connected, the Connections tab must show its dot, and the card's main action must be **Pair with Zwift** (or **Show me how** if the steps are collapsed). | SCR-CONN-006 |
 | When Zwift is connected, the screen must not use the accent fill for any action. | SCR-CONN-007 |
 | The screen must link to the list of supported controllers once that list exists. | SCR-CONN-008 |
@@ -73,7 +73,7 @@ The steps are the same as on [Setup](setup.md#pair-with-zwift): Power Source set
 | Every check must have a fix written in plain words. | SCR-CONN-014 |
 | Windows checks must cover the network profile and the firewall rule. Phone checks must cover VPNs. | SCR-CONN-015 |
 | The screen must not claim a check passed unless the app actually ran it. | SCR-CONN-016 |
-| The screen must be reachable from Connections and from Help and feedback. | SCR-CONN-017 |
+| You must be able to reach the screen from Connections and from Help and feedback. | SCR-CONN-017 |
 
 ??? note "Edge cases"
     - The checks that the app cannot make still appear, so a rider with guest Wi-Fi finds the fix.

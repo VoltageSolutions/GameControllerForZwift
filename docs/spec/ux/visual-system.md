@@ -40,12 +40,12 @@ The accent is the VOLTAGE brand orange.
 | Rule | ID |
 |---|---|
 | The accent fill (`#ED7600`) must fill only the one main action on a screen (Start riding, Continue, Save) and mark live moments (the lit button, "You just pressed"). | UX-V-001 |
-| The label on an accent fill must be `on-accent` (`#1F1B16`) in both modes. White text on the accent must never be used (2.92:1). | UX-V-002 |
+| The label on an accent fill must be `on-accent` (`#1F1B16`) in both modes. The app must never use white text on the accent (2.92:1). | UX-V-002 |
 | Accent used as text, an icon, or a status dot must use `accent-ink`: `#ED7600` in dark mode, `#A55200` in light mode. | UX-V-003 |
 | The Connections tab dot must use `accent-ink` (`#A55200` in light mode, `#ED7600` in dark mode). | UX-V-004 |
-| In light mode the accent fill against the background is only 2.75:1. A primary button must therefore be identified by its dark text label and its shape, never by the fill color alone. | UX-V-005 |
+| In light mode the accent fill against the background is only 2.75:1. You must therefore be able to identify a primary button by its dark text label and its shape, never by the fill color alone. | UX-V-005 |
 | Everything else must stay neutral. Screens must not use the accent for decoration. | UX-V-006 |
-| The app's identity must never rely on color alone. It is carried by the name "Voltage Gamepad", the controller illustration, and the wordmark. | UX-V-007 |
+| The app's identity must never rely on color alone. The name "Voltage Gamepad", the controller illustration, and the wordmark carry it. | UX-V-007 |
 | The app must not adopt a neighbor's category color: Strava orange, Wahoo or Garmin blue, Xbox green, PlayStation blue, Nintendo red, conservation green. | UX-V-008 |
 
 ??? note "Edge cases"
@@ -78,7 +78,7 @@ The last two rows are below 3:1, so they carry extra cues. See [Accessibility](a
 | Rule | ID |
 |---|---|
 | Every text pair must reach 4.5:1 and every meaningful non-text pair 3:1, in both modes. | UX-V-009 |
-| A color pair must be checked against this table before a screen is built. | UX-V-010 |
+| I must check every color pair against this table before I build a screen. | UX-V-010 |
 
 ## Type
 
@@ -87,7 +87,7 @@ The last two rows are below 3:1, so they carry extra cues. See [Accessibility](a
 | The typeface must be Figtree. | UX-V-011 |
 | Headings must use weight 800 with slightly negative tracking. Body text must use weight 400 to 600. | UX-V-012 |
 | Numbers must use tabular figures so readouts do not jitter. | UX-V-013 |
-| Text must be sentence case. All caps must not be used. | UX-V-014 |
+| Text must be sentence case. The app must not use all caps. | UX-V-014 |
 
 | Role | Phone | Tablet |
 |---|---|---|
@@ -115,10 +115,10 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 
 | Rule | ID |
 |---|---|
-| Surfaces must be separated by color, spacing, and rounded corners. Outlines (1 px borders) must not be used. | UX-V-022 |
-| Soft shadows may be used in light mode only. Dark mode has no shadows. | UX-V-023 |
-| Neutrals must be warm: a warm near-black in dark mode and a warm off-white in light mode. Blue-gray must not be used. | UX-V-024 |
-| Gradients must not be used. | UX-V-025 |
+| The app must separate surfaces with color, spacing, and rounded corners. It must not use outlines (1 px borders). | UX-V-022 |
+| The app may use soft shadows in light mode only. Dark mode has no shadows. | UX-V-023 |
+| Neutrals must be warm: a warm near-black in dark mode and a warm off-white in light mode. The app must not use blue-gray. | UX-V-024 |
+| The app must not use gradients. | UX-V-025 |
 
 ??? note "Edge cases"
     - The only outlines allowed are the ones the accessibility rules require: a thin muted outline on controller keys, a dashed outline on free keys, and a dark outline on the lit key.
@@ -137,7 +137,7 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 | An icon in a button must be 18 to 20 px with a 10 px gap to the label. | UX-V-026 |
 | Buttons must hug their label by default. The minimum width is 120 px, and 160 px for the primary action. | UX-V-027 |
 | A button may be full width only for phone bottom actions and phone dialogs. On larger screens a full-width button must stop at 480 px. | UX-V-028 |
-| A button label must never wrap or be truncated, and a button must never shrink below its label. | UX-V-029 |
+| The app must never wrap or truncate a button label, and a button must never shrink below its label. | UX-V-029 |
 | When a row runs out of room, the row must wrap and the button must move to its own line. On phone it goes full width. | UX-V-030 |
 | Buttons in a group must be 8 px apart (12 px on tablet and desktop). | UX-V-031 |
 | Button order must follow the platform: Windows dialogs put the primary action first, Android and iOS put it last. | UX-V-032 |
@@ -149,7 +149,7 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 
 | Rule | ID |
 |---|---|
-| The controller illustration must be filled with soft shapes and a ground shadow. It must never be a wireframe. | UX-V-034 |
+| The app must fill the controller illustration with soft shapes and a ground shadow. It must never draw a wireframe. | UX-V-034 |
 | Keys on the illustration must have a thin muted outline, free keys a dashed outline, and the lit key a dark outline plus the accent fill. | UX-V-035 |
 | The illustration must never be the only way to know a mapping. The Buttons list says the same in text. | UX-V-036 |
 

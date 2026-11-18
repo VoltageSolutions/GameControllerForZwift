@@ -20,7 +20,7 @@ Text needs 4.5:1. Icons, focus rings, status dots, and graphics people need to s
 | Text pairs must reach 4.5:1 and meaningful non-text pairs 3:1, in both modes. | UX-A-001 |
 | Every status must have words as well as color. | UX-A-002 |
 | Accent text, icons, and dots must use `accent-ink` (`#ED7600` in dark mode, `#A55200` in light mode). | UX-A-003 |
-| Text on the accent fill must be `#1F1B16` (5.86:1). White on the accent (2.92:1) must not be used. | UX-A-004 |
+| Text on the accent fill must be `#1F1B16` (5.86:1). The app must not use white on the accent (2.92:1). | UX-A-004 |
 | The app must follow the system dark or light setting. | UX-A-005 |
 | When a Windows contrast theme is on, the app must use system colors. | UX-A-006 |
 
@@ -80,7 +80,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | IDs must follow `{Area}{Element}{Role}` in PascalCase, with the same string on every platform. | UX-A-014 |
 | IDs must not change with language or state. | UX-A-015 |
 | A mapping's ID key must be the mapping's GUID (see `CFG-008`), never its name. | UX-A-016 |
-| Decorative elements must be hidden from assistive technology. | UX-A-017 |
+| The app must hide decorative elements from assistive technology. | UX-A-017 |
 
 ### Core IDs
 
@@ -132,7 +132,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 |---|---|
 | The app must announce changes, not repeats: Zwift connected or lost, controller asleep or back, and the first press in setup. | UX-A-025 |
 | While riding, shift announcements must be optional: Settings has "Announce each shift", off by default. | UX-A-026 |
-| Connection problems must always be announced. | UX-A-027 |
+| The app must always announce connection problems. | UX-A-027 |
 | The app must never move focus to announce something. | UX-A-028 |
 
 *Example: on the setup screen your first press is announced ("Got it. That's your left bumper"). Your next ten presses are not.*
@@ -156,5 +156,5 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 
 | Rule | ID |
 |---|---|
-| Every new screen must pass a contrast check and have a written reading order before it is built. | UX-A-032 |
-| Every new Windows screen must be checked with Accessibility Insights and Narrator. | UX-A-033 |
+| Every new screen must pass a contrast check and have a written reading order before I build it. | UX-A-032 |
+| I must check every new Windows screen with Accessibility Insights and Narrator. | UX-A-033 |

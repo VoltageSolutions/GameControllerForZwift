@@ -28,10 +28,10 @@ Every controller you connect gets its own entry, even two of the same model. The
 
 | Rule | ID |
 |---|---|
-| Every connected controller is listed, one entry per controller, including two controllers of the same model. A left and right Joy-Con pair that SDL combines counts as one controller. | CTRL-001 |
+| The app lists every connected controller, one entry per controller, including two controllers of the same model. A left and right Joy-Con pair that SDL combines counts as one controller. | CTRL-001 |
 | The app checks for controllers that connected or disconnected about every 500 ms and updates the list without a Refresh button. | CTRL-002 |
 | The app only opens controllers that connected and only closes controllers that disconnected. A controller that stays connected keeps its entry and its connection, and a check that finds no change does nothing. | CTRL-003 |
-| A controller that connects is added at the end of the list. The others keep their place. | CTRL-009 |
+| The app adds a controller that connects at the end of the list. The others keep their place. | CTRL-009 |
 
 ??? note "Edge cases"
     - The app tells controllers apart by the SDL instance id of the connection, not by name or model. Two identical controllers are two entries with the same name.
@@ -50,7 +50,7 @@ The app keeps your choice. Connecting or disconnecting another controller never 
 |---|---|
 | The selected controller stays selected while other controllers connect or disconnect. | CTRL-004 |
 | If the selected controller disconnects and other controllers are still connected, the app selects the first controller in the list. | CTRL-005 |
-| If the selected controller disconnects and no controllers remain, the list is empty and shows "None selected". The configuration list shows only Default, which is selected. Save, Save as, Delete, Import, and Rename are disabled, and Open folder stays available (CFG-020, CFG-037). | CTRL-006 |
+| If the selected controller disconnects and no controllers remain, the list is empty and shows "None selected". The configuration list shows only Default, and the app selects it. Save, Save as, Delete, Import, and Rename are disabled, and Open folder stays available (CFG-020, CFG-037). | CTRL-006 |
 | When a controller connects and nothing is selected, the app selects it. When a controller connects while another is selected, the selection stays. A returning controller does not take the selection back. | CTRL-007 |
 | A switch the app makes on its own follows CFG-024: with unsaved changes it asks Save, Don't save, or Cancel. Cancel keeps your edits and their configuration list on screen, with no controller selected. | CTRL-008 |
 
@@ -81,7 +81,7 @@ Some third-party controllers present themselves to Windows as an Xbox controller
 
 | Rule | ID |
 |---|---|
-| A controller is listed with the name and model SDL reports. A third-party controller that identifies as an Xbox controller is treated as that Xbox model, and shares that model's configurations (CFG-011). | CTRL-010 |
+| The app lists a controller with the name and model SDL reports. It treats a third-party controller that identifies as an Xbox controller as that Xbox model, which shares that model's configurations (CFG-011). | CTRL-010 |
 
 ??? note "Edge cases"
     - The same 8BitDo controller in another mode (for example Switch mode) reports a different model, so it has its own configurations.
