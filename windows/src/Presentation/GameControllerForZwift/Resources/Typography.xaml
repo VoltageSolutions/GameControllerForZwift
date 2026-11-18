@@ -6,6 +6,11 @@
 
 
     <!--Typography-->
+
+    <!-- Figtree (UX-V-011). The app ships weights 400 to 800 in Assets/Fonts. Fluent control templates read
+         ContentControlThemeFontFamily, so every control uses Figtree too. -->
+    <FontFamily x:Key="Font.Figtree">pack://application:,,,/GameControllerForZwift;component/Assets/Fonts/#Figtree</FontFamily>
+    <FontFamily x:Key="ContentControlThemeFontFamily">pack://application:,,,/GameControllerForZwift;component/Assets/Fonts/#Figtree</FontFamily>
     
     <sys:Double x:Key="CaptionFontSize">12</sys:Double>
     <sys:Double x:Key="BodyFontSize">14</sys:Double>

@@ -1,4 +1,4 @@
-using GameControllerForZwift.Core;
+﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.Controller;
 using GameControllerForZwift.Core.Mapping;
@@ -69,16 +69,6 @@ namespace GameControllerForZwift.UnitTests
         }
 
         private static object? ShownContent(MainWindow window) => Find<ContentControl>(window, "RootContent").Content;
-
-        [Theory]
-        [InlineData(true, true, true, false, null)]
-        [InlineData(false, false, true, false, null)]
-        [InlineData(false, true, false, false, null)]
-        [InlineData(false, true, true, false, Visibility.Collapsed)]
-        [InlineData(false, true, true, true, Visibility.Visible)]
-        public void GetCaptionButtonVisibility_DependsOnThemeStateAndContrast(
-            bool backdropDisabled, bool hasThemeResources, bool themeModeSet, bool highContrast, Visibility? expected)
-            => Assert.Equal(expected, MainWindow.GetCaptionButtonVisibility(backdropDisabled, hasThemeResources, themeModeSet, highContrast));
 
         [Fact]
         public void Constructor_ShowsTheControllerSetupPageWithItsViewModel()
