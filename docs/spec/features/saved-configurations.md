@@ -302,12 +302,11 @@ A configuration bar sits above the mapping grid. The drop-down picks the configu
 | Rule | ID |
 |---|---|
 | Buttons that do not apply are disabled, not hidden (Save and Delete on Default, Save when nothing changed). | CFG-037 |
-| All dialogs are usable with a game controller and keyboard as well as a mouse. | CFG-038 |
+| All dialogs are usable with a keyboard and a mouse, and with touch. | CFG-038 |
 
 ??? note "Edge cases"
     - Rename is in the `...` menu and is also disabled on Default.
     - Disabled buttons still show their tooltip.
-    - With a game controller, the D-pad moves focus (up and left go back, down and right go forward), A presses the focused button, and B cancels.
 
 ## Out of scope
 

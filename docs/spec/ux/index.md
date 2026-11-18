@@ -24,7 +24,7 @@ Audiences decide what the words say and which features exist. They never decide 
 | # | Audience | What they need |
 |---|---|---|
 | 1 | **Cyclists with indoor trainers.** The main audience. | Reliability, calm polish, a glanceable riding screen, and a setup that proves it works. They compare the app with polished hardware. |
-| 2 | **Gamers** | Correct button glyphs for their controller (Xbox, PlayStation, Nintendo), detected automatically. Controller navigation where it is safe. Depth on request, such as dead zones and curves behind "Advanced". No neon, no all caps. |
+| 2 | **Gamers** | Correct button glyphs for their controller (Xbox, PlayStation, Nintendo), detected automatically. Depth on request, such as dead zones and curves behind "Advanced". No neon, no all caps. |
 | 3 | **Right-to-repair tech advocates** | Values they can see: no account, no upsells, works offline, runs on old phones and tablets, small download. No claims the app cannot verify. No green-leaf clichés. |
 | 4 | **Riders with limited hand mobility** | Large targets, every input remappable. Adaptive and big-button controllers can make shifting possible. |
 

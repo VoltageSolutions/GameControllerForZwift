@@ -122,8 +122,8 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 |---|---|
 | Focus order must be the More button first, then the screen's content top to bottom, then the tabs last. | UX-A-020 |
 | Each screen must have one level 1 heading (the screen title). Card titles must be level 2. | UX-A-021 |
-| Dialogs and menus must trap focus. Esc or B must close them, and focus must return to what opened them. | UX-A-022 |
-| Every focusable element must show the 3 px focus ring. Arrow keys must move in the menu and tab bar. Enter or A must activate. | UX-A-023 |
+| Dialogs and menus must trap focus. Esc must close them, and focus must return to what opened them. | UX-A-022 |
+| Every focusable element must show the 3 px focus ring. Arrow keys must move in the menu and tab bar. Enter must activate. | UX-A-023 |
 | The Buttons screen must tell you its input rule: "Press a button on your controller to select it." | UX-A-024 |
 
 ## Live updates without noise

@@ -88,7 +88,6 @@ Default is listed first and is locked. Saved mappings follow, sorted by name. Th
 |---|---|
 | Switching mapping or controller with unsaved changes must ask what to do. See `CFG-024`. | SCR-BTN-023 |
 | The dialog's choices should read **Save and switch**, **Switch without saving**, and **Cancel**. | SCR-BTN-024 |
-| While the dialog is open, the controller must be able to answer it, with a focus ring and an A and B hint. See `CFG-038` and UX-C-005. | SCR-BTN-025 |
 
 ### Rename, delete, and import
 
@@ -104,7 +103,7 @@ Default is listed first and is locked. Saved mappings follow, sorted by name. Th
 ??? note "Edge cases"
     - The saved configurations spec describes the notice and the dialog buttons in its own words ("configuration", "Don't save"). The words in this page are the UI words and are used in the app.
     - The saved configurations spec describes a bar of buttons above the mapping grid (`CFG` "UI layout"). The screens here replace that arrangement with the picker, Save, and the per-mapping More menu. The rules `CFG-037` and `CFG-038` still apply.
-    - The Import file picker is the standard system file picker. It works with a mouse and keyboard, not with a controller.
+    - The Import file picker is the standard system file picker. It works with a mouse and keyboard.
 
 ## Choose what a button does
 
@@ -117,7 +116,7 @@ It opens as a sheet on a phone, and as a side panel on a landscape screen. Funct
 | **Riding** | Shift up (harder gear), Shift down (easier gear), Steer left, Steer right, Brake |
 | **Zwift buttons** | Ride On, Power-up |
 | **Menus** | Navigate up, Navigate down, Navigate left, Navigate right, Select, Back |
-| **This app** | Functions that are the app's own, such as switching window size |
+| **This app** | Functions that are the app's own: the optional **Switch window size** |
 | **Nothing** | No action |
 
 | Hint | Where |
@@ -134,8 +133,8 @@ It opens as a sheet on a phone, and as a side panel on a landscape screen. Funct
 | Functions must use the real Zwift Ride names. The picker must not list invented functions such as "U-turn" or "Camera view". | SCR-BTN-033 |
 | Each function must be a radio choice (`FunctionItem_{function}`) with one short line saying what it does, such as "Shift up, harder gear". | SCR-BTN-034 |
 | Navigate up, Navigate down, Ride On, and Power-up must show their hint. | SCR-BTN-035 |
-| **This app** must list only functions the app really implements. "Switch window size" belongs here and must not be shown as a Zwift function. | SCR-BTN-036 |
-| The sheet or panel must trap focus, and Esc or B must close it. See [Accessibility](../ux/accessibility.md). | SCR-BTN-037 |
+| **This app** must list only functions the app really implements. It may list **Switch window size** (Full, then Float, then Mini), which must not be shown as a Zwift function. | SCR-BTN-036 |
+| The sheet or panel must trap focus, and Esc must close it. See [Accessibility](../ux/accessibility.md). | SCR-BTN-037 |
 | Choosing a function must apply right away to the current mapping and show "Unsaved changes". | SCR-BTN-038 |
 
 ??? note "Edge cases"
@@ -161,7 +160,7 @@ Sticks and triggers are analog. A small tilt steers a little. A light squeeze br
 
 ## Controller input on these screens
 
-A controller press finds or assigns a button. Dialogs are answered with A and B. See [Controller input](../ux/controller-input.md).
+A controller press finds or assigns a button. Dialogs work with touch, mouse, and keyboard. See [Controller input](../ux/controller-input.md).
 
 ## Accessibility IDs
 

@@ -81,7 +81,7 @@ The steps are the same as on [Setup](setup.md#pair-with-zwift): Power Source set
 
 ## Controller input on these screens
 
-The controller navigates on Connections (it is not a screen where buttons are assigned). A dialog is answered with A and B. See [Controller input](../ux/controller-input.md).
+On Connections, a controller press goes to Zwift as mapped. This is not a screen where buttons are assigned. See [Controller input](../ux/controller-input.md).
 
 ## Accessibility IDs
 

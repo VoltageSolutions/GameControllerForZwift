@@ -84,14 +84,14 @@ flowchart TD
 |---|---|
 | The riding view must have one big readout (the last press) readable at arm's length. | SCR-RIDE-016 |
 | The riding view must show shifts this ride and a quick reference of the main buttons. | SCR-RIDE-017 |
-| The window size must be changeable between Full, Float, and Mini, and the View button on the controller must cycle Full, then Float, then Mini. | SCR-RIDE-018 |
+| You must be able to change the window size between Full, Float, and Mini. The app may offer **Switch window size** as an app action that can be mapped to a controller input, such as View. | SCR-RIDE-018 |
 | Float and Mini must have no navigation. | SCR-RIDE-019 |
 | Float, Mini, and Full must show the same problems (Zwift lost, controller asleep) as the riding view. | SCR-RIDE-020 |
 | The riding view must follow platform limits in [Platforms](../ux/platforms.md). | SCR-RIDE-021 |
 | A shift announcement for assistive technology must be off by default and controlled by Settings, "Announce each shift". | SCR-RIDE-022 |
 
 ??? note "Edge cases"
-    - "Switch window size" is an app behavior, not a Zwift function. It is not part of the function picker for Zwift functions. If it is mappable, it is listed as an app function.
+    - "Switch window size" is an app behavior, not a Zwift function. It is not part of the function picker for Zwift functions. If the app offers it as a mappable action, the picker lists it under **This app**.
     - At 200% text size the readout wraps to two lines before it shrinks.
 
 ## Zwift lost the connection
@@ -133,11 +133,11 @@ flowchart TD
 
 ## Controller input on these screens
 
-On Home, the controller navigates. On the riding view, the controller navigates and View switches the window size. A dialog is answered by the controller (A confirms, B cancels). See [Controller input](../ux/controller-input.md).
+On Home and the riding view, a controller press goes to Zwift as mapped. The only exception is the optional **Switch window size** action. See [Controller input](../ux/controller-input.md).
 
 | Rule | ID |
 |---|---|
-| Controller input on Ride must follow UX-C-004 and UX-C-005. | SCR-RIDE-033 |
+| Controller input on Ride must follow UX-C-004. | SCR-RIDE-033 |
 
 ## Accessibility IDs
 

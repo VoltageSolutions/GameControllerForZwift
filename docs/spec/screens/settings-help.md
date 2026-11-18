@@ -88,7 +88,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 ## Controller input on these screens
 
-The controller navigates. A dialog is answered with A and B. See [Controller input](../ux/controller-input.md).
+On these screens, a controller press goes to Zwift as mapped. Dialogs work with touch, mouse, and keyboard. See [Controller input](../ux/controller-input.md).
 
 ## Accessibility IDs
 

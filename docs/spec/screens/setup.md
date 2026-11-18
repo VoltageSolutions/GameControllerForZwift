@@ -61,7 +61,7 @@ The app uses one controller at a time. A left and right Joy-Con pair counts as o
 |---|---|
 | The screen must appear only when more than one controller is connected. | SCR-SETUP-007 |
 | It must say "Press any button on the one you want." and pick the controller that is pressed. | SCR-SETUP-008 |
-| A Joy-Con pair must be treated as one controller. | SCR-SETUP-009 |
+| A left and right Joy-Con used together count as one controller. | SCR-SETUP-009 |
 
 ## Pair a new Bluetooth controller
 
@@ -165,7 +165,7 @@ Its one main action is **Try the shift again**. **Skip for now** stays available
 
 ## Controller input on these screens
 
-On all setup screens, a controller press only finds or assigns a button. Moving on, going back, and choosing are done with touch, mouse or keyboard (see [Controller input](../ux/controller-input.md)). A dialog that opens here, such as the network permission explanation, is answered by the controller (A and B).
+On all setup screens, a controller press only finds or assigns a button. Moving on, going back, choosing, and answering a dialog such as the network permission explanation are done with touch, mouse, or keyboard (see [Controller input](../ux/controller-input.md)).
 
 | Rule | ID |
 |---|---|
