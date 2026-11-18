@@ -121,6 +121,24 @@ namespace GameControllerForZwift.UI.WPF.Tests
         }
 
         [Fact]
+        public void StyleGallery_IsOnlyOfferedInDebugBuilds()
+        {
+#if DEBUG
+            Assert.True(_viewModel.ShowsStyleGallery);
+            Assert.True(_viewModel.OpenStyleGalleryCommand.CanExecute(null));
+#else
+            Assert.False(_viewModel.ShowsStyleGallery);
+            Assert.False(_viewModel.OpenStyleGalleryCommand.CanExecute(null));
+#endif
+            _viewModel.IsMoreMenuOpen = true;
+
+            _viewModel.OpenStyleGalleryCommand.Execute(null);
+
+            _navigation.Received(1).NavigateTo<StyleGalleryViewModel>();
+            Assert.False(_viewModel.IsMoreMenuOpen);
+        }
+
+        [Fact]
         public void HelpAndSupport_AreDisabledBecauseTheyHaveNoScreen()
         {
             Assert.False(_viewModel.OpenHelpCommand.CanExecute(null));

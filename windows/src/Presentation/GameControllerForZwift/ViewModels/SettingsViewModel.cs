@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.UI.WPF.Dialogs;
+using GameControllerForZwift.UI.WPF.Localization;
 using GameControllerForZwift.UI.WPF.Theme;
 using System.Globalization;
 using System.IO;
@@ -34,9 +35,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         /// <summary>The appearance choices, in the order Settings lists them (SCR-SET-001).</summary>
         public static IReadOnlyList<AppearanceOption> AppearanceOptions { get; } =
         [
-            new(Appearance.Light, "Light"),
-            new(Appearance.Dark, "Dark"),
-            new(Appearance.MatchWindows, "Match Windows"),
+            new(Appearance.Light, Localizer.Get("AppearanceLight")),
+            new(Appearance.Dark, Localizer.Get("AppearanceDark")),
+            new(Appearance.MatchWindows, Localizer.Get("AppearanceMatchWindows")),
         ];
 
         /// <summary>The chosen appearance. Changing it applies it right away.</summary>

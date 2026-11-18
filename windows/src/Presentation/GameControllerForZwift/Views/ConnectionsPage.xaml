@@ -1,14 +1,15 @@
 <UserControl x:Class="GameControllerForZwift.UI.WPF.Views.ConnectionsPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
              AutomationProperties.AutomationId="ConnectionsPage">
     <!-- docs/spec/screens/connections.md -->
     <StackPanel MaxWidth="720" HorizontalAlignment="Left">
-        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="Connections"
+        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc ConnectionsTitle}"
                    AutomationProperties.AutomationId="ConnectionsPageTitle" AutomationProperties.HeadingLevel="Level1" />
 
         <!-- Zwift card: the status in words, updated live (SCR-CONN-004, SCR-CONN-005). -->
-        <Border x:Name="ConnectionsZwiftCard" AutomationProperties.AutomationId="ConnectionsZwiftCard" AutomationProperties.Name="Zwift" Margin="0,24,0,0" Padding="20" CornerRadius="20" Background="{DynamicResource Brush.surface}" Effect="{DynamicResource Effect.shadow}">
+        <Border x:Name="ConnectionsZwiftCard" AutomationProperties.AutomationId="ConnectionsZwiftCard" AutomationProperties.Name="{loc:Loc ConnectionsZwiftCard}" Margin="0,24,0,0" Style="{StaticResource Surface.Row}">
             <StackPanel Orientation="Horizontal">
                 <Grid Width="28" Height="28" VerticalAlignment="Center">
                     <!-- Connected: a check in an ok circle. Not connected: an accent-ink dot. The words carry the state. -->

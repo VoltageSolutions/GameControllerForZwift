@@ -106,6 +106,10 @@ namespace GameControllerForZwift.UI.WPF.Theme
             _ => CreateHighContrastTokens(),
         };
 
+        /// <summary>The color token names, in the order of the spec table (docs/spec/ux/visual-system.md).</summary>
+        public static IReadOnlyList<string> TokenNames { get; } =
+            ["bg", "surface", "surface-2", "text", "muted", "accent", "accent-ink", "on-accent", "focus", "ok", "err", "pad", "pad-2", "pad-key"];
+
         /// <summary>The system color that stands in for each token while a Windows contrast theme is on.</summary>
         public static IReadOnlyDictionary<string, Color> HighContrastColors() => new Dictionary<string, Color>
         {

@@ -43,6 +43,7 @@ nav = [
       "spec/ux/principles.md",
       "spec/ux/visual-system.md",
       "spec/ux/voice.md",
+      "spec/ux/localization.md",
       "spec/ux/navigation.md",
       "spec/ux/controller-input.md",
       "spec/ux/accessibility.md",

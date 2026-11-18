@@ -61,24 +61,36 @@
         <Setter Property="FontSize" Value="{StaticResource TitleLargeFontSize}" />
     </Style>
 
-    <!-- Type roles at desktop sizes (docs/spec/ux/visual-system.md, tablet column). -->
-    <Style x:Key="Text.Title" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource Font.Figtree}" />
-        <Setter Property="FontSize" Value="28" />
-        <Setter Property="FontWeight" Value="ExtraBold" />
-        <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
-        <Setter Property="TextWrapping" Value="Wrap" />
-    </Style>
+    <!-- Type roles at desktop sizes (docs/spec/ux/visual-system.md, Type, tablet column). Headings are weight 800 and
+         body text 400 to 600 (UX-V-012). Every role uses tabular figures, so numbers do not jitter (UX-V-013). -->
     <Style x:Key="Text.Body" TargetType="TextBlock">
         <Setter Property="FontFamily" Value="{StaticResource Font.Figtree}" />
         <Setter Property="FontSize" Value="18" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
         <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+    </Style>
+    <Style x:Key="Text.BodyStrong" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
     <Style x:Key="Text.Caption" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
         <Setter Property="FontSize" Value="15" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+    </Style>
+    <Style x:Key="Text.Title" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="ExtraBold" />
+    </Style>
+    <Style x:Key="Text.Display" TargetType="TextBlock" BasedOn="{StaticResource Text.Title}">
+        <Setter Property="FontSize" Value="52" />
+        <Setter Property="LineHeight" Value="56" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+    </Style>
+    <!-- A big live number, such as watts or gear. -->
+    <Style x:Key="Text.Readout" TargetType="TextBlock" BasedOn="{StaticResource Text.Title}">
+        <Setter Property="FontSize" Value="64" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
     </Style>
 
     <!--Other-->

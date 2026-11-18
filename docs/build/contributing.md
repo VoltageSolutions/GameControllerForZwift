@@ -47,6 +47,7 @@ Pull requests run automated checks; keep them green.
 - **Tests for new behavior.** Add or update tests in the matching test project. Do not leave tests skipped.
 - **Coverage holds up.** New and changed lines should be covered (the patch target is 60%).
 - **Docs follow the code.** If you change behavior that riders or protocol readers rely on, update the matching page on this site.
+- **Screenshots for UI changes.** If the pull request changes what the app looks like, embed screenshots in its description, so a reviewer does not need to build it. Show each changed screen in light and dark mode, plus the states or window sizes that matter, about six images. Drag them into the description on GitHub; they do not go into the repository.
 
 ## Writing docs
 

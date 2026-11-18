@@ -89,3 +89,4 @@ A small floating button with a ⋯ (more) icon. It is not a hamburger: there is 
 ??? note "Edge cases"
     - Only the very first run hides the tabs. Choosing a different controller or pairing a new one later happens inside the Connections tab, with the tabs visible.
     - Pushed screens (Settings, Help and feedback, Credits, and Support this project) keep the tabs visible with none selected.
+    - Debug builds add a fifth menu item, Style gallery, at the end of the menu. It opens a pushed screen that shows every component in each state, for development. Release builds never show it.

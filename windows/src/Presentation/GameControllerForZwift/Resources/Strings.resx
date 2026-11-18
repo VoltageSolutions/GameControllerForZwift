@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- UI text, English (US) source strings (docs/spec/ux/localization.md). Every data element needs a comment for translators. -->
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>Game Controller for Zwift</value>
+    <comment>Window title in the taskbar and Alt+Tab.</comment>
+  </data>
+  <data name="TitleBarText" xml:space="preserve">
+    <value>VOLTAGE · Game Controller for Zwift</value>
+    <comment>App name in the title bar. VOLTAGE and Zwift are brand names (UX-L-008).</comment>
+  </data>
+  <data name="CaptionMinimize" xml:space="preserve">
+    <value>Minimize</value>
+    <comment>Screen reader name of the title bar's minimize button.</comment>
+  </data>
+  <data name="CaptionMaximize" xml:space="preserve">
+    <value>Maximize</value>
+    <comment>Screen reader name of the title bar's maximize button.</comment>
+  </data>
+  <data name="CaptionRestore" xml:space="preserve">
+    <value>Restore</value>
+    <comment>Screen reader name of the title bar's maximize button while the window is maximized.</comment>
+  </data>
+  <data name="CaptionClose" xml:space="preserve">
+    <value>Close</value>
+    <comment>Screen reader name of the title bar's close button.</comment>
+  </data>
+  <data name="NavMain" xml:space="preserve">
+    <value>Main</value>
+    <comment>Screen reader name of the list of tabs.</comment>
+  </data>
+  <data name="NavRide" xml:space="preserve">
+    <value>Ride</value>
+    <comment>Tab label: the riding home screen.</comment>
+  </data>
+  <data name="NavButtons" xml:space="preserve">
+    <value>Buttons</value>
+    <comment>Tab label: what each controller button does.</comment>
+  </data>
+  <data name="NavConnections" xml:space="preserve">
+    <value>Connections</value>
+    <comment>Tab label: the controller and Zwift connections.</comment>
+  </data>
+  <data name="NavConnectionsAlert" xml:space="preserve">
+    <value>{0}, Zwift not connected</value>
+    <comment>Screen reader name of the Connections tab while its warning dot shows. {0} is the tab label.</comment>
+  </data>
+  <data name="NavBack" xml:space="preserve">
+    <value>Back</value>
+    <comment>Screen reader name of the back button on a screen opened from the More menu.</comment>
+  </data>
+  <data name="MenuMore" xml:space="preserve">
+    <value>More: settings, help, credits, support</value>
+    <comment>Screen reader name of the More button while its menu is closed.</comment>
+  </data>
+  <data name="MenuClose" xml:space="preserve">
+    <value>Close menu</value>
+    <comment>Screen reader name of the More button while its menu is open.</comment>
+  </data>
+  <data name="MenuName" xml:space="preserve">
+    <value>More</value>
+    <comment>Screen reader name of the More menu.</comment>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Settings</value>
+    <comment>More menu item.</comment>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>Help and feedback</value>
+    <comment>More menu item.</comment>
+  </data>
+  <data name="MenuCredits" xml:space="preserve">
+    <value>Credits</value>
+    <comment>More menu item.</comment>
+  </data>
+  <data name="MenuSupport" xml:space="preserve">
+    <value>Support this project</value>
+    <comment>More menu item.</comment>
+  </data>
+  <data name="MenuStyleGallery" xml:space="preserve">
+    <value>Style gallery</value>
+    <comment>More menu item shown only in Debug builds, for developers.</comment>
+  </data>
+  <data name="RideTitle" xml:space="preserve">
+    <value>Ride</value>
+    <comment>Title of the Ride screen.</comment>
+  </data>
+  <data name="RidePlaceholder" xml:space="preserve">
+    <value>Set up what each button does on the Buttons tab.</value>
+    <comment>Text on the Ride screen, which has no content of its own yet.</comment>
+  </data>
+  <data name="ConnectionsTitle" xml:space="preserve">
+    <value>Connections</value>
+    <comment>Title of the Connections screen.</comment>
+  </data>
+  <data name="ConnectionsZwiftCard" xml:space="preserve">
+    <value>Zwift</value>
+    <comment>Screen reader name of the card on the Connections screen that shows the Zwift status.</comment>
+  </data>
+  <data name="ZwiftConnected" xml:space="preserve">
+    <value>Zwift can see your controller</value>
+    <comment>Zwift status on the Connections screen when Zwift is connected.</comment>
+  </data>
+  <data name="ZwiftNotConnected" xml:space="preserve">
+    <value>Zwift isn't connected yet</value>
+    <comment>Zwift status on the Connections screen when Zwift is not connected.</comment>
+  </data>
+  <data name="AppearanceLight" xml:space="preserve">
+    <value>Light</value>
+    <comment>Settings, app theme choice.</comment>
+  </data>
+  <data name="AppearanceDark" xml:space="preserve">
+    <value>Dark</value>
+    <comment>Settings, app theme choice.</comment>
+  </data>
+  <data name="AppearanceMatchWindows" xml:space="preserve">
+    <value>Match Windows</value>
+    <comment>Settings, app theme choice that follows the Windows app mode.</comment>
+  </data>
+</root>

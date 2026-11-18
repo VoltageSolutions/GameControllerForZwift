@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using GameControllerForZwift.Core;
+using GameControllerForZwift.UI.WPF.Localization;
 using System.Windows.Threading;
 
 namespace GameControllerForZwift.UI.WPF.ViewModels
@@ -10,9 +11,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
     /// </summary>
     public sealed partial class ZwiftStatus : ObservableObject, IDisposable
     {
-        public const string ConnectedText = "Zwift can see your controller";
-        public const string NotConnectedText = "Zwift isn't connected yet";
-
         private readonly IZwiftConnection? _connection;
         private readonly Dispatcher _dispatcher;
 
@@ -34,7 +32,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private bool _isConnected;
 
         /// <summary>The status in words.</summary>
-        public string StatusText => IsConnected ? ConnectedText : NotConnectedText;
+        public string StatusText => Localizer.Get(IsConnected ? "ZwiftConnected" : "ZwiftNotConnected");
 
         // The network raises the event on its own thread. The change is posted to the thread that created this object.
         private void OnConnectionChanged(object? sender, bool connected)

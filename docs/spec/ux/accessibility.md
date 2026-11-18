@@ -118,11 +118,17 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 
 | Rule | ID |
 |---|---|
-| Focus order must be the More button first, then the screen's content top to bottom, then the tabs last. | UX-A-020 |
+| Focus order and screen reader reading order must follow a left-to-right reading layout: what sits further left comes first, then top to bottom. The table below gives the order for each tab placement. | UX-A-020 |
 | Each screen must have one level 1 heading (the screen title). Card titles must be level 2. | UX-A-021 |
 | Dialogs and menus must trap focus. Esc must close them, and focus must return to what opened them. | UX-A-022 |
 | Every focusable element must show the 3 px focus ring. Arrow keys must move in the menu and tab bar. Enter must activate. | UX-A-023 |
 | The Buttons screen must tell you its input rule: "Press a button on your controller to select it." | UX-A-024 |
+
+| Tab placement | Order |
+|---|---|
+| Sidebar or rail on the left (desktop, Android tablet) | Tabs, More button, screen content |
+| Tab bar at the top center (iPad) | Tabs, More button, screen content |
+| Bottom bar (phone, narrow desktop window) | More button, screen content, tabs |
 
 ## Live updates without noise
 

@@ -1,4 +1,5 @@
-﻿using GameControllerForZwift.UI.WPF.Navigation;
+﻿using GameControllerForZwift.UI.WPF.Localization;
+using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ namespace GameControllerForZwift.UI.WPF
             [typeof(ConnectionsViewModel)] = () => new ConnectionsPage(),
             [typeof(AboutPageViewModel)] = () => new AboutPage(),
             [typeof(SettingsViewModel)] = () => new SettingsPage(),
+            [typeof(StyleGalleryViewModel)] = () => new StyleGalleryPage(),
         });
 
         // Pages that have not been visited yet are built and laid out while the app is idle, one per idle turn, so the
@@ -71,7 +73,7 @@ namespace GameControllerForZwift.UI.WPF
         {
             MainGrid.Margin = WindowState == WindowState.Maximized ? new Thickness(8) : default;
             MaximizeIcon.Text = WindowState == WindowState.Maximized ? "" : "";
-            System.Windows.Automation.AutomationProperties.SetName(MaximizeButton, WindowState == WindowState.Maximized ? "Restore" : "Maximize");
+            System.Windows.Automation.AutomationProperties.SetName(MaximizeButton, Localizer.Get(WindowState == WindowState.Maximized ? "CaptionRestore" : "CaptionMaximize"));
         }
 
         private void MinimizeWindow(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
