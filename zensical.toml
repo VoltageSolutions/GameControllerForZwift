@@ -34,8 +34,10 @@ nav = [
   ] },
   { "Spec" = [
     "spec/index.md",
-    "spec/saved-configurations.md",
-    "spec/controller-detection.md",
+    { "Features" = [
+      "spec/features/saved-configurations.md",
+      "spec/features/controller-detection.md",
+    ] },
     { "UX" = [
       "spec/ux/index.md",
       "spec/ux/principles.md",

@@ -33,6 +33,15 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 
 ## The specs
 
+### Features
+
+| Spec | ID prefix | What it covers |
+|---|---|---|
+| [Saved configurations](features/saved-configurations.md) | `CFG` | Save, reload, rename, delete, import and share mappings. |
+| [Controller detection](features/controller-detection.md) | `CTRL` | How the controller list follows controllers as they connect and disconnect, and which one is selected. |
+
+### UX
+
 | Spec | ID prefix | What it covers |
 |---|---|---|
 | [UX overview](ux/index.md) | none | Brand idea, audiences, how screens are designed and reviewed. |
@@ -43,12 +52,15 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 | [Controller input](ux/controller-input.md) | `UX-C` | What a controller press means on each kind of screen. |
 | [Accessibility](ux/accessibility.md) | `UX-A` | Contrast, targets, IDs, reading order, live updates. |
 | [Platforms](ux/platforms.md) | `UX-PL` | What changes per platform, and what never does. |
+
+### Screens
+
+| Spec | ID prefix | What it covers |
+|---|---|---|
 | [Setup screens](screens/setup.md) | `SCR-SETUP` | Connect a controller, pair with Zwift, try a shift. |
 | [Ride screens](screens/ride.md) | `SCR-RIDE` | Home, riding view, connection lost, ride finished. |
 | [Buttons screens](screens/buttons.md) | `SCR-BTN` | Mappings, the function picker, sticks and triggers. |
 | [Connections screens](screens/connections.md) | `SCR-CONN` | Controller and Zwift status, "Zwift can't find Voltage Gamepad". |
 | [Settings and help screens](screens/settings-help.md) | `SCR-SET` | Settings, Help and feedback, Credits, Support this project. |
-| [Saved configurations](saved-configurations.md) | `CFG` | Save, reload, rename, delete, import and share mappings. |
-| [Controller detection](controller-detection.md) | `CTRL` | How the controller list follows controllers as they connect and disconnect, and which one is selected. |
 
 The saved configurations spec calls a saved set of button assignments a "configuration". The app calls it a **mapping**. The screen specs use "mapping" and refer to the `CFG` rules by ID.

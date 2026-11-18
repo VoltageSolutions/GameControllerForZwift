@@ -8,7 +8,7 @@ using static GameControllerForZwift.UI.WPF.Tests.ViewModels.ConfigurationTestCon
 namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
 {
     /// <summary>
-    /// Saved configurations on the Controller Setup page. See docs/spec/saved-configurations.md.
+    /// Saved configurations on the Controller Setup page. See docs/spec/features/saved-configurations.md.
     /// </summary>
     public sealed class ControllerSetupViewModelConfigurationTests : IDisposable
     {
