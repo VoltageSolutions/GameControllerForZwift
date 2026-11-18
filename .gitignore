@@ -404,7 +404,7 @@ SDL2-*.zip
 # Large Wireshark export, redundant with the pcapng
 docs/captures/Jetblack Packet Disections.json
 
-# Remote build watcher (tools/dev/build-watcher.ps1)
+# Remote build watcher (windows/tools/dev/build-watcher.ps1)
 .build-request
 .build-running
 .build-done

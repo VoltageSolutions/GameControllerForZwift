@@ -1,5 +1,5 @@
 # Remote build watcher. Run from the repo root:
-#   powershell -ExecutionPolicy Bypass -File tools\dev\build-watcher.ps1
+#   powershell -ExecutionPolicy Bypass -File windows\tools\dev\build-watcher.ps1
 # Polls every 2 s for .build-request and runs only dotnet build/test/clean commands.
 # Compatible with Windows PowerShell 5.1 and pwsh.
 $ErrorActionPreference = 'Continue'
@@ -17,12 +17,12 @@ function Get-Steps([string[]]$lines) {
         if ($line -eq '') { continue }
         $n++
         switch -Regex ($line) {
-            '^build$'        { $steps += ,@('build', 'dotnet build GameControllerForZwift.sln -v:minimal', 'build.log'); break }
-            '^test-network$' { $steps += ,@('test-network', 'dotnet test tests\GameControllerForZwift.Network.UnitTests', 'test-network.log'); break }
-            '^test-unit$'    { $steps += ,@('test-unit', 'dotnet test tests\GameControllerForZwift.UnitTests', 'test-unit.log'); break }
-            '^test$'         { $steps += ,@('test-network', 'dotnet test tests\GameControllerForZwift.Network.UnitTests', 'test-network.log')
-                               $steps += ,@('test-unit', 'dotnet test tests\GameControllerForZwift.UnitTests', 'test-unit.log'); break }
-            '^clean$'        { $steps += ,@('clean', 'dotnet clean GameControllerForZwift.sln -v:minimal', 'clean.log'); break }
+            '^build$'        { $steps += ,@('build', 'dotnet build windows\GameControllerForZwift.sln -v:minimal', 'build.log'); break }
+            '^test-network$' { $steps += ,@('test-network', 'dotnet test windows\tests\GameControllerForZwift.Network.UnitTests', 'test-network.log'); break }
+            '^test-unit$'    { $steps += ,@('test-unit', 'dotnet test windows\tests\GameControllerForZwift.UnitTests', 'test-unit.log'); break }
+            '^test$'         { $steps += ,@('test-network', 'dotnet test windows\tests\GameControllerForZwift.Network.UnitTests', 'test-network.log')
+                               $steps += ,@('test-unit', 'dotnet test windows\tests\GameControllerForZwift.UnitTests', 'test-unit.log'); break }
+            '^clean$'        { $steps += ,@('clean', 'dotnet clean windows\GameControllerForZwift.sln -v:minimal', 'clean.log'); break }
             '^dotnet\s'      { $steps += ,@("custom$n", $line, "step-$n.log"); break }
             default          { $steps += ,@("rejected$n", $null, $line) }
         }

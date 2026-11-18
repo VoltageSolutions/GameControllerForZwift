@@ -60,7 +60,7 @@ Full instructions are on the documentation site: [Install and first run](https:/
 
 1. Install the .NET 10 SDK on Windows (for example with Visual Studio and the .NET desktop development workload).
 1. Clone the repo.
-1. Run `dotnet build GameControllerForZwift.sln`. The first build downloads the SDL2 native library.
+1. Run `dotnet build windows/GameControllerForZwift.sln`. The app's solution, source, tests and tools live in `windows/`. The first build downloads the SDL2 native library.
 
 See [Build and test](https://VoltageSolutions.github.io/GameControllerForZwift/build/build-and-test/) and [Architecture](https://VoltageSolutions.github.io/GameControllerForZwift/build/architecture/) for details.
 

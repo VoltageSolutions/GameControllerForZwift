@@ -13,14 +13,14 @@ coverage:
   ignore:
     - "**/Generated/*"
     - "**/Migrations/*"
-    - "tests/**"
-    - "tools/**"
+    - "windows/tests/**"
+    - "windows/tools/**"
     - "**/obj/**"
     - "**/bin/**"
     - "**/*.g.cs"
     - "**/*.g.i.cs"
     - "**/*.designer.cs"
     # WPF XAML code-behind (*.xaml.cs) is intentionally NOT ignored: App/MainWindow/pages are exercised by the
-    # UI tests and the STA unit tests in tests/GameControllerForZwift.UnitTests.
+    # UI tests and the STA unit tests in windows/tests/GameControllerForZwift.UnitTests.
 
 comment: false

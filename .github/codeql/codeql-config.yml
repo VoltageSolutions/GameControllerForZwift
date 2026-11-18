@@ -11,8 +11,8 @@ query-filters:
 # C# is a compiled language: CodeQL's `paths`/`paths-ignore` apply only to interpreted languages (Python, Ruby,
 # JavaScript/TypeScript), see "Customizing your advanced setup for code scanning" in the GitHub docs. What gets
 # analyzed is whatever the manual build in .github/workflows/ci.yml and baseline.yml compiles, and that build only compiles the
-# shipping projects (tests/ and tools/ are not built there). The entries below are kept for documentation and for
+# shipping projects (windows/tests/ and windows/tools/ are not built there). The entries below are kept for documentation and for
 # any non-compiled files CodeQL might pick up. Alerts in generated files (*.g.cs, obj/) are removed by a SARIF filter step in those workflows.
 paths-ignore:
-  - tests/**
-  - tools/**
+  - windows/tests/**
+  - windows/tools/**
