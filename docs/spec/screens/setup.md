@@ -109,28 +109,21 @@ The first time, Zwift also runs a short Zwift Ride tutorial.
 
 ### What the app can tell
 
-| Step | What you do in Zwift | Can the app see it? | How |
-|---|---|---|---|
-| 1 | Power Source: Voltage Gamepad | Yes | The Direct Connect handshake completes (`HandshakeCompleted`, which sets `IsZwiftConnected`). |
-| 2 | Controls: Voltage Gamepad | Not yet | The connection session can report that Zwift subscribed to the Controls characteristic (`IsSubscribed`). The app does not surface this yet. |
-| 3 | Power Source: your trainer | No | The app cannot see it. It never ticks. It stays as the last instruction. |
+The app sees one thing: Zwift opened a connection and finished the handshake (`HandshakeCompleted`, which sets `IsZwiftConnected`). Zwift subscribes to everything at once, whichever slot you picked, so the app cannot tell Power Source from Controls and cannot see you set Power Source back to your trainer. The steps are instructions, and the app never marks one as done.
 
 | State | What you see |
 |---|---|
-| Waiting | "Waiting for Zwift..." No step is ticked. |
-| Step 1 done | Step 1 ticks. "Step 2 of 3." |
-| Step 2 done | Step 2 ticks once the app can detect it. |
-| Last step | Step 3 is shown as an instruction that is never ticked. |
+| Waiting | "Waiting for Zwift..." |
 | Connected | "Zwift is connected" (`SetupZwiftStatus`). |
 
 | Rule | ID |
 |---|---|
 | The screen must name **Voltage Gamepad** as the device to pick in Zwift, and give the steps in the order Power Source, Controls, then Power Source back to the trainer. | SCR-SETUP-017 |
 | The screen must show live status: "Waiting for Zwift..." until `IsZwiftConnected` becomes true, then "Zwift is connected". | SCR-SETUP-018 |
-| Step 1 must tick when the handshake completes. | SCR-SETUP-019 |
-| Step 2 may tick when the app can see that Zwift subscribed to Controls. It must not tick unless the app knows. | SCR-SETUP-020 |
-| Step 3 must never tick, because the app cannot detect it. It must stay as the last instruction. | SCR-SETUP-021 |
-| The app must announce the current step ("Step 2 of 3") as a live region (`SetupZwiftStatus`). | SCR-SETUP-022 |
+| The steps must be instructions only. The app must not mark a step done, because it cannot see which steps the rider took (UX-W-006). | SCR-SETUP-019 |
+| The screen must show only the connection status, "Waiting for Zwift..." or "Zwift is connected", and nothing that says which step the rider is on. | SCR-SETUP-020 |
+| Step 3, Power Source back to your trainer, must stay as the last instruction. | SCR-SETUP-021 |
+| The app must announce the connection status as a live region (`SetupZwiftStatus`). | SCR-SETUP-022 |
 | The screen must mention the one-time Zwift Ride tutorial. | SCR-SETUP-023 |
 | The screen must say that Zwift may run on this computer or on another device on the same network. | SCR-SETUP-024 |
 

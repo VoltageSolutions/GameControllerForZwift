@@ -20,7 +20,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             using var status = new ZwiftStatus(_connection);
 
             Assert.True(status.IsConnected);
-            Assert.Equal("Zwift can see your controller", status.StatusText);
+            Assert.Equal("Zwift is connected to Voltage Gamepad", status.StatusText);
         }
 
         [Fact]

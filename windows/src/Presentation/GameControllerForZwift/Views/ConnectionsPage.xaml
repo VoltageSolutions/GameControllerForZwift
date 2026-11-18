@@ -73,45 +73,19 @@
                                    AutomationProperties.LiveSetting="Polite" />
                     </Grid>
 
+                    <TextBlock x:Name="TrainerReminder" Margin="0,16,0,0" Style="{StaticResource Text.Body}"
+                               Text="{loc:Loc ConnectionsTrainerReminder}"
+                               Visibility="{Binding ShowTrainerReminder, Converter={StaticResource BooleanToVisibility}}"
+                               AutomationProperties.AutomationId="ConnectionsTrainerReminder" />
+
                     <ItemsControl x:Name="ZwiftSteps" Margin="0,20,0,0" ItemsSource="{Binding Steps}" IsTabStop="False"
                                   Visibility="{Binding ShowSteps, Converter={StaticResource BooleanToVisibility}}"
                                   AutomationProperties.AutomationId="ConnectionsSteps">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
-                                <Grid Margin="0,0,0,14">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <!-- Done: a check in an ok circle. Not done: an empty ring. The words beside it say the same. -->
-                                    <Grid Width="24" Height="24" VerticalAlignment="Top" Margin="0,2,0,0">
-                                        <Ellipse>
-                                            <Ellipse.Style>
-                                                <Style TargetType="Ellipse">
-                                                    <Setter Property="Fill" Value="Transparent" />
-                                                    <Setter Property="Stroke" Value="{DynamicResource Brush.muted}" />
-                                                    <Setter Property="StrokeThickness" Value="2" />
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding IsDone}" Value="True">
-                                                            <Setter Property="Fill" Value="{DynamicResource Brush.ok}" />
-                                                            <Setter Property="Stroke" Value="{DynamicResource Brush.ok}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Ellipse.Style>
-                                        </Ellipse>
-                                        <Path Width="24" Height="24" Stretch="None" Data="{StaticResource Icon.Check}"
-                                              Stroke="{DynamicResource Brush.surface}" StrokeThickness="2.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
-                                              Visibility="{Binding IsDone, Converter={StaticResource BooleanToVisibility}}" />
-                                    </Grid>
-                                    <StackPanel Grid.Column="1" Margin="14,0,0,0">
-                                        <TextBlock Style="{StaticResource Text.Body}" Text="{Binding Text}"
-                                                   AutomationProperties.AutomationId="{Binding AutomationId}" />
-                                        <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding StateText}"
-                                                   AutomationProperties.AutomationId="{Binding AutomationId, StringFormat={}{0}State}" />
-                                    </StackPanel>
-                                </Grid>
-                            </DataTemplate>
+                            <TextBlock Margin="0,0,0,10" Style="{StaticResource Text.Body}" Text="{Binding Text}"
+                                       AutomationProperties.AutomationId="{Binding AutomationId}" />
+                        </DataTemplate>
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
 

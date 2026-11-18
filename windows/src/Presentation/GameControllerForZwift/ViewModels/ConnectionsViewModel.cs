@@ -34,10 +34,12 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _controllers = controllers;
             _openUri = openUri ?? OpenWithShell;
 
-            PowerSourceStep = new ZwiftStepViewModel("ConnectionsStep1", "ZwiftStepPowerSource", zwiftStatus.IsConnected);
-            ControlsStep = new ZwiftStepViewModel("ConnectionsStep2", "ZwiftStepControls", false);
-            TrainerStep = new ZwiftStepViewModel("ConnectionsStep3", "ZwiftStepTrainer", false);
-            Steps = [PowerSourceStep, ControlsStep, TrainerStep];
+            Steps =
+            [
+                new ZwiftStep("ConnectionsStep1", Localizer.Get("ZwiftStepPowerSource")),
+                new ZwiftStep("ConnectionsStep2", Localizer.Get("ZwiftStepControls")),
+                new ZwiftStep("ConnectionsStep3", Localizer.Get("ZwiftStepTrainer")),
+            ];
 
             zwiftStatus.PropertyChanged += OnZwiftChanged;
             controllers.PropertyChanged += OnControllersChanged;
@@ -71,17 +73,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         /// <summary>True when there is another controller to choose (two or more are connected).</summary>
         public bool CanPickController => _controllers.Controllers.Count >= 2;
 
-        /// <summary>The three Zwift steps, in order (SCR-CONN-009).</summary>
-        public IReadOnlyList<ZwiftStepViewModel> Steps { get; }
+        /// <summary>
+        /// The three Zwift steps, in order. They are instructions only: the app cannot see which steps the rider took
+        /// (SCR-CONN-009).
+        /// </summary>
+        public IReadOnlyList<ZwiftStep> Steps { get; }
 
-        /// <summary>Step 1, ticked when Zwift is connected (SCR-SETUP-019).</summary>
-        public ZwiftStepViewModel PowerSourceStep { get; }
-
-        /// <summary>Step 2, never ticked because the app does not read the subscription (SCR-SETUP-020).</summary>
-        public ZwiftStepViewModel ControlsStep { get; }
-
-        /// <summary>Step 3, never ticked because the app cannot see it (SCR-SETUP-021).</summary>
-        public ZwiftStepViewModel TrainerStep { get; }
+        /// <summary>True while Zwift is connected, when the reminder to set Power Source back to the trainer shows (SCR-CONN-018).</summary>
+        public bool ShowTrainerReminder => Zwift.IsConnected;
 
         /// <summary>True when the steps show: always while Zwift is not connected, and after Show me how when it is (SCR-CONN-011).</summary>
         public bool ShowSteps => !Zwift.IsConnected || _stepsExpanded;
@@ -109,7 +108,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 return;
             }
 
-            PowerSourceStep.IsDone = Zwift.IsConnected;
             if (!Zwift.IsConnected)
             {
                 // The next connection starts collapsed again.
@@ -138,6 +136,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             OnPropertyChanged(nameof(ShowSteps));
             OnPropertyChanged(nameof(ShowMeHowVisible));
             OnPropertyChanged(nameof(ShowMeHowLabel));
+            OnPropertyChanged(nameof(ShowTrainerReminder));
         }
 
         private static void OpenWithShell(string uri)
@@ -154,30 +153,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         }
     }
 
-    /// <summary>One of the three Zwift steps,, with whether it is done in words as well as in its icon (SCR-CONN-009).</summary>
-    public sealed partial class ZwiftStepViewModel : ObservableObject
-    {
-        private readonly string _textKey;
-
-        public ZwiftStepViewModel(string automationId, string textKey, bool isDone)
-        {
-            AutomationId = automationId;
-            _textKey = textKey;
-            _isDone = isDone;
-        }
-
-        /// <summary>The automation ID of the step.</summary>
-        public string AutomationId { get; }
-
-        /// <summary>The instruction.</summary>
-        public string Text => Localizer.Get(_textKey);
-
-        /// <summary>True when the step is done.</summary>
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(StateText))]
-        private bool _isDone;
-
-        /// <summary>"Done" or "Not done yet".</summary>
-        public string StateText => Localizer.Get(IsDone ? "ZwiftStepDone" : "ZwiftStepNotDone");
-    }
+    /// <summary>One of the three Zwift steps: its automation ID and its numbered instruction.</summary>
+    public sealed record ZwiftStep(string AutomationId, string Text);
 }

@@ -21,7 +21,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 |---|---|
 | Controller here | "Your Xbox controller is here" or "Awake and connected". |
 | No controller | "Wake your controller" with "Looking for your controller...". Both ways out stay visible. |
-| Zwift connected | "Zwift can see your controller." |
+| Zwift connected | "Zwift is connected to Voltage Gamepad" with a reminder to set Power Source back to your trainer. |
 | Zwift not connected | "Zwift isn't connected yet", the three steps, and the tab dot. |
 
 | Rule | ID |
@@ -29,7 +29,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | The screen must show your controller's name and its state in words. | SCR-CONN-001 |
 | The screen must offer **Use a different controller** and **Pair a new Bluetooth controller**. Both must follow [Setup screens](setup.md). On Windows, **Pair a new Bluetooth controller** opens the Windows Bluetooth settings. **Use a different controller** is a dropdown of the connected controllers, and it stays visible but disabled until two or more are connected. | SCR-CONN-002 |
 | With no controller, the screen must show the same "Wake your controller" state as Ride. | SCR-CONN-003 |
-| The Zwift card must say "Zwift can see your controller" or "Zwift isn't connected yet", based on `IsZwiftConnected`. | SCR-CONN-004 |
+| The Zwift card must say "Zwift is connected to Voltage Gamepad" or "Zwift isn't connected yet", based on `IsZwiftConnected`. | SCR-CONN-004 |
 | The card must show a live-updating status, and the app must announce it as a live region. | SCR-CONN-005 |
 | When Zwift is not connected, the Connections tab must show its dot, and the card's main action must be **Pair with Zwift** (or **Show me how** if the steps are collapsed). | SCR-CONN-006 |
 | When Zwift is connected, the screen must not use the accent fill for any action. | SCR-CONN-007 |
@@ -39,19 +39,18 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 The steps are the same as on [Setup](setup.md#pair-with-zwift): Power Source set to Voltage Gamepad, then Controls set to Voltage Gamepad, then Power Source back to your trainer. Zwift needs this every session.
 
-| Step | Can the app see it? |
-|---|---|
-| 1. Power Source: Voltage Gamepad | Yes, through the Direct Connect handshake (`IsZwiftConnected`). |
-| 2. Controls: Voltage Gamepad | Possible. The connection session knows when Zwift subscribes to Controls (`IsSubscribed`), but the app does not use it yet. |
-| 3. Power Source: your trainer | No. It never ticks. |
+The app sees one thing: Zwift opened a connection and finished the handshake (`IsZwiftConnected`). When Zwift connects, it subscribes to everything at once: the controller characteristics, power, and heart rate. It does the same whether you picked Voltage Gamepad as Power Source or as Controls. So the app cannot tell which steps you took, and it never marks a step as done.
 
 | Rule | ID |
 |---|---|
-| The steps must tick off live exactly as described for Setup (SCR-SETUP-019 to SCR-SETUP-021). | SCR-CONN-009 |
+| The steps must be instructions only. The app must not mark a step done, because it cannot see which steps the rider took (UX-W-006). | SCR-CONN-009 |
 | The step list must name **Voltage Gamepad** as the device to pick. | SCR-CONN-010 |
 | When Zwift is connected, the list should collapse to a one-line status and offer to show the steps again. | SCR-CONN-011 |
+| While Zwift is connected, the card must show the reminder "Set Power Source back to your trainer in Zwift." under the status, whether or not the steps are open. It must not show while Zwift is not connected. | SCR-CONN-018 |
 
-Each step shows whether it is done as an icon and as words ("Done" or "Not done yet"), so color and shape never carry the state alone. When Zwift is not connected, the steps are always open. When Zwift is connected, the **Show me how** button opens them and becomes **Hide steps**, which closes them again. When Zwift is not connected, the button is hidden. The steps close again the next time Zwift connects.
+The steps are plain numbered text. When Zwift is not connected, the steps are always open and the button is hidden. When Zwift is connected, the steps start closed, and the **Show me how** button opens them and becomes **Hide steps**, which closes them again. The steps close again the next time Zwift connects.
+
+While Zwift is connected, a one-line reminder sits under the status, whether the steps are open or closed (SCR-CONN-018).
 
 ## Zwift can't find Voltage Gamepad
 
@@ -96,5 +95,6 @@ On Connections, a controller press goes to Zwift as mapped. This is not a screen
 | `ConnectionsPairBluetoothButton` | **Pair a new Bluetooth controller** |
 | `ConnectionsZwiftCard` | The Zwift card |
 | `ConnectionsZwiftStatus` | The Zwift status line |
-| `ConnectionsStep1` to `ConnectionsStep3` | The step texts. Each state text adds `State`, for example `ConnectionsStep1State`. |
+| `ConnectionsTrainerReminder` | The reminder to set Power Source back to your trainer |
+| `ConnectionsStep1` to `ConnectionsStep3` | The step texts |
 | `ConnectionsShowMeHowButton` | The steps button |

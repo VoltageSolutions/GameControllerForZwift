@@ -128,20 +128,16 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         }
 
         [Fact]
-        public void SCRCONN009_NotConnected_ExpandsTheStepsWithNoneDone()
+        public void SCRCONN009_TheStepsAreNumberedInstructionsInOrder()
         {
             ConnectionsViewModel viewModel = Create();
 
             Assert.True(viewModel.ShowSteps);
             Assert.False(viewModel.ShowMeHowVisible);
             Assert.Equal(
-                ["Power Source: Voltage Gamepad", "Controls: Voltage Gamepad", "Power Source: your trainer"],
+                ["1. Power Source: Voltage Gamepad", "2. Controls: Voltage Gamepad", "3. Power Source: your trainer"],
                 viewModel.Steps.Select(s => s.Text));
-            Assert.All(viewModel.Steps, s =>
-            {
-                Assert.False(s.IsDone);
-                Assert.Equal("Not done yet", s.StateText);
-            });
+            Assert.Equal(["ConnectionsStep1", "ConnectionsStep2", "ConnectionsStep3"], viewModel.Steps.Select(s => s.AutomationId));
         }
 
         [Fact]
@@ -149,36 +145,37 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         {
             ConnectionsViewModel viewModel = Create();
 
-            Assert.Contains("Voltage Gamepad", viewModel.PowerSourceStep.Text, StringComparison.Ordinal);
-            Assert.Contains("Voltage Gamepad", viewModel.ControlsStep.Text, StringComparison.Ordinal);
+            Assert.Contains("Voltage Gamepad", viewModel.Steps[0].Text, StringComparison.Ordinal);
+            Assert.Contains("Voltage Gamepad", viewModel.Steps[1].Text, StringComparison.Ordinal);
         }
 
         [Fact]
-        public void SCRCONN009_Connected_TicksOnlyTheFirstStep()
+        public void SCRCONN009_TheStepsDoNotChangeWhenZwiftConnects()
         {
-            ConnectionsViewModel viewModel = Create(true);
+            ConnectionsViewModel viewModel = Create();
+            string[] before = [.. viewModel.Steps.Select(s => s.Text)];
 
-            Assert.True(viewModel.PowerSourceStep.IsDone);
-            Assert.Equal("Done", viewModel.PowerSourceStep.StateText);
-            Assert.False(viewModel.ControlsStep.IsDone);
-            Assert.False(viewModel.TrainerStep.IsDone);
+            RaiseZwift(true);
+
+            Assert.Equal(before, viewModel.Steps.Select(s => s.Text));
         }
 
         [Fact]
-        public void SCRCONN009_StepOneTicksAndUnticksLiveWithTheConnection()
+        public void SCRCONN018_TheTrainerReminderShowsOnlyWhileZwiftIsConnected_EvenWithTheStepsCollapsed()
         {
             ConnectionsViewModel viewModel = Create();
             var changed = new List<string?>();
-            viewModel.PowerSourceStep.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+            viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+            Assert.False(viewModel.ShowTrainerReminder);
 
             RaiseZwift(true);
-            Assert.True(viewModel.PowerSourceStep.IsDone);
-            Assert.Contains(nameof(ZwiftStepViewModel.StateText), changed);
+
+            Assert.True(viewModel.ShowTrainerReminder);
+            Assert.False(viewModel.ShowSteps);
+            Assert.Contains(nameof(ConnectionsViewModel.ShowTrainerReminder), changed);
 
             RaiseZwift(false);
-            Assert.False(viewModel.PowerSourceStep.IsDone);
-            Assert.False(viewModel.ControlsStep.IsDone);
-            Assert.False(viewModel.TrainerStep.IsDone);
+            Assert.False(viewModel.ShowTrainerReminder);
         }
 
         [Fact]

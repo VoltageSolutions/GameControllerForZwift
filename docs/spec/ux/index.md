@@ -93,7 +93,7 @@ Lessons from other apps that shaped this one:
 | A timid accent sprinkled everywhere, or neon in big areas | One confident use per screen (the main action) plus live moments. |
 | Wireframe line illustrations | Filled, soft, friendly illustrations. |
 | An interface with no content | The rider's own things: their controller, rides together, shifts. |
-| Technical nouns such as Config, Mapped, Linked | Plain words such as Climbing mapping, Free button, Zwift can see your controller. |
+| Technical nouns such as Config, Mapped, Linked | Plain words such as Climbing mapping, Free button, Zwift is connected to Voltage Gamepad. |
 | A setup checklist copied from a competitor | A first screen that does something: "Press any button" lights up the controller. |
 | Purple or violet gradients | Flat color, no gradient washes. |
 | A neighbor's category color (Strava orange, Wahoo or Garmin blue, Xbox green, PlayStation blue, Nintendo red, conservation green) | A hue no neighbor owns. The app's own orange is its brand color. |

@@ -139,7 +139,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
         }
 
         [Fact]
-        public void SCRCONN009_NotConnected_ShowsThreeStepsEachWithItsStateInWords()
+        public void SCRCONN009_NotConnected_ShowsTheThreeStepsAsNumberedText()
         {
             TestApplication.Run(() =>
             {
@@ -148,10 +148,10 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
 
                 Assert.Equal(Visibility.Visible, steps.Visibility);
                 Assert.Equal(3, steps.Items.Count);
-                Assert.Equal("Power Source: Voltage Gamepad", Text(setup.Page, "ConnectionsStep1"));
-                Assert.Equal("Not done yet", Text(setup.Page, "ConnectionsStep1State"));
-                Assert.Equal("Controls: Voltage Gamepad", Text(setup.Page, "ConnectionsStep2"));
-                Assert.Equal("Power Source: your trainer", Text(setup.Page, "ConnectionsStep3"));
+                Assert.Equal("1. Power Source: Voltage Gamepad", Text(setup.Page, "ConnectionsStep1"));
+                Assert.Equal("2. Controls: Voltage Gamepad", Text(setup.Page, "ConnectionsStep2"));
+                Assert.Equal("3. Power Source: your trainer", Text(setup.Page, "ConnectionsStep3"));
+                Assert.Equal(Visibility.Collapsed, Element<TextBlock>(setup.Page, "TrainerReminder").Visibility);
                 Assert.Equal(Visibility.Collapsed, Element<Button>(setup.Page, "ShowMeHowButton").Visibility);
             });
         }
@@ -165,10 +165,14 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                 var steps = Element<ItemsControl>(setup.Page, "ZwiftSteps");
                 var showMeHow = Element<Button>(setup.Page, "ShowMeHowButton");
 
-                Assert.Equal("Zwift can see your controller", Text(setup.Page, "ConnectionsZwiftStatus"));
+                Assert.Equal("Zwift is connected to Voltage Gamepad", Text(setup.Page, "ConnectionsZwiftStatus"));
                 Assert.Equal(Visibility.Collapsed, steps.Visibility);
                 Assert.Equal(Visibility.Visible, showMeHow.Visibility);
                 Assert.Equal("Show me how", showMeHow.Content);
+                var reminder = Element<TextBlock>(setup.Page, "TrainerReminder");
+                Assert.Equal(Visibility.Visible, reminder.Visibility);
+                Assert.Equal("Set Power Source back to your trainer in Zwift.", reminder.Text);
+                Assert.Equal("ConnectionsTrainerReminder", AutomationProperties.GetAutomationId(reminder));
 
                 Click(showMeHow);
 
@@ -176,9 +180,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                 Assert.Equal(Visibility.Visible, showMeHow.Visibility);
                 Assert.Equal("Hide steps", showMeHow.Content);
                 Assert.Equal("Hide steps", AutomationProperties.GetName(showMeHow));
-                Assert.Equal("Done", Text(setup.Page, "ConnectionsStep1State"));
-                Assert.Equal("Not done yet", Text(setup.Page, "ConnectionsStep2State"));
-                Assert.Equal("Not done yet", Text(setup.Page, "ConnectionsStep3State"));
+                Assert.Equal("3. Power Source: your trainer", Text(setup.Page, "ConnectionsStep3"));
 
                 Click(showMeHow);
 
@@ -212,7 +214,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                 setup.Connection.ConnectionChanged += NSubstitute.Raise.Event<EventHandler<bool>>(setup.Connection, true);
                 Layout(setup.Page);
 
-                Assert.Equal("Zwift can see your controller", status.Text);
+                Assert.Equal("Zwift is connected to Voltage Gamepad", status.Text);
                 Assert.Equal(Visibility.Collapsed, Element<ItemsControl>(setup.Page, "ZwiftSteps").Visibility);
             });
         }

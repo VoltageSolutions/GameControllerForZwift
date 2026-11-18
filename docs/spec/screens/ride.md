@@ -36,7 +36,7 @@ flowchart TD
 | The controller card must name your controller and say its state in words, such as "Your Xbox controller, awake and connected". | SCR-RIDE-002 |
 | The stats must show only real values the app counts: rides together, shifts, and riding since. Until there is something real to show, the app must hide the stats or say nothing. | SCR-RIDE-003 |
 | The screen must show the selected mapping and let you change it by going to Buttons. | SCR-RIDE-004 |
-| The Zwift status must say "Zwift can see your controller" when `IsZwiftConnected` is true. | SCR-RIDE-005 |
+| The Zwift status must say "Zwift is connected to Voltage Gamepad" when `IsZwiftConnected` is true. | SCR-RIDE-005 |
 | The one main action must be **Start riding**. | SCR-RIDE-006 |
 | The status text must be a live region and announce only changes. | SCR-RIDE-007 |
 
@@ -63,7 +63,7 @@ flowchart TD
 
 | Rule | ID |
 |---|---|
-| When Zwift is not connected, Home must say "Zwift isn't connected yet" instead of "Zwift can see your controller". | SCR-RIDE-012 |
+| When Zwift is not connected, Home must say "Zwift isn't connected yet" instead of "Zwift is connected to Voltage Gamepad". | SCR-RIDE-012 |
 | Home must show a short version of the three steps and make **Pair with Zwift** the main action. | SCR-RIDE-013 |
 | **Pair with Zwift** must open the live pairing steps on [Connections](connections.md). | SCR-RIDE-014 |
 | The Connections tab must show its dot while Zwift is not connected (UX-N-002). | SCR-RIDE-015 |

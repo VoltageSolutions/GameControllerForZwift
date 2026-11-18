@@ -15,7 +15,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 The app talks like a friendly person next to you. It says what is happening and what to do. It does not use jargon.
 
-*Example: not "Controller connected" but "Your Xbox controller is here". Not "Zwift linked" but "Zwift can see your controller".*
+*Example: not "Controller connected" but "Your Xbox controller is here". Not "Zwift linked" but "Zwift is connected to Voltage Gamepad".*
 
 | Rule | ID |
 |---|---|
@@ -34,7 +34,7 @@ The app talks like a friendly person next to you. It says what is happening and 
 |---|---|
 | Config: Climbing | Climbing mapping |
 | Not mapped, No Action Configured | No action |
-| Zwift linked | Zwift can see your controller |
+| Zwift linked | Zwift is connected to Voltage Gamepad |
 | Last press | You just pressed |
 | Controller connected | Your Xbox controller is here, or Awake and connected |
 | Unsaved | Unsaved changes |
@@ -71,7 +71,7 @@ The app talks like a friendly person next to you. It says what is happening and 
 | Controller found | "Your Xbox controller is here." |
 | No controller | "Wake your controller" |
 | Looking for it | "Looking for your controller..." |
-| Zwift connected | "Zwift can see your controller" |
+| Zwift connected | "Zwift is connected to Voltage Gamepad" |
 | Zwift not connected | "Zwift isn't connected yet" |
 | Waiting for Zwift | "Waiting for Zwift..." |
 | Shift test | "Did your gear change?" with "Yes, it shifted" and "Not yet" |
