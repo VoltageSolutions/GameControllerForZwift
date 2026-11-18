@@ -1,4 +1,4 @@
-using GameControllerForZwift.Core;
+﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.FileSystem;
 using GameControllerForZwift.Core.Mapping;
@@ -12,6 +12,7 @@ using GameControllerForZwift.UI.WPF;
 using GameControllerForZwift.UI.WPF.Controls;
 using GameControllerForZwift.UI.WPF.Dialogs;
 using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.Theme;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using GameControllerForZwift.WPF.Logging;
@@ -46,10 +47,12 @@ namespace GameControllerForZwift
             // Build the service provider
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
+            // Color tokens for the appearance, before the first frame (SCR-SET-001: Match Windows by default).
+            ServiceProvider.GetRequiredService<ThemeService>().Apply(Appearance.MatchWindows);
+
             // Show the main window
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
             mainWindow.Show();
-            Current.ThemeMode = ThemeMode.System;
 
             // Refresh configuration lists when files change outside the app (CFG-006). Created here, on the UI thread, so
             // its notifications are posted back to this thread.
@@ -170,6 +173,7 @@ namespace GameControllerForZwift
 
 
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<ThemeService>();
 
             // GameControllerForZwift.UI.WPF
             // ViewModels. The page view models are singletons on purpose: navigation resolves them from the container, so

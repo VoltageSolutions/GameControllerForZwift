@@ -15,6 +15,8 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 Tokens are named roles. Screens use tokens, never raw colors.
 
+On Windows the tokens live in `Resources/Theme/Tokens.Dark.xaml` and `Tokens.Light.xaml` as `Color.<token>` and `Brush.<token>`. A unit test compares them, and the contrast table below, with this page.
+
 | Token | Use | Dark | Light |
 |---|---|---|---|
 | `bg` | Screen background | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#141312;color:#F5F2EC;padding:2px 8px;border-radius:8px">#141312</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FAF8F4;color:#1F1B16;padding:2px 8px;border-radius:8px">#FAF8F4</span> |

@@ -22,6 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- The window paints the warm bg token (UX-V-024), so the Fluent Mica backdrop is off. -->
+    <RuntimeHostConfigurationOption Include="Switch.System.Windows.Appearance.DisableFluentThemeWindowBackdrop" Value="true" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="GameControllerForZwift.UnitTests" />
   </ItemGroup>
 
@@ -35,6 +40,14 @@
     <Resource Include="Assets\kofi_logo.svg">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
+    <Resource Include="Assets\Fonts\Figtree-Regular.ttf" />
+    <Resource Include="Assets\Fonts\Figtree-Medium.ttf" />
+    <Resource Include="Assets\Fonts\Figtree-SemiBold.ttf" />
+    <Resource Include="Assets\Fonts\Figtree-Bold.ttf" />
+    <Resource Include="Assets\Fonts\Figtree-ExtraBold.ttf" />
+    <None Update="Assets\Fonts\OFL.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Resource Include="Assets\logo.ico" />
     <Resource Include="Assets\logo.png" />
     <Resource Include="Assets\logo_transparent.png" />

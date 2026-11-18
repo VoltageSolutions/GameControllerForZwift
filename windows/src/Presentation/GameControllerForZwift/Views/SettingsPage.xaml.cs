@@ -59,28 +59,5 @@ namespace GameControllerForZwift.UI.WPF.Views
         {
             Process.Start(new ProcessStartInfo("https://www.nuget.org/packages/Microsoft.Extensions.Hosting") { UseShellExecute = true });
         }
-
-        private void ThemeMode_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (Change_ThemeMode.SelectedItem is ComboBoxItem selectedItem)
-            {
-                string? selectedValue = selectedItem.Content?.ToString();
-
-                switch (selectedValue)
-                {
-                    case "Light":
-                        Application.Current.ThemeMode = ThemeMode.Light;
-                        break;
-                    case "Dark":
-                        Application.Current.ThemeMode = ThemeMode.Dark;
-                        break;
-                    case "Use system setting":
-                        Application.Current.ThemeMode = ThemeMode.System;
-                        break;
-                    default:
-                        break;
-                }
-            }
-        }
     }
 }

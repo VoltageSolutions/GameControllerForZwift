@@ -17,6 +17,10 @@ This application is made possible through the use of open source libraries. The 
 - [SDL2-CS](https://github.com/flibitijibibo/SDL2-CS) - Copyright (c) 2013-2024 Ethan Lee.
 - [SDL2](https://www.libsdl.org/) - *zlib*
 
+### Fonts
+
+- [Figtree](https://github.com/erikdkennedy/figtree) - Copyright 2022 The Figtree Project Authors - *SIL Open Font License 1.1*
+
 ### Licenses
 
 
@@ -27,6 +31,10 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+**SIL Open Font License 1.1**
+
+Figtree is licensed under the SIL Open Font License, Version 1.1. The full license text ships with the app in `Assets/Fonts/OFL.txt` and is available at [openfontlicense.org](https://openfontlicense.org).
 
 **zlib license**
 

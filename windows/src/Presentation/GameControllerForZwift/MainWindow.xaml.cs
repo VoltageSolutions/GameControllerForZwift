@@ -2,7 +2,6 @@
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Win32;
 using System.Windows;
 using System.Windows.Automation;
 using System.Windows.Automation.Peers;
@@ -43,7 +42,6 @@ namespace GameControllerForZwift.UI.WPF
             DataContext = this;
 
             InitializeComponent();
-            Toggle_TitleButtonVisibility();
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.NavigateToStartPage();
@@ -58,74 +56,16 @@ namespace GameControllerForZwift.UI.WPF
                 CornerRadius = default,
                 GlassFrameThickness = new Thickness(-1),
                 ResizeBorderThickness = ResizeMode == ResizeMode.NoResize ? default : new Thickness(4),
-                UseAeroCaptionButtons = true
+                // The window paints its own background, so the app draws the caption buttons.
+                UseAeroCaptionButtons = false
             }
             );
 
-            SystemEvents.UserPreferenceChanged += SystemEvents_UserPreferenceChanged;
             this.StateChanged += MainWindow_StateChanged;
         }
         #endregion
 
-        #region Methods
-
-        private void Toggle_TitleButtonVisibility()
-        {
-            var appContextBackdropData = AppContext.GetData("Switch.System.Windows.Appearance.DisableFluentThemeWindowBackdrop");
-            bool disableFluentThemeWindowBackdrop = appContextBackdropData != null
-                && bool.Parse(Convert.ToString(appContextBackdropData, System.Globalization.CultureInfo.InvariantCulture) ?? bool.FalseString);
-
-            Visibility? captionButtons = GetCaptionButtonVisibility(
-                disableFluentThemeWindowBackdrop,
-                Application.Current.Resources.MergedDictionaries.Count > 0,
-                Application.Current.ThemeMode != ThemeMode.None,
-                SystemParameters.HighContrast);
-
-            if (captionButtons is Visibility visibility)
-            {
-                MinimizeButton.Visibility = visibility;
-                MaximizeButton.Visibility = visibility;
-                CloseButton.Visibility = visibility;
-            }
-        }
-
-        /// <summary>
-        /// Returns the visibility of the custom caption buttons, or null to leave them as they are. The buttons are
-        /// changed only when the Fluent backdrop is enabled, theme resources are loaded and a theme mode is set; they
-        /// are visible in high contrast and collapsed otherwise.
-        /// </summary>
-        public static Visibility? GetCaptionButtonVisibility(bool backdropDisabled, bool hasThemeResources, bool themeModeSet, bool highContrast)
-        {
-            if (backdropDisabled || !hasThemeResources || !themeModeSet)
-            {
-                return null;
-            }
-
-            return highContrast ? Visibility.Visible : Visibility.Collapsed;
-        }
-
-        #endregion
-
         #region Event Handlers
-
-        private void SystemEvents_UserPreferenceChanged(object sender, UserPreferenceChangedEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                if (SystemParameters.HighContrast)
-                {
-                    MinimizeButton.Visibility = Visibility.Visible;
-                    MaximizeButton.Visibility = Visibility.Visible;
-                    CloseButton.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    MinimizeButton.Visibility = Visibility.Collapsed;
-                    MaximizeButton.Visibility = Visibility.Collapsed;
-                    CloseButton.Visibility = Visibility.Collapsed;
-                }
-            });
-        }
 
         private void MainWindow_StateChanged(object? sender, EventArgs e)
         {

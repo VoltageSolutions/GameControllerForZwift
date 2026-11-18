@@ -12,7 +12,10 @@
     mc:Ignorable="d"
     MinWidth="400"
     MinHeight="450"
-        Width="1600" Height="800" Icon="Assets/logo.png">
+        Width="1600" Height="800" Icon="Assets/logo.png"
+    Background="{DynamicResource Brush.bg}"
+    Foreground="{DynamicResource Brush.text}"
+    FontFamily="{StaticResource Font.Figtree}">
     <Window.Resources>
         <converters:EmptyToVisibilityConverter x:Key="EmptyToVisibilityConverter"/>
 
