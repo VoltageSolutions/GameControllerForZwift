@@ -8,7 +8,7 @@ last-updated: 2026-11-17
 # Visual system
 
 !!! tldr "TL;DR"
-    Warm neutrals, no outlines, one confident orange (#ED7600) action per screen, Figtree type, rounded shapes, filled friendly illustrations. The orange fill always carries a dark label (#1F1B16), never white. In light mode the orange text color is a darker #A55200.
+    Warm neutrals, no outlines, one confident orange (`#ED7600`) action per screen, Figtree type, rounded shapes, filled friendly illustrations. The orange fill always carries a dark label (`#1F1B16`), never white. In light mode the orange text color is a darker `#A55200`.
 
 In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -18,21 +18,21 @@ Tokens are named roles. Screens use tokens, never raw colors.
 
 | Token | Use | Dark | Light |
 |---|---|---|---|
-| bg | Screen background | <span style="background:#141312;color:#F5F2EC;padding:2px 8px;border-radius:8px">#141312</span> | <span style="background:#FAF8F4;color:#1F1B16;padding:2px 8px;border-radius:8px">#FAF8F4</span> |
-| surface | Cards and rows | <span style="background:#1F1D1B;color:#F5F2EC;padding:2px 8px;border-radius:8px">#1F1D1B</span> | <span style="background:#FFFFFF;color:#1F1B16;padding:2px 8px;border-radius:8px">#FFFFFF</span> |
-| surface-2 | Secondary buttons, chips, keycaps | <span style="background:#2A2826;color:#F5F2EC;padding:2px 8px;border-radius:8px">#2A2826</span> | <span style="background:#F1EDE6;color:#1F1B16;padding:2px 8px;border-radius:8px">#F1EDE6</span> |
-| text | Body text | <span style="background:#F5F2EC;color:#1F1B16;padding:2px 8px;border-radius:8px">#F5F2EC</span> | <span style="background:#1F1B16;color:#F5F2EC;padding:2px 8px;border-radius:8px">#1F1B16</span> |
-| muted | Secondary text | <span style="background:#ABA59C;color:#141312;padding:2px 8px;border-radius:8px">#ABA59C</span> | <span style="background:#655E55;color:#FFFFFF;padding:2px 8px;border-radius:8px">#655E55</span> |
-| accent | Fill for the one main action | <span style="background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#ED7600</span> |
-| accent-ink | Accent as text, icons, status dots | <span style="background:#141312;color:#ED7600;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="background:#FAF8F4;color:#A55200;padding:2px 8px;border-radius:8px">#A55200</span> |
-| on-accent | Label on the accent fill | <span style="background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#1F1B16</span> | <span style="background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#1F1B16</span> |
-| focus | Focus ring | <span style="background:#7CC4FF;color:#141312;padding:2px 8px;border-radius:8px">#7CC4FF</span> | <span style="background:#1F5FCC;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1F5FCC</span> |
-| ok | Good state (with words) | <span style="background:#5FD39A;color:#141312;padding:2px 8px;border-radius:8px">#5FD39A</span> | <span style="background:#1E7A4C;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1E7A4C</span> |
-| err | Problem state (with words) | <span style="background:#FF7A70;color:#141312;padding:2px 8px;border-radius:8px">#FF7A70</span> | <span style="background:#B3261E;color:#FFFFFF;padding:2px 8px;border-radius:8px">#B3261E</span> |
-| pad | Controller illustration body | <span style="background:#3A3633;color:#F5F2EC;padding:2px 8px;border-radius:8px">#3A3633</span> | <span style="background:#E6E0D5;color:#1F1B16;padding:2px 8px;border-radius:8px">#E6E0D5</span> |
-| pad-2 | Illustration shading | <span style="background:#2A2725;color:#F5F2EC;padding:2px 8px;border-radius:8px">#2A2725</span> | <span style="background:#D5CDBF;color:#1F1B16;padding:2px 8px;border-radius:8px">#D5CDBF</span> |
-| pad-key | Illustration keys | <span style="background:#4A4542;color:#F5F2EC;padding:2px 8px;border-radius:8px">#4A4542</span> | <span style="background:#F6F2EB;color:#1F1B16;padding:2px 8px;border-radius:8px">#F6F2EB</span> |
-| shadow | Elevation | none | `0 1px 2px rgba(60,40,20,.06), 0 8px 24px rgba(60,40,20,.08)` |
+| `bg` | Screen background | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#141312;color:#F5F2EC;padding:2px 8px;border-radius:8px">#141312</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FAF8F4;color:#1F1B16;padding:2px 8px;border-radius:8px">#FAF8F4</span> |
+| `surface` | Cards and rows | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1F1D1B;color:#F5F2EC;padding:2px 8px;border-radius:8px">#1F1D1B</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FFFFFF;color:#1F1B16;padding:2px 8px;border-radius:8px">#FFFFFF</span> |
+| `surface-2` | Secondary buttons, chips, keycaps | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#2A2826;color:#F5F2EC;padding:2px 8px;border-radius:8px">#2A2826</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#F1EDE6;color:#1F1B16;padding:2px 8px;border-radius:8px">#F1EDE6</span> |
+| `text` | Body text | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#F5F2EC;color:#1F1B16;padding:2px 8px;border-radius:8px">#F5F2EC</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1F1B16;color:#F5F2EC;padding:2px 8px;border-radius:8px">#1F1B16</span> |
+| `muted` | Secondary text | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ABA59C;color:#141312;padding:2px 8px;border-radius:8px">#ABA59C</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#655E55;color:#FFFFFF;padding:2px 8px;border-radius:8px">#655E55</span> |
+| `accent` | Fill for the one main action | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#ED7600</span> |
+| `accent-ink` | Accent as text, icons, status dots | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#141312;color:#ED7600;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FAF8F4;color:#A55200;padding:2px 8px;border-radius:8px">#A55200</span> |
+| `on-accent` | Label on the accent fill | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#1F1B16</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#1F1B16</span> |
+| `focus` | Focus ring | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#7CC4FF;color:#141312;padding:2px 8px;border-radius:8px">#7CC4FF</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1F5FCC;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1F5FCC</span> |
+| `ok` | Good state (with words) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#5FD39A;color:#141312;padding:2px 8px;border-radius:8px">#5FD39A</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1E7A4C;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1E7A4C</span> |
+| `err` | Problem state (with words) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FF7A70;color:#141312;padding:2px 8px;border-radius:8px">#FF7A70</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#B3261E;color:#FFFFFF;padding:2px 8px;border-radius:8px">#B3261E</span> |
+| `pad` | Controller illustration body | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#3A3633;color:#F5F2EC;padding:2px 8px;border-radius:8px">#3A3633</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E6E0D5;color:#1F1B16;padding:2px 8px;border-radius:8px">#E6E0D5</span> |
+| `pad-2` | Illustration shading | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#2A2725;color:#F5F2EC;padding:2px 8px;border-radius:8px">#2A2725</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#D5CDBF;color:#1F1B16;padding:2px 8px;border-radius:8px">#D5CDBF</span> |
+| `pad-key` | Illustration keys | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#4A4542;color:#F5F2EC;padding:2px 8px;border-radius:8px">#4A4542</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#F6F2EB;color:#1F1B16;padding:2px 8px;border-radius:8px">#F6F2EB</span> |
+| `shadow` | Elevation | none | `0 1px 2px rgba(60,40,20,.06), 0 8px 24px rgba(60,40,20,.08)` |
 
 The accent is the VOLTAGE brand orange.
 
@@ -40,10 +40,10 @@ The accent is the VOLTAGE brand orange.
 
 | Rule | ID |
 |---|---|
-| The accent fill (#ED7600) must fill only the one main action on a screen (Start riding, Continue, Save) and mark live moments (the lit button, "You just pressed"). | UX-V-001 |
-| The label on an accent fill must be on-accent (#1F1B16) in both modes. White text on the accent must never be used (2.92:1). | UX-V-002 |
-| Accent used as text, an icon or a status dot must use accent-ink: #ED7600 in dark mode, #A55200 in light mode. | UX-V-003 |
-| The Connections tab dot must use accent-ink (#A55200 in light mode, #ED7600 in dark mode). | UX-V-004 |
+| The accent fill (`#ED7600`) must fill only the one main action on a screen (Start riding, Continue, Save) and mark live moments (the lit button, "You just pressed"). | UX-V-001 |
+| The label on an accent fill must be `on-accent` (`#1F1B16`) in both modes. White text on the accent must never be used (2.92:1). | UX-V-002 |
+| Accent used as text, an icon or a status dot must use `accent-ink`: `#ED7600` in dark mode, `#A55200` in light mode. | UX-V-003 |
+| The Connections tab dot must use `accent-ink` (`#A55200` in light mode, `#ED7600` in dark mode). | UX-V-004 |
 | In light mode the accent fill against the background is only 2.75:1. A primary button must therefore be identified by its dark text label and its shape, never by the fill color alone. | UX-V-005 |
 | Everything else must stay neutral. Screens must not use the accent for decoration. | UX-V-006 |
 | The app's identity must never rely on color alone. It is carried by the name "Voltage Gamepad", the controller illustration and the wordmark. | UX-V-007 |
@@ -59,19 +59,19 @@ Text needs 4.5:1. Icons, focus rings, status dots and graphics people need to se
 
 | Pair | Dark | Light |
 |---|---|---|
-| text on bg | 16.61 | 16.14 |
-| text on surface | 15.04 | 17.12 |
-| muted on bg | 7.59 | 6.03 |
-| muted on surface | 6.88 | 6.39 |
-| muted on surface-2 | 6.01 | 5.48 |
-| accent-ink on bg | 6.36 | 5.20 |
-| accent-ink on surface | 5.75 | 5.52 |
-| accent-ink on surface-2 | 5.03 | 4.73 |
-| on-accent on accent fill | 5.86 | 5.86 |
-| focus on bg | 9.89 | 5.55 |
-| ok on bg | 9.96 | 5.02 |
-| err on bg | 7.31 | 6.16 |
-| accent fill on bg (graphic) | 6.36 | 2.75 |
+| `text` on `bg` | 16.61 | 16.14 |
+| `text` on `surface` | 15.04 | 17.12 |
+| `muted` on `bg` | 7.59 | 6.03 |
+| `muted` on `surface` | 6.88 | 6.39 |
+| `muted` on `surface-2` | 6.01 | 5.48 |
+| `accent-ink` on `bg` | 6.36 | 5.20 |
+| `accent-ink` on `surface` | 5.75 | 5.52 |
+| `accent-ink` on `surface-2` | 5.03 | 4.73 |
+| `on-accent` on accent fill | 5.86 | 5.86 |
+| `focus` on `bg` | 9.89 | 5.55 |
+| `ok` on `bg` | 9.96 | 5.02 |
+| `err` on `bg` | 7.31 | 6.16 |
+| accent fill on `bg` (graphic) | 6.36 | 2.75 |
 | illustration key on body | 1.27 | 1.18 |
 
 The last two rows are below 3:1, so they carry extra cues. See [Accessibility](accessibility.md#color-contrast).

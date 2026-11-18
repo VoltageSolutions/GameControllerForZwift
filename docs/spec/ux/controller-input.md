@@ -76,7 +76,7 @@ The app detects your controller family and shows the matching glyphs. You are ne
 
 | Rule | ID |
 |---|---|
-| Wherever the controller navigates, every focusable element must show a focus ring (3 px, 2 px offset, focus token). | UX-C-013 |
+| Wherever the controller navigates, every focusable element must show a focus ring (3 px, 2 px offset, `focus` token). | UX-C-013 |
 | The focus ring must be the most visible thing on the screen there. | UX-C-014 |
 | When a dialog opens, focus must move into it, and when it closes, focus must return to what opened it. | UX-C-015 |
 

@@ -20,8 +20,8 @@ Text needs 4.5:1. Icons, focus rings, status dots and graphics people need to se
 |---|---|
 | Text pairs must reach 4.5:1 and meaningful non-text pairs 3:1, in both modes. | UX-A-001 |
 | Every status must have words as well as color. | UX-A-002 |
-| Accent text, icons and dots must use accent-ink (#ED7600 in dark mode, #A55200 in light mode). | UX-A-003 |
-| Text on the accent fill must be #1F1B16 (5.86:1). White on the accent (2.92:1) must not be used. | UX-A-004 |
+| Accent text, icons and dots must use `accent-ink` (`#ED7600` in dark mode, `#A55200` in light mode). | UX-A-003 |
+| Text on the accent fill must be `#1F1B16` (5.86:1). White on the accent (2.92:1) must not be used. | UX-A-004 |
 | The app must follow the system dark or light setting. | UX-A-005 |
 | When a Windows contrast theme is on, the app must use system colors. | UX-A-006 |
 
@@ -29,7 +29,7 @@ Fixes made to pairs that failed:
 
 | Problem | Before | Fix |
 |---|---|---|
-| Connections tab dot, light mode | Amber placeholder at 1.57:1 | Accent-ink #A55200, 5.20:1 on bg |
+| Connections tab dot, light mode | Amber placeholder at 1.57:1 | `accent-ink` `#A55200`, 5.20:1 on `bg` |
 | Lit button on the controller drawing, light mode | Accent on the body at 1.39:1 | Dark outline around the lit key |
 | Keys against the body, both modes | 1.2:1 | Thin muted outline on every key, dashed outline on free keys |
 
