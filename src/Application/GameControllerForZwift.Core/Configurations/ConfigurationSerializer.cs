@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace GameControllerForZwift.Core.Configurations
 {
     /// <summary>
-    /// Reads and writes the configuration file format (version 1). See docs/spec/saved-configurations.md.
+    /// Reads and writes the configuration file format (version 1). See docs/spec/features/saved-configurations.md.
     /// </summary>
     public static class ConfigurationSerializer
     {

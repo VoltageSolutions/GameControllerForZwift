@@ -6,6 +6,10 @@ These are the next big pieces of work. They are plans, not promises, and the ord
 
 A calmer, more guided main page.
 
+## Rebuild the existing screens to the UX spec
+
+Bring the existing screens in line with the [UX spec](../spec/ux/index.md) (setup, ride, buttons, connections, settings and help) before adding new components.
+
 ## An on-screen controller view
 
 A picture of your controller that lights up as you press buttons.

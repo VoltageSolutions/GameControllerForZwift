@@ -133,7 +133,7 @@ namespace GameControllerForZwift
             services.AddSingleton<ZwiftRideOutputService>();
             services.AddSingleton<IOutputService>(provider => provider.GetRequiredService<ZwiftRideOutputService>());
 
-            // Saved configurations (docs/spec/saved-configurations.md)
+            // Saved configurations (docs/spec/features/saved-configurations.md)
             services.AddSingleton(TimeProvider.System);
             services.AddSingleton<ControllerModelMatcher>();
             services.AddSingleton<IConfigurationStore>(provider => new ConfigurationStore(

@@ -7,7 +7,7 @@ The app reads Xbox, PlayStation, Nintendo and other controllers through SDL2, ma
 ## Specs
 
 - [Spec overview](https://VoltageSolutions.github.io/GameControllerForZwift/spec/): what the specs are and how to read them.
-- [Saved controller configurations](https://VoltageSolutions.github.io/GameControllerForZwift/spec/saved-configurations/): saving, selecting, renaming, deleting, importing and sharing button mappings.
+- [Saved controller configurations](https://VoltageSolutions.github.io/GameControllerForZwift/spec/features/saved-configurations/): saving, selecting, renaming, deleting, importing and sharing button mappings.
 
 ## How it works
 

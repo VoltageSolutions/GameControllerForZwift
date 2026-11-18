@@ -51,7 +51,7 @@
 
                     <!--Controller Selection Card-->
                     <controls:Card MinWidth="300" Title="Controller" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
-                        <!-- The list follows controllers as they connect and disconnect (docs/spec/controller-detection.md). -->
+                        <!-- The list follows controllers as they connect and disconnect (docs/spec/features/controller-detection.md). -->
                         <Grid>
                             <ComboBox x:Name="ControllerComboBox" HorizontalAlignment="Stretch"
                                 ItemsSource="{Binding ViewModel.Controllers}"
@@ -68,7 +68,7 @@
                         </Grid>
                     </controls:Card>
 
-                    <!--Configuration Card (saved configurations, see docs/spec/saved-configurations.md)-->
+                    <!--Configuration Card (saved configurations, see docs/spec/features/saved-configurations.md)-->
                     <controls:Card MinWidth="300" Title="Configuration" Background="{DynamicResource CardBackgroundFillColorDefaultBrush}" TileRadius="6">
                         <Grid>
                             <Grid.RowDefinitions>
