@@ -33,6 +33,7 @@ dotnet format windows/src/Application/GameControllerForZwift.Core --verify-no-ch
 - `GameControllerForZwift.UITests` needs WinAppDriver and Appium. CI runs it. Skip it locally.
 - Run `dotnet format <project> --verify-no-changes --severity error` on any project you change. CI checks Core, Network, Gamepad, the portable test projects and ZwiftLanProbe.
 - Docs build: `pip install -r docs/requirements.txt`, then `zensical build --clean --strict`. It must pass with no issues.
+- Workflows in `.github/workflows/`: `windows-ci.yml` (Windows CI, pull requests), `windows-cd.yml` (Windows CD, release on `main`), `windows-codeql-and-coverage.yml` (baseline for `main`), `docs-ci.yml` (Docs CI), `docs-cd.yml` (Docs CD) and `release-branch.yml` (sets the version on new release branches).
 
 ## Source of truth
 

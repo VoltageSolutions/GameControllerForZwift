@@ -82,11 +82,24 @@ dotnet test windows/tests/GameControllerForZwift.Network.UnitTests
 dotnet format windows/src/Infrastructure/GameControllerForZwift.Network --verify-no-changes --severity error
 ```
 
-CI runs this check on `Core`, `Network`, `Gamepad`, the portable test projects and `ZwiftLanProbe`.
+The `Lint` job in Windows CI runs this check on `Core`, `Network`, `Gamepad`, the portable test projects and `ZwiftLanProbe`.
 
 ## ARM smoke test
 
-The `ARM smoke test` CI job runs the x64 builds from the `Build` job (framework-dependent and standalone) on a `windows-11-arm` runner. `.github/scripts/smoke-test-app.ps1` starts the app under x64 emulation and checks that its log shows SDL2 initialized and devices enumerated. The `Build` job also uploads both builds as the `app-win-x64` and `app-win-x64-standalone` artifacts (kept for 14 days), so you can copy them to a real ARM device.
+The `ARM smoke test` job in Windows CI runs the x64 builds from the `Build` job (framework-dependent and standalone) on a `windows-11-arm` runner. `.github/scripts/smoke-test-app.ps1` starts the app under x64 emulation and checks that its log shows SDL2 initialized and devices enumerated. The `Build` job also uploads both builds as the `app-win-x64` and `app-win-x64-standalone` artifacts (kept for 14 days), so you can copy them to a real ARM device.
+
+## Workflows
+
+The GitHub Actions workflows live in `.github/workflows/`.
+
+| Workflow | File | When it runs | What it does |
+|---|---|---|---|
+| Windows CI | `windows-ci.yml` | Every pull request | Builds and publishes the app, runs the unit, integration and UI tests, checks formatting, the version, CodeQL and vulnerable packages, and uploads coverage. |
+| Windows CD | `windows-cd.yml` | Push to `main` (not for docs-only changes) | Publishes both zips, creates the GitHub release and opens the next release branch. |
+| Windows CodeQL and Coverage | `windows-codeql-and-coverage.yml` | Push to `main` (not for docs-only changes) | Refreshes the CodeQL alerts and Codecov coverage that pull requests compare against. |
+| Docs CI | `docs-ci.yml` | Pull requests that change the docs | Builds the docs site with `--strict`. |
+| Docs CD | `docs-cd.yml` | Push to `main` that changes the docs | Builds and deploys the docs site to GitHub Pages. |
+| Release Branch | `release-branch.yml` | A `release/vX.Y.Z` branch is created | Sets `<Version>` in `windows/Directory.Build.props` to match the branch name. |
 
 ## Optional: the build watcher
 

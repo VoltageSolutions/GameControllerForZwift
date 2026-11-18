@@ -30,7 +30,7 @@ flowchart LR
 The app's version lives in one place: the `<Version>` element in `windows/Directory.Build.props`. Every project picks it up from there.
 
 - **After each release**, the branch for the next minor version is opened automatically, with the version already set. For example, releasing `v0.3.0` opens `release/v0.4.0` with version `0.4.0`.
-- **For a patch or major release**, I create `release/vX.Y.Z` by hand from `main` (for example `release/v0.3.1` or `release/v1.0.0`). A workflow sets the version to match the branch name. The version must be higher than the latest release, or the workflow fails.
+- **For a patch or major release**, I create `release/vX.Y.Z` by hand from `main` (for example `release/v0.3.1` or `release/v1.0.0`). The Release Branch workflow sets the version to match the branch name. The version must be higher than the latest release, or the workflow fails.
 - **When I go to a new major version**, I delete the minor branch that was opened automatically and is no longer needed.
 - **The Version Check** on pull requests enforces this:
     - Into a release branch, the version must match the branch name. If it does not, your branch is probably based on an older release branch.

@@ -1,7 +1,7 @@
-name: Baseline Workflow
+name: Windows CodeQL and Coverage
 
 # Refreshes what pull requests are compared against: CodeQL alerts and Codecov coverage for main.
-# The full CI Workflow only runs on pull requests.
+# Windows CI only runs on pull requests.
 on:
   push:
     branches: [main]
@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: baseline-${{ github.ref }}
+  group: windows-codeql-and-coverage-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -22,12 +22,12 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  APP_PROJECT: src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
+  APP_PROJECT: windows/src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
   PORTABLE_TESTS: >-
-    tests/GameControllerForZwift.Core.UnitTests
-    tests/GameControllerForZwift.Network.UnitTests
-    tests/GameControllerForZwift.Network.IntegrationTests
-    tests/GameControllerForZwift.Gamepad.UnitTests
+    windows/tests/GameControllerForZwift.Core.UnitTests
+    windows/tests/GameControllerForZwift.Network.UnitTests
+    windows/tests/GameControllerForZwift.Network.IntegrationTests
+    windows/tests/GameControllerForZwift.Gamepad.UnitTests
 
 jobs:
   codeql:
@@ -43,9 +43,9 @@ jobs:
 
       - uses: actions/setup-dotnet@v6
         with:
-          global-json-file: global.json
+          global-json-file: windows/global.json
           cache: true
-          cache-dependency-path: '**/*.csproj'
+          cache-dependency-path: 'windows/**/*.csproj'
 
       - uses: github/codeql-action/init@v4
         with:
@@ -93,15 +93,15 @@ jobs:
 
       - uses: actions/setup-dotnet@v6
         with:
-          global-json-file: global.json
+          global-json-file: windows/global.json
           cache: true
-          cache-dependency-path: '**/*.csproj'
+          cache-dependency-path: 'windows/**/*.csproj'
 
       - name: Restore
-        run: dotnet restore GameControllerForZwift.sln
+        run: dotnet restore windows/GameControllerForZwift.sln
 
       - name: Build solution (Release)
-        run: dotnet build GameControllerForZwift.sln -c Release --no-restore
+        run: dotnet build windows/GameControllerForZwift.sln -c Release --no-restore
 
       # Unit and integration tests only (no UI tests). continue-on-error so coverage is still uploaded;
       # the final step fails the job.
@@ -111,7 +111,7 @@ jobs:
         shell: pwsh
         run: |
           $rc = 0
-          $projects = @('tests/GameControllerForZwift.UnitTests') + @(($env:PORTABLE_TESTS -split '\s+') | Where-Object { $_ })
+          $projects = @('windows/tests/GameControllerForZwift.UnitTests') + @(($env:PORTABLE_TESTS -split '\s+') | Where-Object { $_ })
           foreach ($p in $projects) {
             $name = Split-Path $p -Leaf
             dotnet test $p -c Release --no-build --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"

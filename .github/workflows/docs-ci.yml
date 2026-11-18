@@ -1,4 +1,4 @@
-name: Docs
+name: Docs CI
 
 on:
   pull_request:
@@ -6,13 +6,13 @@ on:
       - 'docs/**'
       - 'zensical.toml'
       - 'docs/requirements.txt'
-      - '.github/workflows/docs.yml'
+      - '.github/workflows/docs-ci.yml'
 
 permissions:
   contents: read
 
 concurrency:
-  group: docs-${{ github.ref }}
+  group: docs-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
