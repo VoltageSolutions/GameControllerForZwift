@@ -27,6 +27,12 @@ namespace GameControllerForZwift.UI.WPF.Navigation
         /// <summary>Shows the view model of type <typeparamref name="TViewModel"/>. See <see cref="NavigateTo(Type)"/>.</summary>
         void NavigateTo<TViewModel>() where TViewModel : class;
 
+        /// <summary>
+        /// Shows the view model of the given type and clears the history. Tabs use it, so back never crosses tabs.
+        /// Navigating to the page that is already shown only clears the history.
+        /// </summary>
+        void NavigateToRoot(Type viewModelType);
+
         /// <summary>Returns to the previous page. Does nothing when the history is empty.</summary>
         void GoBack();
     }

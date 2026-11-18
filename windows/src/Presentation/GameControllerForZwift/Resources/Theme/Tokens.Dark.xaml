@@ -58,4 +58,9 @@
     <!-- Surfaces are separated by color and spacing, not outlines (UX-V-022). -->
     <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="Transparent" />
+
+    <!-- Elevation (UX-V-023): dark mode has no shadows. -->
+    <x:Null x:Key="Effect.shadow" />
+    <!-- Dims the screen behind the More menu. -->
+    <SolidColorBrush x:Key="Brush.scrim" Color="#80000000" />
 </ResourceDictionary>

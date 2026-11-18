@@ -58,4 +58,9 @@
     <!-- Surfaces are separated by color and spacing, not outlines (UX-V-022). -->
     <SolidColorBrush x:Key="CardStrokeColorDefaultBrush" Color="Transparent" />
     <SolidColorBrush x:Key="ExpanderHeaderBorderBrush" Color="Transparent" />
+
+    <!-- Elevation (UX-V-023): a soft shadow in light mode only. -->
+    <DropShadowEffect x:Key="Effect.shadow" Color="#3C2814" Direction="270" ShadowDepth="2" BlurRadius="24" Opacity="0.12" />
+    <!-- Dims the screen behind the More menu. -->
+    <SolidColorBrush x:Key="Brush.scrim" Color="#40281E14" />
 </ResourceDictionary>

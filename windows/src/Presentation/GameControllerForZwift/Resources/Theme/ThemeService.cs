@@ -134,6 +134,8 @@ namespace GameControllerForZwift.UI.WPF.Theme
                 dictionary["Brush." + token] = new SolidColorBrush(color);
             }
 
+            dictionary["Brush.scrim"] = new SolidColorBrush(Colors.Transparent);
+
             return dictionary;
         }
 

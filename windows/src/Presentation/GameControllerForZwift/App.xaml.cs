@@ -135,6 +135,7 @@ namespace GameControllerForZwift
             services.AddSingleton(provider => new MdnsAdvertiser(provider.GetRequiredService<ILogger<MdnsAdvertiser>>()));
             services.AddSingleton<ZwiftRideOutputService>();
             services.AddSingleton<IOutputService>(provider => provider.GetRequiredService<ZwiftRideOutputService>());
+            services.AddSingleton<IZwiftConnection>(provider => provider.GetRequiredService<ZwiftRideOutputService>());
 
             // Saved configurations (docs/spec/features/saved-configurations.md)
             services.AddSingleton(TimeProvider.System);
@@ -180,6 +181,9 @@ namespace GameControllerForZwift
             // their state (for example the selected controller) is kept when the user leaves a page and comes back.
             // Views are not registered: the ViewCache in MainWindow creates one view per page view model.
             services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<ZwiftStatus>();
+            services.AddSingleton<RideViewModel>();
+            services.AddSingleton<ConnectionsViewModel>();
             services.AddSingleton<AboutPageViewModel>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();

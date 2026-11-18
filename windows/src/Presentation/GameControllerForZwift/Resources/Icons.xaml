@@ -1,0 +1,42 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Icons on a 24 by 24 grid, from the app mockups. Icon.* geometries are drawn with a 2 px round stroke,
+         IconFill.* geometries are filled. -->
+
+    <GeometryGroup x:Key="Icon.Ride">
+        <EllipseGeometry Center="6,16" RadiusX="4" RadiusY="4" />
+        <EllipseGeometry Center="18,16" RadiusX="4" RadiusY="4" />
+        <PathGeometry Figures="M6,16 L10,8 H15 L18,16 M10,8 L13,16 H6 M13,5 H16" />
+    </GeometryGroup>
+
+    <GeometryGroup x:Key="Icon.Buttons">
+        <PathGeometry Figures="M7,7 H17 A5,5 0 0 1 22,12 V13.5 A3.5,3.5 0 0 1 15.8,15.7 L14.5,14 H9.5 L8.2,15.7 A3.5,3.5 0 0 1 2,13.5 V12 A5,5 0 0 1 7,7 Z" />
+        <PathGeometry Figures="M7,10 V13 M5.5,11.5 H8.5" />
+        <EllipseGeometry Center="16.5,11" RadiusX="0.6" RadiusY="0.6" />
+    </GeometryGroup>
+
+    <PathGeometry x:Key="Icon.Connections" Figures="M9,7 V3 M15,7 V3 M7,7 H17 V11 A5,5 0 0 1 7,11 Z M12,16 V21" />
+
+    <PathGeometry x:Key="Icon.Back" Figures="M15,6 L9,12 L15,18" />
+
+    <PathGeometry x:Key="Icon.Close" Figures="M6,6 L18,18 M18,6 L6,18" />
+
+    <GeometryGroup x:Key="Icon.Settings">
+        <EllipseGeometry Center="12,12" RadiusX="3.2" RadiusY="3.2" />
+        <PathGeometry Figures="M12,2.8 V5.2 M12,18.8 V21.2 M2.8,12 H5.2 M18.8,12 H21.2 M5.5,5.5 L7.2,7.2 M16.8,16.8 L18.5,18.5 M5.5,18.5 L7.2,16.8 M16.8,7.2 L18.5,5.5" />
+    </GeometryGroup>
+
+    <PathGeometry x:Key="Icon.Help" Figures="M5,5 H19 A1,1 0 0 1 20,6 V16 A1,1 0 0 1 19,17 H11 L6,21 V17 H5 A1,1 0 0 1 4,16 V6 A1,1 0 0 1 5,5 Z" />
+
+    <PathGeometry x:Key="Icon.Credits" Figures="M12,3.5 L14.6,8.8 L20.5,9.7 L16.2,13.8 L17.2,19.6 L12,16.9 L6.8,19.6 L7.8,13.8 L3.5,9.7 L9.4,8.8 Z" />
+
+    <GeometryGroup x:Key="IconFill.More">
+        <EllipseGeometry Center="5,12" RadiusX="2.2" RadiusY="2.2" />
+        <EllipseGeometry Center="12,12" RadiusX="2.2" RadiusY="2.2" />
+        <EllipseGeometry Center="19,12" RadiusX="2.2" RadiusY="2.2" />
+    </GeometryGroup>
+
+    <PathGeometry x:Key="IconFill.Support" Figures="M12,20 C12,20 5,15.6 5,10 A4,4 0 0 1 12,7.4 A4,4 0 0 1 19,10 C19,15.6 12,20 12,20 Z" />
+
+</ResourceDictionary>

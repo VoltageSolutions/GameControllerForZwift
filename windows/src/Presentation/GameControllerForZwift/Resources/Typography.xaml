@@ -61,6 +61,26 @@
         <Setter Property="FontSize" Value="{StaticResource TitleLargeFontSize}" />
     </Style>
 
+    <!-- Type roles at desktop sizes (docs/spec/ux/visual-system.md, tablet column). -->
+    <Style x:Key="Text.Title" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Font.Figtree}" />
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="ExtraBold" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="Text.Body" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Font.Figtree}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+    </Style>
+    <Style x:Key="Text.Caption" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+    </Style>
+
     <!--Other-->
 
     <Style x:Key="ColorTilesPanelStyle" TargetType="{x:Type Border}">

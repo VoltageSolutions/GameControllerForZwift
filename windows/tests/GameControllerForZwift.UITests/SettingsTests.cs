@@ -1,39 +1,25 @@
-﻿using OpenQA.Selenium.Appium;
-
 namespace GameControllerForZwift.UITests
 {
     [Collection("Application collection")]
-    public class SettingsTests : IDisposable
+    public sealed class SettingsTests : IDisposable
     {
         private readonly AppFixture _fixture;
 
         public SettingsTests(AppFixture fixture)
         {
             _fixture = fixture;
+            _fixture.AppSession.Reset();
         }
 
         [Fact]
         public void NavigateToSettings()
         {
-            // Arrange
-            var winButton = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("SettingsButton"));
+            _fixture.AppSession.OpenFromMenu("MenuSettingsItem");
 
-            // Act
-            winButton.Click();
-
-            var title = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("PageTitle"));
-            var titleText = title.Text;
-
-            // Assert
-            Assert.Equal("Appearance & behavior", titleText);
+            Assert.Equal("Appearance & behavior", _fixture.AppSession.Element("PageTitle").Text);
+            Assert.True(_fixture.AppSession.Exists("NavBackButton"));
         }
 
-        public void Dispose()
-        {
-            // Return to default state
-            var controllerSetupTreeViewItem = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("Controller Setup"));
-            controllerSetupTreeViewItem.Click();
-            GC.SuppressFinalize(this);
-        }
+        public void Dispose() => _fixture.AppSession.Reset();
     }
 }

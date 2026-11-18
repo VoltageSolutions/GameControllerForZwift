@@ -57,6 +57,31 @@ namespace GameControllerForZwift.UI.WPF.Navigation
             Show(target);
         }
 
+        public void NavigateToRoot(Type viewModelType)
+        {
+            ArgumentNullException.ThrowIfNull(viewModelType);
+
+            if (_isNavigating)
+            {
+                return;
+            }
+
+            object target = _serviceProvider.GetRequiredService(viewModelType);
+            bool hadHistory = _history.Count > 0;
+            _history.Clear();
+            if (ReferenceEquals(target, _currentViewModel))
+            {
+                if (hadHistory)
+                {
+                    OnPropertyChanged(nameof(CanGoBack));
+                }
+
+                return;
+            }
+
+            Show(target);
+        }
+
         public void GoBack()
         {
             if (_isNavigating || _history.Count == 0)

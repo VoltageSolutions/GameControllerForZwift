@@ -89,6 +89,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | `NavRideTab`, `NavButtonsTab`, `NavConnectionsTab` | Tab (1 to 3 of 3) | "Ride", "Buttons", "Connections" (plus ", Zwift not connected" when the dot shows) |
 | `MenuButton` | Button, expands | "More: settings, help, credits, support" or "Close menu" |
 | `MenuSettingsItem`, `MenuHelpItem`, `MenuCreditsItem`, `MenuSupportItem` | Menu item | "Settings", "Help and feedback", "Credits", "Support this project" |
+| `NavBackButton` | Button | "Back" |
 | `SetupPressAnyButtonStatus` | Live status | "Got it. That's your left bumper" |
 | `SetupContinueButton`, `SetupPairBluetoothButton` | Button | "Continue", "Pair a new Bluetooth controller" |
 | `SetupZwiftStatus` | Live status | "Waiting for Zwift" or "Zwift is connected" |
@@ -112,9 +113,6 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 |---|---|
 | Screens must use the core IDs above where the element exists. | UX-A-018 |
 | The example numbers in the name column (12 rides, 1,086 shifts) are examples. The app must show only real values (UX-P-005). | UX-A-019 |
-
-??? note "Edge cases"
-    The existing UI tests locate elements by `SettingsButton`, `PageTitle`, `OpenGitHubButton`, `OpenkofiButton`, and the tree item "Controller Setup". They move to the new IDs (for example `MenuSettingsItem`, `CreditsGitHubLink`, `SupportKofiButton`) as screens are rebuilt.
 
 ## Reading and focus order
 

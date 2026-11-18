@@ -1,40 +1,25 @@
-﻿using OpenQA.Selenium.Appium;
-
 namespace GameControllerForZwift.UITests
 {
     [Collection("Application collection")]
-    public class AboutTests : IDisposable
+    public sealed class AboutTests : IDisposable
     {
         private readonly AppFixture _fixture;
 
         public AboutTests(AppFixture fixture)
         {
             _fixture = fixture;
+            _fixture.AppSession.Reset();
         }
 
         [Fact]
-        public void NavigateToAbout()
+        public void NavigateToCredits()
         {
-            // Arrange
-            var aboutTreeViewItem = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("About"));
+            _fixture.AppSession.OpenFromMenu("MenuCreditsItem");
 
-            // Act
-            aboutTreeViewItem.Click();
-
-            var githubButton = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("OpenGitHubButton"));
-            var kofiButton = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("OpenkofiButton"));
-
-            // Assert
-            Assert.NotNull(githubButton);
-            Assert.NotNull(kofiButton);
+            Assert.True(_fixture.AppSession.Exists("OpenGitHubButton"));
+            Assert.True(_fixture.AppSession.Exists("OpenkofiButton"));
         }
 
-        public void Dispose()
-        {
-            // Return to default state
-            var controllerSetupTreeViewItem = _fixture.AppSession.FindElement(ByWindowsAutomation.AccessibilityId("Controller Setup"));
-            controllerSetupTreeViewItem.Click();
-            GC.SuppressFinalize(this);
-        }
+        public void Dispose() => _fixture.AppSession.Reset();
     }
 }

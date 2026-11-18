@@ -200,5 +200,69 @@ namespace GameControllerForZwift.UI.WPF.Tests.Navigation
             Assert.Same(_pageA, _service.CurrentViewModel);
             Assert.False(_service.CanGoBack);
         }
+
+        [Fact]
+        public void NavigateToRoot_ShowsThePageAndClearsTheHistory()
+        {
+            _service.NavigateTo<PageA>();
+            _service.NavigateTo<PageB>();
+            _changes.Clear();
+
+            _service.NavigateToRoot(typeof(PageC));
+
+            Assert.Same(_pageC, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
+            Assert.Contains(nameof(INavigationService.CurrentViewModel), _changes);
+            Assert.Contains(nameof(INavigationService.CanGoBack), _changes);
+        }
+
+        [Fact]
+        public void NavigateToRoot_OnTheShownPage_OnlyClearsTheHistory()
+        {
+            _service.NavigateTo<PageA>();
+            _service.NavigateTo<PageB>();
+            _changes.Clear();
+
+            _service.NavigateToRoot(typeof(PageB));
+
+            Assert.Same(_pageB, _service.CurrentViewModel);
+            Assert.False(_service.CanGoBack);
+            Assert.Equal(nameof(INavigationService.CanGoBack), Assert.Single(_changes));
+        }
+
+        [Fact]
+        public void NavigateToRoot_OnTheShownPageWithoutHistory_RaisesNothing()
+        {
+            _service.NavigateTo<PageA>();
+            _changes.Clear();
+
+            _service.NavigateToRoot(typeof(PageA));
+
+            Assert.Empty(_changes);
+        }
+
+        [Fact]
+        public void NavigateToRoot_NullType_Throws()
+        {
+            Assert.Throws<ArgumentNullException>(() => _service.NavigateToRoot(null!));
+        }
+
+        [Fact]
+        public void NavigateToRoot_FromAChangeNotification_IsIgnored()
+        {
+            _service.NavigateTo<PageA>();
+            _service.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(INavigationService.CurrentViewModel))
+                {
+                    _service.NavigateToRoot(typeof(PageC));
+                }
+            };
+
+            _service.NavigateTo<PageB>();
+
+            Assert.Same(_pageB, _service.CurrentViewModel);
+            Assert.True(_service.CanGoBack);
+        }
     }
 }

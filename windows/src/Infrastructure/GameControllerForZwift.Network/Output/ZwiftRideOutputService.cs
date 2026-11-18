@@ -11,7 +11,7 @@ namespace GameControllerForZwift.Network.Output
     /// Lifecycle: call <see cref="StartAsync"/> at app startup (starts the Direct Connect server, then advertises it via mDNS)
     /// and <see cref="StopAsync"/>/<see cref="DisposeAsync"/> on exit. There are no constructor side effects.
     /// </summary>
-    public sealed partial class ZwiftRideOutputService : IOutputService, IAsyncDisposable
+    public sealed partial class ZwiftRideOutputService : IOutputService, IZwiftConnection, IAsyncDisposable
     {
         /// <summary>
         /// Single place to edit the ZwiftFunction -> Zwift Ride button mapping (exactly what a Zwift Ride provides).

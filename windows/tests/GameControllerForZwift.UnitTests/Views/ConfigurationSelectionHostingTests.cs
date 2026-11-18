@@ -1,4 +1,4 @@
-using GameControllerForZwift.Core;
+﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.Controller;
 using GameControllerForZwift.UI.WPF.Dialogs;
@@ -473,7 +473,10 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
             services.AddSingleton<IDialogService>(_context.Dialogs);
             services.AddSingleton(_context.Matcher);
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<ZwiftStatus>();
             services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<RideViewModel>();
+            services.AddSingleton<ConnectionsViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();
             services.AddSingleton(new AboutPageViewModel("# Acknowledgements"));
             services.AddSingleton<SettingsViewModel>();
@@ -493,7 +496,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
 
         private static ControllerSetupPage ShowControllerSetup(MainWindow window)
         {
-            window.ViewModel.NavigateToPage(window.ViewModel.Pages.Single(p => p.ViewModelType == typeof(ControllerSetupViewModel)));
+            window.ViewModel.SelectTab(ShellTab.Buttons);
             Pump(window);
             return Assert.IsType<ControllerSetupPage>(((ContentControl)window.FindName("RootContent")).Content);
         }

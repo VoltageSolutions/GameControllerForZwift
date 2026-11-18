@@ -45,6 +45,7 @@ The tabs are always in the same order. They are the same on every screen after f
 | The tabs must be Ride, Buttons, and Connections, in that order, on every screen after first run. | UX-N-001 |
 | The Connections tab must show an `accent-ink` dot whenever Zwift is not connected, so the warning is visible from any tab. The dot must also have words in its accessible name. | UX-N-002 |
 | The tab bar must not hold page actions. The app must never put a screen's one accent action in the navigation. | UX-N-003 |
+| Choosing a tab must show that tab's screen and clear the back history, so back never returns to another tab. | UX-N-017 |
 
 ## The More button
 
