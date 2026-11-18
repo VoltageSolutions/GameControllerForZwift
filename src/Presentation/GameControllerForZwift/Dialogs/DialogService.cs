@@ -1,4 +1,3 @@
-using GameControllerForZwift.Core;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Windows;
@@ -6,19 +5,11 @@ using System.Windows;
 namespace GameControllerForZwift.UI.WPF.Dialogs
 {
     /// <summary>
-    /// Shows the app's dialogs as modal windows centered on the main window. While a dialog is open, the selected game
-    /// controller can move focus, press buttons and cancel (CFG-038).
+    /// Shows the app's dialogs as modal windows centered on the main window. They work with keyboard, mouse, and
+    /// touch (CFG-038).
     /// </summary>
     public sealed class DialogService : IDialogService
     {
-        private readonly IDataIntegrator _dataIntegrator;
-
-        public DialogService(IDataIntegrator dataIntegrator)
-        {
-            ArgumentNullException.ThrowIfNull(dataIntegrator);
-            _dataIntegrator = dataIntegrator;
-        }
-
         public bool Confirm(string title, string message, string confirmText)
         {
             var dialog = new MessageDialogWindow(title, message, confirmText, null, "Cancel");
@@ -78,7 +69,7 @@ namespace GameControllerForZwift.UI.WPF.Dialogs
             using var process = Process.Start(new ProcessStartInfo(folderPath) { UseShellExecute = true });
         }
 
-        private bool? ShowModal(Window dialog)
+        private static bool? ShowModal(Window dialog)
         {
             var owner = GetOwner();
             if (owner is not null)
@@ -86,7 +77,6 @@ namespace GameControllerForZwift.UI.WPF.Dialogs
             else
                 dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            using var navigator = new GamepadDialogNavigator(_dataIntegrator, dialog);
             return dialog.ShowDialog();
         }
 
