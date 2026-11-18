@@ -180,7 +180,3 @@ On all setup screens, a controller press only finds or assigns a button. Moving 
 | `SetupContinueButton` | Connect controller and following screens |
 | `SetupPairBluetoothButton` | Connect controller |
 | `SetupZwiftStatus` | Pair with Zwift |
-
-## Implementation status
-
-Not implemented yet. The current Windows app has no first-run flow. It opens on the Controller Setup page, where you choose a controller from a drop-down and press "Refresh List" to look again. There is no Bluetooth help, network permission screen, Zwift pairing guide or shift test. The app can tell whether Zwift is connected (`IsZwiftConnected`) but does not show it. Detecting step 2 needs the app to surface the existing `IsSubscribed` check from the connection session.

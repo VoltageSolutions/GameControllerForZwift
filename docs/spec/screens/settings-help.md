@@ -14,28 +14,28 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
 
 ## Settings
 
-**What it is for:** change how the app looks and behaves, and manage saved layouts and logs.
+**What it is for:** change how the app looks and behaves, and manage saved mappings and logs.
 
-**Sections:** Appearance, While riding, Layouts, Help, About.
+**Sections:** Appearance, While riding, Mappings, Help, About.
 
 | Section | Content |
 |---|---|
 | Appearance | **Light**, **Dark** or **Match Windows**. |
 | While riding | **Announce each shift** (off by default). On Windows also a shortcut to switch window size. |
 | Startup (Windows) | **Start with Windows**. |
-| Layouts | **Open folder** and **Delete all saved layouts**. |
+| Mappings | **Open folder** and **Delete all saved mappings**. |
 | Help | Links to Help and feedback, with **Open log folder**. |
 | About | Version, and a link to Credits. |
 
-*Example: you press Delete all saved layouts. The dialog says "Delete all 3 saved layouts? This can't be undone. Default stays." After you confirm, every controller is back on Default.*
+*Example: you press Delete all saved mappings. The dialog says "Delete all 3 saved mappings? This can't be undone. Default stays." After you confirm, every controller is back on Default.*
 
 | Rule | ID |
 |---|---|
 | Settings must offer the appearance choices Light, Dark and Match Windows. The default must be Match Windows. | SCR-SET-001 |
 | Settings must offer **Announce each shift**, off by default. See UX-A-026. | SCR-SET-002 |
 | On Windows, Settings must offer **Start with Windows** and a shortcut for switching the window size. | SCR-SET-003 |
-| Settings must offer **Open folder** for saved layouts (`CFG-034`). | SCR-SET-004 |
-| Settings must offer **Delete all saved layouts** behind a confirmation that states the count and that it can't be undone. See `CFG-035` and `CFG-036`. | SCR-SET-005 |
+| Settings must offer **Open folder** for saved mappings (`CFG-034`). | SCR-SET-004 |
+| Settings must offer **Delete all saved mappings** behind a confirmation that states the count and that it can't be undone. See `CFG-035` and `CFG-036`. | SCR-SET-005 |
 | If there is nothing to delete, Settings must say so and not ask for confirmation. See `CFG-035`. | SCR-SET-006 |
 | Settings must offer **Open log folder**. | SCR-SET-007 |
 | When an update is available, Settings must show a badge. The app must not show a banner on other screens. | SCR-SET-008 |
@@ -80,7 +80,7 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
 | Rule | ID |
 |---|---|
 | The screen must offer Ko-fi, a star on GitHub, telling a friend and contributing. | SCR-SET-022 |
-| The pitch must be short, honest and framed as keeping the app free. It must not make claims the app cannot verify. | SCR-SET-023 |
+| The pitch must be short, honest and framed as supporting the project. It must not make claims the app cannot verify. | SCR-SET-023 |
 | Only one action may use the accent fill (Chip in on Ko-fi). | SCR-SET-024 |
 | The screen must follow the platform's donation rules (see [Platforms](../ux/platforms.md)). | SCR-SET-025 |
 
@@ -98,7 +98,3 @@ The controller navigates. A dialog is answered with A and B. See [Controller inp
 | `MenuSettingsItem`, `MenuHelpItem`, `MenuCreditsItem`, `MenuSupportItem` | The More menu |
 | `CreditsGitHubLink` | Credits |
 | `SupportKofiButton` | Support this project |
-
-## Implementation status
-
-Not implemented yet. The current Windows app has a Settings page with one choice, the app theme (Light, Dark or Use system setting). Its About page links to the project on GitHub, to Issues and to Ko-fi, lists dependencies and shows the license text. It has no Help and feedback screen, no Support screen, no "Announce each shift", no layouts section, no log folder button, no update badge, and no start-with-Windows option.

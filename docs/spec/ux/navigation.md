@@ -38,7 +38,7 @@ The tabs are always in the same order. They are the same on every screen after f
 | Tab | What lives there |
 |---|---|
 | **Ride** | Home ("Ready when you are"), the live riding view, ride finished. |
-| **Buttons** | Layouts, buttons, sticks and triggers. |
+| **Buttons** | Mappings, buttons, sticks and triggers. |
 | **Connections** | Your controller (use a different one, pair a new one), Zwift (status, pair Voltage Gamepad, the three steps) and "Zwift can't find Voltage Gamepad". |
 
 | Rule | ID |
@@ -89,7 +89,3 @@ A small floating button with a ⋯ (more) icon. It is not a hamburger: there is 
 ??? note "Edge cases"
     - Only the very first run hides the tabs. Choosing a different controller or pairing a new one later happens inside the Connections tab, with the tabs visible.
     - Pushed screens (Settings, Help and feedback, Credits, Support this project) keep the tabs visible with none selected.
-
-## Implementation status
-
-Not implemented yet. The current Windows app has a custom title bar, a back button, a side menu with "Controller Setup" and "About", and a Settings button in the footer of the menu. It has no tabs and no More button.

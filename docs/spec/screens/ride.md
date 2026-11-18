@@ -8,7 +8,7 @@ last-updated: 2026-11-17
 # Ride screens
 
 !!! tldr "TL;DR"
-    Ride is the home tab. It shows your controller, honest stats, your layout and whether Zwift can see you. The one main action is **Start riding**, or **Pair with Zwift** when Zwift is not connected. While riding you get one big readout and three window sizes: Full, Float and Mini. Problems are said in words: "Your controller is fine", "Wake your controller".
+    Ride is the home tab. It shows your controller, honest stats, your mapping and whether Zwift can see you. The one main action is **Start riding**, or **Pair with Zwift** when Zwift is not connected. While riding you get one big readout and three window sizes: Full, Float and Mini. Problems are said in words: "Your controller is fine", "Wake your controller".
 
 In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -27,7 +27,7 @@ flowchart TD
 
 **What it is for:** the screen you see every day. It tells you that you are ready, or what is missing.
 
-**Content, top to bottom:** the screen title "Ready when you are" (`RidePageTitle`), your controller card (for example "Your Xbox controller, awake and connected", `RideControllerCard`), your stats (`RideStats`), your current layout, the Zwift status (`RideZwiftStatus`), and the main action **Start riding** (`RideStartButton`).
+**Content, top to bottom:** the screen title "Ready when you are" (`RidePageTitle`), your controller card (for example "Your Xbox controller, awake and connected", `RideControllerCard`), your stats (`RideStats`), your current mapping, the Zwift status (`RideZwiftStatus`), and the main action **Start riding** (`RideStartButton`).
 
 *Example: "12 rides together, 1,086 shifts, riding since September."*
 
@@ -36,7 +36,7 @@ flowchart TD
 | The title must be "Ready when you are". | SCR-RIDE-001 |
 | The controller card must name your controller and say its state in words, such as "Your Xbox controller, awake and connected". | SCR-RIDE-002 |
 | The stats must show only real values the app counts: rides together, shifts and riding since. The stats must be hidden or say nothing until there is something real to show. | SCR-RIDE-003 |
-| The screen must show the selected layout and let you change it by going to Buttons. | SCR-RIDE-004 |
+| The screen must show the selected mapping and let you change it by going to Buttons. | SCR-RIDE-004 |
 | The Zwift status must say "Zwift can see your controller" when `IsZwiftConnected` is true. | SCR-RIDE-005 |
 | The one main action must be **Start riding**. | SCR-RIDE-006 |
 | The status text must be a live region and announce only changes. | SCR-RIDE-007 |
@@ -123,14 +123,14 @@ flowchart TD
 
 **Content:** time, shifts and rides together. The one-time donation ask: **Chip in on Ko-fi** or **Maybe later**.
 
-**Copy:** a line that keeping the app free takes support.
+**Copy:** a short line about supporting the project.
 
 | Rule | ID |
 |---|---|
 | The summary must show only real values: ride time, shifts and rides together. | SCR-RIDE-029 |
 | The donation ask must appear at most once, on a ride finished screen, with "Chip in on Ko-fi" and "Maybe later". | SCR-RIDE-030 |
 | The ask must never block anything. "Maybe later" must dismiss it, and the app must not ask again. | SCR-RIDE-031 |
-| The ask must be framed as keeping the app free. It must not claim impact the app cannot verify. | SCR-RIDE-032 |
+| The ask must be framed as supporting the project. It must not claim impact the app cannot verify. | SCR-RIDE-032 |
 
 ## Controller input on these screens
 
@@ -147,7 +147,3 @@ On Home, the controller navigates. On the riding view, the controller navigates 
 | `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideZwiftStatus`, `RideStartButton` | Home |
 | `RideLastPressStatus`, `RideWindowSizeGroup`, `RideStopButton` | Riding view |
 | `NavConnectionsTab` | Name adds ", Zwift not connected" when the dot shows |
-
-## Implementation status
-
-Not implemented yet. The current Windows app has no Ride screen. It has no riding view, no Float or Mini window, no ride summary and no donation ask. It does not count rides or shifts. It shows no Zwift status and no "Wake your controller" state.

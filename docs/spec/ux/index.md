@@ -24,10 +24,10 @@ Audiences decide what the words say and which features exist. They never decide 
 
 | # | Audience | What they need |
 |---|---|---|
-| 1 | **Cyclists with indoor trainers.** The main audience. | Reliability, calm polish, a glanceable riding screen, and a setup that proves it works. They compare the app with polished paid hardware. |
+| 1 | **Cyclists with indoor trainers.** The main audience. | Reliability, calm polish, a glanceable riding screen, and a setup that proves it works. They compare the app with polished hardware. |
 | 2 | **Gamers** | Correct button glyphs for their controller (Xbox, PlayStation, Nintendo), detected automatically. Controller navigation where it is safe. Depth on request, such as dead zones and curves behind "Advanced". No neon, no all caps. |
-| 3 | **Right-to-repair tech advocates** | Values they can see: free, no account, no upsells, works offline, runs on old phones and tablets, small download. No claims the app cannot verify. No green-leaf clichés. |
-| 4 | **Riders with limited hand mobility** | Large targets, every input remappable, and an app that never requires press-and-hold. Adaptive and big-button controllers can make shifting possible. |
+| 3 | **Right-to-repair tech advocates** | Values they can see: no account, no upsells, works offline, runs on old phones and tablets, small download. No claims the app cannot verify. No green-leaf clichés. |
+| 4 | **Riders with limited hand mobility** | Large targets, every input remappable. Adaptive and big-button controllers can make shifting possible. |
 
 ## How the UX specs are organized
 
@@ -93,7 +93,7 @@ Lessons from other apps that shaped this one:
 | A timid accent sprinkled everywhere, or neon in big areas | One confident use per screen (the main action) plus live moments. |
 | Wireframe line illustrations | Filled, soft, friendly illustrations. |
 | An interface with no content | The rider's own things: their controller, rides together, shifts. |
-| Technical nouns such as Config, Mapped, Linked | Plain words such as Climbing layout, Free button, Zwift can see your controller. |
+| Technical nouns such as Config, Mapped, Linked | Plain words such as Climbing mapping, Free button, Zwift can see your controller. |
 | A setup checklist copied from a competitor | A first screen that does something: "Press any button" lights up the controller. |
 | Purple or violet gradients | Flat color, no gradient washes. |
 | A neighbor's category color (Strava orange, Wahoo or Garmin blue, Xbox green, PlayStation blue, Nintendo red, conservation green) | A hue no neighbor owns. The app's own orange is its brand color. |

@@ -91,7 +91,3 @@ The controller navigates on Connections (it is not a screen where buttons are as
 | `NavConnectionsTab` | The tab. Its name adds ", Zwift not connected" when the dot shows. |
 | `ConnectionsZwiftCard` | The Zwift card |
 | `ConnectionsShowMeHowButton` | The steps button |
-
-## Implementation status
-
-Not implemented yet. The current Windows app has no Connections screen and no Zwift status. It chooses a controller from a drop-down on the Controller Setup page. The app knows whether Zwift is connected (`IsZwiftConnected` and `ConnectionChanged`) but never shows it. The troubleshooting checks exist today only as written steps in the [troubleshooting guide](../../use/troubleshooting.md).

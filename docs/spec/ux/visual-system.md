@@ -160,7 +160,3 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 |---|---|
 | Motion must be 100 to 200 ms and only for state changes. | UX-V-037 |
 | The app must respect the system reduce-motion setting. See [Accessibility](accessibility.md#text-size-and-motion). | UX-V-038 |
-
-## Implementation status
-
-Not implemented yet. The current Windows app uses Windows system colors and the default Windows font, with the Light, Dark or "Use system setting" theme choice. It has outlined cards, standard-size controls, no accent action and no controller illustration.

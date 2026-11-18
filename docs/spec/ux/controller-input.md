@@ -8,7 +8,7 @@ last-updated: 2026-11-17
 # Controller input
 
 !!! tldr "TL;DR"
-    A controller press has exactly one meaning on each screen. On setup and Buttons screens, presses find or assign buttons. While riding, the controller navigates. In a dialog, the controller answers it (A confirms, B cancels). The app never requires press-and-hold, and it shows the right button glyphs for your controller.
+    A controller press has exactly one meaning on each screen. On setup and Buttons screens, presses find or assign buttons. While riding, the controller navigates. In a dialog, the controller answers it (A confirms, B cancels). A hold on a mapped button reaches Zwift as a hold. The app shows the right button glyphs for your controller.
 
 In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -44,17 +44,16 @@ flowchart TD
 
 ??? note "Edge cases"
     - Shifting in Zwift is not affected by any of this. The app keeps sending your mapped functions to Zwift while you navigate its own screens.
-    - The file picker for importing a layout is the standard Windows dialog. It is not a dialog the app can answer with a controller (see `CFG-038` implementation status).
+    - The file picker for importing a mapping is the standard Windows dialog. It is not a dialog the app can answer with a controller (see `CFG-038`).
 
-## Never press and hold
+## Holding a button
 
 | Rule | ID |
 |---|---|
-| The app must never require press-and-hold to use any of its own features. | UX-C-007 |
-| The app should treat Zwift's own hold actions (Ride On to nearby riders, Power-up to skip a workout block) as Zwift's behavior, and should say so next to those functions. | UX-C-008 |
+| The app must pass a hold on a mapped button to Zwift as a hold, so Zwift's own hold actions work (Ride On to nearby riders, Power-up to skip a workout block). It should say so next to those functions. | UX-C-008 |
 
 ??? note "Edge cases"
-    Zwift's hold actions still need a hold. Offering them as separate mappable functions is possible only if Zwift's protocol allows it.
+    Zwift's hold actions still need a hold. The app does not add its own hold behavior.
 
 ## Button glyphs
 
@@ -97,7 +96,3 @@ The app keeps reading your controller while it is not the focused window, so you
 |---|---|
 | On Windows the app must keep reading controller input when another window (such as Zwift) has focus. | UX-C-019 |
 | If a platform cannot read input in the background, the app must say so in plain words and keep the screen open. | UX-C-020 |
-
-## Implementation status
-
-Not implemented yet. The current Windows app picks a controller from a drop-down with a "Refresh List" button. Pressed buttons light up their rows on the setup page. It shows no glyph families and no dialog hints. The saved layouts dialogs (`CFG-038`) are controller-friendly: D-pad moves focus, A presses and B cancels, except for the Import file picker and typing a name.

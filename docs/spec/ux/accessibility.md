@@ -70,17 +70,17 @@ An ID is `{Area}{Element}{Role}` in PascalCase. IDs never change with language o
 
 | Part | Values |
 |---|---|
-| Areas | `Setup`, `Nav`, `Menu`, `Ride`, `Buttons`, `Layout`, `Connections`, `Settings`, `Help`, `Credits`, `Support`, `Dialog` |
+| Areas | `Setup`, `Nav`, `Menu`, `Ride`, `Buttons`, `Mapping`, `Connections`, `Settings`, `Help`, `Credits`, `Support`, `Dialog` |
 | Roles | `Button`, `Tab`, `Item`, `Link`, `Toggle`, `Field`, `Status`, `Title`, `Row`, `Card`, `Image` |
 
-Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_ShiftUp`, `LayoutItem_{id}`.
+Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_ShiftUp`, `MappingItem_{id}`.
 
 | Rule | ID |
 |---|---|
 | Every interactive or meaningful element must have an ID, a name and a role. | UX-A-013 |
 | IDs must follow `{Area}{Element}{Role}` in PascalCase, with the same string on every platform. | UX-A-014 |
 | IDs must not change with language or state. | UX-A-015 |
-| A layout's ID key must be the layout's GUID (see `CFG-008`), never its name. | UX-A-016 |
+| A mapping's ID key must be the mapping's GUID (see `CFG-008`), never its name. | UX-A-016 |
 | Decorative elements must be hidden from assistive technology. | UX-A-017 |
 
 ### Core IDs
@@ -101,7 +101,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | `RideLastPressStatus` | Live status | "Shift up, right bumper" |
 | `RideWindowSizeGroup` | Radio group | "Window size: Full, Float, Mini" |
 | `RideStopButton` | Button | "Stop riding" |
-| `ButtonsLayoutPicker` | Button, opens | "Layout: Climbing, unsaved changes" |
+| `ButtonsMappingPicker` | Button, opens | "Mapping: Climbing, unsaved changes" |
 | `ButtonsSaveButton`, `ButtonsSaveAsButton` | Button | "Save", "Save as new" |
 | `ButtonsRow_{input}` | Button | "Right bumper: shift up" |
 | `ButtonsControllerImage` | Image | "Your controller. Right bumper selected. X and Menu are free" |
@@ -159,7 +159,3 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 |---|---|
 | Every new screen must pass a contrast check and have a written reading order before it is built. | UX-A-032 |
 | Every new Windows screen must be checked with Accessibility Insights and Narrator. | UX-A-033 |
-
-## Implementation status
-
-Not implemented yet. The current Windows app sets some `AutomationProperties.Name` values (for example "Back", "Navigation Pane" and "Settings") and uses the tree item title as an ID. It uses none of the `{Area}{Element}{Role}` IDs, has no live status, and has not been checked against these rules.

@@ -49,7 +49,6 @@ You ride sweaty, at arm's length, with Zwift full screen. The riding screen has 
 | Rule | ID |
 |---|---|
 | A controller press must have exactly one meaning on each screen. See [Controller input](controller-input.md). | UX-P-010 |
-| The app must never require press-and-hold, so riders with limited hand mobility can use every part of it. | UX-P-011 |
 
 ## Simple by default, depth on request
 
@@ -64,19 +63,15 @@ You ride sweaty, at arm's length, with Zwift full screen. The riding screen has 
 | Rule | ID |
 |---|---|
 | Performance is a feature. The app should use little battery, offer a dark mode that suits OLED screens, and keep working on older devices. | UX-P-015 |
-| The app must be free to use with no account and no upsells. It must work offline. | UX-P-016 |
+| The app must have no account and no upsells. It must work offline. | UX-P-016 |
 
 ## Donations, once and honest
 
 | Rule | ID |
 |---|---|
-| The app must ask for a donation at most once, after a good ride, framed as keeping the app free. | UX-P-017 |
+| The app must ask for a donation at most once, after a good ride, framed as supporting the project. | UX-P-017 |
 | A donation ask must never block anything and must never repeat. | UX-P-018 |
 
 ??? note "Edge cases"
     - "Support this project" in the More menu is always available. It is a place you choose to visit, not an ask.
     - The ask is skipped if you chose "Maybe later" once. See [Ride screens](../screens/ride.md).
-
-## Implementation status
-
-Not implemented yet. The current Windows app has a side menu and a drop-down for choosing the controller. Its About page carries a donate link. It has no donation ask, no honest stats, and no per-screen controller rules.

@@ -31,8 +31,6 @@ Every spec has a status in its front matter.
 
 Start with the TL;DR. Then read the sections you care about. Each section opens with a short description of what you see and what happens, often with an example. After that comes a table of rules with their IDs. Finer points sit in a collapsed "Edge cases" block that you can open when you need it.
 
-Pages that describe screens end with an **Implementation status** section. It says what the current Windows app does today compared with the spec.
-
 ## The specs
 
 | Spec | ID prefix | What it covers |
@@ -47,10 +45,10 @@ Pages that describe screens end with an **Implementation status** section. It sa
 | [Platforms](ux/platforms.md) | `UX-PL` | What changes per platform, and what never does. |
 | [Setup screens](screens/setup.md) | `SCR-SETUP` | Connect a controller, pair with Zwift, try a shift. |
 | [Ride screens](screens/ride.md) | `SCR-RIDE` | Home, riding view, connection lost, ride finished. |
-| [Buttons screens](screens/buttons.md) | `SCR-BTN` | Layouts, the function picker, sticks and triggers. |
+| [Buttons screens](screens/buttons.md) | `SCR-BTN` | Mappings, the function picker, sticks and triggers. |
 | [Connections screens](screens/connections.md) | `SCR-CONN` | Controller and Zwift status, "Zwift can't find Voltage Gamepad". |
 | [Settings and help screens](screens/settings-help.md) | `SCR-SET` | Settings, Help and feedback, Credits, Support this project. |
-| [Saved configurations](saved-configurations.md) | `CFG` | Save, reload, rename, delete, import and share layouts. |
+| [Saved configurations](saved-configurations.md) | `CFG` | Save, reload, rename, delete, import and share mappings. |
 | [Controller detection](controller-detection.md) | `CTRL` | How the controller list follows controllers as they connect and disconnect, and which one is selected. |
 
-The saved configurations spec calls a saved set of button mappings a "configuration". The app calls it a **layout**. The screen specs use "layout" and refer to the `CFG` rules by ID.
+The saved configurations spec calls a saved set of button assignments a "configuration". The app calls it a **mapping**. The screen specs use "mapping" and refer to the `CFG` rules by ID.

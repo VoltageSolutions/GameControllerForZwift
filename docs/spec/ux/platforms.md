@@ -53,7 +53,3 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
     - Windows is the only platform that ships today. The other columns describe the target shell, so the same screens can be built later.
     - Android background input has not been tested.
     - The "Pair a new Bluetooth controller" screen shows the same pairing-mode steps everywhere. Only the last step (the hand-off) changes.
-
-## Implementation status
-
-Windows only. The current Windows app has no Float or Mini window, no notification-area icon, no start-with-Windows option and no shortcuts. It reads the controller through SDL. Android, iOS and Linux apps do not exist yet.

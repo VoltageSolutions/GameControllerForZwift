@@ -310,16 +310,6 @@ A configuration bar sits above the mapping grid. The drop-down picks the configu
     - Disabled buttons still show their tooltip.
     - With a game controller, the D-pad moves focus (up and left go back, down and right go forward), A presses the focused button, and B cancels.
 
-## Implementation status (v0.4.0)
-
-Every requirement is implemented except one gap in CFG-038:
-
-- The app's own dialogs (confirm, unsaved changes, name, notices) work with a mouse, the keyboard (Tab, Enter, Escape) and the selected game controller (D-pad moves focus, A presses, B cancels).
-- **Gap:** the **Import...** file picker is the standard Windows Open dialog. It works with a mouse and keyboard but not with a game controller.
-- **Gap:** typing a name with a game controller needs the Windows touch keyboard. The name dialog does not offer one.
-
-The status is Accepted because of these gaps. Implemented means a spec has none.
-
 ## Out of scope
 
 - Syncing configurations between machines (you copy files).
