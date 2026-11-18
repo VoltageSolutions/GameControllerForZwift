@@ -1,33 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization">
 
     <!-- Styles of the window shell: the tabs, the More button and its menu, and the back button
          (docs/spec/ux/navigation.md). Colors come from the tokens, sizes from docs/spec/ux/visual-system.md. -->
-
-    <BooleanToVisibilityConverter x:Key="BooleanToVisibility" />
-
-    <!-- Focus ring: 3 px, 2 px outside the control (UX-V-021). -->
-    <Style x:Key="FocusRing">
-        <Setter Property="Control.Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Border Margin="-5" BorderThickness="3" CornerRadius="24" BorderBrush="{DynamicResource Brush.focus}" SnapsToDevicePixels="True" />
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="IconStroke" TargetType="Path">
-        <Setter Property="Width" Value="24" />
-        <Setter Property="Height" Value="24" />
-        <Setter Property="Stretch" Value="None" />
-        <Setter Property="StrokeThickness" Value="2" />
-        <Setter Property="StrokeStartLineCap" Value="Round" />
-        <Setter Property="StrokeEndLineCap" Value="Round" />
-        <Setter Property="StrokeLineJoin" Value="Round" />
-        <Setter Property="Stroke" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Control}}" />
-        <Setter Property="SnapsToDevicePixels" Value="False" />
-    </Style>
 
     <!-- The tab lists. One per placement; the window shows the one that fits its width (UX-N-010). -->
     <Style x:Key="NavList" TargetType="ListBox">
@@ -37,7 +13,7 @@
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
         <Setter Property="KeyboardNavigation.TabNavigation" Value="Once" />
-        <Setter Property="AutomationProperties.Name" Value="Main" />
+        <Setter Property="AutomationProperties.Name" Value="{loc:Loc NavMain}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBox">
@@ -53,7 +29,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusRing}" />
         <Setter Property="AutomationProperties.AutomationId" Value="{Binding AutomationId}" />
         <Setter Property="AutomationProperties.Name" Value="{Binding AccessibleName}" />
         <Style.Triggers>
@@ -151,7 +127,7 @@
         <Setter Property="Foreground" Value="{DynamicResource Brush.bg}" />
         <Setter Property="Background" Value="{DynamicResource Brush.text}" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusRing}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -176,7 +152,7 @@
         <Setter Property="FontSize" Value="18" />
         <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusRing}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -204,7 +180,7 @@
         <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
         <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
         <Setter Property="Cursor" Value="Hand" />
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource FocusRing}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">

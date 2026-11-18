@@ -123,7 +123,7 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 | The app must not use gradients. | UX-V-025 |
 
 ??? note "Edge cases"
-    - The only outlines allowed are the ones the accessibility rules require: a thin muted outline on controller keys, a dashed outline on free keys, and a dark outline on the lit key.
+    - The only outlines allowed are the ones the accessibility rules require: a thin muted outline on controller keys, a dashed outline on free keys, a dark outline on the lit key, and the 2 px muted outline on an unchecked choice (UX-V-043).
     - With a Windows contrast theme on, the app uses system colors instead of these tokens.
 
 ## Buttons
@@ -146,6 +146,20 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 | A screen must have at most one primary (accent) button. | UX-V-033 |
 
 *Example: a German label for "Start riding" is longer. The button grows, and if the row is full, the button moves to its own line instead of breaking the label.*
+
+## Fields and choices
+
+Dropdowns, text boxes, checkboxes, switches, and radio buttons share one look, so a screen reads as one set of controls.
+
+| Rule | ID |
+|---|---|
+| Dropdowns and text boxes must be 48 px high with the `surface-2` fill and radius 14. Their text must be centered vertically. | UX-V-039 |
+| A dropdown's list must open below it on a `surface` panel with radius 16. The selected item must be bold. | UX-V-040 |
+| A checked checkbox, switch, or radio button must use the `text` color, not the accent (UX-V-006). | UX-V-041 |
+| A choice and its label must form one 48 px target (UX-V-020). Clicking the label toggles the choice. | UX-V-042 |
+| An unchecked checkbox, an off switch, and an empty radio button must have a 2 px `muted` outline, so the control stands out from the background at 3:1 or more. This is one of the outlines accessibility needs (see the edge cases under Surfaces). | UX-V-043 |
+
+On Windows the buttons, fields, and surfaces live in `Resources/Controls.xaml` and `Resources/Surfaces.xaml`. In Debug builds, the style gallery in the More menu shows each one in every state.
 
 ## Illustration
 

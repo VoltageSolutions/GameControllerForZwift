@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GameControllerForZwift.UI.WPF.Localization;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using System.ComponentModel;
@@ -54,7 +55,7 @@ namespace GameControllerForZwift.UI.WPF
         private bool _hasAlert;
 
         /// <summary>The name a screen reader reads. The dot has words too (UX-N-002).</summary>
-        public string AccessibleName => HasAlert ? Label + ", Zwift not connected" : Label;
+        public string AccessibleName => HasAlert ? Localizer.Format("NavConnectionsAlert", Label) : Label;
     }
 
     /// <summary>
@@ -71,6 +72,11 @@ namespace GameControllerForZwift.UI.WPF
 
         private readonly INavigationService _navigationService;
         private readonly ZwiftStatus _zwiftStatus;
+#if DEBUG
+        private readonly bool _showsStyleGallery = true;
+#else
+        private readonly bool _showsStyleGallery;
+#endif
 
         public MainWindowViewModel(INavigationService navigationService, ZwiftStatus? zwiftStatus = null)
         {
@@ -82,9 +88,9 @@ namespace GameControllerForZwift.UI.WPF
 
             Tabs =
             [
-                new NavTab(ShellTab.Ride, "Ride", "NavRideTab", typeof(RideViewModel)),
-                new NavTab(ShellTab.Buttons, "Buttons", "NavButtonsTab", typeof(ControllerSetupViewModel)),
-                new NavTab(ShellTab.Connections, "Connections", "NavConnectionsTab", typeof(ConnectionsViewModel)),
+                new NavTab(ShellTab.Ride, Localizer.Get("NavRide"), "NavRideTab", typeof(RideViewModel)),
+                new NavTab(ShellTab.Buttons, Localizer.Get("NavButtons"), "NavButtonsTab", typeof(ControllerSetupViewModel)),
+                new NavTab(ShellTab.Connections, Localizer.Get("NavConnections"), "NavConnectionsTab", typeof(ConnectionsViewModel)),
             ];
             UpdateConnectionsAlert();
         }
@@ -131,7 +137,7 @@ namespace GameControllerForZwift.UI.WPF
         private bool _isMoreMenuOpen;
 
         /// <summary>The More button's name for screen readers.</summary>
-        public string MoreButtonName => IsMoreMenuOpen ? "Close menu" : "More: settings, help, credits, support";
+        public string MoreButtonName => Localizer.Get(IsMoreMenuOpen ? "MenuClose" : "MenuMore");
 
         /// <summary>Picks the tab placement for a window width (UX-N-010, UX-N-011).</summary>
         public static NavLayout LayoutForWidth(double width) => width switch
@@ -170,6 +176,20 @@ namespace GameControllerForZwift.UI.WPF
         {
             IsMoreMenuOpen = false;
             _navigationService.NavigateTo<AboutPageViewModel>();
+        }
+
+        /// <summary>
+        /// True in Debug builds, where the More menu also lists the style gallery (docs/spec/ux/navigation.md). Release
+        /// builds never show it.
+        /// </summary>
+        public bool ShowsStyleGallery => _showsStyleGallery;
+
+        /// <summary>Opens the style gallery as a pushed screen. Only Debug builds can.</summary>
+        [RelayCommand(CanExecute = nameof(ShowsStyleGallery))]
+        private void OpenStyleGallery()
+        {
+            IsMoreMenuOpen = false;
+            _navigationService.NavigateTo<StyleGalleryViewModel>();
         }
 
         /// <summary>Help and feedback has no screen, so its menu item is disabled.</summary>

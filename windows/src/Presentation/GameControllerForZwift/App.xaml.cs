@@ -184,6 +184,7 @@ namespace GameControllerForZwift
             services.AddSingleton<ZwiftStatus>();
             services.AddSingleton<RideViewModel>();
             services.AddSingleton<ConnectionsViewModel>();
+            services.AddSingleton<StyleGalleryViewModel>();
             services.AddSingleton<AboutPageViewModel>(provider =>
             {
                 var fileService = provider.GetRequiredService<IFileService>();

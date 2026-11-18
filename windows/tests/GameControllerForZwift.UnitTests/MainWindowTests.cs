@@ -45,6 +45,7 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton<ConnectionsViewModel>();
             services.AddSingleton(new AboutPageViewModel("# Acknowledgements"));
             services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<StyleGalleryViewModel>();
             services.AddTransient<MainWindow>();
             return services.BuildServiceProvider();
         }
@@ -313,7 +314,7 @@ namespace GameControllerForZwift.UnitTests
         {
             WithWindow((_, window) =>
             {
-                var items = Find<StackPanel>(window, "MoreMenu").Children.OfType<Button>().ToList();
+                var items = Find<StackPanel>(window, "MoreMenu").Children.OfType<Button>().Take(4).ToList();
 
                 Assert.Equal(
                     MenuIds,
@@ -322,6 +323,42 @@ namespace GameControllerForZwift.UnitTests
                 Assert.True(Find<Button>(window, "MenuCreditsItem").IsEnabled);
                 Assert.False(Find<Button>(window, "MenuHelpItem").IsEnabled);
                 Assert.False(Find<Button>(window, "MenuSupportItem").IsEnabled);
+            });
+        }
+
+        [Fact]
+        public void StyleGallery_OpensAsAPushedScreenAndShowsOnlyInDebugBuilds()
+        {
+            WithWindow((_, window) =>
+            {
+                var item = Find<Button>(window, "MenuStyleGalleryItem");
+#if DEBUG
+                Assert.Equal(Visibility.Visible, item.Visibility);
+#else
+                Assert.Equal(Visibility.Collapsed, item.Visibility);
+#endif
+
+                window.ViewModel.OpenStyleGalleryCommand.Execute(null);
+                Pump(window);
+
+                Assert.IsType<StyleGalleryPage>(ShownContent(window));
+                Assert.True(window.ViewModel.IsPushedScreen);
+            });
+        }
+
+        [Fact]
+        public void UXA020_ReadingOrderIsSidebarMoreMenuContentThenBottomBar()
+        {
+            WithWindow((_, window) =>
+            {
+                UIElementCollection children = Find<Grid>(window, "ShellGrid").Children;
+                int Index(string name) => children.IndexOf(Find<UIElement>(window, name));
+
+                Assert.True(Index("NavSidebar") < Index("MoreButton"));
+                Assert.True(Index("NavRail") < Index("MoreButton"));
+                Assert.True(Index("MoreButton") < Index("MoreMenuLayer"));
+                Assert.True(Index("MoreMenuLayer") < Index("ContentArea"));
+                Assert.True(Index("ContentArea") < Index("NavBottomBar"));
             });
         }
 

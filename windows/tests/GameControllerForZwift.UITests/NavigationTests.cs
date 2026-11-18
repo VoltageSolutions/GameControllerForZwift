@@ -75,6 +75,22 @@ namespace GameControllerForZwift.UITests
             Assert.True(session.Exists("MenuButton"));
         }
 
+        [Fact]
+        public void StyleGallery_ShowsInTheMenuOnlyInDebugBuilds()
+        {
+            var session = _fixture.AppSession;
+            session.Element("MenuButton").Click();
+
+#if DEBUG
+            session.Element("MenuStyleGalleryItem").Click();
+            Assert.Equal("Style gallery", session.Element("StyleGalleryPageTitle").Text);
+            Assert.True(session.Exists("NavBackButton"));
+#else
+            Assert.False(session.Exists("MenuStyleGalleryItem"));
+            session.PressEscape("MenuSettingsItem");
+#endif
+        }
+
         public void Dispose() => _fixture.AppSession.Reset();
     }
 }

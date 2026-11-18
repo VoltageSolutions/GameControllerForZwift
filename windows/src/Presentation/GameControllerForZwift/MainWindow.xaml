@@ -4,7 +4,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
-    Title="Game Controller for Zwift"
+    xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
+    Title="{loc:Loc WindowTitle}"
     d:DesignHeight="650"
     d:DesignWidth="1000"
     WindowStartupLocation="CenterScreen"
@@ -33,18 +34,18 @@
             <StackPanel Orientation="Horizontal" Margin="16,0,0,0" VerticalAlignment="Center">
                 <Ellipse Width="14" Height="14" Fill="{DynamicResource Brush.accent}" />
                 <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" FontSize="13" Foreground="{DynamicResource Brush.muted}"
-                           Text="VOLTAGE · Game Controller for Zwift" />
+                           Text="{loc:Loc TitleBarText}" />
             </StackPanel>
             <Button x:Name="MinimizeButton" Grid.Column="1" Style="{StaticResource CaptionButton}" Click="MinimizeWindow"
-                    AutomationProperties.Name="Minimize" WindowChrome.IsHitTestVisibleInChrome="True">
+                    AutomationProperties.Name="{loc:Loc CaptionMinimize}" WindowChrome.IsHitTestVisibleInChrome="True">
                 <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="10" Text="&#xE921;" />
             </Button>
             <Button x:Name="MaximizeButton" Grid.Column="2" Style="{StaticResource CaptionButton}" Click="MaximizeWindow"
-                    AutomationProperties.Name="Maximize" WindowChrome.IsHitTestVisibleInChrome="True">
+                    AutomationProperties.Name="{loc:Loc CaptionMaximize}" WindowChrome.IsHitTestVisibleInChrome="True">
                 <TextBlock x:Name="MaximizeIcon" FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="10" Text="&#xE922;" />
             </Button>
             <Button x:Name="CloseButton" Grid.Column="3" Style="{StaticResource CaptionCloseButton}" Click="CloseWindow"
-                    AutomationProperties.Name="Close" WindowChrome.IsHitTestVisibleInChrome="True">
+                    AutomationProperties.Name="{loc:Loc CaptionClose}" WindowChrome.IsHitTestVisibleInChrome="True">
                 <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" FontSize="10" Text="&#xE8BB;" />
             </Button>
         </Grid>
@@ -55,8 +56,43 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <!-- Focus order is the More button, the menu, the content, then the tabs (UX-A-020). Panel.ZIndex keeps the
-                 floating parts on top. -->
+            <!-- Focus and reading order follow a left-to-right layout (UX-A-020): the sidebar or rail, the More button, the
+                 menu, the content, then the bottom bar. Only one tab placement is visible at a time. Panel.ZIndex keeps
+                 the floating parts on top. -->
+            <!-- Wide window: sidebar with icons and labels. -->
+            <Border x:Name="NavSidebar" Grid.Column="0" Width="240" Padding="12,16" Background="{DynamicResource Brush.surface-2}">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ViewModel.NavLayout}" Value="Sidebar">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <controls:NavTabList x:Name="SidebarTabs" Style="{StaticResource NavList}" ItemContainerStyle="{StaticResource NavSidebarItem}"
+                         AutomationProperties.AutomationId="NavSidebar"
+                         ItemsSource="{Binding ViewModel.Tabs}" SelectedItem="{Binding ViewModel.SelectedTab, Mode=TwoWay}" />
+            </Border>
+
+            <!-- Medium window: compact rail. -->
+            <Border x:Name="NavRail" Grid.Column="0" Width="112" Padding="0,24,0,0" Background="{DynamicResource Brush.surface-2}">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ViewModel.NavLayout}" Value="Rail">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <controls:NavTabList x:Name="RailTabs" Style="{StaticResource NavList}" ItemContainerStyle="{StaticResource NavRailItem}"
+                         AutomationProperties.AutomationId="NavRail"
+                         ItemsSource="{Binding ViewModel.Tabs}" SelectedItem="{Binding ViewModel.SelectedTab, Mode=TwoWay}" />
+            </Border>
+
             <!-- More button: floats at the top right of the content area and never moves (UX-N-004, UX-N-007). -->
             <controls:MoreMenuButton x:Name="MoreButton" Panel.ZIndex="3" IsExpanded="{Binding ViewModel.IsMoreMenuOpen, Mode=OneWay}" Grid.Column="0" Grid.ColumnSpan="2" HorizontalAlignment="Right" VerticalAlignment="Top"
                     Command="{Binding ViewModel.ToggleMoreMenuCommand}"
@@ -106,7 +142,7 @@
                   Visibility="{Binding ViewModel.IsMoreMenuOpen, Converter={StaticResource BooleanToVisibility}}">
                 <Border x:Name="MenuScrim" Background="{DynamicResource Brush.scrim}" MouseLeftButtonDown="MenuScrim_MouseLeftButtonDown" />
                 <StackPanel x:Name="MoreMenu" HorizontalAlignment="Right" VerticalAlignment="Top"
-                            AutomationProperties.AutomationId="MoreMenu" AutomationProperties.Name="More"
+                            AutomationProperties.AutomationId="MoreMenu" AutomationProperties.Name="{loc:Loc MenuName}"
                             KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.DirectionalNavigation="Cycle">
                     <!-- The menu opens downward from the More button and lines up with its right edge. -->
                     <StackPanel.Style>
@@ -123,37 +159,48 @@
                         </Style>
                     </StackPanel.Style>
                     <controls:MenuPillButton x:Name="MenuSettingsItem" Style="{StaticResource MenuPill}" Command="{Binding ViewModel.OpenSettingsCommand}"
-                            AutomationProperties.AutomationId="MenuSettingsItem" AutomationProperties.Name="Settings">
+                            AutomationProperties.AutomationId="MenuSettingsItem" AutomationProperties.Name="{loc:Loc MenuSettings}">
                         <StackPanel Orientation="Horizontal">
                             <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Settings}" />
-                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Settings" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{loc:Loc MenuSettings}" />
                         </StackPanel>
                     </controls:MenuPillButton>
                     <controls:MenuPillButton x:Name="MenuHelpItem" Style="{StaticResource MenuPill}" Command="{Binding ViewModel.OpenHelpCommand}"
-                            AutomationProperties.AutomationId="MenuHelpItem" AutomationProperties.Name="Help and feedback">
+                            AutomationProperties.AutomationId="MenuHelpItem" AutomationProperties.Name="{loc:Loc MenuHelp}">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox Width="20" Height="20" Margin="1,0">
                                 <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Help}" />
                             </Viewbox>
-                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Help and feedback" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{loc:Loc MenuHelp}" />
                         </StackPanel>
                     </controls:MenuPillButton>
                     <controls:MenuPillButton x:Name="MenuCreditsItem" Style="{StaticResource MenuPill}" Command="{Binding ViewModel.OpenCreditsCommand}"
-                            AutomationProperties.AutomationId="MenuCreditsItem" AutomationProperties.Name="Credits">
+                            AutomationProperties.AutomationId="MenuCreditsItem" AutomationProperties.Name="{loc:Loc MenuCredits}">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox Width="20" Height="20" Margin="1,0">
                                 <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Credits}" />
                             </Viewbox>
-                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Credits" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{loc:Loc MenuCredits}" />
                         </StackPanel>
                     </controls:MenuPillButton>
                     <controls:MenuPillButton x:Name="MenuSupportItem" Style="{StaticResource MenuPill}" Command="{Binding ViewModel.OpenSupportCommand}"
-                            AutomationProperties.AutomationId="MenuSupportItem" AutomationProperties.Name="Support this project">
+                            AutomationProperties.AutomationId="MenuSupportItem" AutomationProperties.Name="{loc:Loc MenuSupport}">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox Width="18" Height="18" Margin="2,0">
                                 <Path Width="24" Height="24" Data="{StaticResource IconFill.Support}" Fill="{DynamicResource Brush.accent-ink}" />
                             </Viewbox>
-                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="Support this project" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{loc:Loc MenuSupport}" />
+                        </StackPanel>
+                    </controls:MenuPillButton>
+                    <!-- Debug builds only: every component in each state, for development (docs/spec/ux/navigation.md). -->
+                    <controls:MenuPillButton x:Name="MenuStyleGalleryItem" Style="{StaticResource MenuPill}" Command="{Binding ViewModel.OpenStyleGalleryCommand}"
+                            AutomationProperties.AutomationId="MenuStyleGalleryItem" AutomationProperties.Name="{loc:Loc MenuStyleGallery}"
+                            Visibility="{Binding ViewModel.ShowsStyleGallery, Converter={StaticResource BooleanToVisibility}}">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="20" Height="20" Margin="1,0">
+                                <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Gallery}" />
+                            </Viewbox>
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{loc:Loc MenuStyleGallery}" />
                         </StackPanel>
                     </controls:MenuPillButton>
                 </StackPanel>
@@ -182,47 +229,13 @@
 
                 <Button x:Name="BackButton" Grid.Row="0" Margin="0,0,0,16" HorizontalAlignment="Left"
                         Style="{StaticResource BackButton}" Command="{Binding ViewModel.BackCommand}"
-                        AutomationProperties.AutomationId="NavBackButton" AutomationProperties.Name="Back"
+                        AutomationProperties.AutomationId="NavBackButton" AutomationProperties.Name="{loc:Loc NavBack}"
                         Visibility="{Binding ViewModel.IsPushedScreen, Converter={StaticResource BooleanToVisibility}}">
                     <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Back}" />
                 </Button>
 
                 <ContentControl x:Name="RootContent" Grid.Row="1" IsTabStop="False" Focusable="False" />
             </Grid>
-
-            <!-- Wide window: sidebar with icons and labels. -->
-            <Border x:Name="NavSidebar" Grid.Column="0" Width="240" Padding="12,16" Background="{DynamicResource Brush.surface-2}">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ViewModel.NavLayout}" Value="Sidebar">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <controls:NavTabList x:Name="SidebarTabs" Style="{StaticResource NavList}" ItemContainerStyle="{StaticResource NavSidebarItem}"
-                         AutomationProperties.AutomationId="NavSidebar"
-                         ItemsSource="{Binding ViewModel.Tabs}" SelectedItem="{Binding ViewModel.SelectedTab, Mode=TwoWay}" />
-            </Border>
-
-            <!-- Medium window: compact rail. -->
-            <Border x:Name="NavRail" Grid.Column="0" Width="112" Padding="0,24,0,0" Background="{DynamicResource Brush.surface-2}">
-                <Border.Style>
-                    <Style TargetType="Border">
-                        <Setter Property="Visibility" Value="Collapsed" />
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding ViewModel.NavLayout}" Value="Rail">
-                                <Setter Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Border.Style>
-                <controls:NavTabList x:Name="RailTabs" Style="{StaticResource NavList}" ItemContainerStyle="{StaticResource NavRailItem}"
-                         AutomationProperties.AutomationId="NavRail"
-                         ItemsSource="{Binding ViewModel.Tabs}" SelectedItem="{Binding ViewModel.SelectedTab, Mode=TwoWay}" />
-            </Border>
 
             <!-- Narrow window: floating bottom bar, full width. -->
             <Border x:Name="NavBottomBar" Panel.ZIndex="1" Grid.Column="0" Grid.ColumnSpan="2" VerticalAlignment="Bottom" Margin="12,0,12,16" Padding="4"

@@ -27,6 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- UI strings. The fixed name keeps the resource name independent of folders and namespaces. -->
+    <EmbeddedResource Update="Resources\Strings.resx" LogicalName="GameControllerForZwift.Resources.Strings.resources" />
+  </ItemGroup>
+
+  <ItemGroup>
     <InternalsVisibleTo Include="GameControllerForZwift.UnitTests" />
   </ItemGroup>
 
