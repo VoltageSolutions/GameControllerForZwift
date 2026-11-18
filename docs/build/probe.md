@@ -8,13 +8,13 @@
 Close the main app first. Both use port 36866 and the same mDNS name.
 
 ```powershell
-dotnet run --project tools/ZwiftLanProbe
+dotnet run --project windows/tools/ZwiftLanProbe
 ```
 
 With options:
 
 ```powershell
-dotnet run --project tools/ZwiftLanProbe -- --name "Probe Test" --verbose --log-file logs/probe.log
+dotnet run --project windows/tools/ZwiftLanProbe -- --name "Probe Test" --verbose --log-file logs/probe.log
 ```
 
 Then pair it in Zwift the same way as the app (see [Pair with Zwift](../use/pair-with-zwift.md)). When Zwift connects, the probe prints:

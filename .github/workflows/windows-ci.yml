@@ -1,10 +1,10 @@
-name: CI Workflow
+name: Windows CI
 
 on:
   pull_request:
 
 concurrency:
-  group: ci-${{ github.ref }}
+  group: windows-ci-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -14,13 +14,13 @@ env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
-  APP_PROJECT: src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
+  APP_PROJECT: windows/src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
   # Non-WPF test projects (also built on Linux by the Lint job)
   PORTABLE_TESTS: >-
-    tests/GameControllerForZwift.Core.UnitTests
-    tests/GameControllerForZwift.Network.UnitTests
-    tests/GameControllerForZwift.Network.IntegrationTests
-    tests/GameControllerForZwift.Gamepad.UnitTests
+    windows/tests/GameControllerForZwift.Core.UnitTests
+    windows/tests/GameControllerForZwift.Network.UnitTests
+    windows/tests/GameControllerForZwift.Network.IntegrationTests
+    windows/tests/GameControllerForZwift.Gamepad.UnitTests
 
 jobs:
   build:
@@ -37,15 +37,15 @@ jobs:
 
       - uses: actions/setup-dotnet@v6
         with:
-          global-json-file: global.json
+          global-json-file: windows/global.json
           cache: true
-          cache-dependency-path: '**/*.csproj'
+          cache-dependency-path: 'windows/**/*.csproj'
 
       - name: Restore
-        run: dotnet restore GameControllerForZwift.sln
+        run: dotnet restore windows/GameControllerForZwift.sln
 
       - name: Build solution (Release)
-        run: dotnet build GameControllerForZwift.sln -c Release --no-restore
+        run: dotnet build windows/GameControllerForZwift.sln -c Release --no-restore
 
       - name: Publish (framework-dependent)
         run: dotnet publish $env:APP_PROJECT -c Release -r win-x64 --self-contained false -o artifacts/fd
@@ -87,7 +87,7 @@ jobs:
           HEAD_REF: ${{ github.head_ref }}
         run: |
           vs=.github/scripts/version.sh
-          props=Directory.Build.props
+          props=windows/Directory.Build.props
           version="$(bash "$vs" get)" || { echo "::error title=Version Check::Could not read <Version> from $props"; exit 1; }
           git fetch --no-tags origin "+refs/heads/${BASE_REF}:refs/remotes/origin/${BASE_REF}"
           if git diff --name-only "origin/${BASE_REF}...HEAD" | grep -vqE '^docs/|^zensical\.toml$|\.md$'; then
@@ -109,11 +109,11 @@ jobs:
               conclusion=failure; title="Branch ${HEAD_REF} is not named release/vX.Y.Z"
               summary="Release branches must be named release/vX.Y.Z so the version can be checked. Rename the branch and open the pull request again."
             elif [ -n "$head_version" ] && [ "$head_version" != "$version" ]; then
-              conclusion=failure; title="Set <Version> in Directory.Build.props to ${head_version}"
-              summary="Branch ${HEAD_REF} is for version ${head_version}, but Directory.Build.props has ${version}. Change <Version> in Directory.Build.props to ${head_version}."
+              conclusion=failure; title="Set <Version> in windows/Directory.Build.props to ${head_version}"
+              summary="Branch ${HEAD_REF} is for version ${head_version}, but windows/Directory.Build.props has ${version}. Change <Version> in windows/Directory.Build.props to ${head_version}."
             elif [ -n "$latest" ] && ! bash "$vs" gt "$version" "$latest"; then
-              conclusion=failure; title="Version ${version} is not higher than the latest release v${latest}: raise <Version> in Directory.Build.props"
-              summary="The latest release is v${latest}. Raise <Version> in Directory.Build.props above ${latest} (the release branch name must match it)."
+              conclusion=failure; title="Version ${version} is not higher than the latest release v${latest}: raise <Version> in windows/Directory.Build.props"
+              summary="The latest release is v${latest}. Raise <Version> in windows/Directory.Build.props above ${latest} (the release branch name must match it)."
             else
               title="New app version v${version}"
               summary="Merging to main will create a new tag and release for v${version} (latest release: v${latest:-none})."
@@ -123,11 +123,11 @@ jobs:
               conclusion=failure; title="Base branch ${BASE_REF} is not named release/vX.Y.Z"
               summary="Pull requests go into a release branch named release/vX.Y.Z. Point this pull request at the current release branch."
             elif [ "$base_version" != "$version" ]; then
-              conclusion=failure; title="Set <Version> in Directory.Build.props to ${base_version}"
-              summary="This pull request goes into ${BASE_REF}, but Directory.Build.props has ${version}. Your branch is probably based on an older release branch: merge or rebase it onto ${BASE_REF}, or change <Version> in Directory.Build.props to ${base_version}."
+              conclusion=failure; title="Set <Version> in windows/Directory.Build.props to ${base_version}"
+              summary="This pull request goes into ${BASE_REF}, but windows/Directory.Build.props has ${version}. Your branch is probably based on an older release branch: merge or rebase it onto ${BASE_REF}, or change <Version> in windows/Directory.Build.props to ${base_version}."
             else
               title="Version ${version} matches ${BASE_REF}"
-              summary="Directory.Build.props has ${version}, the version of ${BASE_REF}."
+              summary="windows/Directory.Build.props has ${version}, the version of ${BASE_REF}."
             fi
           fi
           {
@@ -233,15 +233,15 @@ jobs:
 
       - uses: actions/setup-dotnet@v6
         with:
-          global-json-file: global.json
+          global-json-file: windows/global.json
           cache: true
-          cache-dependency-path: '**/*.csproj'
+          cache-dependency-path: 'windows/**/*.csproj'
 
       - name: Restore
-        run: dotnet restore GameControllerForZwift.sln
+        run: dotnet restore windows/GameControllerForZwift.sln
 
       - name: Build solution (Release)
-        run: dotnet build GameControllerForZwift.sln -c Release --no-restore
+        run: dotnet build windows/GameControllerForZwift.sln -c Release --no-restore
 
       # WinAppDriver is installed in its own foreground step (absolute paths, verbose msiexec log) so that a
       # failure stops the job with a clear message. appium-windows-driver >= 3 no longer bundles it.
@@ -302,7 +302,7 @@ jobs:
           }
 
           $rc = 0
-          $projects = @('tests/GameControllerForZwift.UnitTests') + @(($env:PORTABLE_TESTS -split '\s+') | Where-Object { $_ })
+          $projects = @('windows/tests/GameControllerForZwift.UnitTests') + @(($env:PORTABLE_TESTS -split '\s+') | Where-Object { $_ })
           foreach ($p in $projects) {
             $name = Split-Path $p -Leaf
             dotnet test $p -c Release --no-build --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"
@@ -355,7 +355,7 @@ jobs:
               Get-Content appium.log -ErrorAction SilentlyContinue
               throw 'Appium did not become ready within 60 seconds.'
             }
-            dotnet test tests/GameControllerForZwift.UITests -c Release --no-build --verbosity normal --logger "trx;LogFileName=UITests.trx" --results-directory TestResults-UI/UITests
+            dotnet test windows/tests/GameControllerForZwift.UITests -c Release --no-build --verbosity normal --logger "trx;LogFileName=UITests.trx" --results-directory TestResults-UI/UITests
             $rc = $LASTEXITCODE
           } finally {
             taskkill /T /F /PID $appium.Id 2>&1 | Out-Null
@@ -421,7 +421,7 @@ jobs:
           name: ui-diagnostics
           path: |
             appium.log
-            tests/GameControllerForZwift.UITests/**/screenshot.png
+            windows/tests/GameControllerForZwift.UITests/**/screenshot.png
           if-no-files-found: warn
 
       - name: Fail if any test failed or was skipped
@@ -453,26 +453,26 @@ jobs:
 
       - uses: actions/setup-dotnet@v6
         with:
-          global-json-file: global.json
+          global-json-file: windows/global.json
           cache: true
-          cache-dependency-path: '**/*.csproj'
+          cache-dependency-path: 'windows/**/*.csproj'
 
       - name: Restore
         run: |
-          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet restore "$p"; done
+          for p in $PORTABLE_TESTS windows/tools/ZwiftLanProbe; do dotnet restore "$p"; done
 
       - name: Verify formatting
         run: |
-          for p in src/Application/GameControllerForZwift.Core \
-                   src/Infrastructure/GameControllerForZwift.Network \
-                   src/Infrastructure/GameControllerForZwift.Gamepad \
-                   $PORTABLE_TESTS tools/ZwiftLanProbe; do
+          for p in windows/src/Application/GameControllerForZwift.Core \
+                   windows/src/Infrastructure/GameControllerForZwift.Network \
+                   windows/src/Infrastructure/GameControllerForZwift.Gamepad \
+                   $PORTABLE_TESTS windows/tools/ZwiftLanProbe; do
             dotnet format "$p" --verify-no-changes --severity error --no-restore --verbosity diagnostic
           done
 
       - name: Build portable projects (Linux)
         run: |
-          for p in $PORTABLE_TESTS tools/ZwiftLanProbe; do dotnet build "$p" -c Release --no-restore; done
+          for p in $PORTABLE_TESTS windows/tools/ZwiftLanProbe; do dotnet build "$p" -c Release --no-restore; done
 
   vulnerabilities:
     name: Vulnerabilities
@@ -487,9 +487,9 @@ jobs:
 
       - uses: actions/setup-dotnet@v6
         with:
-          global-json-file: global.json
+          global-json-file: windows/global.json
           cache: true
-          cache-dependency-path: '**/*.csproj'
+          cache-dependency-path: 'windows/**/*.csproj'
 
       - uses: github/codeql-action/init@v4
         with:
@@ -530,9 +530,9 @@ jobs:
       - name: Check NuGet packages for known vulnerabilities
         shell: pwsh
         run: |
-          dotnet restore GameControllerForZwift.sln
+          dotnet restore windows/GameControllerForZwift.sln
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          $json = dotnet list GameControllerForZwift.sln package --vulnerable --include-transitive --format json --output-version 1 | Out-String
+          $json = dotnet list windows/GameControllerForZwift.sln package --vulnerable --include-transitive --format json --output-version 1 | Out-String
           if ($LASTEXITCODE -ne 0) { Write-Host $json; exit $LASTEXITCODE }
           $start = $json.IndexOf('{')
           $data = if ($start -ge 0) { $json.Substring($start) | ConvertFrom-Json } else { $null }

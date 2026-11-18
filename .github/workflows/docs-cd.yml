@@ -1,6 +1,6 @@
-name: Docs Deploy
+name: Docs CD
 
-# Separate from docs.yml so pull requests never show a skipped deploy job.
+# Separate from docs-ci.yml so pull requests never show a skipped deploy job.
 on:
   push:
     branches: [main]
@@ -8,8 +8,8 @@ on:
       - 'docs/**'
       - 'zensical.toml'
       - 'docs/requirements.txt'
-      - '.github/workflows/docs.yml'
-      - '.github/workflows/docs-deploy.yml'
+      - '.github/workflows/docs-ci.yml'
+      - '.github/workflows/docs-cd.yml'
   workflow_dispatch:
 
 permissions:

@@ -1,42 +1,44 @@
 # Build and test
 
 !!! tldr "TL;DR"
-    Install the .NET 10 SDK, clone the repo and run `dotnet build GameControllerForZwift.sln` on Windows. The build downloads the native SDL2 library once and checks its SHA256 hash. Run the tests with `dotnet test`. Warnings are errors, and formatting is checked with `dotnet format`, so keep the build clean.
+    Install the .NET 10 SDK, clone the repo and run `dotnet build windows/GameControllerForZwift.sln` on Windows. The build downloads the native SDL2 library once and checks its SHA256 hash. Run the tests with `dotnet test`. Warnings are errors, and formatting is checked with `dotnet format`, so keep the build clean.
 
 ## What you need
 
 - **Windows 10 or 11** for the full solution. The WPF app and its tests only build on Windows.
-- **.NET 10 SDK.** The repo's `global.json` asks for SDK `10.0.100` with `rollForward: latestFeature`, so any newer 10.0 feature band works.
+- **.NET 10 SDK.** `windows/global.json` asks for SDK `10.0.100` with `rollForward: latestFeature`, so any newer 10.0 feature band works.
 - An editor such as Visual Studio 2026, Visual Studio Code or Rider. Visual Studio needs the ".NET desktop development" workload for WPF.
 
 The `Core`, `Network` and `Gamepad` libraries, their tests and `ZwiftLanProbe` also build on Linux and macOS. CI uses that for the formatting check.
+
+Everything that belongs to the app lives in `windows/`: the solution, `global.json`, `Directory.Build.props`, `build/`, `src/`, `tests/` and `tools/`. The commands on this page run from the repo root.
 
 ## Build
 
 ```powershell
 git clone https://github.com/VoltageSolutions/GameControllerForZwift.git
 cd GameControllerForZwift
-dotnet build GameControllerForZwift.sln
+dotnet build windows/GameControllerForZwift.sln
 ```
 
 Run the app:
 
 ```powershell
-dotnet run --project src/Presentation/GameControllerForZwift
+dotnet run --project windows/src/Presentation/GameControllerForZwift
 ```
 
 ### SDL2 download
 
-The app reads controllers through the native SDL2 library. `build/Sdl2.targets` (imported by the `Gamepad` project) takes care of it:
+The app reads controllers through the native SDL2 library. `windows/build/Sdl2.targets` (imported by the `Gamepad` project) takes care of it:
 
-1. On Windows only, before the build needs it, it downloads `SDL2-2.30.10-win32-x64.zip` from the official SDL GitHub releases into `.cache/sdl2/`.
+1. On Windows only, before the build needs it, it downloads `SDL2-2.30.10-win32-x64.zip` from the official SDL GitHub releases into `windows/.cache/sdl2/`.
 2. It checks the zip's **SHA256** hash against the value in the targets file. If the hash does not match, the zip is deleted and the build fails.
 3. It unzips `SDL2.dll` and copies it next to the app in both build and publish output.
 
-The download happens once. Later builds reuse `.cache/sdl2/SDL2.dll`.
+The download happens once. Later builds reuse `windows/.cache/sdl2/SDL2.dll`.
 
 !!! tip "Building offline"
-    Put `SDL2.dll` (version 2.30.10, win32-x64) into `.cache/sdl2/` yourself and the build skips the download.
+    Put `SDL2.dll` (version 2.30.10, win32-x64) into `windows/.cache/sdl2/` yourself and the build skips the download.
 
 ## Tests
 
@@ -52,13 +54,13 @@ The download happens once. Later builds reuse `.cache/sdl2/SDL2.dll`.
 The tests use xUnit and NSubstitute. Run them all with:
 
 ```powershell
-dotnet test GameControllerForZwift.sln
+dotnet test windows/GameControllerForZwift.sln
 ```
 
 Or run one project:
 
 ```powershell
-dotnet test tests/GameControllerForZwift.Network.UnitTests
+dotnet test windows/tests/GameControllerForZwift.Network.UnitTests
 ```
 
 !!! note "UI tests need extra tools"
@@ -66,7 +68,7 @@ dotnet test tests/GameControllerForZwift.Network.UnitTests
 
 ## Code quality
 
-`Directory.Build.props` applies to every project:
+`windows/Directory.Build.props` applies to every project:
 
 | Setting | Effect |
 |---|---|
@@ -77,21 +79,34 @@ dotnet test tests/GameControllerForZwift.Network.UnitTests
 `.editorconfig` only adjusts analyzer severities. For example, test projects may use underscores in test method names. Formatting follows the `dotnet format` defaults. Check it before you push:
 
 ```powershell
-dotnet format src/Infrastructure/GameControllerForZwift.Network --verify-no-changes --severity error
+dotnet format windows/src/Infrastructure/GameControllerForZwift.Network --verify-no-changes --severity error
 ```
 
-CI runs this check on `Core`, `Network`, `Gamepad`, the portable test projects and `ZwiftLanProbe`.
+The `Lint` job in Windows CI runs this check on `Core`, `Network`, `Gamepad`, the portable test projects and `ZwiftLanProbe`.
 
 ## ARM smoke test
 
-The `ARM smoke test` CI job runs the x64 builds from the `Build` job (framework-dependent and standalone) on a `windows-11-arm` runner. `.github/scripts/smoke-test-app.ps1` starts the app under x64 emulation and checks that its log shows SDL2 initialized and devices enumerated. The `Build` job also uploads both builds as the `app-win-x64` and `app-win-x64-standalone` artifacts (kept for 14 days), so you can copy them to a real ARM device.
+The `ARM smoke test` job in Windows CI runs the x64 builds from the `Build` job (framework-dependent and standalone) on a `windows-11-arm` runner. `.github/scripts/smoke-test-app.ps1` starts the app under x64 emulation and checks that its log shows SDL2 initialized and devices enumerated. The `Build` job also uploads both builds as the `app-win-x64` and `app-win-x64-standalone` artifacts (kept for 14 days), so you can copy them to a real ARM device.
+
+## Workflows
+
+The GitHub Actions workflows live in `.github/workflows/`.
+
+| Workflow | File | When it runs | What it does |
+|---|---|---|---|
+| Windows CI | `windows-ci.yml` | Every pull request | Builds and publishes the app, runs the unit, integration and UI tests, checks formatting, the version, CodeQL and vulnerable packages, and uploads coverage. |
+| Windows CD | `windows-cd.yml` | Push to `main` (not for docs-only changes) | Publishes both zips, creates the GitHub release and opens the next release branch. |
+| Windows CodeQL and Coverage | `windows-codeql-and-coverage.yml` | Push to `main` (not for docs-only changes) | Refreshes the CodeQL alerts and Codecov coverage that pull requests compare against. |
+| Docs CI | `docs-ci.yml` | Pull requests that change the docs | Builds the docs site with `--strict`. |
+| Docs CD | `docs-cd.yml` | Push to `main` that changes the docs | Builds and deploys the docs site to GitHub Pages. |
+| Release Branch | `release-branch.yml` | A `release/vX.Y.Z` branch is created | Sets `<Version>` in `windows/Directory.Build.props` to match the branch name. |
 
 ## Optional: the build watcher
 
-`tools/dev/build-watcher.ps1` is a small helper for driving builds on a Windows machine from somewhere else, for example a remote session that can write files but has no shell there. Start it from the repo root:
+`windows/tools/dev/build-watcher.ps1` is a small helper for driving builds on a Windows machine from somewhere else, for example a remote session that can write files but has no shell there. Start it from the repo root:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File tools\dev\build-watcher.ps1
+powershell -ExecutionPolicy Bypass -File windows\tools\dev\build-watcher.ps1
 ```
 
 It checks every 2 seconds for a file called `.build-request` in the repo root.

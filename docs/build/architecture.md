@@ -5,14 +5,16 @@
 
 ## Projects
 
+The app's solution (`windows/GameControllerForZwift.sln`) and everything it builds live in `windows/`. The docs, workflows and repo-wide config stay at the root.
+
 | Project | Path | Responsibility |
 |---|---|---|
-| `GameControllerForZwift.Core` | `src/Application/` | Domain types: `ControllerData`, `ControllerInput`, `ZwiftFunction`, `InputMapping`, controller profiles, `OutputState` and the `IInputService` and `IOutputService` interfaces. Also the `DataIntegrator`, which polls the controller, applies the mapping and pushes the result to the output. |
-| `GameControllerForZwift.Gamepad` | `src/Infrastructure/` | Reads game controllers with SDL2 (`SDL2InputService`, `SDL2GameController`), including battery level. Loads the mapping profile (`ControllerProfileService`). Downloads the native SDL2 library at build time. |
-| `GameControllerForZwift.Network` | `src/Infrastructure/` | Presents the app to Zwift as a Zwift Ride: `ZwiftRideOutputService` (the `IOutputService`), `DirectConnectServer` and `DirectConnectSession` (Wahoo Direct Connect over TCP), `ZwiftControlProtocol` (handshake, replies and keypad frames), `ZwiftRideProfile` (advertisement and GATT tree) and `MdnsAdvertiser`. Depends only on the logging abstractions, not on WPF. |
-| `GameControllerForZwift` (WPF app) | `src/Presentation/` | The Windows app: pages, view models, controls, dependency injection setup and logging providers. |
-| `ZwiftLanProbe` | `tools/` | A console app that runs the Direct Connect server and mDNS advertiser on their own, driven from the keyboard. See [ZwiftLanProbe](probe.md). |
-| Tests | `tests/` | Unit, integration and UI tests. See [Build and test](build-and-test.md#tests). |
+| `GameControllerForZwift.Core` | `windows/src/Application/` | Domain types: `ControllerData`, `ControllerInput`, `ZwiftFunction`, `InputMapping`, controller profiles, `OutputState` and the `IInputService` and `IOutputService` interfaces. Also the `DataIntegrator`, which polls the controller, applies the mapping and pushes the result to the output. |
+| `GameControllerForZwift.Gamepad` | `windows/src/Infrastructure/` | Reads game controllers with SDL2 (`SDL2InputService`, `SDL2GameController`), including battery level. Loads the mapping profile (`ControllerProfileService`). Downloads the native SDL2 library at build time. |
+| `GameControllerForZwift.Network` | `windows/src/Infrastructure/` | Presents the app to Zwift as a Zwift Ride: `ZwiftRideOutputService` (the `IOutputService`), `DirectConnectServer` and `DirectConnectSession` (Wahoo Direct Connect over TCP), `ZwiftControlProtocol` (handshake, replies and keypad frames), `ZwiftRideProfile` (advertisement and GATT tree) and `MdnsAdvertiser`. Depends only on the logging abstractions, not on WPF. |
+| `GameControllerForZwift` (WPF app) | `windows/src/Presentation/` | The Windows app: pages, view models, controls, dependency injection setup and logging providers. |
+| `ZwiftLanProbe` | `windows/tools/` | A console app that runs the Direct Connect server and mDNS advertiser on their own, driven from the keyboard. See [ZwiftLanProbe](probe.md). |
+| Tests | `windows/tests/` | Unit, integration and UI tests. See [Build and test](build-and-test.md#tests). |
 
 ## How input flows
 

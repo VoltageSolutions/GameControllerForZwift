@@ -17,7 +17,7 @@ This project follows a modified version of Git Flow where `main` always represen
 
 ## Versions and release branches
 
-- The version lives in one place: `<Version>` in `Directory.Build.props`.
+- The version lives in one place: `<Version>` in `windows/Directory.Build.props`.
 - After each release, the branch for the next minor version (for example `release/v0.4.0` after `v0.3.0`) is opened automatically, with the version already set.
 - For a patch or major release, I create `release/vX.Y.Z` by hand from `main`, and the version is set for me. It must be higher than the latest release.
 - When I go to a new major version, I delete the unused minor branch that was opened automatically.
@@ -25,8 +25,8 @@ This project follows a modified version of Git Flow where `main` always represen
 
 ## Build and test
 
-Build with the .NET 10 SDK on Windows (`dotnet build GameControllerForZwift.sln`). See [Build and test](https://VoltageSolutions.github.io/GameControllerForZwift/build/build-and-test/) for the full steps and [Architecture](https://VoltageSolutions.github.io/GameControllerForZwift/build/architecture/) for how the code is laid out.
+Build with the .NET 10 SDK on Windows (`dotnet build windows/GameControllerForZwift.sln`). See [Build and test](https://VoltageSolutions.github.io/GameControllerForZwift/build/build-and-test/) for the full steps and [Architecture](https://VoltageSolutions.github.io/GameControllerForZwift/build/architecture/) for how the code is laid out.
 
 ## What a pull request needs
 
-CI runs on every pull request and all checks must pass: build with no warnings, formatting, tests (none skipped), and coverage. The version in `Directory.Build.props` must match the release branch (see above). If you change behavior that riders or protocol readers rely on, update the matching docs page. Behavior is described in `docs/spec/`, so update the spec too. AI coding agents should read [AGENTS.md](AGENTS.md). The details are in [Contributing](https://VoltageSolutions.github.io/GameControllerForZwift/build/contributing/).
+Windows CI runs on every pull request and all checks must pass: build with no warnings, formatting, tests (none skipped), and coverage. The version in `windows/Directory.Build.props` must match the release branch (see above). If you change behavior that riders or protocol readers rely on, update the matching docs page. Behavior is described in `docs/spec/`, so update the spec too. AI coding agents should read [AGENTS.md](AGENTS.md). The details are in [Contributing](https://VoltageSolutions.github.io/GameControllerForZwift/build/contributing/).

@@ -1,4 +1,4 @@
-name: CD Workflow
+name: Windows CD
 
 on:
   push:
@@ -18,7 +18,7 @@ on:
         default: false
 
 concurrency:
-  group: cd
+  group: windows-cd
   cancel-in-progress: false
 
 permissions:
@@ -44,7 +44,7 @@ jobs:
         id: v
         shell: bash
         run: |
-          version="$(bash .github/scripts/version.sh get)" || { echo "::error::Could not read <Version> from Directory.Build.props"; exit 1; }
+          version="$(bash .github/scripts/version.sh get)" || { echo "::error::Could not read <Version> from windows/Directory.Build.props"; exit 1; }
           echo "version=$version" >> "$GITHUB_OUTPUT"
           if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
@@ -57,15 +57,15 @@ jobs:
       - uses: actions/setup-dotnet@v6
         if: steps.v.outputs.skip != 'true'
         with:
-          global-json-file: global.json
+          global-json-file: windows/global.json
           cache: true
-          cache-dependency-path: '**/*.csproj'
+          cache-dependency-path: 'windows/**/*.csproj'
 
       # dotnet publish restores and builds the app project (and the libraries it references) itself.
       - name: Publish
         if: steps.v.outputs.skip != 'true'
         run: |
-          $proj = 'src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj'
+          $proj = 'windows/src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj'
           dotnet publish $proj -c Release -r win-x64 --self-contained false -o artifacts/fd
           dotnet publish $proj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/standalone
           ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
@@ -155,7 +155,7 @@ jobs:
             version="$(bash "$vs" get)"
             latest="$(bash "$vs" latest-tag)"
             echo "Dry run on ${GITHUB_REF_NAME} (${GITHUB_SHA}): nothing is published or pushed."
-            echo "Version in Directory.Build.props: ${version}"
+            echo "Version in windows/Directory.Build.props: ${version}"
             echo "Latest release tag: v${latest:-none}"
             if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
               echo "A real run would NOT release: tag v${version} already exists, so it would stop before this job. For ${version}, this job would do:"
@@ -179,7 +179,7 @@ jobs:
           fi
           git switch -c "$branch" "$GITHUB_SHA"
           bash "$vs" set "$next"
-          git add Directory.Build.props
+          git add windows/Directory.Build.props
           git -c user.name='github-actions[bot]' -c user.email='41898173+github-actions[bot]@users.noreply.github.com' \
             commit -m "Start ${next} development" -m "Opened automatically after v${version} was released."
           git push origin "HEAD:refs/heads/${branch}"

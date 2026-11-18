@@ -89,7 +89,7 @@ public class ZwiftRideReplicaTests
             Assert.Equal(Cat(Notifications[i].Uuid, Hex(Notifications[i].Data)), notes[i].Payload);
 
         await session.DisposeAsync();
-        await Task.WhenAny(run, Task.Delay(5000));
+        await run.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
     }
 
     [Fact]
@@ -145,6 +145,6 @@ public class ZwiftRideReplicaTests
         Assert.Equal(Cat(Zwift2, Hex("2308ffffffff0f")), note[0].Payload);
 
         await session.DisposeAsync();
-        await Task.WhenAny(run, Task.Delay(5000));
+        await run.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
     }
 }
