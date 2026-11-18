@@ -1,277 +1,236 @@
-﻿using GameControllerForZwift.Core.Configurations;
-using GameControllerForZwift.UI.WPF.Dialogs;
+using GameControllerForZwift.Core;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
-using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace GameControllerForZwift.UI.WPF.Tests
 {
     public class MainWindowViewModelTests
     {
-        private readonly INavigationService _navigationServiceMock;
-        private readonly ILogger<MainWindowViewModel> _loggerMock;
+        private readonly INavigationService _navigation = Substitute.For<INavigationService>();
+        private readonly IZwiftConnection _zwift = Substitute.For<IZwiftConnection>();
         private readonly MainWindowViewModel _viewModel;
 
         public MainWindowViewModelTests()
         {
-            _navigationServiceMock = Substitute.For<INavigationService>();
-            _loggerMock = Substitute.For<ILogger<MainWindowViewModel>>();
-            _viewModel = new MainWindowViewModel(_navigationServiceMock, _loggerMock);
+            _viewModel = new MainWindowViewModel(_navigation, new ZwiftStatus(_zwift));
         }
 
-        private static SettingsViewModel CreateSettingsViewModel() => new(
-            Substitute.For<IConfigurationStore>(), Substitute.For<IAppSettingsStore>(), Substitute.For<IDialogService>());
+        private void RaiseNavigation(string propertyName) =>
+            _navigation.PropertyChanged += Raise.Event<PropertyChangedEventHandler>(_navigation, new PropertyChangedEventArgs(propertyName));
 
-        [Fact]
-        public void Constructor_InitializesPagesProperty()
+        private void Show(object viewModel)
         {
-            // Arrange & Act (Setup already initializes the view model)
-
-            // Assert
-            Assert.NotNull(_viewModel.Pages);
-            Assert.NotEmpty(_viewModel.Pages);
+            _navigation.CurrentViewModel.Returns(viewModel);
+            RaiseNavigation(nameof(INavigationService.CurrentViewModel));
         }
 
-        [Fact]
-        public void SettingsCommand_InvokesNavigationToSettingsPage()
-        {
-            // Act
-            _viewModel.SettingsCommand.Execute(null);
+        private static readonly string[] TabLabels = ["Ride", "Buttons", "Connections"];
+        private static readonly string[] TabIds = ["NavRideTab", "NavButtonsTab", "NavConnectionsTab"];
 
-            // Assert
-            _navigationServiceMock.Received(1).NavigateTo<SettingsViewModel>();
+        [Fact]
+        public void Constructor_RejectsANullNavigationService()
+        {
+            Assert.Throws<ArgumentNullException>(() => new MainWindowViewModel(null!));
         }
 
         [Fact]
-        public void BackCommand_InvokesGoBack_WhenHistoryIsNotEmpty()
+        public void UXN001_TabsAreRideButtonsAndConnectionsInOrder()
         {
-            // Arrange
-            _navigationServiceMock.CanGoBack.Returns(true);
+            Assert.Equal(TabLabels, _viewModel.Tabs.Select(t => t.Label));
+            Assert.Equal(TabIds, _viewModel.Tabs.Select(t => t.AutomationId));
+            Assert.Equal(typeof(RideViewModel), _viewModel.Tabs[0].ViewModelType);
+            Assert.Equal(typeof(ControllerSetupViewModel), _viewModel.Tabs[1].ViewModelType);
+            Assert.Equal(typeof(ConnectionsViewModel), _viewModel.Tabs[2].ViewModelType);
+        }
 
-            // Act
+        [Fact]
+        public void NavigateToStartPage_ShowsTheButtonsTabWithAnEmptyHistory()
+        {
+            _viewModel.NavigateToStartPage();
+
+            _navigation.Received(1).NavigateToRoot(typeof(ControllerSetupViewModel));
+        }
+
+        [Theory]
+        [InlineData(ShellTab.Ride, typeof(RideViewModel))]
+        [InlineData(ShellTab.Buttons, typeof(ControllerSetupViewModel))]
+        [InlineData(ShellTab.Connections, typeof(ConnectionsViewModel))]
+        public void SelectTab_NavigatesToItsRootAndClosesTheMenu(ShellTab tab, Type viewModelType)
+        {
+            _viewModel.IsMoreMenuOpen = true;
+
+            _viewModel.SelectTab(tab);
+
+            _navigation.Received(1).NavigateToRoot(viewModelType);
+            Assert.False(_viewModel.IsMoreMenuOpen);
+        }
+
+        [Fact]
+        public void SelectedTab_SetToNull_DoesNothing()
+        {
+            _viewModel.SelectedTab = null;
+
+            _navigation.DidNotReceiveWithAnyArgs().NavigateToRoot(default!);
+        }
+
+        [Fact]
+        public void SelectedTab_FollowsTheShownPage()
+        {
+            var changed = new List<string?>();
+            _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+
+            Show(new RideViewModel());
+
+            Assert.Equal(ShellTab.Ride, _viewModel.SelectedTab!.Tab);
+            Assert.False(_viewModel.IsPushedScreen);
+            Assert.Contains(nameof(MainWindowViewModel.CurrentViewModel), changed);
+            Assert.Contains(nameof(MainWindowViewModel.SelectedTab), changed);
+            Assert.Contains(nameof(MainWindowViewModel.IsPushedScreen), changed);
+        }
+
+        [Fact]
+        public void UXN009_APushedScreenSelectsNoTabAndShowsBack()
+        {
+            Show(new object());
+
+            Assert.Null(_viewModel.SelectedTab);
+            Assert.True(_viewModel.IsPushedScreen);
+        }
+
+        [Fact]
+        public void IsPushedScreen_IsFalseBeforeTheFirstPage()
+        {
+            Assert.Null(_viewModel.CurrentViewModel);
+            Assert.False(_viewModel.IsPushedScreen);
+        }
+
+        [Fact]
+        public void UXN008_UXN009_SettingsAndCreditsArePushedAndCloseTheMenu()
+        {
+            _viewModel.IsMoreMenuOpen = true;
+            _viewModel.OpenSettingsCommand.Execute(null);
+            _navigation.Received(1).NavigateTo<SettingsViewModel>();
+            Assert.False(_viewModel.IsMoreMenuOpen);
+
+            _viewModel.IsMoreMenuOpen = true;
+            _viewModel.OpenCreditsCommand.Execute(null);
+            _navigation.Received(1).NavigateTo<AboutPageViewModel>();
+            Assert.False(_viewModel.IsMoreMenuOpen);
+        }
+
+        [Fact]
+        public void HelpAndSupport_AreDisabledBecauseTheyHaveNoScreen()
+        {
+            Assert.False(_viewModel.OpenHelpCommand.CanExecute(null));
+            Assert.False(_viewModel.OpenSupportCommand.CanExecute(null));
+            _viewModel.OpenHelpCommand.Execute(null);
+            _viewModel.OpenSupportCommand.Execute(null);
+            _navigation.DidNotReceiveWithAnyArgs().NavigateTo(default(Type)!);
+        }
+
+        [Fact]
+        public void MoreMenu_TogglesAndCloses()
+        {
+            var changed = new List<string?>();
+            _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+            Assert.Equal("More: settings, help, credits, support", _viewModel.MoreButtonName);
+
+            _viewModel.ToggleMoreMenuCommand.Execute(null);
+            Assert.True(_viewModel.IsMoreMenuOpen);
+            Assert.Equal("Close menu", _viewModel.MoreButtonName);
+            Assert.Contains(nameof(MainWindowViewModel.MoreButtonName), changed);
+
+            _viewModel.ToggleMoreMenuCommand.Execute(null);
+            Assert.False(_viewModel.IsMoreMenuOpen);
+
+            _viewModel.IsMoreMenuOpen = true;
+            _viewModel.CloseMoreMenuCommand.Execute(null);
+            Assert.False(_viewModel.IsMoreMenuOpen);
+        }
+
+        [Fact]
+        public void Back_GoesBackAndClosesTheMenu()
+        {
+            _navigation.CanGoBack.Returns(true);
+            RaiseNavigation(nameof(INavigationService.CanGoBack));
+            _viewModel.IsMoreMenuOpen = true;
+
             _viewModel.BackCommand.Execute(null);
 
-            // Assert
-            _navigationServiceMock.Received(1).GoBack();
+            _navigation.Received(1).GoBack();
+            Assert.False(_viewModel.IsMoreMenuOpen);
         }
 
         [Fact]
-        public void BackCommand_CannotExecute_WhenHistoryIsEmpty()
+        public void BackCommand_FollowsCanGoBack()
         {
-            // Arrange
-            _navigationServiceMock.CanGoBack.Returns(false);
-
-            // Act & Assert
-            Assert.False(_viewModel.BackCommand.CanExecute(null));
-        }
-
-        [Fact]
-        public void BackCommand_CanExecuteChanges_WhenNavigationServiceReportsCanGoBackChange()
-        {
-            // Arrange
             bool raised = false;
             _viewModel.BackCommand.CanExecuteChanged += (_, _) => raised = true;
-            _navigationServiceMock.CanGoBack.Returns(true);
+            Assert.False(_viewModel.BackCommand.CanExecute(null));
 
-            // Act
-            _navigationServiceMock.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(
-                _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CanGoBack)));
+            _navigation.CanGoBack.Returns(true);
+            RaiseNavigation(nameof(INavigationService.CanGoBack));
 
-            // Assert
             Assert.True(raised);
             Assert.True(_viewModel.CanGoBack);
             Assert.True(_viewModel.BackCommand.CanExecute(null));
         }
 
         [Fact]
-        public void CurrentViewModel_RaisesPropertyChanged_WhenNavigationServiceChangesPage()
-        {
-            // Arrange
-            var page = new object();
-            var changed = new List<string?>();
-            _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
-            _navigationServiceMock.CurrentViewModel.Returns(page);
-
-            // Act
-            _navigationServiceMock.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(
-                _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CurrentViewModel)));
-
-            // Assert
-            Assert.Contains(nameof(MainWindowViewModel.CurrentViewModel), changed);
-            Assert.Same(page, _viewModel.CurrentViewModel);
-        }
-
-        [Fact]
-        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmpty_ForSettingsBecauseItIsNotInTheTree()
-        {
-            // The real navigation tree has no Settings item, so the shell must show no tree selection for it.
-            Assert.Empty(_viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel)));
-            Assert.NotEmpty(_viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(ControllerSetupViewModel)));
-        }
-
-        [Fact]
-        public void IsSettingsShown_FollowsTheCurrentViewModel()
+        public void OtherNavigationChanges_AreIgnored()
         {
             var changed = new List<string?>();
             _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
-            _navigationServiceMock.CurrentViewModel.Returns(CreateSettingsViewModel());
-            _navigationServiceMock.PropertyChanged += Raise.Event<System.ComponentModel.PropertyChangedEventHandler>(
-                _navigationServiceMock, new System.ComponentModel.PropertyChangedEventArgs(nameof(INavigationService.CurrentViewModel)));
+            RaiseNavigation("Something else");
 
-            Assert.True(_viewModel.IsSettingsShown);
-            Assert.Contains(nameof(MainWindowViewModel.IsSettingsShown), changed);
+            Assert.Empty(changed);
+        }
 
-            _navigationServiceMock.CurrentViewModel.Returns(new object());
-            Assert.False(_viewModel.IsSettingsShown);
+        [Theory]
+        [InlineData(1600, NavLayout.Sidebar)]
+        [InlineData(1000, NavLayout.Sidebar)]
+        [InlineData(999.5, NavLayout.Rail)]
+        [InlineData(640, NavLayout.Rail)]
+        [InlineData(639, NavLayout.BottomBar)]
+        [InlineData(400, NavLayout.BottomBar)]
+        public void UXN010_LayoutForWidth_PlacesTheTabs(double width, NavLayout expected)
+        {
+            Assert.Equal(expected, MainWindowViewModel.LayoutForWidth(width));
+
+            _viewModel.UpdateLayoutForWidth(width);
+            Assert.Equal(expected, _viewModel.NavLayout);
         }
 
         [Fact]
-        public void NavigateToStartPage_NavigatesToControllerSetup()
+        public void UXN002_ConnectionsTabShowsItsDotWhileZwiftIsNotConnected()
         {
-            // Act
-            _viewModel.NavigateToStartPage();
+            NavTab connections = _viewModel.Tabs[2];
+            Assert.False(_viewModel.IsZwiftConnected);
+            Assert.True(connections.HasAlert);
+            Assert.Equal("Connections, Zwift not connected", connections.AccessibleName);
+            Assert.False(_viewModel.Tabs[0].HasAlert);
+            Assert.Equal("Ride", _viewModel.Tabs[0].AccessibleName);
 
-            // Assert
-            _navigationServiceMock.Received(1).NavigateTo<ControllerSetupViewModel>();
+            var changed = new List<string?>();
+            _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+            _zwift.ConnectionChanged += Raise.Event<EventHandler<bool>>(_zwift, true);
+
+            Assert.True(_viewModel.IsZwiftConnected);
+            Assert.False(connections.HasAlert);
+            Assert.Equal("Connections", connections.AccessibleName);
+            Assert.Contains(nameof(MainWindowViewModel.IsZwiftConnected), changed);
         }
 
         [Fact]
-        public void NavigateToPage_NavigatesToTheItemsViewModelType()
+        public void WithoutAZwiftStatus_ZwiftShowsAsNotConnected()
         {
-            // Arrange
-            var item = new PagesInfoDataItem { ViewModelName = nameof(AboutPageViewModel) };
+            var viewModel = new MainWindowViewModel(_navigation);
 
-            // Act
-            _viewModel.NavigateToPage(item);
-
-            // Assert
-            _navigationServiceMock.Received(1).NavigateTo(Arg.Is<Type>(t => t == item.ViewModelType));
-        }
-
-        [Fact]
-        public void NavigateToPage_DoesNothing_ForNullOrUnknownItem()
-        {
-            // Act
-            _viewModel.NavigateToPage(null);
-            _viewModel.NavigateToPage(new PagesInfoDataItem { ViewModelName = "DoesNotExist" });
-
-            // Assert
-            _navigationServiceMock.DidNotReceiveWithAnyArgs().NavigateTo(default!);
-        }
-
-        [Fact]
-        public void GetNavigationItemHierarchyFromViewModelType_ReturnsCorrectHierarchy_WhenPageTypeExists()
-        {
-            // Arrange
-            var childItem = new PagesInfoDataItem { Title = "Child", ViewModelName = nameof(SettingsViewModel) };
-            var parentItem = new PagesInfoDataItem
-            {
-                Title = "Parent",
-                Items = new ObservableCollection<PagesInfoDataItem> { childItem }
-            };
-
-            _viewModel.Pages = new List<PagesInfoDataItem> { parentItem };
-
-            // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel));
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.Equal(2, result.Count);
-            Assert.Equal(parentItem, result[0]);
-            Assert.Equal(childItem, result[1]);
-        }
-
-        [Fact]
-        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmptyList_WhenPageTypeDoesNotExist()
-        {
-            // Arrange
-            var item = new PagesInfoDataItem { Title = "Item", ViewModelName = nameof(SettingsViewModel) };
-            _viewModel.Pages = new List<PagesInfoDataItem> { item };
-
-            // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(AboutPageViewModel));
-
-            // Assert
-            Assert.Empty(result);
-        }
-
-        [Fact]
-        public void GetNavigationItemHierarchyFromViewModelType_ReturnsSingleItem_WhenPageIsAtTopLevel()
-        {
-            // Arrange
-            var other = new PagesInfoDataItem { Title = "Other", ViewModelName = nameof(AboutPageViewModel) };
-            var top = new PagesInfoDataItem { Title = "Top", ViewModelName = nameof(SettingsViewModel) };
-            _viewModel.Pages = new List<PagesInfoDataItem> { other, top };
-
-            // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel));
-
-            // Assert
-            Assert.Single(result);
-            Assert.Same(top, result[0]);
-        }
-
-        [Fact]
-        public void GetNavigationItemHierarchyFromViewModelType_ReturnsFullHierarchy_WhenPageIsNestedTwoLevelsDeep()
-        {
-            // Arrange
-            var grandchild = new PagesInfoDataItem { Title = "Grandchild", ViewModelName = nameof(SettingsViewModel) };
-            var sibling = new PagesInfoDataItem { Title = "Sibling", ViewModelName = nameof(AboutPageViewModel) };
-            var child = new PagesInfoDataItem
-            {
-                Title = "Child",
-                Items = new ObservableCollection<PagesInfoDataItem> { grandchild }
-            };
-            var parent = new PagesInfoDataItem
-            {
-                Title = "Parent",
-                Items = new ObservableCollection<PagesInfoDataItem> { sibling, child }
-            };
-            _viewModel.Pages = new List<PagesInfoDataItem> { parent };
-
-            // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel));
-
-            // Assert
-            Assert.Equal(new[] { parent, child, grandchild }, result);
-        }
-
-        [Fact]
-        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmptyList_WhenNestedTreeDoesNotContainPageType()
-        {
-            // Arrange
-            var grandchild = new PagesInfoDataItem { Title = "Grandchild", ViewModelName = nameof(AboutPageViewModel) };
-            var child = new PagesInfoDataItem
-            {
-                Title = "Child",
-                Items = new ObservableCollection<PagesInfoDataItem> { grandchild }
-            };
-            var parent = new PagesInfoDataItem
-            {
-                Title = "Parent",
-                Items = new ObservableCollection<PagesInfoDataItem> { child }
-            };
-            _viewModel.Pages = new List<PagesInfoDataItem> { parent };
-
-            // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(typeof(SettingsViewModel));
-
-            // Assert
-            Assert.Empty(result);
-        }
-
-        [Fact]
-        public void GetNavigationItemHierarchyFromViewModelType_ReturnsEmptyList_WhenPageTypeIsNull()
-        {
-            // Act
-            var result = _viewModel.GetNavigationItemHierarchyFromViewModelType(null);
-
-            // Assert
-            Assert.Empty(result);
+            Assert.False(viewModel.IsZwiftConnected);
+            Assert.True(viewModel.Tabs[2].HasAlert);
         }
     }
 }

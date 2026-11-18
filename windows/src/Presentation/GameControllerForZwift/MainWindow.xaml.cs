@@ -2,11 +2,8 @@
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel;
 using System.Windows;
-using System.Windows.Automation;
-using System.Windows.Automation.Peers;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Shell;
 using System.Windows.Threading;
@@ -14,27 +11,33 @@ using System.Windows.Threading;
 namespace GameControllerForZwift.UI.WPF
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// The window shell. It shows the view of the current page, places the tabs for the window width, and moves focus
+    /// into and out of the More menu.
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region Fields
-        // True while the shell moves the tree selection to match the page that is shown. Selection changes made for that
-        // reason must never start a navigation, otherwise back would push the page again.
-        private bool _isSyncingSelection;
         public MainWindowViewModel ViewModel { get; }
         private readonly IServiceProvider _serviceProvider;
 
         // One view per page view model, created on first navigation and reused afterwards.
         private readonly ViewCache _viewCache = new(new Dictionary<Type, Func<FrameworkElement>>
         {
+            [typeof(RideViewModel)] = () => new RidePage(),
             [typeof(ControllerSetupViewModel)] = () => new ControllerSetupPage(),
+            [typeof(ConnectionsViewModel)] = () => new ConnectionsPage(),
             [typeof(AboutPageViewModel)] = () => new AboutPage(),
             [typeof(SettingsViewModel)] = () => new SettingsPage(),
         });
-        #endregion
 
-        #region Constructor
+        // Pages that have not been visited yet are built and laid out while the app is idle, one per idle turn, so the
+        // first visit is instant. The About page is the slow one: it converts the acknowledgements markdown into a
+        // FlowDocument and parses the ko-fi SVG.
+        private static readonly Type[] _pagesToPrepare =
+        [
+            typeof(RideViewModel), typeof(ConnectionsViewModel), typeof(AboutPageViewModel), typeof(SettingsViewModel),
+        ];
+        private int _nextPageToPrepare;
+
         public MainWindow(MainWindowViewModel mainWindowViewModel, IServiceProvider serviceProvider)
         {
             ViewModel = mainWindowViewModel;
@@ -47,140 +50,69 @@ namespace GameControllerForZwift.UI.WPF
             ViewModel.NavigateToStartPage();
             ShowCurrentView();
             ContentRendered += (_, _) => Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, PrepareNextPage);
+            SizeChanged += (_, e) => ViewModel.UpdateLayoutForWidth(e.NewSize.Width);
 
             WindowChrome.SetWindowChrome(
-            this,
-            new WindowChrome
-            {
-                CaptionHeight = 50,
-                CornerRadius = default,
-                GlassFrameThickness = new Thickness(-1),
-                ResizeBorderThickness = ResizeMode == ResizeMode.NoResize ? default : new Thickness(4),
-                // The window paints its own background, so the app draws the caption buttons.
-                UseAeroCaptionButtons = false
-            }
-            );
+                this,
+                new WindowChrome
+                {
+                    CaptionHeight = 48,
+                    CornerRadius = default,
+                    GlassFrameThickness = new Thickness(-1),
+                    ResizeBorderThickness = ResizeMode == ResizeMode.NoResize ? default : new Thickness(4),
+                    // The window paints its own background, so the app draws the caption buttons.
+                    UseAeroCaptionButtons = false,
+                });
 
-            this.StateChanged += MainWindow_StateChanged;
+            StateChanged += MainWindow_StateChanged;
         }
-        #endregion
-
-        #region Event Handlers
 
         private void MainWindow_StateChanged(object? sender, EventArgs e)
         {
-            MainGrid.Margin = this.WindowState == WindowState.Maximized ? new Thickness(8) : default;
+            MainGrid.Margin = WindowState == WindowState.Maximized ? new Thickness(8) : default;
+            MaximizeIcon.Text = WindowState == WindowState.Maximized ? "" : "";
+            System.Windows.Automation.AutomationProperties.SetName(MaximizeButton, WindowState == WindowState.Maximized ? "Restore" : "Maximize");
         }
 
-        private void PagesTreeView_SelectedItemChanged()
-        {
-            if (_isSyncingSelection)
-            {
-                return;
-            }
+        private void MinimizeWindow(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
-            if (PagesTreeView.SelectedItem is PagesInfoDataItem navItem)
-            {
-                ViewModel.NavigateToPage(navItem);
-                var tvi = PagesTreeView.ItemContainerGenerator.ContainerFromItem(navItem) as TreeViewItem;
-                if (tvi != null)
-                {
-                    tvi.BringIntoView();
-                }
-            }
+        private void MaximizeWindow(object sender, RoutedEventArgs e) =>
+            WindowState = WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+
+        private void CloseWindow(object sender, RoutedEventArgs e) => Application.Current.Shutdown();
+
+        private void MenuScrim_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            ViewModel.CloseMoreMenuCommand.Execute(null);
+            e.Handled = true;
         }
 
-        private void PagesTreeView_PreviewKeyDown(object sender, KeyEventArgs e)
+        private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.Key == Key.Enter && PagesTreeView.SelectedItem is not null)
+            switch (e.PropertyName)
             {
-                SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem(((TreeView)sender).SelectedItem) as TreeViewItem);
-            }
-        }
-
-        private void PagesTreeView_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            if (e.OriginalSource is ToggleButton)
-            {
-                return;
-            }
-            if (PagesTreeView.SelectedItem is null)
-            {
-                return;
-            }
-            SelectedItemChanged(PagesTreeView.ItemContainerGenerator.ContainerFromItem(((TreeView)sender).SelectedItem) as TreeViewItem);
-        }
-
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
-        {
-            AutomationPeer peer = UIElementAutomationPeer.CreatePeerForElement((Button)sender);
-            peer.RaiseNotificationEvent(
-               AutomationNotificationKind.Other,
-                AutomationNotificationProcessing.ImportantMostRecent,
-                "Settings Page Opened",
-                "ButtonClickedActivity"
-            );
-        }
-
-        private void PagesTreeView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (PagesTreeView.Items.Count > 0)
-            {
-                TreeViewItem firstItem = (TreeViewItem)PagesTreeView.ItemContainerGenerator.ContainerFromItem(PagesTreeView.Items[0]);
-                if (firstItem != null)
-                {
-                    firstItem.IsSelected = true;
-                }
+                case nameof(MainWindowViewModel.CurrentViewModel):
+                    ShowCurrentView();
+                    break;
+                case nameof(MainWindowViewModel.IsMoreMenuOpen):
+                    MoveFocusForMenu(ViewModel.IsMoreMenuOpen);
+                    break;
             }
         }
 
-        private void MinimizeWindow(object sender, RoutedEventArgs e)
+        // Opening the menu moves focus to its first item. Closing it returns focus to the More button when focus was in
+        // the menu, so keyboard users stay where they were.
+        private void MoveFocusForMenu(bool isOpen)
         {
-            this.WindowState = WindowState.Minimized;
-        }
-
-        private void MaximizeWindow(object sender, RoutedEventArgs e)
-        {
-            if (this.WindowState == WindowState.Maximized)
+            if (isOpen)
             {
-                this.WindowState = WindowState.Normal;
-                MaximizeIcon.Text = "\uE922";
+                Dispatcher.BeginInvoke(DispatcherPriority.Input, () => MenuSettingsItem.Focus());
             }
-            else
+            else if (MoreMenu.IsKeyboardFocusWithin || MoreButton.IsKeyboardFocused)
             {
-                this.WindowState = WindowState.Maximized;
-                MaximizeIcon.Text = "\uE923";
+                MoreButton.Focus();
             }
         }
-
-        private void CloseWindow(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
-        }
-
-        private void SelectedItemChanged(TreeViewItem? tvi)
-        {
-            PagesTreeView_SelectedItemChanged();
-            if (tvi != null)
-            {
-                tvi.IsExpanded = !tvi.IsExpanded;
-            }
-        }
-
-        private void ViewModel_PropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(MainWindowViewModel.CurrentViewModel))
-            {
-                ShowCurrentView();
-                SyncTreeSelection(ViewModel.CurrentViewModel?.GetType());
-            }
-        }
-
-        // Pages that have not been visited yet are built and laid out while the app is idle, one per idle turn, so the
-        // first visit is instant. The About page is the slow one: it converts the acknowledgements markdown into a
-        // FlowDocument and parses the ko-fi SVG.
-        private static readonly Type[] _pagesToPrepare = { typeof(AboutPageViewModel), typeof(SettingsViewModel) };
-        private int _nextPageToPrepare;
 
         private void PrepareNextPage()
         {
@@ -201,18 +133,6 @@ namespace GameControllerForZwift.UI.WPF
             Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, PrepareNextPage);
         }
 
-        private static void ClearSelection(ItemsControl parent)
-        {
-            foreach (object item in parent.Items)
-            {
-                if (parent.ItemContainerGenerator.ContainerFromItem(item) is TreeViewItem container)
-                {
-                    container.IsSelected = false;
-                    ClearSelection(container);
-                }
-            }
-        }
-
         private void ShowCurrentView()
         {
             RootContent.Content = _viewCache.GetView(ViewModel.CurrentViewModel);
@@ -220,7 +140,12 @@ namespace GameControllerForZwift.UI.WPF
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            if (IsBackKeyGesture(e.Key, e.SystemKey, Keyboard.Modifiers) && TryGoBack())
+            if (e.Key == Key.Escape && ViewModel.IsMoreMenuOpen)
+            {
+                ViewModel.CloseMoreMenuCommand.Execute(null);
+                e.Handled = true;
+            }
+            else if (IsBackKeyGesture(e.Key, e.SystemKey, Keyboard.Modifiers) && TryGoBack())
             {
                 e.Handled = true;
             }
@@ -258,59 +183,5 @@ namespace GameControllerForZwift.UI.WPF
             ViewModel.BackCommand.Execute(null);
             return true;
         }
-
-        /// <summary>Selects the tree item of the page that is shown, without navigating.</summary>
-        private void SyncTreeSelection(Type? viewModelType)
-        {
-            List<PagesInfoDataItem> list = ViewModel.GetNavigationItemHierarchyFromViewModelType(viewModelType);
-
-            if (list.Count == 0)
-            {
-                // The page has no tree item (Settings): show no selection. Navigation must not start from this.
-                _isSyncingSelection = true;
-                try
-                {
-                    ClearSelection(PagesTreeView);
-                }
-                finally
-                {
-                    _isSyncingSelection = false;
-                }
-            }
-            else
-            {
-                _isSyncingSelection = true;
-                try
-                {
-                    TreeViewItem? selectedTreeViewItem = null;
-                    ItemsControl itemsControl = PagesTreeView;
-                    foreach (PagesInfoDataItem item in list)
-                    {
-                        var tvi = itemsControl.ItemContainerGenerator.ContainerFromItem(item) as TreeViewItem;
-                        if (tvi != null)
-                        {
-                            tvi.IsExpanded = true;
-                            if (item != list[^1])
-                            {
-                                // Realize the child containers before looking for the next level.
-                                tvi.UpdateLayout();
-                            }
-                            itemsControl = tvi;
-                            selectedTreeViewItem = tvi;
-                        }
-                    }
-
-                    if (selectedTreeViewItem != null)
-                    {
-                        selectedTreeViewItem.IsSelected = true;
-                    }
-                }
-                finally
-                {
-                    _isSyncingSelection = false;
-                }
-            }
-        }
-        #endregion
     }
 }

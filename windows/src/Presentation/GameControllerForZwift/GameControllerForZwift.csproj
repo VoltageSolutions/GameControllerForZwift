@@ -55,9 +55,6 @@
     <Resource Include="Assets\logo_transparent.png" />
   </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="Navigation\PagesInfoData.json" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />

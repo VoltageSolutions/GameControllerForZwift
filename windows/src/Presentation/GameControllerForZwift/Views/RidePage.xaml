@@ -1,0 +1,12 @@
+<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.RidePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             AutomationProperties.AutomationId="RidePage">
+    <!-- The Ride tab is a placeholder (docs/spec/screens/ride.md describes the screen). -->
+    <StackPanel>
+        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="Ride"
+                   AutomationProperties.AutomationId="RidePageTitle" AutomationProperties.HeadingLevel="Level1" />
+        <TextBlock Margin="0,12,0,0" Style="{StaticResource Text.Body}" Foreground="{DynamicResource Brush.muted}"
+                   Text="Set up what each button does on the Buttons tab." />
+    </StackPanel>
+</UserControl>

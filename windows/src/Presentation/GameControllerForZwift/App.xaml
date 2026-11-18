@@ -11,6 +11,8 @@
                 <ResourceDictionary Source="Resources/Images.xaml" />
                 <ResourceDictionary Source="Resources/CardStyles.xaml" />
                 <ResourceDictionary Source="Resources/ControllerMapping.xaml" />
+                <ResourceDictionary Source="Resources/Icons.xaml" />
+                <ResourceDictionary Source="Resources/Shell.xaml" />
                 <!-- Replaced at startup by ThemeService, which keeps the tokens for the chosen appearance last. -->
                 <ResourceDictionary Source="Resources/Theme/Tokens.Dark.xaml" />
             </ResourceDictionary.MergedDictionaries>

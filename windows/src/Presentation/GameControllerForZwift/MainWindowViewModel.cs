@@ -1,69 +1,198 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.ViewModels;
-using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 
 namespace GameControllerForZwift.UI.WPF
 {
-    public partial class MainWindowViewModel : ObservableObject
+    /// <summary>The three tabs, in the order the spec gives them (UX-N-001).</summary>
+    public enum ShellTab
     {
-        #region Fields
+        Ride,
+        Buttons,
+        Connections,
+    }
 
-        [ObservableProperty]
-        private string _applicationTitle = "Game Controller For Zwift";
+    /// <summary>Where the tabs go for the window width (UX-N-010).</summary>
+    public enum NavLayout
+    {
+        /// <summary>Wide window: a sidebar with icons and labels.</summary>
+        Sidebar,
 
-        // Facilitate Navigation
-        [ObservableProperty]
-        private ICollection<PagesInfoDataItem> _pages;
-        [ObservableProperty]
-        private PagesInfoDataItem? _selectedControl;
-        private readonly INavigationService _navigationService;
+        /// <summary>Medium window: a compact rail.</summary>
+        Rail,
 
-        // The following may need to go to other VMs instead
-        private readonly ILogger<MainWindowViewModel> _logger;
-        #endregion
+        /// <summary>Narrow window: a floating bar at the bottom.</summary>
+        BottomBar,
+    }
 
-        #region Constructor
-
-        public MainWindowViewModel(INavigationService navigationService, ILogger<MainWindowViewModel> logger)
+    /// <summary>One tab in the navigation.</summary>
+    public sealed partial class NavTab : ObservableObject
+    {
+        public NavTab(ShellTab tab, string label, string automationId, Type viewModelType)
         {
-            // Setup Navigation
-            _pages = PagesInfoDataSource.Instance.PagesInfo;
-            _navigationService = navigationService;
-            _navigationService.PropertyChanged += OnNavigationServicePropertyChanged;
-
-            // Other DI
-            _logger = logger;
+            Tab = tab;
+            Label = label;
+            AutomationId = automationId;
+            ViewModelType = viewModelType;
         }
 
-        #endregion
+        public ShellTab Tab { get; }
 
-        #region Navigation
+        public string Label { get; }
+
+        /// <summary>The UI Automation id, as in docs/spec/ux/accessibility.md.</summary>
+        public string AutomationId { get; }
+
+        /// <summary>The view model the tab shows.</summary>
+        public Type ViewModelType { get; }
+
+        /// <summary>True when the tab shows its warning dot.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(AccessibleName))]
+        private bool _hasAlert;
+
+        /// <summary>The name a screen reader reads. The dot has words too (UX-N-002).</summary>
+        public string AccessibleName => HasAlert ? Label + ", Zwift not connected" : Label;
+    }
+
+    /// <summary>
+    /// View model of the window shell: the three tabs, the More button and its menu, back, and where the tabs go for
+    /// the window width (docs/spec/ux/navigation.md).
+    /// </summary>
+    public partial class MainWindowViewModel : ObservableObject
+    {
+        /// <summary>At this width and wider the tabs are a sidebar.</summary>
+        public const double SidebarMinWidth = 1000;
+
+        /// <summary>At this width and wider, up to the sidebar width, the tabs are a compact rail.</summary>
+        public const double RailMinWidth = 640;
+
+        private readonly INavigationService _navigationService;
+        private readonly ZwiftStatus _zwiftStatus;
+
+        public MainWindowViewModel(INavigationService navigationService, ZwiftStatus? zwiftStatus = null)
+        {
+            ArgumentNullException.ThrowIfNull(navigationService);
+            _navigationService = navigationService;
+            _navigationService.PropertyChanged += OnNavigationServicePropertyChanged;
+            _zwiftStatus = zwiftStatus ?? new ZwiftStatus();
+            _zwiftStatus.PropertyChanged += OnZwiftStatusPropertyChanged;
+
+            Tabs =
+            [
+                new NavTab(ShellTab.Ride, "Ride", "NavRideTab", typeof(RideViewModel)),
+                new NavTab(ShellTab.Buttons, "Buttons", "NavButtonsTab", typeof(ControllerSetupViewModel)),
+                new NavTab(ShellTab.Connections, "Connections", "NavConnectionsTab", typeof(ConnectionsViewModel)),
+            ];
+            UpdateConnectionsAlert();
+        }
+
+        /// <summary>The tabs, in order.</summary>
+        public IReadOnlyList<NavTab> Tabs { get; }
 
         /// <summary>The view model of the page being shown. The shell shows the matching view from its view cache.</summary>
         public object? CurrentViewModel => _navigationService.CurrentViewModel;
 
-        /// <summary>True while the Settings page is shown. It has no item in the navigation tree.</summary>
-        public bool IsSettingsShown => CurrentViewModel is SettingsViewModel;
+        /// <summary>
+        /// The tab of the page being shown, or null on a pushed screen (UX-N-009). Setting it shows that tab and
+        /// clears the history.
+        /// </summary>
+        public NavTab? SelectedTab
+        {
+            get => Tabs.FirstOrDefault(t => t.ViewModelType == CurrentViewModel?.GetType());
+            set
+            {
+                if (value is not null)
+                {
+                    IsMoreMenuOpen = false;
+                    _navigationService.NavigateToRoot(value.ViewModelType);
+                }
+            }
+        }
+
+        /// <summary>True on a screen opened from the More menu. It shows a back button (UX-N-016).</summary>
+        public bool IsPushedScreen => CurrentViewModel is not null && SelectedTab is null;
 
         /// <summary>True when there is a previous page to return to.</summary>
         public bool CanGoBack => _navigationService.CanGoBack;
 
-        /// <summary>Shows the first page. Starts with an empty history.</summary>
-        public void NavigateToStartPage()
+        /// <summary>True while Zwift is connected.</summary>
+        public bool IsZwiftConnected => _zwiftStatus.IsConnected;
+
+        /// <summary>Where the tabs go. The window sets it from its width.</summary>
+        [ObservableProperty]
+        private NavLayout _navLayout = NavLayout.Sidebar;
+
+        /// <summary>True while the More menu is open.</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(MoreButtonName))]
+        private bool _isMoreMenuOpen;
+
+        /// <summary>The More button's name for screen readers.</summary>
+        public string MoreButtonName => IsMoreMenuOpen ? "Close menu" : "More: settings, help, credits, support";
+
+        /// <summary>Picks the tab placement for a window width (UX-N-010, UX-N-011).</summary>
+        public static NavLayout LayoutForWidth(double width) => width switch
         {
-            _navigationService.NavigateTo<ControllerSetupViewModel>();
+            >= SidebarMinWidth => NavLayout.Sidebar,
+            >= RailMinWidth => NavLayout.Rail,
+            _ => NavLayout.BottomBar,
+        };
+
+        /// <summary>Updates <see cref="NavLayout"/> for a new window width.</summary>
+        public void UpdateLayoutForWidth(double width) => NavLayout = LayoutForWidth(width);
+
+        /// <summary>Shows the first tab after start. The history starts empty.</summary>
+        public void NavigateToStartPage() => SelectTab(ShellTab.Buttons);
+
+        /// <summary>Shows a tab and clears the history.</summary>
+        public void SelectTab(ShellTab tab) => SelectedTab = Tabs.Single(t => t.Tab == tab);
+
+        [RelayCommand]
+        private void ToggleMoreMenu() => IsMoreMenuOpen = !IsMoreMenuOpen;
+
+        [RelayCommand]
+        private void CloseMoreMenu() => IsMoreMenuOpen = false;
+
+        /// <summary>Opens Settings as a pushed screen (UX-N-009).</summary>
+        [RelayCommand]
+        private void OpenSettings()
+        {
+            IsMoreMenuOpen = false;
+            _navigationService.NavigateTo<SettingsViewModel>();
         }
 
-        /// <summary>Shows the page of a navigation item the user picked. Does nothing for items without a page.</summary>
-        public void NavigateToPage(PagesInfoDataItem? item)
+        /// <summary>Opens Credits as a pushed screen (UX-N-009).</summary>
+        [RelayCommand]
+        private void OpenCredits()
         {
-            if (item?.ViewModelType is Type viewModelType)
-            {
-                _navigationService.NavigateTo(viewModelType);
-            }
+            IsMoreMenuOpen = false;
+            _navigationService.NavigateTo<AboutPageViewModel>();
+        }
+
+        /// <summary>Help and feedback has no screen, so its menu item is disabled.</summary>
+        [RelayCommand(CanExecute = nameof(HasHelpScreen))]
+        private void OpenHelp()
+        {
+        }
+
+        /// <summary>Support this project has no screen, so its menu item is disabled.</summary>
+        [RelayCommand(CanExecute = nameof(HasSupportScreen))]
+        private void OpenSupport()
+        {
+        }
+
+        private static bool HasHelpScreen() => false;
+
+        private static bool HasSupportScreen() => false;
+
+        [RelayCommand(CanExecute = nameof(CanGoBack))]
+        private void Back()
+        {
+            IsMoreMenuOpen = false;
+            _navigationService.GoBack();
         }
 
         private void OnNavigationServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -72,7 +201,8 @@ namespace GameControllerForZwift.UI.WPF
             {
                 case nameof(INavigationService.CurrentViewModel):
                     OnPropertyChanged(nameof(CurrentViewModel));
-                    OnPropertyChanged(nameof(IsSettingsShown));
+                    OnPropertyChanged(nameof(SelectedTab));
+                    OnPropertyChanged(nameof(IsPushedScreen));
                     break;
                 case nameof(INavigationService.CanGoBack):
                     OnPropertyChanged(nameof(CanGoBack));
@@ -81,73 +211,17 @@ namespace GameControllerForZwift.UI.WPF
             }
         }
 
-        #endregion
-
-        #region Commands
-        [RelayCommand]
-        public void Settings()
+        private void OnZwiftStatusPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            _navigationService.NavigateTo<SettingsViewModel>();
+            if (e.PropertyName == nameof(ZwiftStatus.IsConnected))
+            {
+                OnPropertyChanged(nameof(IsZwiftConnected));
+                UpdateConnectionsAlert();
+            }
         }
 
-        [RelayCommand(CanExecute = nameof(CanGoBack))]
-        public void Back()
-        {
-            _navigationService.GoBack();
-        }
-
-        public List<PagesInfoDataItem> GetNavigationItemHierarchyFromViewModelType(Type? viewModelType)
-        {
-            List<PagesInfoDataItem> list = new List<PagesInfoDataItem>();
-            Stack<PagesInfoDataItem> _stack = new Stack<PagesInfoDataItem>();
-            Stack<PagesInfoDataItem> _revStack = new Stack<PagesInfoDataItem>();
-
-            if (viewModelType == null)
-            {
-                return list;
-            }
-            foreach (var item in Pages)
-            {
-                _stack.Push(item);
-                bool found = FindNavigationItemsHierarchyFromViewModelType(viewModelType, item.Items, ref _stack);
-                if (found)
-                {
-                    break;
-                }
-                _stack.Pop();
-            }
-
-            while (_stack.Count > 0)
-            {
-                _revStack.Push(_stack.Pop());
-            }
-
-            foreach (var item in _revStack)
-            {
-                list.Add(item);
-            }
-
-            return list;
-        }
-
-        private static bool FindNavigationItemsHierarchyFromViewModelType(Type viewModelType, ICollection<PagesInfoDataItem> pages, ref Stack<PagesInfoDataItem> stack)
-        {
-            var item = stack.Peek();
-            if (viewModelType == item.ViewModelType)
-            {
-                return true;
-            }
-
-            foreach (var child in item.Items)
-            {
-                stack.Push(child);
-                if (FindNavigationItemsHierarchyFromViewModelType(viewModelType, child.Items, ref stack)) { return true; }
-                stack.Pop();
-            }
-
-            return false;
-        }
-
-        #endregion
+        // UX-N-002: the Connections tab shows its dot whenever Zwift is not connected.
+        private void UpdateConnectionsAlert() =>
+            Tabs.Single(t => t.Tab == ShellTab.Connections).HasAlert = !_zwiftStatus.IsConnected;
     }
 }

@@ -1,4 +1,4 @@
-﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.Controller;
 using GameControllerForZwift.Core.Mapping;
@@ -16,9 +16,13 @@ using System.Windows.Threading;
 
 namespace GameControllerForZwift.UnitTests
 {
+    /// <summary>The window shell (docs/spec/ux/navigation.md).</summary>
     [Collection(WpfWindows.Name)]
     public class MainWindowTests
     {
+        private static readonly string[] NavIds = ["NavSidebar", "NavRail", "NavBottomBar"];
+        private static readonly string[] MenuIds = ["MenuSettingsItem", "MenuHelpItem", "MenuCreditsItem", "MenuSupportItem"];
+
         private static ServiceProvider CreateProvider()
         {
             var dataIntegrator = Substitute.For<IDataIntegrator>();
@@ -34,406 +38,385 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton(Substitute.For<IDialogService>());
             services.AddSingleton<ControllerModelMatcher>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<ZwiftStatus>();
             services.AddSingleton<MainWindowViewModel>();
+            services.AddSingleton<RideViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();
+            services.AddSingleton<ConnectionsViewModel>();
             services.AddSingleton(new AboutPageViewModel("# Acknowledgements"));
             services.AddSingleton<SettingsViewModel>();
             services.AddTransient<MainWindow>();
             return services.BuildServiceProvider();
         }
 
-        private static MainWindow ShowWindow(ServiceProvider provider)
+        // Shows a window for the test and closes it afterwards.
+        private static void WithWindow(Action<ServiceProvider, MainWindow> test, double width = 1600)
         {
-            var window = provider.GetRequiredService<MainWindow>();
-            window.ShowActivated = false;
-            window.Show();
-            Pump(window);
-            return window;
+            TestApplication.Run(() =>
+            {
+                using ServiceProvider provider = CreateProvider();
+                var window = provider.GetRequiredService<MainWindow>();
+                window.ShowActivated = false;
+                window.ShowInTaskbar = false;
+                window.Width = width;
+                window.Show();
+                Pump(window);
+                try
+                {
+                    test(provider, window);
+                }
+                finally
+                {
+                    window.Close();
+                }
+            });
         }
 
         // Runs everything queued so far, including the idle work that prepares the other pages.
-        private static void Pump(MainWindow window)
+        private static void Pump(Window window)
         {
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < 8; i++)
             {
                 window.Dispatcher.Invoke(DispatcherPriority.ApplicationIdle, () => { });
             }
         }
 
-        private static T Find<T>(MainWindow window, string name) where T : class => (T)window.FindName(name);
-
-        private static TreeViewItem TreeItem(MainWindow window, Type viewModelType)
-        {
-            PagesInfoDataItem item = window.ViewModel.Pages.Single(p => p.ViewModelType == viewModelType);
-            return (TreeViewItem)Find<TreeView>(window, "PagesTreeView").ItemContainerGenerator.ContainerFromItem(item);
-        }
+        private static T Find<T>(MainWindow window, string name) where T : class => Assert.IsAssignableFrom<T>(window.FindName(name));
 
         private static object? ShownContent(MainWindow window) => Find<ContentControl>(window, "RootContent").Content;
 
-        [Fact]
-        public void Constructor_ShowsTheControllerSetupPageWithItsViewModel()
+        // Clicks like a user: the click handlers run and so does the command.
+        private static void Click(Button button)
         {
-            TestApplication.Run(() =>
+            Assert.True(button.IsEnabled);
+            var invoke = (System.Windows.Automation.Provider.IInvokeProvider)new System.Windows.Automation.Peers.ButtonAutomationPeer(button)
+                .GetPattern(System.Windows.Automation.Peers.PatternInterface.Invoke);
+            invoke.Invoke();
+            Pump(Window.GetWindow(button));
+        }
+
+        private static void PressKey(MainWindow window, Key key) =>
+            window.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, key)
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    var page = Assert.IsType<ControllerSetupPage>(ShownContent(window));
-                    Assert.Same(provider.GetRequiredService<ControllerSetupViewModel>(), page.DataContext);
-                    Assert.Same(page.DataContext, page.ViewModel);
-                    Assert.False(window.ViewModel.CanGoBack);
-                    Assert.True(TreeItem(window, typeof(ControllerSetupViewModel)).IsSelected);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                RoutedEvent = Keyboard.PreviewKeyDownEvent,
+            });
+
+        [Fact]
+        public void Start_ShowsTheButtonsTabWithEmptyHistory()
+        {
+            WithWindow((provider, window) =>
+            {
+                var page = Assert.IsType<ControllerSetupPage>(ShownContent(window));
+                Assert.Same(provider.GetRequiredService<ControllerSetupViewModel>(), page.DataContext);
+                Assert.Equal(ShellTab.Buttons, window.ViewModel.SelectedTab!.Tab);
+                Assert.Same(window.ViewModel.SelectedTab, Find<UI.WPF.Controls.NavTabList>(window, "SidebarTabs").SelectedItem);
+                Assert.False(window.ViewModel.CanGoBack);
+                Assert.Equal(Visibility.Collapsed, Find<Button>(window, "BackButton").Visibility);
+            });
+        }
+
+        [Theory]
+        [InlineData(0, typeof(RidePage))]
+        [InlineData(2, typeof(ConnectionsPage))]
+        [InlineData(1, typeof(ControllerSetupPage))]
+        public void UXN001_SelectingATabShowsItsPage(int index, Type pageType)
+        {
+            WithWindow((_, window) =>
+            {
+                var tabs = Find<UI.WPF.Controls.NavTabList>(window, "SidebarTabs");
+
+                tabs.SelectedItem = window.ViewModel.Tabs[index];
+                Pump(window);
+
+                Assert.IsType(pageType, ShownContent(window));
+                Assert.False(window.ViewModel.CanGoBack);
             });
         }
 
         [Fact]
-        public void NavigatingToAnotherPage_ShowsItsViewAndSelectsItsTreeItem()
+        public void UXN008_UXN009_SettingsOpensFromTheMenuAsAPushedScreen()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    PagesInfoDataItem about = window.ViewModel.Pages.Single(p => p.ViewModelType == typeof(AboutPageViewModel));
+                Click(Find<UI.WPF.Controls.MoreMenuButton>(window, "MoreButton"));
+                Pump(window);
+                Assert.Equal(Visibility.Visible, Find<Grid>(window, "MoreMenuLayer").Visibility);
 
-                    window.ViewModel.NavigateToPage(about);
+                Click(Find<Button>(window, "MenuSettingsItem"));
+                Pump(window);
 
-                    var page = Assert.IsType<AboutPage>(ShownContent(window));
-                    Assert.Same(provider.GetRequiredService<AboutPageViewModel>(), page.ViewModel);
-                    Assert.True(TreeItem(window, typeof(AboutPageViewModel)).IsSelected);
-                    Assert.False(TreeItem(window, typeof(ControllerSetupViewModel)).IsSelected);
-                    Assert.True(window.ViewModel.CanGoBack);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.IsType<SettingsPage>(ShownContent(window));
+                Assert.Equal(Visibility.Collapsed, Find<Grid>(window, "MoreMenuLayer").Visibility);
+                Assert.Null(Find<UI.WPF.Controls.NavTabList>(window, "SidebarTabs").SelectedItem);
+                Assert.Equal(Visibility.Visible, Find<Button>(window, "BackButton").Visibility);
             });
         }
 
         [Fact]
-        public void Back_ReturnsToThePreviousPageAndAddsNoHistoryEntry()
+        public void UXN016_BackReturnsToTheScreenTheMenuWasOpenedFrom()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    window.ViewModel.NavigateToPage(window.ViewModel.Pages.Single(p => p.ViewModelType == typeof(AboutPageViewModel)));
+                window.ViewModel.SelectTab(ShellTab.Connections);
+                window.ViewModel.OpenCreditsCommand.Execute(null);
+                Pump(window);
+                Assert.IsType<AboutPage>(ShownContent(window));
 
-                    window.ViewModel.BackCommand.Execute(null);
+                Click(Find<Button>(window, "BackButton"));
+                Pump(window);
 
-                    Assert.IsType<ControllerSetupPage>(ShownContent(window));
-                    Assert.True(TreeItem(window, typeof(ControllerSetupViewModel)).IsSelected);
-                    Assert.False(window.ViewModel.CanGoBack);
-                    Assert.False(window.ViewModel.BackCommand.CanExecute(null));
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.IsType<ConnectionsPage>(ShownContent(window));
+                Assert.Equal(ShellTab.Connections, window.ViewModel.SelectedTab!.Tab);
+                Assert.Equal(Visibility.Collapsed, Find<Button>(window, "BackButton").Visibility);
+            });
+        }
+
+        [Fact]
+        public void SelectingATabFromAPushedScreen_ClearsTheHistory()
+        {
+            WithWindow((_, window) =>
+            {
+                window.ViewModel.OpenSettingsCommand.Execute(null);
+                Assert.True(window.ViewModel.CanGoBack);
+
+                window.ViewModel.SelectTab(ShellTab.Ride);
+                Pump(window);
+
+                Assert.IsType<RidePage>(ShownContent(window));
+                Assert.False(window.ViewModel.CanGoBack);
             });
         }
 
         [Fact]
         public void ReturningToAPage_ShowsTheSameViewInstance()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    object? first = ShownContent(window);
-                    window.ViewModel.SettingsCommand.Execute(null);
+                object? first = ShownContent(window);
+                window.ViewModel.OpenSettingsCommand.Execute(null);
 
-                    window.ViewModel.BackCommand.Execute(null);
+                window.ViewModel.BackCommand.Execute(null);
 
-                    Assert.Same(first, ShownContent(window));
-                }
-                finally
-                {
-                    window.Close();
-                }
-            });
-        }
-
-        [Fact]
-        public void Settings_ShowsTheSettingsPageWithNoTreeSelection()
-        {
-            TestApplication.Run(() =>
-            {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    window.ViewModel.SettingsCommand.Execute(null);
-
-                    Assert.IsType<SettingsPage>(ShownContent(window));
-                    Assert.True(window.ViewModel.IsSettingsShown);
-                    Assert.False(TreeItem(window, typeof(ControllerSetupViewModel)).IsSelected);
-                    Assert.False(TreeItem(window, typeof(AboutPageViewModel)).IsSelected);
-                    Assert.True(window.ViewModel.CanGoBack);
-
-                    window.ViewModel.BackCommand.Execute(null);
-
-                    Assert.IsType<ControllerSetupPage>(ShownContent(window));
-                    Assert.False(window.ViewModel.IsSettingsShown);
-                    Assert.True(TreeItem(window, typeof(ControllerSetupViewModel)).IsSelected);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.Same(first, ShownContent(window));
             });
         }
 
         [Fact]
         public void IdleWork_BuildsThePagesThatHaveNotBeenVisited()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    var viewCache = (ViewCache)typeof(MainWindow)
-                        .GetField("_viewCache", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
-                        .GetValue(window)!;
-                    var views = (System.Collections.IDictionary)typeof(ViewCache)
-                        .GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
-                        .GetValue(viewCache)!;
+                var viewCache = (ViewCache)typeof(MainWindow)
+                    .GetField("_viewCache", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+                    .GetValue(window)!;
+                var views = (System.Collections.IDictionary)typeof(ViewCache)
+                    .GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+                    .GetValue(viewCache)!;
 
-                    Assert.Equal(3, views.Count);
-                    Assert.True(((FrameworkElement)views[typeof(AboutPageViewModel)]!).IsMeasureValid);
-                    Assert.Null(((FrameworkElement)views[typeof(SettingsViewModel)]!).Parent);
-                }
-                finally
+                Assert.Equal(5, views.Count);
+                Assert.True(((FrameworkElement)views[typeof(AboutPageViewModel)]!).IsMeasureValid);
+                Assert.Null(((FrameworkElement)views[typeof(SettingsViewModel)]!).Parent);
+            });
+        }
+
+        [Theory]
+        [InlineData(1600, "NavSidebar", NavLayout.Sidebar)]
+        [InlineData(800, "NavRail", NavLayout.Rail)]
+        [InlineData(500, "NavBottomBar", NavLayout.BottomBar)]
+        public void UXN010_UXN011_TheTabsMoveWithTheWindowWidth(double width, string visibleNav, NavLayout layout)
+        {
+            WithWindow((_, window) =>
+            {
+                Assert.Equal(layout, window.ViewModel.NavLayout);
+                foreach (string nav in NavIds)
                 {
-                    window.Close();
+                    Assert.Equal(nav == visibleNav ? Visibility.Visible : Visibility.Collapsed, Find<Border>(window, nav).Visibility);
                 }
+
+                // UX-N-004: the More button stays at the top right whatever the width.
+                var more = Find<Button>(window, "MoreButton");
+                Assert.Equal(HorizontalAlignment.Right, more.HorizontalAlignment);
+                Assert.Equal(VerticalAlignment.Top, more.VerticalAlignment);
+            }, width);
+        }
+
+        [Fact]
+        public void UXN011_ResizingSwitchesThePlacement()
+        {
+            WithWindow((_, window) =>
+            {
+                window.Width = 700;
+                Pump(window);
+                Assert.Equal(NavLayout.Rail, window.ViewModel.NavLayout);
+
+                window.Width = 1200;
+                Pump(window);
+                Assert.Equal(NavLayout.Sidebar, window.ViewModel.NavLayout);
             });
         }
 
         [Fact]
-        public void EnterOnTheSelectedTreeItem_NavigatesToItsPage()
+        public void BottomBar_KeepsTheContentAboveTheBar()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    var tree = Find<TreeView>(window, "PagesTreeView");
-                    TreeItem(window, typeof(AboutPageViewModel)).IsSelected = true;
+                Assert.Equal(88, Find<Grid>(window, "ContentArea").Margin.Bottom);
+            }, 500);
+        }
 
-                    tree.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Enter)
-                    {
-                        RoutedEvent = Keyboard.PreviewKeyDownEvent,
-                    });
+        [Fact]
+        public void MoreMenu_EscapeClosesIt()
+        {
+            WithWindow((_, window) =>
+            {
+                window.ViewModel.IsMoreMenuOpen = true;
+                Pump(window);
 
-                    Assert.IsType<AboutPageViewModel>(window.ViewModel.CurrentViewModel);
-                    Assert.IsType<AboutPage>(ShownContent(window));
-                }
-                finally
-                {
-                    window.Close();
-                }
+                PressKey(window, Key.Escape);
+
+                Assert.False(window.ViewModel.IsMoreMenuOpen);
+                Assert.Equal(Visibility.Collapsed, Find<Grid>(window, "MoreMenuLayer").Visibility);
             });
         }
 
         [Fact]
-        public void EnterWithoutASelection_DoesNothing()
+        public void MoreMenu_EscapeWithTheMenuClosedDoesNothing()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    window.ViewModel.SettingsCommand.Execute(null);
-                    var tree = Find<TreeView>(window, "PagesTreeView");
+                PressKey(window, Key.Escape);
 
-                    tree.RaiseEvent(new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Enter)
-                    {
-                        RoutedEvent = Keyboard.PreviewKeyDownEvent,
-                    });
-
-                    Assert.IsType<SettingsViewModel>(window.ViewModel.CurrentViewModel);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.False(window.ViewModel.IsMoreMenuOpen);
+                Assert.IsType<ControllerSetupPage>(ShownContent(window));
             });
         }
 
         [Fact]
-        public void ClickingASelectedTreeItem_NavigatesToItsPage()
+        public void MoreMenu_ClickingTheScrimClosesIt()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    var tree = Find<TreeView>(window, "PagesTreeView");
-                    TreeItem(window, typeof(AboutPageViewModel)).IsSelected = true;
+                window.ViewModel.IsMoreMenuOpen = true;
+                Pump(window);
+                var scrim = Find<Border>(window, "MenuScrim");
+                var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left) { RoutedEvent = UIElement.MouseLeftButtonDownEvent };
 
-                    tree.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left)
-                    {
-                        RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent,
-                        Source = tree,
-                    });
+                scrim.RaiseEvent(args);
 
-                    Assert.IsType<AboutPageViewModel>(window.ViewModel.CurrentViewModel);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.True(args.Handled);
+                Assert.False(window.ViewModel.IsMoreMenuOpen);
             });
         }
 
         [Fact]
-        public void ClickingTheTreeWithoutASelection_DoesNothing()
+        public void UXN008_MenuListsItsItemsInOrderAndDisablesTheOnesWithoutAScreen()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    window.ViewModel.SettingsCommand.Execute(null);
-                    var tree = Find<TreeView>(window, "PagesTreeView");
+                var items = Find<StackPanel>(window, "MoreMenu").Children.OfType<Button>().ToList();
 
-                    tree.RaiseEvent(new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left)
-                    {
-                        RoutedEvent = UIElement.PreviewMouseLeftButtonUpEvent,
-                        Source = tree,
-                    });
+                Assert.Equal(
+                    MenuIds,
+                    items.Select(b => System.Windows.Automation.AutomationProperties.GetAutomationId(b)));
+                Assert.True(Find<Button>(window, "MenuSettingsItem").IsEnabled);
+                Assert.True(Find<Button>(window, "MenuCreditsItem").IsEnabled);
+                Assert.False(Find<Button>(window, "MenuHelpItem").IsEnabled);
+                Assert.False(Find<Button>(window, "MenuSupportItem").IsEnabled);
+            });
+        }
 
-                    Assert.IsType<SettingsViewModel>(window.ViewModel.CurrentViewModel);
-                }
-                finally
-                {
-                    window.Close();
-                }
+        [Fact]
+        public void UXN002_ConnectionsTabShowsZwiftStatus()
+        {
+            WithWindow((_, window) =>
+            {
+                window.ViewModel.SelectTab(ShellTab.Connections);
+                Pump(window);
+
+                var page = Assert.IsType<ConnectionsPage>(ShownContent(window));
+                Assert.Equal("Zwift isn't connected yet", Assert.IsType<TextBlock>(page.FindName("ZwiftStatusText")).Text);
+                Assert.True(window.ViewModel.Tabs[2].HasAlert);
+            });
+        }
+
+        [Fact]
+        public void MaximizeButton_TogglesTheWindowState()
+        {
+            WithWindow((_, window) =>
+            {
+                Click(Find<Button>(window, "MaximizeButton"));
+                Assert.Equal(WindowState.Maximized, window.WindowState);
+                Assert.Equal(new Thickness(8), Find<Grid>(window, "MainGrid").Margin);
+                Assert.Equal("", Find<TextBlock>(window, "MaximizeIcon").Text);
+
+                Click(Find<Button>(window, "MaximizeButton"));
+                Assert.Equal(WindowState.Normal, window.WindowState);
+                Assert.Equal(default, Find<Grid>(window, "MainGrid").Margin);
+
+                Click(Find<Button>(window, "MinimizeButton"));
+                Assert.Equal(WindowState.Minimized, window.WindowState);
             });
         }
 
         [Fact]
         public void MouseBackButton_GoesBackWhenThereIsAPreviousPage()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    window.ViewModel.SettingsCommand.Execute(null);
-                    var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.XButton1)
-                    {
-                        RoutedEvent = Mouse.PreviewMouseDownEvent,
-                    };
+                window.ViewModel.OpenSettingsCommand.Execute(null);
+                var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.XButton1) { RoutedEvent = Mouse.PreviewMouseDownEvent };
 
-                    window.RaiseEvent(args);
+                window.RaiseEvent(args);
 
-                    Assert.True(args.Handled);
-                    Assert.IsType<ControllerSetupViewModel>(window.ViewModel.CurrentViewModel);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.True(args.Handled);
+                Assert.IsType<ControllerSetupViewModel>(window.ViewModel.CurrentViewModel);
             });
         }
 
         [Fact]
         public void MouseBackButton_IsNotHandledWithoutHistory()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.XButton1)
-                    {
-                        RoutedEvent = Mouse.PreviewMouseDownEvent,
-                    };
+                var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.XButton1) { RoutedEvent = Mouse.PreviewMouseDownEvent };
 
-                    window.RaiseEvent(args);
+                window.RaiseEvent(args);
 
-                    Assert.False(args.Handled);
-                    Assert.IsType<ControllerSetupViewModel>(window.ViewModel.CurrentViewModel);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.False(args.Handled);
+                Assert.IsType<ControllerSetupViewModel>(window.ViewModel.CurrentViewModel);
             });
         }
 
         [Fact]
         public void OtherMouseButtons_DoNotGoBack()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    window.ViewModel.SettingsCommand.Execute(null);
-                    var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.Left)
-                    {
-                        RoutedEvent = Mouse.PreviewMouseDownEvent,
-                    };
+                window.ViewModel.OpenSettingsCommand.Execute(null);
+                var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, 0, MouseButton.XButton2) { RoutedEvent = Mouse.PreviewMouseDownEvent };
 
-                    window.RaiseEvent(args);
+                window.RaiseEvent(args);
 
-                    Assert.False(args.Handled);
-                    Assert.IsType<SettingsViewModel>(window.ViewModel.CurrentViewModel);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.False(args.Handled);
+                Assert.IsType<SettingsViewModel>(window.ViewModel.CurrentViewModel);
             });
         }
 
         [Fact]
         public void OrdinaryKeys_DoNotGoBack()
         {
-            TestApplication.Run(() =>
+            WithWindow((_, window) =>
             {
-                using ServiceProvider provider = CreateProvider();
-                MainWindow window = ShowWindow(provider);
-                try
+                window.ViewModel.OpenSettingsCommand.Execute(null);
+                var args = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Left)
                 {
-                    window.ViewModel.SettingsCommand.Execute(null);
-                    var args = new KeyEventArgs(Keyboard.PrimaryDevice, PresentationSource.FromVisual(window), 0, Key.Left)
-                    {
-                        RoutedEvent = Keyboard.PreviewKeyDownEvent,
-                    };
+                    RoutedEvent = Keyboard.PreviewKeyDownEvent,
+                };
 
-                    window.RaiseEvent(args);
+                window.RaiseEvent(args);
 
-                    Assert.False(args.Handled);
-                    Assert.IsType<SettingsViewModel>(window.ViewModel.CurrentViewModel);
-                }
-                finally
-                {
-                    window.Close();
-                }
+                Assert.False(args.Handled);
+                Assert.IsType<SettingsViewModel>(window.ViewModel.CurrentViewModel);
             });
         }
 
