@@ -117,6 +117,62 @@
     <value>Zwift isn't connected yet</value>
     <comment>Zwift status on the Connections screen when Zwift is not connected.</comment>
   </data>
+  <data name="ConnectionsControllerCard" xml:space="preserve">
+    <value>Your controller</value>
+    <comment>Screen reader name of the card on the Connections screen that shows your controller.</comment>
+  </data>
+  <data name="ConnectionsControllerHere" xml:space="preserve">
+    <value>Your {0} is here</value>
+    <comment>Connections screen, your controller card, when a controller is connected. {0} is the controller name, for example Xbox Series X Controller.</comment>
+  </data>
+  <data name="ConnectionsControllerAwake" xml:space="preserve">
+    <value>Awake and connected</value>
+    <comment>Connections screen, second line under the controller name when a controller is connected.</comment>
+  </data>
+  <data name="ConnectionsNoController" xml:space="preserve">
+    <value>Wake your controller</value>
+    <comment>Connections screen, your controller card, when no controller is connected. It asks the person to press a button on the controller to wake it.</comment>
+  </data>
+  <data name="ConnectionsLooking" xml:space="preserve">
+    <value>Looking for your controller...</value>
+    <comment>Connections screen, second line when no controller is connected. The app is still scanning for one.</comment>
+  </data>
+  <data name="ConnectionsPickerLabel" xml:space="preserve">
+    <value>Use a different controller</value>
+    <comment>Connections screen, label of the dropdown that switches to another connected controller.</comment>
+  </data>
+  <data name="ConnectionsPairBluetooth" xml:space="preserve">
+    <value>Pair a new Bluetooth controller</value>
+    <comment>Connections screen, button that opens the Windows Bluetooth settings so the person can pair a controller.</comment>
+  </data>
+  <data name="ConnectionsShowMeHow" xml:space="preserve">
+    <value>Show me how</value>
+    <comment>Connections screen, button on the Zwift card that shows the three steps to pair with Zwift again.</comment>
+  </data>
+  <data name="ConnectionsHideSteps" xml:space="preserve">
+    <value>Hide steps</value>
+    <comment>Connections screen, button on the Zwift card that hides the three steps to pair with Zwift. It replaces Show me how while the steps are open.</comment>
+  </data>
+  <data name="ZwiftStepPowerSource" xml:space="preserve">
+    <value>Power Source: Voltage Gamepad</value>
+    <comment>Zwift step 1. In Zwift, the person sets the Power Source device to Voltage Gamepad. Keep Power Source and Voltage Gamepad as they appear in Zwift.</comment>
+  </data>
+  <data name="ZwiftStepControls" xml:space="preserve">
+    <value>Controls: Voltage Gamepad</value>
+    <comment>Zwift step 2. In Zwift, the person sets the Controls device to Voltage Gamepad. Keep Controls and Voltage Gamepad as they appear in Zwift.</comment>
+  </data>
+  <data name="ZwiftStepTrainer" xml:space="preserve">
+    <value>Power Source: your trainer</value>
+    <comment>Zwift step 3. In Zwift, the person sets the Power Source device back to their trainer. Keep Power Source as it appears in Zwift.</comment>
+  </data>
+  <data name="ZwiftStepDone" xml:space="preserve">
+    <value>Done</value>
+    <comment>State of a Zwift step that is complete. Shown next to a check icon and read by screen readers.</comment>
+  </data>
+  <data name="ZwiftStepNotDone" xml:space="preserve">
+    <value>Not done yet</value>
+    <comment>State of a Zwift step that is not complete. Shown next to an empty circle and read by screen readers.</comment>
+  </data>
   <data name="AppearanceLight" xml:space="preserve">
     <value>Light</value>
     <comment>Settings, app theme choice.</comment>

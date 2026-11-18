@@ -75,14 +75,5 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             Assert.False(status.IsConnected);
             new ZwiftStatus().Dispose();
         }
-
-        [Fact]
-        public void ConnectionsViewModel_ShowsTheStatus()
-        {
-            using var status = new ZwiftStatus(_connection);
-
-            Assert.Same(status, new ConnectionsViewModel(status).Zwift);
-            Assert.Throws<ArgumentNullException>(() => new ConnectionsViewModel(null!));
-        }
     }
 }

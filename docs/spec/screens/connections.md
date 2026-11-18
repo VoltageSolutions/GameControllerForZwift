@@ -27,7 +27,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | Rule | ID |
 |---|---|
 | The screen must show your controller's name and its state in words. | SCR-CONN-001 |
-| The screen must offer **Use a different controller** and **Pair a new Bluetooth controller**. Both must follow [Setup screens](setup.md). | SCR-CONN-002 |
+| The screen must offer **Use a different controller** and **Pair a new Bluetooth controller**. Both must follow [Setup screens](setup.md). On Windows, **Pair a new Bluetooth controller** opens the Windows Bluetooth settings. **Use a different controller** is a dropdown of the connected controllers, and it stays visible but disabled until two or more are connected. | SCR-CONN-002 |
 | With no controller, the screen must show the same "Wake your controller" state as Ride. | SCR-CONN-003 |
 | The Zwift card must say "Zwift can see your controller" or "Zwift isn't connected yet", based on `IsZwiftConnected`. | SCR-CONN-004 |
 | The card must show a live-updating status, and the app must announce it as a live region. | SCR-CONN-005 |
@@ -50,6 +50,8 @@ The steps are the same as on [Setup](setup.md#pair-with-zwift): Power Source set
 | The steps must tick off live exactly as described for Setup (SCR-SETUP-019 to SCR-SETUP-021). | SCR-CONN-009 |
 | The step list must name **Voltage Gamepad** as the device to pick. | SCR-CONN-010 |
 | When Zwift is connected, the list should collapse to a one-line status and offer to show the steps again. | SCR-CONN-011 |
+
+Each step shows whether it is done as an icon and as words ("Done" or "Not done yet"), so color and shape never carry the state alone. When Zwift is not connected, the steps are always open. When Zwift is connected, the **Show me how** button opens them and becomes **Hide steps**, which closes them again. When Zwift is not connected, the button is hidden. The steps close again the next time Zwift connects.
 
 ## Zwift can't find Voltage Gamepad
 
@@ -88,5 +90,11 @@ On Connections, a controller press goes to Zwift as mapped. This is not a screen
 | ID | Where |
 |---|---|
 | `NavConnectionsTab` | The tab. Its name adds ", Zwift not connected" when the dot shows. |
+| `ConnectionsControllerCard` | The controller card |
+| `ConnectionsControllerName` | The controller's name and state line |
+| `ConnectionsControllerPicker` | The **Use a different controller** dropdown |
+| `ConnectionsPairBluetoothButton` | **Pair a new Bluetooth controller** |
 | `ConnectionsZwiftCard` | The Zwift card |
+| `ConnectionsZwiftStatus` | The Zwift status line |
+| `ConnectionsStep1` to `ConnectionsStep3` | The step texts. Each state text adds `State`, for example `ConnectionsStep1State`. |
 | `ConnectionsShowMeHowButton` | The steps button |
