@@ -13,7 +13,7 @@ last-updated: 2026-11-17
 
 ## How to read this spec
 
-Every rule has a stable ID (`CTRL-001` and up), so tests, issues and other specs can point to it. **must**, **should** and **may** mean the same as in the [saved configurations spec](saved-configurations.md#how-to-read-this-spec).
+Every rule has a stable ID (`CTRL-001` and up), so tests, issues, and other specs can point to it. **must**, **should**, and **may** mean the same as in the [saved configurations spec](saved-configurations.md#how-to-read-this-spec).
 
 ## Terms
 
@@ -51,9 +51,9 @@ The app keeps your choice. Connecting or disconnecting another controller never 
 |---|---|
 | The selected controller stays selected while other controllers connect or disconnect. | CTRL-004 |
 | If the selected controller disconnects and other controllers are still connected, the app selects the first controller in the list. | CTRL-005 |
-| If the selected controller disconnects and no controllers remain, the list is empty and shows "None selected". The configuration list shows only Default, which is selected. Save, Save as, Delete, Import and Rename are disabled, and Open folder stays available (CFG-020, CFG-037). | CTRL-006 |
+| If the selected controller disconnects and no controllers remain, the list is empty and shows "None selected". The configuration list shows only Default, which is selected. Save, Save as, Delete, Import, and Rename are disabled, and Open folder stays available (CFG-020, CFG-037). | CTRL-006 |
 | When a controller connects and nothing is selected, the app selects it. When a controller connects while another is selected, the selection stays. A returning controller does not take the selection back. | CTRL-007 |
-| A switch the app makes on its own follows CFG-024: with unsaved changes it asks Save, Don't save or Cancel. Cancel keeps your edits and their configuration list on screen, with no controller selected. | CTRL-008 |
+| A switch the app makes on its own follows CFG-024: with unsaved changes it asks Save, Don't save, or Cancel. Cancel keeps your edits and their configuration list on screen, with no controller selected. | CTRL-008 |
 
 ```mermaid
 flowchart TD

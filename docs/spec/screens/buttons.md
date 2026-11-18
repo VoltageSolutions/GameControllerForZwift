@@ -8,9 +8,9 @@ last-updated: 2026-11-17
 # Buttons screens
 
 !!! tldr "TL;DR"
-    The Buttons tab is where you choose what each input on your controller does. A mapping picker, Save and Save as new sit at the top. Two tabs below split buttons from sticks and triggers. A controller illustration and a list say the same thing in two ways. Tapping a row or pressing a button on your controller opens a picker of Zwift functions, grouped by what they do. Saving and switching mappings follow the saved configurations spec by ID.
+    The Buttons tab is where you choose what each input on your controller does. A mapping picker, Save, and Save as new sit at the top. Two tabs below split buttons from sticks and triggers. A controller illustration and a list say the same thing in two ways. Tapping a row or pressing a button on your controller opens a picker of Zwift functions, grouped by what they do. Saving and switching mappings follow the saved configurations spec by ID.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md). A **mapping** is what the saved configurations spec (`CFG`) calls a configuration.
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md). A **mapping** is what the saved configurations spec (`CFG`) calls a configuration.
 
 ```mermaid
 flowchart TD
@@ -38,12 +38,12 @@ The screen's hint says: "Press a button on your controller to select it."
 
 | Rule | ID |
 |---|---|
-| The screen must have a mapping picker, Save and Save as new, a Buttons tab, a Sticks and triggers tab, the controller illustration and a list of what each input does. | SCR-BTN-001 |
+| The screen must have a mapping picker, Save and Save as new, a Buttons tab, a Sticks and triggers tab, the controller illustration, and a list of what each input does. | SCR-BTN-001 |
 | The list must carry the same information as the illustration, in text. | SCR-BTN-002 |
 | Each list row must say the input and its function, for example "Right bumper: shift up". A button with no function must say "No action". | SCR-BTN-003 |
-| The illustration must show the selected button, mark free keys with a dashed outline and use the lit style for a press (see [Visual system](../ux/visual-system.md)). | SCR-BTN-004 |
+| The illustration must show the selected button, mark free keys with a dashed outline, and use the lit style for a press (see [Visual system](../ux/visual-system.md)). | SCR-BTN-004 |
 | Tapping or clicking a row, or pressing the matching button on your controller, must select it and open the function picker. | SCR-BTN-005 |
-| A controller press here must only find or assign a button. It must not navigate, save or go back. | SCR-BTN-006 |
+| A controller press here must only find or assign a button. It must not navigate, save, or go back. | SCR-BTN-006 |
 | The screen must show the hint "Press a button on your controller to select it." and no controller hint bar. | SCR-BTN-007 |
 | The Save button is the screen's one main action, and it must be an accent button only when it is enabled (that is, when a saved mapping has unsaved changes, see `CFG-037`). | SCR-BTN-008 |
 | The screen must have a **Reset to default** action for the current mapping's mappings. | SCR-BTN-009 |
@@ -55,7 +55,7 @@ The screen's hint says: "Press a button on your controller to select it."
 
 ## Mappings
 
-A mapping is a named set of mappings for one controller model. The behavior, storage and rules live in the saved configurations spec. This section says where each part appears on screen, and refers to the spec for the rule.
+A mapping is a named set of mappings for one controller model. The behavior, storage, and rules live in the saved configurations spec. This section says where each part appears on screen, and refers to the spec for the rule.
 
 ### Mapping picker
 
@@ -64,13 +64,13 @@ Default is listed first and is locked. Saved mappings follow, sorted by name. Th
 | Rule | ID |
 |---|---|
 | The picker must list Default first, then saved mappings by name, and select the last-used one. See `CFG-015` to `CFG-019`. | SCR-BTN-011 |
-| Default must show as locked. It cannot be overwritten, renamed or deleted. See `CFG-020`. | SCR-BTN-012 |
+| Default must show as locked. It cannot be overwritten, renamed, or deleted. See `CFG-020`. | SCR-BTN-012 |
 | The selected mapping must show "Unsaved changes" in words when its mappings differ from what is saved. See `CFG-021`. | SCR-BTN-013 |
 | Buttons that do not apply must be disabled, not hidden. See `CFG-037`. | SCR-BTN-014 |
 | The picker must offer **Import a mapping**. See `CFG-030`. | SCR-BTN-015 |
 | On desktop the picker must offer **Open folder**. See `CFG-034`. | SCR-BTN-016 |
 | On phone the picker must offer **Share** in its place. Sharing a mapping hands the mapping's file to the system share sheet. | SCR-BTN-017 |
-| Each saved mapping must have a More menu with Rename and Delete. Default's More menu must have neither enabled. See `CFG-020`, `CFG-025` and `CFG-029`. | SCR-BTN-018 |
+| Each saved mapping must have a More menu with Rename and Delete. Default's More menu must have neither enabled. See `CFG-020`, `CFG-025`, and `CFG-029`. | SCR-BTN-018 |
 
 ### Save and Save as
 
@@ -88,10 +88,10 @@ Default is listed first and is locked. Saved mappings follow, sorted by name. Th
 | Rule | ID |
 |---|---|
 | Switching mapping or controller with unsaved changes must ask what to do. See `CFG-024`. | SCR-BTN-023 |
-| The dialog's choices should read **Save and switch**, **Switch without saving** and **Cancel**. | SCR-BTN-024 |
+| The dialog's choices should read **Save and switch**, **Switch without saving**, and **Cancel**. | SCR-BTN-024 |
 | While the dialog is open, the controller must be able to answer it, with a focus ring and an A and B hint. See `CFG-038` and UX-C-005. | SCR-BTN-025 |
 
-### Rename, delete and import
+### Rename, delete, and import
 
 | Rule | ID |
 |---|---|
@@ -104,7 +104,7 @@ Default is listed first and is locked. Saved mappings follow, sorted by name. Th
 
 ??? note "Edge cases"
     - The saved configurations spec describes the notice and the dialog buttons in its own words ("configuration", "Don't save"). The words in this page are the UI words and are used in the app.
-    - The saved configurations spec describes a bar of buttons above the mapping grid (`CFG` "UI layout"). The screens here replace that arrangement with the picker, Save and the per-mapping More menu. The rules `CFG-037` and `CFG-038` still apply.
+    - The saved configurations spec describes a bar of buttons above the mapping grid (`CFG` "UI layout"). The screens here replace that arrangement with the picker, Save, and the per-mapping More menu. The rules `CFG-037` and `CFG-038` still apply.
     - The Import file picker is the standard system file picker. It works with a mouse and keyboard, not with a controller.
 
 ## Choose what a button does
@@ -131,10 +131,10 @@ It opens as a sheet on a phone, and as a side panel on a landscape screen. Funct
 
 | Rule | ID |
 |---|---|
-| The picker must show functions in the groups Riding, Zwift buttons, Menus, This app and Nothing, in that order. | SCR-BTN-032 |
+| The picker must show functions in the groups Riding, Zwift buttons, Menus, This app, and Nothing, in that order. | SCR-BTN-032 |
 | Functions must use the real Zwift Ride names. The picker must not list invented functions such as "U-turn" or "Camera view". | SCR-BTN-033 |
 | Each function must be a radio choice (`FunctionItem_{function}`) with one short line saying what it does, such as "Shift up, harder gear". | SCR-BTN-034 |
-| Navigate up, Navigate down, Ride On and Power-up must show their hint. | SCR-BTN-035 |
+| Navigate up, Navigate down, Ride On, and Power-up must show their hint. | SCR-BTN-035 |
 | **This app** must list only functions the app really implements. "Switch window size" belongs here and must not be shown as a Zwift function. | SCR-BTN-036 |
 | The sheet or panel must trap focus, and Esc or B must close it. See [Accessibility](../ux/accessibility.md). | SCR-BTN-037 |
 | Choosing a function must apply right away to the current mapping and show "Unsaved changes". | SCR-BTN-038 |

@@ -10,7 +10,7 @@ last-updated: 2026-11-17
 !!! tldr "TL;DR"
     One fixed UI. It is about the rider and their controller. It never asks who you are, reads at arm's length, says state in words, keeps things simple by default, and never invents numbers. Everything else in the UX specs follows from these rules.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ## One UI for everyone
 
@@ -31,7 +31,7 @@ The app shows real things it counts: rides together, shifts, riding since. It sh
 | Rule | ID |
 |---|---|
 | Screens should show the rider's own things (their controller, rides together, shifts, riding since). | UX-P-004 |
-| The app must never show a number it does not actually know. It must not show invented stats, counters or claims. | UX-P-005 |
+| The app must never show a number it does not actually know. It must not show invented stats, counters, or claims. | UX-P-005 |
 | The app must not make claims it cannot verify, such as "devices saved". | UX-P-006 |
 
 ## Readable and glanceable
@@ -41,7 +41,7 @@ You ride sweaty, at arm's length, with Zwift full screen. The riding screen has 
 | Rule | ID |
 |---|---|
 | Each riding screen must have one big readout that can be read at arm's length. | UX-P-007 |
-| State must always be said in words, such as "Awake and connected", "Unsaved changes" or "Zwift can see your controller". Color or an icon alone must never carry state. | UX-P-008 |
+| State must always be said in words, such as "Awake and connected", "Unsaved changes", or "Zwift can see your controller". Color or an icon alone must never carry state. | UX-P-008 |
 | Where the controller navigates, the focus ring must be the most visible element on screen. | UX-P-009 |
 
 ## Controller input

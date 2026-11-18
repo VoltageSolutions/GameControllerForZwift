@@ -48,7 +48,7 @@ dotnet format src/Application/GameControllerForZwift.Core --verify-no-changes --
 - The repo stores LF. Windows working trees use CRLF. `*.sh` files always stay LF (see `.gitattributes`).
 - Comments, XML docs and docs pages describe what the code does now. Do not write history ("previously", "the old ...", "used to", "for now"), because git has it. Do not write future plans, because the roadmap has them, and only when requested.
 - Codecov targets: patch coverage of at least 60% of the changed lines, and project coverage of at least 40%. Codecov ignores `tests/`, `tools/`, generated files and `obj/`/`bin/`, but counts `*.xaml.cs`. CI collects coverage from the UnitTests, Core, Gamepad and Network unit test projects. Measure coverage and check it before you call work ready.
-- Docs voice: first person singular ("I", "me"), US spelling, short sentences, no em dashes. Pages start with a TL;DR callout.
+- Docs voice: first person singular ("I", "me"), US spelling, serial (Oxford) comma in lists of three or more, short sentences, no em dashes. Pages start with a TL;DR callout.
 - Keep private data out of the repo: no machine names, IP addresses, MAC addresses, serial numbers or local user paths. Packet captures stay in the git-ignored `docs/captures/`.
 - When an AI helped with a commit, end the message with a `Co-Authored-By` trailer. Do not add links to AI sessions.
 

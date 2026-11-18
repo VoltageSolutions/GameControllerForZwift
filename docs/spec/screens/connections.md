@@ -10,13 +10,13 @@ last-updated: 2026-11-17
 !!! tldr "TL;DR"
     The Connections tab has two jobs: your controller and Zwift. For the controller you can use a different one or pair a new one. For Zwift you see its status, the three pairing steps with live progress where the app can tell, and a help screen, "Zwift can't find Voltage Gamepad", with live checks and the checks the app cannot make. The tab shows a dot whenever Zwift is not connected.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ## The Connections screen
 
 **What it is for:** see and fix both connections in one place.
 
-**Content, top to bottom:** your controller (its name and state in words, with **Use a different controller** and **Pair a new Bluetooth controller**), then the Zwift card (`ConnectionsZwiftCard`) with its status, the three steps and a **Show me how** button (`ConnectionsShowMeHowButton`), then a link to the help screen.
+**Content, top to bottom:** your controller (its name and state in words, with **Use a different controller** and **Pair a new Bluetooth controller**), then the Zwift card (`ConnectionsZwiftCard`) with its status, the three steps, and a **Show me how** button (`ConnectionsShowMeHowButton`), then a link to the help screen.
 
 | State | What you see |
 |---|---|

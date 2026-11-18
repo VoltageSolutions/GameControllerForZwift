@@ -1,7 +1,7 @@
 # Spec
 
 !!! tldr "TL;DR"
-    The specs describe, in plain language, how the app must look and behave. Every rule has an ID that tests, issues and code point to. Each spec has a status: Draft, Accepted or Implemented.
+    The specs describe, in plain language, how the app must look and behave. Every rule has an ID that tests, issues, and code point to. Each spec has a status: Draft, Accepted, or Implemented.
 
 ## What the specs are
 
@@ -37,7 +37,7 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 
 | Spec | ID prefix | What it covers |
 |---|---|---|
-| [Saved configurations](features/saved-configurations.md) | `CFG` | Save, reload, rename, delete, import and share mappings. |
+| [Saved configurations](features/saved-configurations.md) | `CFG` | Save, reload, rename, delete, import, and share mappings. |
 | [Controller detection](features/controller-detection.md) | `CTRL` | How the controller list follows controllers as they connect and disconnect, and which one is selected. |
 
 ### UX
@@ -48,7 +48,7 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 | [Principles](ux/principles.md) | `UX-P` | The design principles the whole app follows. |
 | [Visual system](ux/visual-system.md) | `UX-V` | Color, type, spacing, buttons, illustration, motion. |
 | [Voice and copy](ux/voice.md) | `UX-W` | How the app talks and what it calls things. |
-| [Navigation](ux/navigation.md) | `UX-N` | Tabs, the More button and where they go on each screen size. |
+| [Navigation](ux/navigation.md) | `UX-N` | Tabs, the More button, and where they go on each screen size. |
 | [Controller input](ux/controller-input.md) | `UX-C` | What a controller press means on each kind of screen. |
 | [Accessibility](ux/accessibility.md) | `UX-A` | Contrast, targets, IDs, reading order, live updates. |
 | [Platforms](ux/platforms.md) | `UX-PL` | What changes per platform, and what never does. |
@@ -59,8 +59,8 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 |---|---|---|
 | [Setup screens](screens/setup.md) | `SCR-SETUP` | Connect a controller, pair with Zwift, try a shift. |
 | [Ride screens](screens/ride.md) | `SCR-RIDE` | Home, riding view, connection lost, ride finished. |
-| [Buttons screens](screens/buttons.md) | `SCR-BTN` | Mappings, the function picker, sticks and triggers. |
+| [Buttons screens](screens/buttons.md) | `SCR-BTN` | Mappings, the function picker, and sticks and triggers. |
 | [Connections screens](screens/connections.md) | `SCR-CONN` | Controller and Zwift status, "Zwift can't find Voltage Gamepad". |
-| [Settings and help screens](screens/settings-help.md) | `SCR-SET` | Settings, Help and feedback, Credits, Support this project. |
+| [Settings and help screens](screens/settings-help.md) | `SCR-SET` | Settings, Help and feedback, Credits, and Support this project. |
 
 The saved configurations spec calls a saved set of button assignments a "configuration". The app calls it a **mapping**. The screen specs use "mapping" and refer to the `CFG` rules by ID.

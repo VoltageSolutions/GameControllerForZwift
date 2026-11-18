@@ -10,7 +10,7 @@ last-updated: 2026-11-17
 !!! tldr "TL;DR"
     Plain, warm, second person. Name things after what they mean to the rider, not after how the app works inside. Sentence case everywhere. The app is "Voltage Gamepad". A saved set of button assignments is a "mapping".
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ## The voice
 
@@ -20,12 +20,13 @@ The app talks like a friendly person next to you. It says what is happening and 
 
 | Rule | ID |
 |---|---|
-| Copy must be plain, warm and in the second person ("you", "your"). | UX-W-001 |
+| Copy must be plain, warm, and in the second person ("you", "your"). | UX-W-001 |
 | Copy must be in sentence case. All caps must not be used. | UX-W-002 |
 | Copy must name things after what they mean to the rider, not after internal terms. | UX-W-003 |
 | Every sentence should be short. A rider should be able to say it out loud. | UX-W-004 |
 | Copy must not use marketing claims. | UX-W-005 |
 | Copy must not make claims the app cannot verify. | UX-W-006 |
+| Copy and docs must use the serial (Oxford) comma in lists of three or more, as in "Settings, Help and feedback, Credits, and Support this project". | UX-W-017 |
 
 ## Avoid and use
 
@@ -56,7 +57,7 @@ The app talks like a friendly person next to you. It says what is happening and 
 
 | Rule | ID |
 |---|---|
-| The UI must say "mapping", never "configuration", "config", "layout" or "profile". | UX-W-013 |
+| The UI must say "mapping", never "configuration", "config", "layout", or "profile". | UX-W-013 |
 | Copy that tells you what to pick in Zwift must name **Voltage Gamepad**. | UX-W-014 |
 | Copy must use the Zwift Ride function names (Shift up, Shift down, Steer left, Steer right, Brake, Navigate up, Navigate down, Select, Back, Power-up, Ride On, No action). | UX-W-015 |
 
@@ -87,3 +88,4 @@ The app talks like a friendly person next to you. It says what is happening and 
 ??? note "Edge cases"
     - Translated labels can be longer. The button rules in the [visual system](visual-system.md) make long labels move to their own line rather than break.
     - Where a problem is shown, the copy says what is fine too, such as "Your controller is fine" when Zwift lost the connection.
+    - An item name that contains "and" stays one item, so "Help and feedback" and "Sticks and triggers" get no comma inside them. A list of two items gets no comma either: "Ride and Buttons".

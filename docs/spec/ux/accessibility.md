@@ -8,19 +8,19 @@ last-updated: 2026-11-17
 # Accessibility
 
 !!! tldr "TL;DR"
-    Target WCAG 2.2 AA on every platform. Every color pair is checked. Every tap or click target is at least 48 by 48 px. Every interactive or meaningful element has a stable ID (the same string on Windows, Android and iOS), a spoken name, a role and, where it changes, a live status.
+    Target WCAG 2.2 AA on every platform. Every color pair is checked. Every tap or click target is at least 48 by 48 px. Every interactive or meaningful element has a stable ID (the same string on Windows, Android and iOS), a spoken name, a role, and, where it changes, a live status.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ## Color contrast
 
-Text needs 4.5:1. Icons, focus rings, status dots and graphics people need to see need 3:1. Color is never the only signal: every status also has words. The full pair table is in the [visual system](visual-system.md#contrast).
+Text needs 4.5:1. Icons, focus rings, status dots, and graphics people need to see need 3:1. Color is never the only signal: every status also has words. The full pair table is in the [visual system](visual-system.md#contrast).
 
 | Rule | ID |
 |---|---|
 | Text pairs must reach 4.5:1 and meaningful non-text pairs 3:1, in both modes. | UX-A-001 |
 | Every status must have words as well as color. | UX-A-002 |
-| Accent text, icons and dots must use `accent-ink` (`#ED7600` in dark mode, `#A55200` in light mode). | UX-A-003 |
+| Accent text, icons, and dots must use `accent-ink` (`#ED7600` in dark mode, `#A55200` in light mode). | UX-A-003 |
 | Text on the accent fill must be `#1F1B16` (5.86:1). White on the accent (2.92:1) must not be used. | UX-A-004 |
 | The app must follow the system dark or light setting. | UX-A-005 |
 | When a Windows contrast theme is on, the app must use system colors. | UX-A-006 |
@@ -53,7 +53,7 @@ Fixes made to pairs that failed:
 ??? note "Edge cases"
     WCAG 2.2 AA asks for 24 px. Material asks for 48 dp and Apple for 44 pt. The app goes beyond all of them.
 
-## IDs, names and roles
+## IDs, names, and roles
 
 ### ID naming scheme
 
@@ -77,7 +77,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 
 | Rule | ID |
 |---|---|
-| Every interactive or meaningful element must have an ID, a name and a role. | UX-A-013 |
+| Every interactive or meaningful element must have an ID, a name, and a role. | UX-A-013 |
 | IDs must follow `{Area}{Element}{Role}` in PascalCase, with the same string on every platform. | UX-A-014 |
 | IDs must not change with language or state. | UX-A-015 |
 | A mapping's ID key must be the mapping's GUID (see `CFG-008`), never its name. | UX-A-016 |
@@ -115,7 +115,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | The example numbers in the name column (12 rides, 1,086 shifts) are examples. The app must show only real values (UX-P-005). | UX-A-019 |
 
 ??? note "Edge cases"
-    The existing UI tests locate elements by `SettingsButton`, `PageTitle`, `OpenGitHubButton`, `OpenkofiButton` and the tree item "Controller Setup". They move to the new IDs (for example `MenuSettingsItem`, `CreditsGitHubLink`, `SupportKofiButton`) as screens are rebuilt.
+    The existing UI tests locate elements by `SettingsButton`, `PageTitle`, `OpenGitHubButton`, `OpenkofiButton`, and the tree item "Controller Setup". They move to the new IDs (for example `MenuSettingsItem`, `CreditsGitHubLink`, `SupportKofiButton`) as screens are rebuilt.
 
 ## Reading and focus order
 

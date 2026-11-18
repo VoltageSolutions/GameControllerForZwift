@@ -10,7 +10,7 @@ last-updated: 2026-11-17
 !!! tldr "TL;DR"
     Warm neutrals, no outlines, one confident orange (`#ED7600`) action per screen, Figtree type, rounded shapes, filled friendly illustrations. The orange fill always carries a dark label (`#1F1B16`), never white. In light mode the orange text color is a darker `#A55200`.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ## Color tokens
 
@@ -42,20 +42,20 @@ The accent is the VOLTAGE brand orange.
 |---|---|
 | The accent fill (`#ED7600`) must fill only the one main action on a screen (Start riding, Continue, Save) and mark live moments (the lit button, "You just pressed"). | UX-V-001 |
 | The label on an accent fill must be `on-accent` (`#1F1B16`) in both modes. White text on the accent must never be used (2.92:1). | UX-V-002 |
-| Accent used as text, an icon or a status dot must use `accent-ink`: `#ED7600` in dark mode, `#A55200` in light mode. | UX-V-003 |
+| Accent used as text, an icon, or a status dot must use `accent-ink`: `#ED7600` in dark mode, `#A55200` in light mode. | UX-V-003 |
 | The Connections tab dot must use `accent-ink` (`#A55200` in light mode, `#ED7600` in dark mode). | UX-V-004 |
 | In light mode the accent fill against the background is only 2.75:1. A primary button must therefore be identified by its dark text label and its shape, never by the fill color alone. | UX-V-005 |
 | Everything else must stay neutral. Screens must not use the accent for decoration. | UX-V-006 |
-| The app's identity must never rely on color alone. It is carried by the name "Voltage Gamepad", the controller illustration and the wordmark. | UX-V-007 |
+| The app's identity must never rely on color alone. It is carried by the name "Voltage Gamepad", the controller illustration, and the wordmark. | UX-V-007 |
 | The app must not adopt a neighbor's category color: Strava orange, Wahoo or Garmin blue, Xbox green, PlayStation blue, Nintendo red, conservation green. | UX-V-008 |
 
 ??? note "Edge cases"
-    - The app sits beside Zwift, which is also orange-leaning. That is why UX-V-007 asks for identity through name, illustration and wordmark rather than color.
-    - Purple and violet gradients, neon fills and gradient washes are not used.
+    - The app sits beside Zwift, which is also orange-leaning. That is why UX-V-007 asks for identity through name, illustration, and wordmark rather than color.
+    - Purple and violet gradients, neon fills, and gradient washes are not used.
 
 ## Contrast
 
-Text needs 4.5:1. Icons, focus rings, status dots and graphics people need to see need 3:1. Values below are computed.
+Text needs 4.5:1. Icons, focus rings, status dots, and graphics people need to see need 3:1. Values below are computed.
 
 | Pair | Dark | Light |
 |---|---|---|
@@ -100,7 +100,7 @@ The last two rows are below 3:1, so they carry extra cues. See [Accessibility](a
 
 Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 
-## Spacing, radius and size
+## Spacing, radius, and size
 
 | Item | Value | ID |
 |---|---|---|
@@ -116,20 +116,20 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 
 | Rule | ID |
 |---|---|
-| Surfaces must be separated by color, spacing and rounded corners. Outlines (1 px borders) must not be used. | UX-V-022 |
+| Surfaces must be separated by color, spacing, and rounded corners. Outlines (1 px borders) must not be used. | UX-V-022 |
 | Soft shadows may be used in light mode only. Dark mode has no shadows. | UX-V-023 |
 | Neutrals must be warm: a warm near-black in dark mode and a warm off-white in light mode. Blue-gray must not be used. | UX-V-024 |
 | Gradients must not be used. | UX-V-025 |
 
 ??? note "Edge cases"
-    - The only outlines allowed are the ones the accessibility rules require: a thin muted outline on controller keys, a dashed outline on free keys and a dark outline on the lit key.
+    - The only outlines allowed are the ones the accessibility rules require: a thin muted outline on controller keys, a dashed outline on free keys, and a dark outline on the lit key.
     - With a Windows contrast theme on, the app uses system colors instead of these tokens.
 
 ## Buttons
 
 | Kind | Height | Padding left and right | Label |
 |---|---|---|---|
-| Row, dialog and secondary actions | 48 | 24 | 15 to 20, weight 700 |
+| Row, dialog, and secondary actions | 48 | 24 | 15 to 20, weight 700 |
 | Standard | 56 | 28 | 15 to 20, weight 700 |
 | The screen's one primary action | 60 to 64 | 28 | 15 to 20, weight 800 |
 

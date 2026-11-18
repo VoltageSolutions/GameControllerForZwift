@@ -8,7 +8,7 @@ last-updated: 2026-11-17
 # UX overview
 
 !!! tldr "TL;DR"
-    The brand idea is **use what you already own**. The app feels warm and human and is about the rider's own controller: no outlines, warm neutrals, one confident orange action per screen, friendly type and plain words. You cannot change the layout.
+    The brand idea is **use what you already own**. The app feels warm and human and is about the rider's own controller: no outlines, warm neutrals, one confident orange action per screen, friendly type, and plain words. You cannot change the layout.
 
 ## The idea
 
@@ -42,7 +42,7 @@ Audiences decide what the words say and which features exist. They never decide 
 | [Platforms](platforms.md) | What the shell changes on each platform. |
 | [Screens](../screens/setup.md) | What each screen contains, one page per area. |
 
-Rules on these pages are written as "must", "should" and "may" (see [how to read a spec](../index.md)).
+Rules on these pages are written as "must", "should", and "may" (see [how to read a spec](../index.md)).
 
 ## How screens are designed and reviewed
 
@@ -73,23 +73,23 @@ Lessons from other apps that shaped this one:
 | Test | The question |
 |---|---|
 | Swap test | Could another app's logo go on this screen without anyone noticing? If yes, it is generic. |
-| Reason test | Can you state why for the color, type, layout and each word? |
+| Reason test | Can you state why for the color, type, layout, and each word? |
 | Glance test | Can you read the riding screen from the saddle? |
 | One-accent test | Is there one obvious main action, and nothing else competing in the accent color? |
 | Words test | Would a rider say these words out loud? |
 | Input test | On this screen, does a controller press mean exactly one thing? |
 | Honesty test | Is every number something the app actually knows? |
 | Both modes | Is it checked in light and dark? |
-| Audience test | Does anything put off a gamer, a conservationist or someone with limited hand mobility? |
+| Audience test | Does anything put off a gamer, a conservationist, or someone with limited hand mobility? |
 
 ### Anti-patterns
 
-| Looks generic, techy or machine-made | Do instead |
+| Looks generic, techy, or machine-made | Do instead |
 |---|---|
-| Every card and row outlined with 1 px borders | Surface color, spacing and rounded corners. Soft shadows in light mode. |
+| Every card and row outlined with 1 px borders | Surface color, spacing, and rounded corners. Soft shadows in light mode. |
 | Blue-black dark mode | Warm near-black. |
 | Condensed all-caps headings and buttons | Sentence case, bold friendly type. |
-| Default typefaces such as Inter, DM Sans or Space Grotesk | A chosen face with character (Figtree). |
+| Default typefaces such as Inter, DM Sans, or Space Grotesk | A chosen face with character (Figtree). |
 | A timid accent sprinkled everywhere, or neon in big areas | One confident use per screen (the main action) plus live moments. |
 | Wireframe line illustrations | Filled, soft, friendly illustrations. |
 | An interface with no content | The rider's own things: their controller, rides together, shifts. |

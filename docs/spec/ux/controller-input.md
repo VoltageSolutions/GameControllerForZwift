@@ -10,7 +10,7 @@ last-updated: 2026-11-17
 !!! tldr "TL;DR"
     A controller press has exactly one meaning on each screen. On setup and Buttons screens, presses find or assign buttons. While riding, the controller navigates. In a dialog, the controller answers it (A confirms, B cancels). A hold on a mapped button reaches Zwift as a hold. The app shows the right button glyphs for your controller.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ## One meaning per screen
 
@@ -18,7 +18,7 @@ Your controller does different jobs in different places. To keep that clear, eac
 
 | Where | What a press means | Controller hint bar |
 |---|---|---|
-| Setup and Buttons screens | Find or assign a button. Navigation, save and back use touch, mouse or keyboard. | None |
+| Setup and Buttons screens | Find or assign a button. Navigation, save, and back use touch, mouse, or keyboard. | None |
 | Riding screens | The controller navigates. View switches the window size (Full, then Float, then Mini). | Not needed |
 | Dialogs | The controller answers the dialog. A confirms, B cancels. | A and B hint, with a focus ring |
 
@@ -27,7 +27,7 @@ Your controller does different jobs in different places. To keep that clear, eac
 | Rule | ID |
 |---|---|
 | A controller press must have exactly one meaning on each screen. | UX-C-001 |
-| On setup and Buttons screens, a press must only find or assign a button. It must not navigate, save or go back. | UX-C-002 |
+| On setup and Buttons screens, a press must only find or assign a button. It must not navigate, save, or go back. | UX-C-002 |
 | On setup and Buttons screens, the app must not show a controller hint bar. The screen's own hint says "Press a button on your controller to select it." | UX-C-003 |
 | On riding screens, the controller must navigate, and View must switch the window size from Full to Float to Mini. | UX-C-004 |
 | While a dialog is open, the controller must be able to answer it. A confirms and B cancels. The dialog must show a focus ring and an A and B hint. | UX-C-005 |

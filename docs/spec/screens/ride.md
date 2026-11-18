@@ -8,9 +8,9 @@ last-updated: 2026-11-17
 # Ride screens
 
 !!! tldr "TL;DR"
-    Ride is the home tab. It shows your controller, honest stats, your mapping and whether Zwift can see you. The one main action is **Start riding**, or **Pair with Zwift** when Zwift is not connected. While riding you get one big readout and three window sizes: Full, Float and Mini. Problems are said in words: "Your controller is fine", "Wake your controller".
+    Ride is the home tab. It shows your controller, honest stats, your mapping, and whether Zwift can see you. The one main action is **Start riding**, or **Pair with Zwift** when Zwift is not connected. While riding you get one big readout and three window sizes: Full, Float, and Mini. Problems are said in words: "Your controller is fine", "Wake your controller".
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ```mermaid
 flowchart TD
@@ -35,7 +35,7 @@ flowchart TD
 |---|---|
 | The title must be "Ready when you are". | SCR-RIDE-001 |
 | The controller card must name your controller and say its state in words, such as "Your Xbox controller, awake and connected". | SCR-RIDE-002 |
-| The stats must show only real values the app counts: rides together, shifts and riding since. The stats must be hidden or say nothing until there is something real to show. | SCR-RIDE-003 |
+| The stats must show only real values the app counts: rides together, shifts, and riding since. The stats must be hidden or say nothing until there is something real to show. | SCR-RIDE-003 |
 | The screen must show the selected mapping and let you change it by going to Buttons. | SCR-RIDE-004 |
 | The Zwift status must say "Zwift can see your controller" when `IsZwiftConnected` is true. | SCR-RIDE-005 |
 | The one main action must be **Start riding**. | SCR-RIDE-006 |
@@ -43,7 +43,7 @@ flowchart TD
 
 ## Home, no controller
 
-**What it is for:** every rider will open the app with the controller turned off, asleep or unplugged. The screen says so and shows the way out.
+**What it is for:** every rider will open the app with the controller turned off, asleep, or unplugged. The screen says so and shows the way out.
 
 **Copy:** title "Wake your controller", status "Looking for your controller...".
 
@@ -73,7 +73,7 @@ flowchart TD
 
 **What it is for:** a glance from the saddle. One big readout, nothing else competing.
 
-**Content:** the big "You just pressed" readout (`RideLastPressStatus`, for example "Shift up, right bumper"), shifts this ride, a quick reference of your main buttons, the window size choice (`RideWindowSizeGroup`: Full, Float, Mini) and **Stop riding** (`RideStopButton`).
+**Content:** the big "You just pressed" readout (`RideLastPressStatus`, for example "Shift up, right bumper"), shifts this ride, a quick reference of your main buttons, the window size choice (`RideWindowSizeGroup`: Full, Float, Mini), and **Stop riding** (`RideStopButton`).
 
 | Window size | What it is |
 |---|---|
@@ -85,9 +85,9 @@ flowchart TD
 |---|---|
 | The riding view must have one big readout (the last press) readable at arm's length. | SCR-RIDE-016 |
 | The riding view must show shifts this ride and a quick reference of the main buttons. | SCR-RIDE-017 |
-| The window size must be changeable between Full, Float and Mini, and the View button on the controller must cycle Full, then Float, then Mini. | SCR-RIDE-018 |
+| The window size must be changeable between Full, Float, and Mini, and the View button on the controller must cycle Full, then Float, then Mini. | SCR-RIDE-018 |
 | Float and Mini must have no navigation. | SCR-RIDE-019 |
-| Float, Mini and Full must show the same problems (Zwift lost, controller asleep) as the riding view. | SCR-RIDE-020 |
+| Float, Mini, and Full must show the same problems (Zwift lost, controller asleep) as the riding view. | SCR-RIDE-020 |
 | The riding view must follow platform limits in [Platforms](../ux/platforms.md). | SCR-RIDE-021 |
 | A shift announcement for assistive technology must be off by default and controlled by Settings, "Announce each shift". | SCR-RIDE-022 |
 
@@ -121,13 +121,13 @@ flowchart TD
 
 **What it is for:** show a short honest summary and, once, ask for support.
 
-**Content:** time, shifts and rides together. The one-time donation ask: **Chip in on Ko-fi** or **Maybe later**.
+**Content:** time, shifts, and rides together. The one-time donation ask: **Chip in on Ko-fi** or **Maybe later**.
 
 **Copy:** a short line about supporting the project.
 
 | Rule | ID |
 |---|---|
-| The summary must show only real values: ride time, shifts and rides together. | SCR-RIDE-029 |
+| The summary must show only real values: ride time, shifts, and rides together. | SCR-RIDE-029 |
 | The donation ask must appear at most once, on a ride finished screen, with "Chip in on Ko-fi" and "Maybe later". | SCR-RIDE-030 |
 | The ask must never block anything. "Maybe later" must dismiss it, and the app must not ask again. | SCR-RIDE-031 |
 | The ask must be framed as supporting the project. It must not claim impact the app cannot verify. | SCR-RIDE-032 |

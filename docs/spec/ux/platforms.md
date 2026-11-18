@@ -8,9 +8,9 @@ last-updated: 2026-11-17
 # Platforms
 
 !!! tldr "TL;DR"
-    Screens, content, tokens and voice are the same on every platform. Only the shell adapts: pairing, the Float and Mini windows, background input and a few platform states. Windows is the shipping platform.
+    Screens, content, tokens, and voice are the same on every platform. Only the shell adapts: pairing, the Float and Mini windows, background input, and a few platform states. Windows is the shipping platform.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ## What stays the same and what adapts
 
@@ -19,12 +19,12 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
 | Screens and their content | How you pair a Bluetooth controller |
 | Color tokens, type, spacing | The Float and Mini windows |
 | Voice and copy | Background input |
-| The three tabs and the More menu | Platform states, extras and donation rules |
+| The three tabs and the More menu | Platform states, extras, and donation rules |
 
 | Rule | ID |
 |---|---|
-| Screens, content, tokens and voice must be the same on every platform. | UX-PL-001 |
-| Only the shell may adapt to a platform: pairing, Float, Mini, background input, platform states, extras and donations. | UX-PL-002 |
+| Screens, content, tokens, and voice must be the same on every platform. | UX-PL-001 |
+| Only the shell may adapt to a platform: pairing, Float, Mini, background input, platform states, extras, and donations. | UX-PL-002 |
 | Order of buttons in dialogs follows each platform (see UX-V-032). | UX-PL-003 |
 
 ## The platform shell

@@ -10,7 +10,7 @@ last-updated: 2026-11-17
 !!! tldr "TL;DR"
     First run walks you through six short screens: connect a controller, choose one if there are several, pair a Bluetooth controller if needed, allow the Windows network permission, pair with Zwift, and try a shift. First run has no tab bar. The one main action on each screen moves you forward. Pairing with Zwift shows live progress where the app can tell.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ```mermaid
 flowchart TD
@@ -166,7 +166,7 @@ Its one main action is **Try the shift again**. **Skip for now** stays available
 
 ## Controller input on these screens
 
-On all setup screens, a controller press only finds or assigns a button. Moving on, going back and choosing are done with touch, mouse or keyboard (see [Controller input](../ux/controller-input.md)). A dialog that opens here, such as the network permission explanation, is answered by the controller (A and B).
+On all setup screens, a controller press only finds or assigns a button. Moving on, going back, and choosing are done with touch, mouse or keyboard (see [Controller input](../ux/controller-input.md)). A dialog that opens here, such as the network permission explanation, is answered by the controller (A and B).
 
 | Rule | ID |
 |---|---|

@@ -9,7 +9,7 @@ last-updated: 2026-11-17
 # Saved controller configurations
 
 !!! tldr "TL;DR"
-    You can save, reload, rename, delete, import and share controller configurations (button mappings). Each configuration is one JSON file in a per-user folder. A configuration belongs to a controller *model* (vendor and product ID), so a second controller of the same model shares it. The built-in Default is always available and read-only.
+    You can save, reload, rename, delete, import, and share controller configurations (button mappings). Each configuration is one JSON file in a per-user folder. A configuration belongs to a controller *model* (vendor and product ID), so a second controller of the same model shares it. The built-in Default is always available and read-only.
 
 ## How to read this spec
 
@@ -29,7 +29,7 @@ Every rule has a stable ID (`CFG-001` and up), so tests, issues and other specs 
 
 ## Storage
 
-Each configuration you save becomes one small JSON file in your config folder. The app creates the folder the first time you save. If you add, change or remove files there yourself, the app notices and updates its list.
+Each configuration you save becomes one small JSON file in your config folder. The app creates the folder the first time you save. If you add, change, or remove files there yourself, the app notices and updates its list.
 
 *Example: you save "Climbing" for your Xbox controller. A file named `Xbox-Series-X-Controller_Climbing.json` appears in the config folder. You can copy it to a USB stick or email it to a friend.*
 
@@ -40,10 +40,10 @@ Each configuration you save becomes one small JSON file in your config folder. T
 | The file holds everything needed to load it. The filename is for humans only, and loading never depends on it. | CFG-003 |
 | Filenames should be `<ControllerName>_<ConfigName>.json`. Characters that are invalid in Windows filenames and whitespace are replaced by `-`. If the name is taken on disk, the app appends `-2`, `-3`, and so on. | CFG-004 |
 | A file that fails to parse is skipped with a log warning. It never crashes the app and is never deleted. | CFG-005 |
-| The app should watch the config folder and refresh its lists when files are added, changed or removed outside the app. | CFG-006 |
+| The app should watch the config folder and refresh its lists when files are added, changed, or removed outside the app. | CFG-006 |
 
 ??? note "Edge cases"
-    - Any run of whitespace, control characters or invalid characters (`< > : " / \ | ? *`) becomes a single `-`. Trailing dots are dropped, because Windows would drop them anyway.
+    - Any run of whitespace, control characters, or invalid characters (`< > : " / \ | ? *`) becomes a single `-`. Trailing dots are dropped, because Windows would drop them anyway.
     - If a part of the name ends up empty, the app uses `Controller` or `Configuration` in its place.
     - The controller part of the filename is cut to 60 characters.
     - A rename that only changes the case of the name keeps the same file.
@@ -86,7 +86,7 @@ The file says which controller model it is for, which input does what, and when 
 | Inputs missing from `mappings` load as `None`. | CFG-010 |
 
 ??? note "Edge cases"
-    - A file is also rejected, with a message that names the problem, if it is empty, is not valid JSON, or has no `id`, `name` or `controller`.
+    - A file is also rejected, with a message that names the problem, if it is empty, is not valid JSON, or has no `id`, `name`, or `controller`.
     - A mapping entry with an unknown `input` is skipped, which has the same effect as `None`. An unknown `function` loads as `None`.
     - The `vendorId` and `productId` are hexadecimal text, with or without a `0x` prefix. If one cannot be read, it is treated as unknown (0000), and matching falls back to the controller name (CFG-014).
     - The app writes `mappings` sorted by input, and `modified` in UTC to the second.
@@ -120,7 +120,7 @@ When you pick a controller, the app shows Default first and then your saved conf
 | Default is listed first, then saved configs sorted by name (ignoring case). Configurations of other controllers follow when CFG-039 is on. | CFG-015 |
 | The last-used config for that controller model is selected. | CFG-017 |
 | If there's nothing saved, or the last-used one is gone, Default is selected. | CFG-016, 018 |
-| After any save, rename, delete or import, the list refreshes and your selection stays put. | CFG-019 |
+| After any save, rename, delete, or import, the list refreshes and your selection stays put. | CFG-019 |
 
 ```mermaid
 flowchart TD
@@ -133,8 +133,8 @@ flowchart TD
 
 ??? note "Edge cases"
     - Last-used is stored in `settings.json` by configuration `id`, one entry per controller model.
-    - The app records last-used when you switch configurations, save, save as and import. Selecting Default clears the entry, and so does deleting the selected config.
-    - The refresh in CFG-019 also covers save as, folder changes and import. Matching is by `id`. If the selected config was deleted, Default is selected.
+    - The app records last-used when you switch configurations, save, save as, and import. Selecting Default clears the entry, and so does deleting the selected config.
+    - The refresh in CFG-019 also covers save as, folder changes, and import. Matching is by `id`. If the selected config was deleted, Default is selected.
     - If two saved configs have the same name ignoring case (for example from files copied in by hand), the app sorts them by `id` after the name so the order is stable.
     - Edits you have not saved stay on screen when the list refreshes because of a folder change. They are not replaced by the file's contents.
 
@@ -158,13 +158,13 @@ Climbing (Xbox Series X Controller)
 | A checkbox **Show configurations from other controllers** is unchecked by default and its state is kept in `settings.json`. When it is checked, the list shows, after this controller's entries, the saved configurations of other controller models, sorted by name (ignoring case), each followed by its controller name in parentheses. | CFG-039 |
 | Selecting a configuration of another controller asks "Use Climbing with this controller?". On yes, the app saves a copy for the selected controller model with a new `id` and selects it. On no, the previous selection stays. | CFG-040 |
 | The original configuration stays with its own controller model and is not changed. | CFG-041 |
-| If the copy's name is already used for this controller, the app asks for a new name as in CFG-032. With unsaved changes, the app asks Save, Don't save or Cancel (CFG-024) before it switches. Cancel in either prompt saves nothing and keeps the previous selection. | CFG-042 |
+| If the copy's name is already used for this controller, the app asks for a new name as in CFG-032. With unsaved changes, the app asks Save, Don't save, or Cancel (CFG-024) before it switches. Cancel in either prompt saves nothing and keeps the previous selection. | CFG-042 |
 
 ??? note "Edge cases"
     - Two configurations of other controllers with the same name are sorted by controller name, then by `id`.
     - A configuration of another controller is never the last-used one. The copy is, once you select it.
     - After the copy is saved, the app shows the notice "Saved a copy to your configurations." (CFG-031).
-    - Name checks for Save as, Rename and Import only look at this controller's configurations (CFG-027). Entries of other controllers do not block a name.
+    - Name checks for Save as, Rename, and Import only look at this controller's configurations (CFG-027). Entries of other controllers do not block a name.
     - With no controller selected (CTRL-006), the list shows only Default, even when the box is checked.
     - A controller model in the alias list (CFG-013) counts as the same model, so its configurations are listed as this controller's own.
 
@@ -176,11 +176,11 @@ You can change the mappings at any time. A dot after the name (for example `Clim
 
 | Rule | ID |
 |---|---|
-| Default is read-only. It cannot be overwritten, renamed or deleted. You may edit mappings while Default is selected, and then only **Save as** is enabled. | CFG-020 |
+| Default is read-only. It cannot be overwritten, renamed, or deleted. You may edit mappings while Default is selected, and then only **Save as** is enabled. | CFG-020 |
 | When the current mappings differ from the selected configuration as saved, the UI shows an unsaved-changes indicator (for example `Climbing •`). | CFG-021 |
 | **Save** overwrites the selected configuration's file and updates `modified`. | CFG-022 |
 | **Save as** asks for a name, creates a new configuration with a new `id`, then selects it. | CFG-023 |
-| Switching configuration or controller with unsaved changes asks you to Save, Discard or Cancel. | CFG-024 |
+| Switching configuration or controller with unsaved changes asks you to Save, Discard, or Cancel. | CFG-024 |
 | **Rename** changes `name`, renames the file as in CFG-004, and keeps the same `id`. | CFG-025 |
 
 ```mermaid
@@ -195,11 +195,11 @@ flowchart TD
 
 ??? note "Edge cases"
     - Choosing Save in the prompt while Default is selected opens the Save as dialog. If you cancel that dialog, the switch is cancelled too.
-    - The prompt's buttons read Save, Don't save and Cancel. Don't save is the Discard choice.
+    - The prompt's buttons read Save, Don't save, and Cancel. Don't save is the Discard choice.
     - Save as suggests a name based on the selected configuration (for example `Climbing (2)`). It suggests nothing when Default is selected.
     - Save as is enabled whenever a controller is selected, even when a saved configuration is selected. Save is enabled only for a saved configuration with unsaved changes.
     - Rename keeps your on-screen mappings, including unsaved edits, and updates `modified`. A rename to the exact same name does nothing.
-    - A failed save, rename or delete shows an error message and leaves the list as it was.
+    - A failed save, rename, or delete shows an error message and leaves the list as it was.
     - Deleting a configuration discards any unsaved edits to it after you confirm the delete.
 
 ## Names
@@ -215,7 +215,7 @@ Every configuration needs a name that is short, not blank, and different from th
 | The name field validates as you type. It shows an inline message ("A configuration named 'Climbing' already exists for this controller") and disables the confirm button until the name is valid. Duplicates are blocked and never silently overwritten. | CFG-028 |
 
 ??? note "Edge cases"
-    - The other messages are "Enter a name.", "Use 50 characters or fewer." and "'Default' is reserved for the built-in configuration."
+    - The other messages are "Enter a name.", "Use 50 characters or fewer.", and "'Default' is reserved for the built-in configuration."
     - An empty box disables the confirm button but shows no message until you type something.
     - When you rename, your own current name does not count as a duplicate.
     - Names are unique per model, so the same name may exist for two different controller models.
@@ -237,13 +237,13 @@ Delete removes the selected configuration after you confirm. The app then goes b
 
 ## Import and sharing
 
-To share a configuration, copy its file. To use one someone sent you, pick it with Import. The app checks the file, makes its own copy in your config folder and selects it.
+To share a configuration, copy its file. To use one someone sent you, pick it with Import. The app checks the file, makes its own copy in your config folder, and selects it.
 
 *Example: a friend emails you `Climbing.json`. You choose Import, pick the file, and see "Saved a copy to your configurations." Your friend's file stays where it was.*
 
 | Rule | ID |
 |---|---|
-| **Import** opens a file picker for `.json` files, validates the file (CFG-005, CFG-007), copies it into the config folder and selects it. | CFG-030 |
+| **Import** opens a file picker for `.json` files, validates the file (CFG-005, CFG-007), copies it into the config folder, and selects it. | CFG-030 |
 | After a successful import the app shows a non-blocking notice: "Saved a copy to your configurations." | CFG-031 |
 | If the imported name collides (CFG-027), the app asks for a new name, pre-filled with a suggestion such as `Climbing (2)`. | CFG-032 |
 | If the imported file's controller model does not match the selected controller, the app asks whether to use it for the selected controller. If you say yes, it rewrites `controller` to the selected model and assigns a new `id`. | CFG-033 |
@@ -268,7 +268,7 @@ flowchart TD
     - The notice goes away on its own after 6 seconds, or when you dismiss it.
     - If the file's `id` is already in use in the config folder (for example you import a file from the folder itself), the copy gets a new `id`.
     - A file that cannot be imported (not valid JSON, missing fields, or a newer format version) shows an error message that says why.
-    - If there are unsaved changes, the app asks Save, Don't save or Cancel before the import is selected (CFG-024).
+    - If there are unsaved changes, the app asks Save, Don't save, or Cancel before the import is selected (CFG-024).
     - Cancelling the rename prompt cancels the import.
     - The picker is disabled when no controller is selected.
 

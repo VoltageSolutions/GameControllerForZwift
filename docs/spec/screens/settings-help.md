@@ -1,16 +1,16 @@
 ---
 id: SPEC-SCR-SET
-title: Settings, help, credits and support
+title: Settings, help, credits, and support
 status: Draft
 last-updated: 2026-11-17
 ---
 
-# Settings, help, credits and support
+# Settings, help, credits, and support
 
 !!! tldr "TL;DR"
     Four screens open from the More button as pushed screens with a back button: Settings, Help and feedback, Credits, and Support this project. They are reference screens, so lists are fine, but they stay short and plain. An available update shows as a badge in Settings, never as a banner.
 
-In the rules, "must", "should" and "may" have the meaning given in [how to read a spec](../index.md).
+In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ## Settings
 
@@ -20,7 +20,7 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
 
 | Section | Content |
 |---|---|
-| Appearance | **Light**, **Dark** or **Match Windows**. |
+| Appearance | **Light**, **Dark**, or **Match Windows**. |
 | While riding | **Announce each shift** (off by default). On Windows also a shortcut to switch window size. |
 | Startup (Windows) | **Start with Windows**. |
 | Mappings | **Open folder** and **Delete all saved mappings**. |
@@ -31,7 +31,7 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
 
 | Rule | ID |
 |---|---|
-| Settings must offer the appearance choices Light, Dark and Match Windows. The default must be Match Windows. | SCR-SET-001 |
+| Settings must offer the appearance choices Light, Dark, and Match Windows. The default must be Match Windows. | SCR-SET-001 |
 | Settings must offer **Announce each shift**, off by default. See UX-A-026. | SCR-SET-002 |
 | On Windows, Settings must offer **Start with Windows** and a shortcut for switching the window size. | SCR-SET-003 |
 | Settings must offer **Open folder** for saved mappings (`CFG-034`). | SCR-SET-004 |
@@ -52,7 +52,7 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
 | Help must list the common problems, each with a short plain fix. | SCR-SET-010 |
 | Help must link to "Zwift can't find Voltage Gamepad" on [Connections](connections.md). | SCR-SET-011 |
 | Help must offer **Open log folder**. | SCR-SET-012 |
-| **Report a problem** must open GitHub and say what to attach: the app version, the controller and the log file. | SCR-SET-013 |
+| **Report a problem** must open GitHub and say what to attach: the app version, the controller, and the log file. | SCR-SET-013 |
 | The screen should tell you to check the log before sharing it publicly, because it lists local network addresses. | SCR-SET-014 |
 | **Send feedback** must open GitHub. | SCR-SET-015 |
 | Help should offer the list of supported controllers once that list exists. | SCR-SET-016 |
@@ -79,8 +79,8 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
 
 | Rule | ID |
 |---|---|
-| The screen must offer Ko-fi, a star on GitHub, telling a friend and contributing. | SCR-SET-022 |
-| The pitch must be short, honest and framed as supporting the project. It must not make claims the app cannot verify. | SCR-SET-023 |
+| The screen must offer Ko-fi, a star on GitHub, telling a friend, and contributing. | SCR-SET-022 |
+| The pitch must be short, honest, and framed as supporting the project. It must not make claims the app cannot verify. | SCR-SET-023 |
 | Only one action may use the accent fill (Chip in on Ko-fi). | SCR-SET-024 |
 | The screen must follow the platform's donation rules (see [Platforms](../ux/platforms.md)). | SCR-SET-025 |
 
