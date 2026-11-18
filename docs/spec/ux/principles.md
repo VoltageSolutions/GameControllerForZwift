@@ -14,15 +14,15 @@ In the rules, "must", "should" and "may" have the meaning given in [how to read 
 
 ## One UI for everyone
 
-Everyone gets the same screens. No themes per audience, no layouts you arrange yourself. Zwift's customizable HUD is the warning: ten years of options piled up into clutter.
+Everyone gets the same screens. No themes per audience, no layouts you arrange yourself. This app should be clear enough to avoid clutter or extensive personalization options.
 
-*Example: a gamer and a cyclist open the app with the same Xbox controller. They see the same screens. The only difference is the layout they saved.*
+*Example: a gamer and a cyclist open the app with the same Xbox controller. They see the same screens. The only difference is the mapping they saved.*
 
 | Rule | ID |
 |---|---|
 | The app must have one fixed UI. It must not offer per-audience themes or user-arranged layouts or HUDs. | UX-P-001 |
 | The app must never ask who you are or what kind of rider you are. The connected controller sets the button glyphs and the suggested mappings. | UX-P-002 |
-| The brand idea is "use what you already own". Every screen should support the line "Shift and steer in Zwift with the controller you already own. Free, no account, no new hardware." | UX-P-003 |
+| The brand idea is "use what you already own". Every screen should support the line "Shift and steer in Zwift with the controller you already own. No account, no new hardware." | UX-P-003 |
 
 ## About the rider and their controller
 
