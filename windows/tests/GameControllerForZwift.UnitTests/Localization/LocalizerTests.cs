@@ -13,7 +13,7 @@ namespace GameControllerForZwift.UnitTests.Localization
         public void Get_ReturnsTheEnglishString()
         {
             Assert.Equal("Ride", Localizer.Lookup("NavRide", CultureInfo.InvariantCulture));
-            Assert.Equal("Zwift can see your controller", Localizer.Lookup("ZwiftConnected", new CultureInfo("en-US")));
+            Assert.Equal("Zwift is connected to Voltage Gamepad", Localizer.Lookup("ZwiftConnected", new CultureInfo("en-US")));
         }
 
         [Fact]

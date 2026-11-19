@@ -4,41 +4,97 @@
              xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
              AutomationProperties.AutomationId="ConnectionsPage">
     <!-- docs/spec/screens/connections.md -->
-    <StackPanel MaxWidth="720" HorizontalAlignment="Left">
-        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc ConnectionsTitle}"
-                   AutomationProperties.AutomationId="ConnectionsPageTitle" AutomationProperties.HeadingLevel="Level1" />
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MaxWidth="720" />
+        </Grid.ColumnDefinitions>
+        <StackPanel>
+            <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc ConnectionsTitle}"
+                       AutomationProperties.AutomationId="ConnectionsPageTitle" AutomationProperties.HeadingLevel="Level1" />
 
-        <!-- Zwift card: the status in words, updated live (SCR-CONN-004, SCR-CONN-005). -->
-        <Border x:Name="ConnectionsZwiftCard" AutomationProperties.AutomationId="ConnectionsZwiftCard" AutomationProperties.Name="{loc:Loc ConnectionsZwiftCard}" Margin="0,24,0,0" Style="{StaticResource Surface.Row}">
-            <StackPanel Orientation="Horizontal">
-                <Grid Width="28" Height="28" VerticalAlignment="Center">
-                    <!-- Connected: a check in an ok circle. Not connected: an accent-ink dot. The words carry the state. -->
-                    <Ellipse x:Name="StatusMark">
-                        <Ellipse.Style>
-                            <Style TargetType="Ellipse">
-                                <Setter Property="Width" Value="12" />
-                                <Setter Property="Height" Value="12" />
-                                <Setter Property="Fill" Value="{DynamicResource Brush.accent-ink}" />
-                                <Style.Triggers>
-                                    <DataTrigger Binding="{Binding Zwift.IsConnected}" Value="True">
-                                        <Setter Property="Width" Value="28" />
-                                        <Setter Property="Height" Value="28" />
-                                        <Setter Property="Fill" Value="{DynamicResource Brush.ok}" />
-                                    </DataTrigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Ellipse.Style>
-                    </Ellipse>
-                    <Path x:Name="StatusCheck" Width="16" Height="16" Stretch="None" Data="M3,8.5 L6,11.5 L13,4.5"
-                          Stroke="{DynamicResource Brush.surface}" StrokeThickness="2.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
-                          Visibility="{Binding Zwift.IsConnected, Converter={StaticResource BooleanToVisibility}}" />
-                </Grid>
-                <TextBlock x:Name="ZwiftStatusText" Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource Text.Body}" FontWeight="SemiBold"
-                           Text="{Binding Zwift.StatusText, NotifyOnTargetUpdated=True}"
-                           Binding.TargetUpdated="ZwiftStatusText_TargetUpdated"
-                           AutomationProperties.AutomationId="ConnectionsZwiftStatus"
-                           AutomationProperties.LiveSetting="Polite" />
-            </StackPanel>
-        </Border>
-    </StackPanel>
+            <!-- Your controller: its name and state in words, a way to pick another, and a way to pair a new one
+                 (SCR-CONN-001 to SCR-CONN-003). Both ways out stay visible with no controller. -->
+            <Border x:Name="ConnectionsControllerCard" Style="{StaticResource Surface.Card}" Margin="0,24,0,0"
+                    AutomationProperties.AutomationId="ConnectionsControllerCard" AutomationProperties.Name="{loc:Loc ConnectionsControllerCard}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{Binding ControllerText}"
+                               AutomationProperties.AutomationId="ConnectionsControllerName" AutomationProperties.LiveSetting="Polite" />
+                    <TextBlock Style="{StaticResource Text.Caption}" Margin="0,4,0,0" Text="{Binding ControllerCaption}"
+                               AutomationProperties.AutomationId="ConnectionsControllerState" />
+
+                    <TextBlock Style="{StaticResource Text.Caption}" Margin="0,20,0,6" Text="{loc:Loc ConnectionsPickerLabel}" />
+                    <ComboBox x:Name="ControllerPicker" HorizontalAlignment="Left" MinWidth="280" MaxWidth="420"
+                              ItemsSource="{Binding Controllers}" SelectedItem="{Binding SelectedController}" DisplayMemberPath="Name"
+                              IsEnabled="{Binding CanPickController}"
+                              AutomationProperties.AutomationId="ConnectionsControllerPicker" AutomationProperties.Name="{loc:Loc ConnectionsPickerLabel}" />
+
+                    <Button x:Name="PairBluetoothButton" Margin="0,20,0,0" Command="{Binding PairBluetoothCommand}"
+                            Content="{loc:Loc ConnectionsPairBluetooth}"
+                            AutomationProperties.AutomationId="ConnectionsPairBluetoothButton" />
+                </StackPanel>
+            </Border>
+
+            <!-- Zwift card: the status in words, updated live (SCR-CONN-004, SCR-CONN-005), then the three steps
+                 (SCR-CONN-009). When Zwift is connected the steps collapse behind Show me how (SCR-CONN-011). -->
+            <Border x:Name="ConnectionsZwiftCard" AutomationProperties.AutomationId="ConnectionsZwiftCard" AutomationProperties.Name="{loc:Loc ConnectionsZwiftCard}"
+                    Margin="0,16,0,0" Style="{StaticResource Surface.Card}">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid Width="28" Height="28" VerticalAlignment="Center">
+                            <!-- Connected: a check in an ok circle. Not connected: an accent-ink dot. The words carry the state. -->
+                            <Ellipse x:Name="StatusMark">
+                                <Ellipse.Style>
+                                    <Style TargetType="Ellipse">
+                                        <Setter Property="Width" Value="12" />
+                                        <Setter Property="Height" Value="12" />
+                                        <Setter Property="Fill" Value="{DynamicResource Brush.accent-ink}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Zwift.IsConnected}" Value="True">
+                                                <Setter Property="Width" Value="28" />
+                                                <Setter Property="Height" Value="28" />
+                                                <Setter Property="Fill" Value="{DynamicResource Brush.ok}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Ellipse.Style>
+                            </Ellipse>
+                            <Path x:Name="StatusCheck" Width="24" Height="24" Stretch="None" Data="{StaticResource Icon.Check}"
+                                  Stroke="{DynamicResource Brush.surface}" StrokeThickness="2.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round"
+                                  Visibility="{Binding Zwift.IsConnected, Converter={StaticResource BooleanToVisibility}}" />
+                        </Grid>
+                        <TextBlock x:Name="ZwiftStatusText" Grid.Column="1" Margin="10,0,0,0" VerticalAlignment="Center" Style="{StaticResource Text.BodyStrong}"
+                                   Text="{Binding Zwift.StatusText, NotifyOnTargetUpdated=True}"
+                                   Binding.TargetUpdated="ZwiftStatusText_TargetUpdated"
+                                   AutomationProperties.AutomationId="ConnectionsZwiftStatus"
+                                   AutomationProperties.LiveSetting="Polite" />
+                    </Grid>
+
+                    <TextBlock x:Name="TrainerReminder" Margin="0,16,0,0" Style="{StaticResource Text.Body}"
+                               Text="{loc:Loc ConnectionsTrainerReminder}"
+                               Visibility="{Binding ShowTrainerReminder, Converter={StaticResource BooleanToVisibility}}"
+                               AutomationProperties.AutomationId="ConnectionsTrainerReminder" />
+
+                    <ItemsControl x:Name="ZwiftSteps" Margin="0,20,0,0" ItemsSource="{Binding Steps}" IsTabStop="False"
+                                  Visibility="{Binding ShowSteps, Converter={StaticResource BooleanToVisibility}}"
+                                  AutomationProperties.AutomationId="ConnectionsSteps">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                            <TextBlock Margin="0,0,0,10" Style="{StaticResource Text.Body}" Text="{Binding Text}"
+                                       AutomationProperties.AutomationId="{Binding AutomationId}" />
+                        </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <Button x:Name="ShowMeHowButton" Margin="0,20,0,0" Command="{Binding ShowMeHowCommand}"
+                            Content="{Binding ShowMeHowLabel}" AutomationProperties.Name="{Binding ShowMeHowLabel}"
+                            Visibility="{Binding ShowMeHowVisible, Converter={StaticResource BooleanToVisibility}}"
+                            AutomationProperties.AutomationId="ConnectionsShowMeHowButton" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
 </UserControl>

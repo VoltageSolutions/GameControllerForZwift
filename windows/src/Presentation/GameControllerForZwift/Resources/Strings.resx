@@ -110,12 +110,64 @@
     <comment>Screen reader name of the card on the Connections screen that shows the Zwift status.</comment>
   </data>
   <data name="ZwiftConnected" xml:space="preserve">
-    <value>Zwift can see your controller</value>
-    <comment>Zwift status on the Connections screen when Zwift is connected.</comment>
+    <value>Zwift is connected to Voltage Gamepad</value>
+    <comment>Zwift status on the Connections screen when Zwift is connected. Keep Voltage Gamepad, which is the device name Zwift shows for this app.</comment>
   </data>
   <data name="ZwiftNotConnected" xml:space="preserve">
     <value>Zwift isn't connected yet</value>
     <comment>Zwift status on the Connections screen when Zwift is not connected.</comment>
+  </data>
+  <data name="ConnectionsControllerCard" xml:space="preserve">
+    <value>Your controller</value>
+    <comment>Screen reader name of the card on the Connections screen that shows your controller.</comment>
+  </data>
+  <data name="ConnectionsControllerHere" xml:space="preserve">
+    <value>Your {0} is here</value>
+    <comment>Connections screen, your controller card, when a controller is connected. {0} is the controller name, for example Xbox Series X Controller.</comment>
+  </data>
+  <data name="ConnectionsControllerAwake" xml:space="preserve">
+    <value>Awake and connected</value>
+    <comment>Connections screen, second line under the controller name when a controller is connected.</comment>
+  </data>
+  <data name="ConnectionsNoController" xml:space="preserve">
+    <value>Wake your controller</value>
+    <comment>Connections screen, your controller card, when no controller is connected. It asks the person to press a button on the controller to wake it.</comment>
+  </data>
+  <data name="ConnectionsLooking" xml:space="preserve">
+    <value>Looking for your controller...</value>
+    <comment>Connections screen, second line when no controller is connected. The app is still scanning for one.</comment>
+  </data>
+  <data name="ConnectionsPickerLabel" xml:space="preserve">
+    <value>Use a different controller</value>
+    <comment>Connections screen, label of the dropdown that switches to another connected controller.</comment>
+  </data>
+  <data name="ConnectionsPairBluetooth" xml:space="preserve">
+    <value>Pair a new Bluetooth controller</value>
+    <comment>Connections screen, button that opens the Windows Bluetooth settings so the person can pair a controller.</comment>
+  </data>
+  <data name="ConnectionsShowMeHow" xml:space="preserve">
+    <value>Show me how</value>
+    <comment>Connections screen, button on the Zwift card that shows the three steps to pair with Zwift again.</comment>
+  </data>
+  <data name="ConnectionsHideSteps" xml:space="preserve">
+    <value>Hide steps</value>
+    <comment>Connections screen, button on the Zwift card that hides the three steps to pair with Zwift. It replaces Show me how while the steps are open.</comment>
+  </data>
+  <data name="ConnectionsTrainerReminder" xml:space="preserve">
+    <value>Set Power Source back to your trainer in Zwift.</value>
+    <comment>Connections screen, reminder under the Zwift status while Zwift is connected. Power Source is the Zwift setting that picks the trainer.</comment>
+  </data>
+  <data name="ZwiftStepPowerSource" xml:space="preserve">
+    <value>1. Power Source: Voltage Gamepad</value>
+    <comment>Zwift step 1, with its number. In Zwift, the person sets the Power Source device to Voltage Gamepad. Keep Power Source and Voltage Gamepad as they appear in Zwift.</comment>
+  </data>
+  <data name="ZwiftStepControls" xml:space="preserve">
+    <value>2. Controls: Voltage Gamepad</value>
+    <comment>Zwift step 2, with its number. In Zwift, the person sets the Controls device to Voltage Gamepad. Keep Controls and Voltage Gamepad as they appear in Zwift.</comment>
+  </data>
+  <data name="ZwiftStepTrainer" xml:space="preserve">
+    <value>3. Power Source: your trainer</value>
+    <comment>Zwift step 3, with its number. In Zwift, the person sets the Power Source device back to their trainer. Keep Power Source as it appears in Zwift.</comment>
   </data>
   <data name="AppearanceLight" xml:space="preserve">
     <value>Light</value>

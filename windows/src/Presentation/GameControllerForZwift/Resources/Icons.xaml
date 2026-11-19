@@ -18,6 +18,8 @@
 
     <PathGeometry x:Key="Icon.Connections" Figures="M9,7 V3 M15,7 V3 M7,7 H17 V11 A5,5 0 0 1 7,11 Z M12,16 V21" />
 
+    <PathGeometry x:Key="Icon.Check" Figures="M5,12.5 L10,17.5 L19,7" />
+
     <PathGeometry x:Key="Icon.Back" Figures="M15,6 L9,12 L15,18" />
 
     <PathGeometry x:Key="Icon.Close" Figures="M6,6 L18,18 M18,6 L6,18" />
