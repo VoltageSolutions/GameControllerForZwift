@@ -26,7 +26,7 @@ namespace GameControllerForZwift.UITests
             Assert.True(session.Exists("ConnectionsZwiftStatus"));
 
             session.Element("NavButtonsTab").Click();
-            Assert.True(session.Exists("ControllerComboBox"));
+            Assert.True(session.Exists("ButtonsPageTitle"));
             Assert.True(session.Element("NavButtonsTab").IsSelected());
         }
 

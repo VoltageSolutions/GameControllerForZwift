@@ -230,7 +230,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     Pump(window);
 
                     Assert.Null(viewModel.SelectedController);
-                    Assert.Empty(Element<ComboBox>(page, "ControllerComboBox").Items);
+                    Assert.Empty(viewModel.Controllers);
                     Assert.Equal(["Default", "Start is A •"], configurations.Items.Cast<ConfigurationItem>().Select(i => i.DisplayName));
                     AssertShows(configurations, viewModel.SelectedConfiguration);
                     Assert.True(Element<Button>(page, "SaveConfigurationAsButton").IsEnabled);
@@ -243,7 +243,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
         }
 
         [Fact]
-        public void CTRL008_ControllerSwitchCanceled_ControllerDropDownShowsTheSelectedController()
+        public void CTRL008_ControllerSwitchCanceled_KeepsTheControllerAndItsConfiguration()
         {
             // CFG-024 for a controller the user picks: Cancel keeps the controller and its configuration.
             TestApplication.Run(() =>
@@ -257,19 +257,17 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                 {
                     var viewModel = provider.GetRequiredService<ControllerSetupViewModel>();
                     ControllerSetupPage page = ShowControllerSetup(window);
-                    var controllers = Element<ComboBox>(page, "ControllerComboBox");
                     var configurations = Element<ComboBox>(page, "ConfigurationComboBox");
                     PickWithMouse(configurations, "Climbing", window);
                     viewModel.Selector(ControllerInput.Menu).SelectedZwiftFunction = ZwiftFunction.RideOn;
                     Pump(window);
 
                     _context.Dialogs.UnsavedChangesAnswers.Enqueue(UnsavedChangesChoice.Cancel);
-                    PickWithMouse(controllers, oneS, window);
+                    viewModel.SelectedController = oneS;
+                    Pump(window);
 
                     Assert.Equal(1, _context.Dialogs.UnsavedChangesPrompts);
                     Assert.Same(seriesX, viewModel.SelectedController);
-                    AssertShows(controllers, seriesX);
-                    Assert.Equal("Xbox Series X Controller", controllers.Text);
                     Assert.Equal("Climbing •", viewModel.SelectedConfiguration?.DisplayName);
                     AssertShows(configurations, viewModel.SelectedConfiguration);
                 }
@@ -426,12 +424,10 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
 
         private static void AssertEmptyState(ControllerSetupPage page, ControllerSetupViewModel viewModel, Window window)
         {
-            var controllers = Element<ComboBox>(page, "ControllerComboBox");
             var configurations = Element<ComboBox>(page, "ConfigurationComboBox");
             Assert.Null(viewModel.SelectedController);
-            Assert.Empty(controllers.Items);
-            Assert.Null(controllers.SelectedItem);
-            Assert.Equal(Visibility.Visible, Element<TextBlock>(page, "NoControllerText").Visibility);
+            Assert.Empty(viewModel.Controllers);
+            Assert.Equal(Visibility.Visible, Element<Border>(page, "NoControllerCard").Visibility);
 
             var item = Assert.IsType<ConfigurationItem>(Assert.Single(configurations.Items.Cast<object?>()));
             Assert.True(item.IsDefault);

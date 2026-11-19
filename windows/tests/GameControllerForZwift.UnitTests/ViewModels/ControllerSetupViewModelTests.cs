@@ -52,8 +52,6 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         public void Constructor_ShouldInitializeDefaultValues()
         {
             // Assert
-            Assert.Equal("Controller Setup", _viewModel.Title);
-            Assert.Equal("Select a game controller and configure its button mapping to Zwift functions.", _viewModel.Description);
             Assert.NotNull(_viewModel.ButtonFunctionMappings);
             Assert.NotNull(_viewModel.DpadFunctionMappings);
             Assert.NotNull(_viewModel.LeftStickFunctionMappings);

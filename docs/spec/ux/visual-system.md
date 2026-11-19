@@ -1,7 +1,7 @@
 ---
 id: SPEC-UX-VISUAL
 title: Visual system
-last-updated: 2026-11-17
+last-updated: 2026-11-19
 ---
 
 # Visual system
@@ -90,6 +90,9 @@ The last two rows are below 3:1, so they carry extra cues. See [Accessibility](a
 | Headings must use weight 800 with slightly negative tracking. Body text must use weight 400 to 600. | UX-V-012 |
 | Numbers must use tabular figures so readouts do not jitter. | UX-V-013 |
 | Text must be sentence case. The app must not use all caps. | UX-V-014 |
+| Text must wrap to fit its container. The app must never cut off or clip a word, at any window width or text size. A row or card grows taller instead. | UX-V-044 |
+
+*Example: on a narrow window the Buttons list drops from two columns to one. A long function name wraps to a second line inside its row, and the row grows taller.*
 
 | Role | Phone | Tablet |
 |---|---|---|

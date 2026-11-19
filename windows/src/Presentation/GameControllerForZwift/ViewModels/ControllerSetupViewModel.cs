@@ -5,6 +5,7 @@ using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.Mapping;
 using GameControllerForZwift.UI.WPF.Dialogs;
+using GameControllerForZwift.UI.WPF.Localization;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
@@ -25,12 +26,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         /// How often the app checks for controllers that connected or disconnected (CTRL-002).
         /// </summary>
         public static readonly TimeSpan ControllerDetectionInterval = TimeSpan.FromMilliseconds(500);
-
-        [ObservableProperty]
-        private string _title = "Controller Setup";
-
-        [ObservableProperty]
-        private string _description = "Select a game controller and configure its button mapping to Zwift functions.";
 
         //[ObservableProperty]
         //ZwiftFunctionSelectorViewModel _selectorViewModel;
@@ -58,6 +53,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private DispatcherTimer? _detectionTimer;
         private bool _isDetectingControllers;
         private bool _showOtherControllersConfigurations;
+        private readonly List<ButtonRowViewModel> _rows;
+        private ButtonRowViewModel? _selectedRow;
+        private ButtonsTab _selectedTab;
+        private bool _isScreenActive;
 
         [ObservableProperty]
         private ControllerData? _currentControllerValues;
@@ -122,6 +121,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _rightStickFunctionMappings = CreateRightStickMappings();
             _shoulderFunctionMappings = CreateShoulderMappings();
 
+            // One row per input, in the order the screen lists them (SCR-BTN-003).
+            var selectors = AllSelectors.ToDictionary(vm => vm.SelectedInput);
+            _rows = ButtonsCatalog.Inputs.Select(info => new ButtonRowViewModel(info, selectors[info.Input])).ToList();
+            ButtonRows = Tab(ButtonsTab.Buttons);
+            LeftStickRows = _rows.Where(r => r.Info.Key.StartsWith("LS", StringComparison.Ordinal)).ToList();
+            RightStickRows = _rows.Where(r => r.Info.Key.StartsWith("RS", StringComparison.Ordinal)).ToList();
+            TriggerRows = _rows.Where(r => r.Input is ControllerInput.LeftTrigger or ControllerInput.RightTrigger).ToList();
+
             _showOtherControllersConfigurations = _appSettings.GetShowOtherControllersConfigurations();
 
             // Load default profile and apply it
@@ -138,6 +145,100 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #endregion
 
         #region Properties
+
+        /// <summary>Gets every row of the Buttons screen, in the order the screen lists them (SCR-BTN-003).</summary>
+        public IReadOnlyList<ButtonRowViewModel> Rows => _rows;
+
+        /// <summary>Gets the rows of the Buttons tab: buttons, D-pad, and bumpers.</summary>
+        public IReadOnlyList<ButtonRowViewModel> ButtonRows { get; }
+
+        /// <summary>Gets the rows of the left stick: its click and its four directions.</summary>
+        public IReadOnlyList<ButtonRowViewModel> LeftStickRows { get; }
+
+        /// <summary>Gets the rows of the right stick: its click and its four directions.</summary>
+        public IReadOnlyList<ButtonRowViewModel> RightStickRows { get; }
+
+        /// <summary>Gets the rows of the two triggers.</summary>
+        public IReadOnlyList<ButtonRowViewModel> TriggerRows { get; }
+
+        /// <summary>Gets the panel where you choose what the selected row does (SCR-BTN-005).</summary>
+        public FunctionPickerViewModel FunctionPicker { get; } = new();
+
+        /// <summary>Gets a value indicating whether a controller is selected. Without one the screen asks you to wake it.</summary>
+        public bool HasController => _selectedController is not null;
+
+        /// <summary>Gets the line that names the controller, for example "Your Xbox Series X Controller".</summary>
+        public string ControllerName =>
+            _selectedController is { } controller ? Localizer.Format("ButtonsControllerName", controller.Name) : string.Empty;
+
+        /// <summary>Gets or sets the selected row, which a click or a controller press picks (SCR-BTN-005).</summary>
+        public ButtonRowViewModel? SelectedRow
+        {
+            get => _selectedRow;
+            private set
+            {
+                if (ReferenceEquals(_selectedRow, value))
+                    return;
+
+                if (_selectedRow is not null)
+                    _selectedRow.IsSelected = false;
+                _selectedRow = value;
+                if (_selectedRow is not null)
+                    _selectedRow.IsSelected = true;
+                OnPropertyChanged();
+            }
+        }
+
+        /// <summary>Gets or sets the tab that shows (SCR-BTN-001).</summary>
+        public ButtonsTab SelectedTab
+        {
+            get => _selectedTab;
+            set
+            {
+                if (!SetProperty(ref _selectedTab, value))
+                    return;
+
+                OnPropertyChanged(nameof(IsButtonsTabSelected));
+                OnPropertyChanged(nameof(IsSticksTabSelected));
+            }
+        }
+
+        /// <summary>Gets or sets a value indicating whether the Buttons tab shows. Setting it to true shows the tab.</summary>
+        public bool IsButtonsTabSelected
+        {
+            get => _selectedTab == ButtonsTab.Buttons;
+            set
+            {
+                if (value)
+                    SelectedTab = ButtonsTab.Buttons;
+            }
+        }
+
+        /// <summary>Gets or sets a value indicating whether the Sticks and triggers tab shows. Setting it to true shows the tab.</summary>
+        public bool IsSticksTabSelected
+        {
+            get => _selectedTab == ButtonsTab.SticksAndTriggers;
+            set
+            {
+                if (value)
+                    SelectedTab = ButtonsTab.SticksAndTriggers;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the Buttons screen is showing. A controller press only selects a row
+        /// while it is (SCR-BTN-005 and SCR-BTN-006). Hiding the screen closes the function panel.
+        /// </summary>
+        public bool IsScreenActive
+        {
+            get => _isScreenActive;
+            set
+            {
+                _isScreenActive = value;
+                if (!value)
+                    FunctionPicker.Close();
+            }
+        }
 
         /// <summary>
         /// Gets or sets the selected controller. Switching to a different controller model with unsaved changes asks first (CFG-024).
@@ -163,6 +264,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 var oldValue = _selectedController;
                 _selectedController = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(HasController));
+                OnPropertyChanged(nameof(ControllerName));
+                ResetToDefaultCommand.NotifyCanExecuteChanged();
+                if (value is null)
+                    FunctionPicker.Close();
                 OnSelectedControllerChanged(oldValue, value);
 
                 if (modelChanges)
@@ -353,17 +459,32 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             }
         }
 
-        //[RelayCommand]
-        //public void ResetMappingsToDefault()
-        //{
+        /// <summary>
+        /// Selects a row and opens the panel where you choose what it does (SCR-BTN-005).
+        /// </summary>
+        /// <param name="row">The row.</param>
+        [RelayCommand]
+        private void SelectRow(ButtonRowViewModel? row)
+        {
+            if (row is null)
+                return;
 
-        //}
+            SelectedRow = row;
+            SelectedTab = row.Info.Tab;
+            FunctionPicker.Open(row);
+        }
 
-        //[RelayCommand]
-        //public void ClearAllMappings()
-        //{
+        /// <summary>
+        /// Sets every input to what the Default mapping does. The edits show as unsaved changes (SCR-BTN-009).
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(CanResetToDefault))]
+        private void ResetToDefault()
+        {
+            ApplyMappings(_defaultMappings);
+            UpdateDirtyState();
+        }
 
-        //}
+        private bool CanResetToDefault() => _selectedController is not null;
 
         /// <summary>
         /// Overwrites the selected configuration (CFG-022). Disabled on Default and when nothing changed (CFG-020, CFG-037).
@@ -816,8 +937,21 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             foreach (var item in _configurations)
                 item.IsDirty = dirty && ReferenceEquals(item, selected);
             IsDirty = dirty;
+            UpdateChangedRows(selected);
             UpdateCommandStates();
         }
+
+        // A row is marked Changed when its function differs from the selected mapping as saved.
+        private void UpdateChangedRows(ConfigurationItem? selected)
+        {
+            foreach (var row in _rows)
+            {
+                var saved = selected is not null && selected.Mappings.TryGetValue(row.Input, out var function) ? function : ZwiftFunction.None;
+                row.IsChanged = selected is not null && row.Function != saved;
+            }
+        }
+
+        private List<ButtonRowViewModel> Tab(ButtonsTab tab) => _rows.Where(r => r.Info.Tab == tab).ToList();
 
         private void UpdateCommandStates()
         {
@@ -826,6 +960,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             DeleteCommand.NotifyCanExecuteChanged();
             RenameCommand.NotifyCanExecuteChanged();
             ImportCommand.NotifyCanExecuteChanged();
+            ResetToDefaultCommand.NotifyCanExecuteChanged();
         }
 
         /// <summary>
@@ -1018,6 +1153,19 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #endregion
 
 
+        /// <summary>
+        /// A press that starts while the screen shows selects its row and opens the function panel. It does nothing else: it
+        /// does not navigate, save, or go back (SCR-BTN-005 and SCR-BTN-006).
+        /// </summary>
+        internal void HandleControllerPress(ControllerData? previous, ControllerData current)
+        {
+            if (!_isScreenActive || _selectedController is null)
+                return;
+
+            if (ButtonsCatalog.FirstNewPress(previous, current) is { } input)
+                SelectRow(_rows.First(r => r.Input == input));
+        }
+
         private void _dataIntegrator_InputChanged(object? sender, InputStateChangedEventArgs e)
         {
             var app = Application.Current;
@@ -1028,7 +1176,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 // Ensure that UI updates happen on the UI thread
                 app.Dispatcher.Invoke(() =>
                 {
+                    var previous = CurrentControllerValues;
                     CurrentControllerValues = e.Data;
+                    HandleControllerPress(previous, e.Data);
                 });
             }
         }
