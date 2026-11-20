@@ -7,7 +7,7 @@ last-updated: 2026-11-17
 # Buttons screens
 
 !!! tldr "TL;DR"
-    The Buttons tab is where you choose what each input on your controller does. A mapping picker, Save, and Save as new sit at the top. Two tabs below split buttons from sticks and triggers. A controller illustration and a list say the same thing in two ways. Tapping a row or pressing a button on your controller opens a picker of Zwift functions, grouped by what they do. Saving and switching mappings follow the saved configurations spec by ID.
+    The Buttons tab is where you choose what each input on your controller does. A mapping picker, Save, and Save as new sit at the top. Two tabs below split buttons from sticks and triggers. A controller illustration and a list say the same thing in two ways. Tapping or clicking a row opens a picker of Zwift functions, grouped by what they do. Saving and switching mappings follow the saved configurations spec by ID.
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md). A **mapping** is what the saved configurations spec (`CFG`) calls a configuration.
 
@@ -31,9 +31,9 @@ flowchart TD
 
 **Content, top to bottom:** the mapping picker (`ButtonsMappingPicker`, for example "Mapping: Climbing, unsaved changes"), **Save** and **Save as new** (`ButtonsSaveButton`, `ButtonsSaveAsButton`), two tabs (Buttons, and Sticks and triggers), the controller illustration (`ButtonsControllerImage`), and the list of what each input does (`ButtonsRow_{input}`, for example "Right bumper: shift up").
 
-The screen's hint says: "Press a button on your controller to select it."
+The screen's hint says: "Press a button on your controller to see it light up. Tap a row to change what it does."
 
-*Example: you press X on your controller. Its row is selected and the picker opens. X is a free button, so the row says "No action".*
+*Example: you press X on your controller. The X row lights up while you hold it, and nothing else changes. X is a free button, so the row says "No action". You click the row, and the picker opens. You close it, and the row is no longer selected.*
 
 | Rule | ID |
 |---|---|
@@ -41,12 +41,14 @@ The screen's hint says: "Press a button on your controller to select it."
 | The list must carry the same information as the illustration, in text. | SCR-BTN-002 |
 | Each list row must say the input and its function, for example "Right bumper: shift up". A button with no function must say "No action". | SCR-BTN-003 |
 | The illustration must show the selected button, mark free keys with a dashed outline, and use the lit style for a press (see [Visual system](../ux/visual-system.md)). | SCR-BTN-004 |
-| Tapping or clicking a row, or pressing the matching button on your controller, must select it and open the function picker. | SCR-BTN-005 |
-| A controller press here must only find or assign a button. It must not navigate, save, or go back. | SCR-BTN-006 |
-| The screen must show the hint "Press a button on your controller to select it." and no controller hint bar. | SCR-BTN-007 |
+| Tapping or clicking a row must select it and open the function picker. A controller press must not open the picker. | SCR-BTN-005 |
+| A controller press here must only light the matching row, so you can test your controller. It must not select a row, open the picker, navigate, save, or go back. | SCR-BTN-006 |
+| The screen must show the hint "Press a button on your controller to see it light up. Tap a row to change what it does." and no controller hint bar. | SCR-BTN-007 |
 | The Save button is the screen's one main action, and it must be an accent button only when it is enabled (that is, when a saved mapping has unsaved changes, see `CFG-037`). | SCR-BTN-008 |
 | The screen must have a **Reset to default** action for the current mapping's mappings. | SCR-BTN-009 |
 | The Buttons screen must stay visual: the illustration first, the list as the text version. | SCR-BTN-010 |
+| A row stays selected only while its function picker is open. When the picker closes, by any means, no row is selected. A row then looks selected only while you hold its button, so you can test your controller. | SCR-BTN-044 |
+| On Windows, the function picker is a side panel. On Android and iOS, it must be a bottom sheet built with the platform's native bottom sheet component, not a custom one. | SCR-BTN-045 |
 
 ??? note "Edge cases"
     - The Buttons header has no More menu of its own. Advanced options have their own place at the bottom of Sticks and triggers.
@@ -160,7 +162,7 @@ Sticks and triggers are analog. A small tilt steers a little. A light squeeze br
 
 ## Controller input on these screens
 
-A controller press finds or assigns a button. Dialogs work with touch, mouse, and keyboard. See [Controller input](../ux/controller-input.md).
+A controller press lights the matching row. Dialogs work with touch, mouse, and keyboard. See [Controller input](../ux/controller-input.md).
 
 ## Accessibility IDs
 

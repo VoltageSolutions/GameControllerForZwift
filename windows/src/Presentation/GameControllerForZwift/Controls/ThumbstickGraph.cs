@@ -91,9 +91,9 @@ namespace GameControllerForZwift.UI.WPF.Controls
                     StrokeThickness = 1,
                     StrokeDashArray = new DoubleCollection { 2, 2 }
                 };
-                // Resource references follow the Fluent light/dark theme dynamically.
-                circle.SetResourceReference(Shape.StrokeProperty, "ControlStrongStrokeColorDefaultBrush");
-                circle.SetResourceReference(Shape.FillProperty, "CardBackgroundFillColorDefaultBrush");
+                // Resource references follow the light/dark tokens dynamically.
+                circle.SetResourceReference(Shape.StrokeProperty, "Brush.muted");
+                circle.SetResourceReference(Shape.FillProperty, "Brush.surface-2");
                 _circles.Add(circle);
                 _chartCanvas.Children.Add(circle);
             }
@@ -168,11 +168,11 @@ namespace GameControllerForZwift.UI.WPF.Controls
             // Update plot point color
             if (IsOutsideOrigin(originX, Position.X) || IsOutsideOrigin(originY, Position.Y))
             {
-                _plotPoint.SetResourceReference(Shape.FillProperty, "AccentFillColorDefaultBrush");
+                _plotPoint.SetResourceReference(Shape.FillProperty, "Brush.accent");
             }
             else
             {
-                _plotPoint.SetResourceReference(Shape.FillProperty, "TextFillColorSecondaryBrush");
+                _plotPoint.SetResourceReference(Shape.FillProperty, "Brush.muted");
             }
         }
 

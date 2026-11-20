@@ -18,6 +18,7 @@ namespace GameControllerForZwift.UnitTests.Localization
             "Resources/Shell.xaml",
             "Views/RidePage.xaml",
             "Views/ConnectionsPage.xaml",
+            "Views/ControllerSetupPage.xaml",
         ];
 
         // Attributes that hold text people see or hear.

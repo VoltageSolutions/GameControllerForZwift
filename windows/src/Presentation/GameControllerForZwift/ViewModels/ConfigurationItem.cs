@@ -59,14 +59,13 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         /// Gets the name to show, with an unsaved-changes marker (CFG-021), for example "Climbing •". A configuration of another
         /// controller model names its controller, for example "Climbing (Xbox Series X Controller)" (CFG-039).
         /// </summary>
-        public string DisplayName
-        {
-            get
-            {
-                var name = IsFromOtherController ? $"{Name} ({Configuration!.Controller.DisplayName})" : Name;
-                return IsDirty ? name + " •" : name;
-            }
-        }
+        public string DisplayName => IsDirty ? ListName + " •" : ListName;
+
+        /// <summary>
+        /// Gets the name to list, without the unsaved-changes marker. A configuration of another controller model names its
+        /// controller, for example "Climbing (Xbox Series X Controller)" (CFG-039).
+        /// </summary>
+        public string ListName => IsFromOtherController ? $"{Name} ({Configuration!.Controller.DisplayName})" : Name;
 
         public override string ToString() => DisplayName;
     }

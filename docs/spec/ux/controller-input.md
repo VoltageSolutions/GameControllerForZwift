@@ -7,7 +7,7 @@ last-updated: 2026-11-17
 # Controller input
 
 !!! tldr "TL;DR"
-    A controller press has exactly one meaning on each screen. On setup and Buttons screens, a press finds or assigns a button. Everywhere else, a press goes to Zwift as mapped. A hold on a mapped button reaches Zwift as a hold. The app shows the right button glyphs for your controller.
+    A controller press has exactly one meaning on each screen. On the Buttons screen, a press lights the matching row. On setup screens, a press finds or assigns a button. Everywhere else, a press goes to Zwift as mapped. A hold on a mapped button reaches Zwift as a hold. The app shows the right button glyphs for your controller.
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -17,18 +17,19 @@ Your controller does different jobs in different places. To keep that clear, eac
 
 | Where | What a press means |
 |---|---|
-| Setup and Buttons screens | Find or assign a button. |
+| Buttons screen | Light the matching row. |
+| Setup screens | Find or assign a button. |
 | Everywhere else | The press goes to Zwift as mapped. |
 
 The app may offer **Switch window size** (Full, then Float, then Mini) as an app action that can be mapped to a controller input, such as View. It is the only app action a controller input may trigger. All other mapped inputs go to Zwift.
 
-*Example: on the Buttons screen you press the right bumper. The app selects "Right bumper" and shows what it does. It does not shift gears.*
+*Example: on the Buttons screen you press the right bumper. The "Right bumper" row lights up. The app does not open the picker, and it does not shift gears.*
 
 | Rule | ID |
 |---|---|
 | A controller press must have exactly one meaning on each screen. | UX-C-001 |
-| On setup and Buttons screens, a press must only find or assign a button. It must not navigate, save, or go back. | UX-C-002 |
-| On setup and Buttons screens, the app must not show a controller hint bar. The screen's own hint says "Press a button on your controller to select it." | UX-C-003 |
+| On the Buttons screen, a press must only light the matching row. On setup screens, a press must only find or assign a button. A press must not navigate, save, or go back. | UX-C-002 |
+| On setup and Buttons screens, the app must not show a controller hint bar. The screen's own hint says "Press a button on your controller to see it light up. Tap a row to change what it does." | UX-C-003 |
 | The app may offer **Switch window size** (Full, then Float, then Mini) as an app action that can be mapped to a controller input, such as View. It is the only app action a controller input may trigger. The app must send every other mapped input to Zwift. | UX-C-004 |
 | The app's own dialogs must work with a mouse, a keyboard, and touch. See `CFG-038`. | UX-C-006 |
 

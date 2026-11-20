@@ -155,8 +155,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     _context.DataIntegrator.GetControllers().Returns([controller]);
                     viewModel.DetectControllers();
                     Pump(window);
-                    var controllers = FindDescendants<ComboBox>(page).First(c => ReferenceEquals(c.ItemsSource, viewModel.Controllers));
-                    controllers.SelectedItem = controller;
+                    viewModel.SelectedController = controller;
                     viewModel.Selector(ControllerInput.Menu).SelectedZwiftFunction = ZwiftFunction.RideOn;
                     Pump(window);
 
@@ -274,50 +273,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
         }
 
         [Fact]
-        public void ControllerConnectsAfterTheDropDownWasOpened_DropDownShowsBothControllers()
-        {
-            // CTRL-001: the second controller must be visible in the drop-down, not just present in its items.
-            TestApplication.Run(() =>
-            {
-                var seriesX = Controller(Xbox);
-                using ServiceProvider provider = CreateProvider(seriesX);
-                MainWindow window = ShowWindow(provider);
-                try
-                {
-                    var viewModel = provider.GetRequiredService<ControllerSetupViewModel>();
-                    ControllerSetupPage page = ShowControllerSetup(window);
-                    var controllers = FindDescendants<ComboBox>(page).First(c => ReferenceEquals(c.ItemsSource, viewModel.Controllers));
-                    Assert.Same(seriesX, controllers.SelectedItem);
-                    OpenAndCloseDropDown(controllers, window);
-
-                    var oneS = TestControllers.Create(0x045E, 0x02E0, "Xbox One S Controller");
-                    _context.DataIntegrator.GetControllers().Returns([seriesX, oneS]);
-                    viewModel.DetectControllers();
-                    Pump(window);
-
-                    controllers.IsDropDownOpen = true;
-                    Pump(window);
-                    var popup = Assert.IsType<Popup>(controllers.Template.FindName("PART_Popup", controllers));
-                    var scrollViewer = FindDescendants<ScrollViewer>(popup.Child).First();
-                    var rowHeight = ((FrameworkElement)controllers.ItemContainerGenerator.ContainerFromIndex(0)).ActualHeight;
-                    double extent = scrollViewer.ExtentHeight;
-                    controllers.IsDropDownOpen = false;
-                    Pump(window);
-
-                    Assert.Equal(2, controllers.Items.Count);
-                    Assert.True(extent >= 2 * rowHeight, $"The drop-down shows {extent} of {2 * rowHeight} for two rows.");
-                    Assert.Same(seriesX, controllers.SelectedItem);
-                    Assert.Same(seriesX, viewModel.SelectedController);
-                }
-                finally
-                {
-                    window.Close();
-                }
-            });
-        }
-
-        [Fact]
-        public void NoController_ShowsNoneSelected_UntilOneConnects()
+        public void NoController_ShowsWakeYourController_UntilOneConnects()
         {
             // CTRL-006, CTRL-007
             TestApplication.Run(() =>
@@ -328,9 +284,9 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                 {
                     var viewModel = provider.GetRequiredService<ControllerSetupViewModel>();
                     ControllerSetupPage page = ShowControllerSetup(window);
-                    var placeholder = Element<TextBlock>(page, "NoControllerText");
-                    Assert.Equal("None selected", placeholder.Text);
+                    var placeholder = Element<Border>(page, "NoControllerCard");
                     Assert.Equal(Visibility.Visible, placeholder.Visibility);
+                    Assert.Equal(Visibility.Collapsed, Element<StackPanel>(page, "ControllerContent").Visibility);
                     Assert.Null(page.FindName("RefreshListButton"));
 
                     var controller = Controller(Xbox);
@@ -339,7 +295,8 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     Pump(window);
 
                     Assert.Equal(Visibility.Collapsed, placeholder.Visibility);
-                    Assert.Same(controller, Element<ComboBox>(page, "ControllerComboBox").SelectedItem);
+                    Assert.Equal(Visibility.Visible, Element<StackPanel>(page, "ControllerContent").Visibility);
+                    Assert.Same(controller, viewModel.SelectedController);
                 }
                 finally
                 {
@@ -386,8 +343,8 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     var viewModel = provider.GetRequiredService<ControllerSetupViewModel>();
                     ControllerSetupPage page = ShowControllerSetup(window);
                     var checkBox = Element<CheckBox>(page, "ShowOtherControllersConfigurationsCheckBox");
-                    Assert.Equal("ShowOtherControllersConfigurationsCheckBox", System.Windows.Automation.AutomationProperties.GetAutomationId(checkBox));
-                    Assert.Equal("Show configurations from other controllers", checkBox.Content);
+                    Assert.Equal("ButtonsShowOthersToggle", System.Windows.Automation.AutomationProperties.GetAutomationId(checkBox));
+                    Assert.Equal("Show mappings from other controllers", checkBox.Content);
                     Assert.False(checkBox.IsChecked);
 
                     checkBox.IsChecked = true;
