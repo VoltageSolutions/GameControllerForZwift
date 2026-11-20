@@ -18,6 +18,9 @@ namespace GameControllerForZwift.UI.WPF.Views
         /// <summary>The narrowest a row is before the list drops to fewer columns.</summary>
         internal const double MinimumRowWidth = 320;
 
+        /// <summary>The widest the cards on Sticks and triggers grow, together, before the page leaves the rest empty.</summary>
+        internal const double MaximumCardsWidth = 1000;
+
         /// <summary>The widest the mapping picker grows.</summary>
         internal const double MaximumPickerWidth = 420;
 
@@ -28,6 +31,10 @@ namespace GameControllerForZwift.UI.WPF.Views
         /// <summary>The width of one row in a list, so rows fill the page in as many columns as fit.</summary>
         public static readonly DependencyProperty RowWidthProperty =
             DependencyProperty.Register(nameof(RowWidth), typeof(double), typeof(ControllerSetupPage), new PropertyMetadata(MinimumRowWidth + RowGap));
+
+        /// <summary>The width of one card on Sticks and triggers, so cards fill the page in as many columns as fit.</summary>
+        public static readonly DependencyProperty CardWidthProperty =
+            DependencyProperty.Register(nameof(CardWidth), typeof(double), typeof(ControllerSetupPage), new PropertyMetadata(MinimumRowWidth + 2 * CardPadding + RowGap));
 
         /// <summary>The width of one row in a list inside a card.</summary>
         public static readonly DependencyProperty CardRowWidthProperty =
@@ -52,6 +59,7 @@ namespace GameControllerForZwift.UI.WPF.Views
             // The import notice is non-blocking and hides itself (CFG-031).
             _noticeTimer = new DispatcherTimer { Interval = NoticeDuration };
             _noticeTimer.Tick += NoticeTimer_Tick;
+            SticksContent.MaxWidth = MaximumCardsWidth;
             DataContextChanged += OnDataContextChanged;
             SizeChanged += (_, e) => UpdateLayoutWidths(e.NewSize.Width);
 
@@ -68,6 +76,13 @@ namespace GameControllerForZwift.UI.WPF.Views
             set => SetValue(RowWidthProperty, value);
         }
 
+        /// <summary>Gets or sets the width of one card on Sticks and triggers.</summary>
+        public double CardWidth
+        {
+            get => (double)GetValue(CardWidthProperty);
+            set => SetValue(CardWidthProperty, value);
+        }
+
         /// <summary>Gets or sets the width of one row in a list inside a card.</summary>
         public double CardRowWidth
         {
@@ -79,17 +94,21 @@ namespace GameControllerForZwift.UI.WPF.Views
         /// Returns the width of one column when a list of rows fills <paramref name="available"/>. Rows take as many columns as
         /// fit at the minimum width, then share the space evenly, so text wraps inside a row and never clips (UX-V-044).
         /// </summary>
-        internal static double ColumnWidth(double available)
+        internal static double ColumnWidth(double available) => ColumnWidth(available, MinimumRowWidth);
+
+        /// <summary>Returns the width of one column when items at least <paramref name="minimum"/> wide fill <paramref name="available"/>.</summary>
+        internal static double ColumnWidth(double available, double minimum)
         {
-            int columns = Math.Max(1, (int)Math.Floor(available / (MinimumRowWidth + RowGap)));
-            return Math.Max(MinimumRowWidth, available / columns);
+            int columns = Math.Max(1, (int)Math.Floor(available / (minimum + RowGap)));
+            return Math.Max(minimum, available / columns);
         }
 
         private void UpdateLayoutWidths(double pageWidth)
         {
             double available = Math.Max(0, pageWidth - SystemParameters.VerticalScrollBarWidth);
             RowWidth = ColumnWidth(available);
-            CardRowWidth = ColumnWidth(Math.Max(0, available - 2 * CardPadding));
+            CardWidth = ColumnWidth(Math.Min(available, MaximumCardsWidth), MinimumRowWidth + 2 * CardPadding);
+            CardRowWidth = ColumnWidth(Math.Max(0, CardWidth - RowGap - 2 * CardPadding));
             ConfigurationComboBox.Width = Math.Clamp(available - RowGap, 240, MaximumPickerWidth);
         }
 

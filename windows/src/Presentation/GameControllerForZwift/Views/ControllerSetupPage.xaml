@@ -305,9 +305,9 @@
 
                     <!-- Sticks and triggers tab: each stick with its live position, and the triggers with their live fill
                          (SCR-BTN-039 to SCR-BTN-042). -->
-                    <StackPanel x:Name="SticksContent" Visibility="{Binding IsSticksTabSelected, Converter={StaticResource BooleanToVisibility}}"
+                    <WrapPanel x:Name="SticksContent" HorizontalAlignment="Left" Visibility="{Binding IsSticksTabSelected, Converter={StaticResource BooleanToVisibility}}"
                                 AutomationProperties.AutomationId="ButtonsSticksList" AutomationProperties.Name="{loc:Loc ButtonsSticksListName}">
-                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,0,16" AutomationProperties.AutomationId="ButtonsLeftStickCard">
+                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top" Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}" AutomationProperties.AutomationId="ButtonsLeftStickCard">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsLeftStick}" AutomationProperties.HeadingLevel="Level2" />
                                 <controls:ThumbstickGraph x:Name="LeftStickGraph" Width="120" Height="120" Margin="0,16,0,16" HorizontalAlignment="Left"
@@ -324,7 +324,7 @@
                                               ItemsPanel="{StaticResource Buttons.CardRowsPanel}" IsTabStop="False" />
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,0,16" AutomationProperties.AutomationId="ButtonsRightStickCard">
+                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top" Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}" AutomationProperties.AutomationId="ButtonsRightStickCard">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsRightStick}" AutomationProperties.HeadingLevel="Level2" />
                                 <controls:ThumbstickGraph x:Name="RightStickGraph" Width="120" Height="120" Margin="0,16,0,16" HorizontalAlignment="Left"
@@ -341,7 +341,7 @@
                                               ItemsPanel="{StaticResource Buttons.CardRowsPanel}" IsTabStop="False" />
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,0,16" AutomationProperties.AutomationId="ButtonsTriggersCard">
+                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top" Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}" AutomationProperties.AutomationId="ButtonsTriggersCard">
                             <StackPanel>
                                 <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsTriggers}" AutomationProperties.HeadingLevel="Level2" />
                                 <TextBlock x:Name="BrakeCaution" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,4,0,16" Text="{loc:Loc ButtonsBrakeCaution}"
@@ -354,7 +354,7 @@
                                                        AutomationProperties.AutomationId="ButtonsRightTriggerImage" AutomationProperties.Name="{loc:Loc ButtonsTriggerFill}" />
                             </StackPanel>
                         </Border>
-                    </StackPanel>
+                    </WrapPanel>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
