@@ -188,7 +188,7 @@
 
     <Grid>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
-            <StackPanel x:Name="PageContent" Margin="0,0,0,24" MaxWidth="1200" HorizontalAlignment="Stretch">
+            <StackPanel x:Name="PageContent" Margin="0,0,0,24" HorizontalAlignment="Stretch">
                 <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc ButtonsTitle}" TextWrapping="Wrap"
                            AutomationProperties.AutomationId="ButtonsPageTitle" AutomationProperties.HeadingLevel="Level1" />
 
