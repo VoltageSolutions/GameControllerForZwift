@@ -51,7 +51,7 @@
                                 </StackPanel>
                                 <Path Grid.Column="3" VerticalAlignment="Center" Width="24" Height="24" Stretch="None" Data="M9,6 L15,12 L9,18"
                                       Stroke="{DynamicResource Brush.text}" StrokeThickness="2.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                                      StrokeLineJoin="Round" AutomationProperties.AccessibilityView="Raw" />
+                                      StrokeLineJoin="Round" />
                             </Grid>
                         </Grid>
                         <ControlTemplate.Triggers>
@@ -164,8 +164,7 @@
                                     <TextBlock TextWrapping="Wrap" FontFamily="{DynamicResource Font.Figtree}" FontSize="14"
                                                Foreground="{DynamicResource Brush.muted}" Text="{Binding Hint}" />
                                 </StackPanel>
-                                <Grid x:Name="CheckBadge" Grid.Column="1" Width="24" Height="24" Margin="12,0,0,0" VerticalAlignment="Center" Visibility="Collapsed"
-                                      AutomationProperties.AccessibilityView="Raw">
+                                <Grid x:Name="CheckBadge" Grid.Column="1" Width="24" Height="24" Margin="12,0,0,0" VerticalAlignment="Center" Visibility="Collapsed">
                                     <Ellipse Fill="{DynamicResource Brush.text}" />
                                     <Path Width="24" Height="24" Stretch="None" Data="{StaticResource Icon.Check}" Stroke="{DynamicResource Brush.bg}"
                                           StrokeThickness="2.4" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
@@ -363,8 +362,7 @@
         <!-- The function panel: a side panel over the screen. It traps focus, Esc closes it, and a click outside closes it
              (SCR-BTN-037). -->
         <Grid x:Name="FunctionOverlay" Visibility="{Binding FunctionPicker.IsOpen, Converter={StaticResource BooleanToVisibility}}">
-            <Border x:Name="FunctionScrim" Background="{DynamicResource Brush.scrim}" MouseLeftButtonDown="FunctionScrim_MouseLeftButtonDown"
-                    AutomationProperties.AccessibilityView="Raw" />
+            <Border x:Name="FunctionScrim" Background="{DynamicResource Brush.scrim}" MouseLeftButtonDown="FunctionScrim_MouseLeftButtonDown" />
             <Border x:Name="FunctionPanel" HorizontalAlignment="Right" Width="440" MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=UserControl}}"
                     Background="{DynamicResource Brush.surface}" CornerRadius="32,0,0,32" Padding="16,24"
                     KeyboardNavigation.TabNavigation="Cycle" KeyboardNavigation.ControlTabNavigation="Cycle" KeyboardNavigation.DirectionalNavigation="Cycle"
@@ -381,8 +379,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Border MinWidth="44" Height="30" CornerRadius="15" VerticalAlignment="Center" Background="{DynamicResource Brush.accent}"
-                                AutomationProperties.AccessibilityView="Raw">
+                        <Border MinWidth="44" Height="30" CornerRadius="15" VerticalAlignment="Center" Background="{DynamicResource Brush.accent}">
                             <TextBlock Margin="10,0" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{DynamicResource Font.Figtree}" FontSize="15"
                                        FontWeight="ExtraBold" Foreground="{DynamicResource Brush.on-accent}" Text="{Binding FunctionPicker.Target.Chip}" />
                         </Border>
