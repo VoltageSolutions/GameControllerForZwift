@@ -33,7 +33,7 @@ flowchart TD
 
 The screen's hint says: "Press a button on your controller to see it light up. Tap a row to change what it does."
 
-*Example: you press X on your controller. The X row lights up while you hold it, and nothing else changes. X is a free button, so the row says "No action". You click the row, and the picker opens.*
+*Example: you press X on your controller. The X row lights up while you hold it, and nothing else changes. X is a free button, so the row says "No action". You click the row, and the picker opens. You close it, and the row is no longer selected.*
 
 | Rule | ID |
 |---|---|
@@ -43,10 +43,12 @@ The screen's hint says: "Press a button on your controller to see it light up. T
 | The illustration must show the selected button, mark free keys with a dashed outline, and use the lit style for a press (see [Visual system](../ux/visual-system.md)). | SCR-BTN-004 |
 | Tapping or clicking a row must select it and open the function picker. A controller press must not open the picker. | SCR-BTN-005 |
 | A controller press here must only light the matching row, so you can test your controller. It must not select a row, open the picker, navigate, save, or go back. | SCR-BTN-006 |
-| The screen must show the hint "Press a button on your controller to select it." and no controller hint bar. | SCR-BTN-007 |
+| The screen must show the hint "Press a button on your controller to see it light up. Tap a row to change what it does." and no controller hint bar. | SCR-BTN-007 |
 | The Save button is the screen's one main action, and it must be an accent button only when it is enabled (that is, when a saved mapping has unsaved changes, see `CFG-037`). | SCR-BTN-008 |
 | The screen must have a **Reset to default** action for the current mapping's mappings. | SCR-BTN-009 |
 | The Buttons screen must stay visual: the illustration first, the list as the text version. | SCR-BTN-010 |
+| A row stays selected only while its function picker is open. When the picker closes, by any means, no row is selected. A row then looks selected only while you hold its button, so you can test your controller. | SCR-BTN-044 |
+| On Windows, the function picker is a side panel. On Android and iOS, it must be a bottom sheet built with the platform's native bottom sheet component, not a custom one. | SCR-BTN-045 |
 
 ??? note "Edge cases"
     - The Buttons header has no More menu of its own. Advanced options have their own place at the bottom of Sticks and triggers.

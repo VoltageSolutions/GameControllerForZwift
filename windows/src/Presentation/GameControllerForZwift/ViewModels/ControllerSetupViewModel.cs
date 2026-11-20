@@ -121,6 +121,13 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _rightStickFunctionMappings = CreateRightStickMappings();
             _shoulderFunctionMappings = CreateShoulderMappings();
 
+            // A row stays selected only while its picker is open (SCR-BTN-044).
+            FunctionPicker.PropertyChanged += (_, e) =>
+            {
+                if (e.PropertyName == nameof(FunctionPickerViewModel.IsOpen) && !FunctionPicker.IsOpen)
+                    SelectedRow = null;
+            };
+
             // One row per input, in the order the screen lists them (SCR-BTN-003).
             var selectors = AllSelectors.ToDictionary(vm => vm.SelectedInput);
             _rows = ButtonsCatalog.Inputs.Select(info => new ButtonRowViewModel(info, selectors[info.Input])).ToList();
@@ -171,7 +178,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         public string ControllerName =>
             _selectedController is { } controller ? Localizer.Format("ButtonsControllerName", controller.Name) : string.Empty;
 
-        /// <summary>Gets or sets the selected row, which a click or tap picks (SCR-BTN-005).</summary>
+        /// <summary>Gets the selected row, which a click or tap picks and closing the picker clears (SCR-BTN-005 and SCR-BTN-044).</summary>
         public ButtonRowViewModel? SelectedRow
         {
             get => _selectedRow;

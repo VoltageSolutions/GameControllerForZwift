@@ -95,15 +95,18 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         }
 
         [Fact]
-        public void SCRBTN005_ClosingThePickerKeepsTheRowSelected()
+        public void SCRBTN044_ClosingThePickerDeselectsTheRow()
         {
             var viewModel = _context.CreateViewModel(Xbox);
             ButtonRowViewModel row = viewModel.Rows[0];
             viewModel.SelectRowCommand.Execute(row);
+            Assert.True(row.IsSelected);
 
             viewModel.FunctionPicker.CloseCommand.Execute(null);
 
             Assert.False(viewModel.FunctionPicker.IsOpen);
+            Assert.Null(viewModel.SelectedRow);
+            Assert.False(row.IsSelected);
         }
 
         [Fact]
