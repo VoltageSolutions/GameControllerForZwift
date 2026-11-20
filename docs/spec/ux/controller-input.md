@@ -29,7 +29,7 @@ The app may offer **Switch window size** (Full, then Float, then Mini) as an app
 |---|---|
 | A controller press must have exactly one meaning on each screen. | UX-C-001 |
 | On the Buttons screen, a press must only light the matching row. On setup screens, a press must only find or assign a button. A press must not navigate, save, or go back. | UX-C-002 |
-| On setup and Buttons screens, the app must not show a controller hint bar. The screen's own hint says "Press a button on your controller to select it." | UX-C-003 |
+| On setup and Buttons screens, the app must not show a controller hint bar. The screen's own hint says "Press a button on your controller to see it light up. Tap a row to change what it does." | UX-C-003 |
 | The app may offer **Switch window size** (Full, then Float, then Mini) as an app action that can be mapped to a controller input, such as View. It is the only app action a controller input may trigger. The app must send every other mapped input to Zwift. | UX-C-004 |
 | The app's own dialogs must work with a mouse, a keyboard, and touch. See `CFG-038`. | UX-C-006 |
 
