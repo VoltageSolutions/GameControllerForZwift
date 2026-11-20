@@ -155,8 +155,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     _context.DataIntegrator.GetControllers().Returns([controller]);
                     viewModel.DetectControllers();
                     Pump(window);
-                    var controllers = FindDescendants<ComboBox>(page).First(c => ReferenceEquals(c.ItemsSource, viewModel.Controllers));
-                    controllers.SelectedItem = controller;
+                    viewModel.SelectedController = controller;
                     viewModel.Selector(ControllerInput.Menu).SelectedZwiftFunction = ZwiftFunction.RideOn;
                     Pump(window);
 

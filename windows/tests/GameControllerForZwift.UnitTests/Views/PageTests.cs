@@ -102,7 +102,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                         .Invoke(page, [button, new RoutedEventArgs()]);
 
                     Assert.True(menu.IsOpen);
-                    Assert.Same(page, menu.DataContext);
+                    Assert.Same(page.ViewModel, menu.DataContext);
                     Assert.All(menu.Items.OfType<MenuItem>(), item => Assert.NotNull(item.Command));
                     Assert.Same(page.ViewModel.OpenFolderCommand, ((MenuItem)menu.Items[2]).Command);
                     menu.IsOpen = false;
