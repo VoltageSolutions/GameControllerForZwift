@@ -115,25 +115,5 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         /// <summary>Returns the listing of an input. Every <see cref="ControllerInput"/> is listed.</summary>
         public static ButtonsInputInfo Input(ControllerInput input) => InputsByValue[input];
-
-        /// <summary>
-        /// Returns the first input, in listing order, that is pressed in <paramref name="current"/> and was not pressed in
-        /// <paramref name="previous"/>, or null when no press started.
-        /// </summary>
-        /// <param name="previous">The state before, or null when there is none.</param>
-        /// <param name="current">The state now.</param>
-        public static ControllerInput? FirstNewPress(ControllerData? previous, ControllerData current)
-        {
-            ArgumentNullException.ThrowIfNull(current);
-            foreach (ButtonsInputInfo info in Inputs)
-            {
-                if (current.IsPressed(info.Input) && !(previous?.IsPressed(info.Input) ?? false))
-                {
-                    return info.Input;
-                }
-            }
-
-            return null;
-        }
     }
 }

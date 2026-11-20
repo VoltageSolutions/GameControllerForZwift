@@ -1,6 +1,7 @@
 using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Controller;
 using GameControllerForZwift.UI.WPF.ViewModels;
+using NSubstitute;
 using static GameControllerForZwift.UI.WPF.Tests.ViewModels.ConfigurationTestContext;
 
 namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
@@ -106,43 +107,34 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         }
 
         [Fact]
-        public void SCRBTN006_PressSelectsRowOnlyWhileTheScreenIsActive()
+        public void SCRBTN006_ControllerPressLightsTheRowWithoutSelectingOrOpeningThePicker()
+        {
+            GameControllerForZwift.UnitTests.TestApplication.Run(() =>
+            {
+                var viewModel = _context.CreateViewModel(Xbox);
+                ButtonRowViewModel row = viewModel.Rows.Single(r => r.Input == ControllerInput.A);
+                ZwiftFunction before = viewModel.Selector(ControllerInput.A).SelectedZwiftFunction;
+
+                _context.DataIntegrator.InputPolled += Raise.Event<EventHandler<InputStateChangedEventArgs>>(_context.DataIntegrator, new InputStateChangedEventArgs(new ControllerData { A = true }));
+
+                Assert.True(viewModel.CurrentControllerValues.A);
+                Assert.Null(viewModel.SelectedRow);
+                Assert.False(viewModel.FunctionPicker.IsOpen);
+                Assert.False(row.IsSelected);
+                Assert.Equal(before, viewModel.Selector(ControllerInput.A).SelectedZwiftFunction);
+            });
+        }
+
+        [Fact]
+        public void SCRBTN005_HidingTheScreenClosesThePicker()
         {
             var viewModel = _context.CreateViewModel(Xbox);
-            var idle = new ControllerData();
-            var pressed = new ControllerData { A = true };
+            viewModel.IsScreenActive = true;
+            viewModel.SelectRowCommand.Execute(viewModel.Rows[0]);
 
             viewModel.IsScreenActive = false;
-            viewModel.HandleControllerPress(idle, pressed);
-            Assert.Null(viewModel.SelectedRow);
 
-            viewModel.IsScreenActive = true;
-            viewModel.HandleControllerPress(idle, pressed);
-            Assert.Equal(ControllerInput.A, viewModel.SelectedRow?.Input);
-        }
-
-        [Fact]
-        public void SCRBTN006_HeldButtonDoesNotReselect()
-        {
-            var viewModel = _context.CreateViewModel(Xbox);
-            viewModel.IsScreenActive = true;
-            var held = new ControllerData { A = true };
-
-            viewModel.HandleControllerPress(held, held);
-
-            Assert.Null(viewModel.SelectedRow);
-        }
-
-        [Fact]
-        public void SCRBTN006_PressDoesNotChangeTheMapping()
-        {
-            var viewModel = _context.CreateViewModel(Xbox);
-            viewModel.IsScreenActive = true;
-            ZwiftFunction before = viewModel.Selector(ControllerInput.A).SelectedZwiftFunction;
-
-            viewModel.HandleControllerPress(new ControllerData(), new ControllerData { A = true });
-
-            Assert.Equal(before, viewModel.Selector(ControllerInput.A).SelectedZwiftFunction);
+            Assert.False(viewModel.FunctionPicker.IsOpen);
         }
 
         [Fact]
@@ -163,18 +155,6 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             viewModel.ResetToDefaultCommand.Execute(null);
 
             Assert.Equal(original, viewModel.Selector(ControllerInput.A).SelectedZwiftFunction);
-        }
-
-        [Fact]
-        public void FirstNewPress_ReturnsNullWhenNothingStarted()
-        {
-            Assert.Null(ButtonsCatalog.FirstNewPress(null, new ControllerData()));
-        }
-
-        [Fact]
-        public void FirstNewPress_ReturnsTheNewlyPressedInput()
-        {
-            Assert.Equal(ControllerInput.B, ButtonsCatalog.FirstNewPress(new ControllerData(), new ControllerData { B = true }));
         }
     }
 }

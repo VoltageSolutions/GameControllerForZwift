@@ -27,7 +27,7 @@ When the app closes normally, it tells the network that Voltage Gamepad is leavi
 
 ## A button does nothing in Zwift
 
-- Check the mapping on the **Buttons** tab. When you press a button, its row is selected and the function panel opens. If nothing happens, the app is not seeing that input. Check that the right controller is selected on the **Connections** tab. If your controller is not in the list, disconnect it and connect it again. The list updates by itself.
+- Check the mapping on the **Buttons** tab. When you press a button, its row lights up. If nothing lights up, the app is not seeing that input. Check that the right controller is selected on the **Connections** tab. If your controller is not in the list, disconnect it and connect it again. The list updates by itself.
 - Check that the input is not set to **No action**.
 - Remember that mappings go back to the defaults each time the app starts.
 

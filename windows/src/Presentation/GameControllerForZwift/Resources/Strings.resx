@@ -190,8 +190,8 @@
     <comment>Buttons screen, line under the title that names the controller. {0} is the controller name, for example Xbox Series X Controller.</comment>
   </data>
   <data name="ButtonsHint" xml:space="preserve">
-    <value>Press a button on your controller to select it.</value>
-    <comment>Buttons screen hint under the title. Pressing a button on the controller selects that button's row.</comment>
+    <value>Press a button on your controller to see it light up. Tap a row to change what it does.</value>
+    <comment>Buttons screen hint under the title. Pressing a button on the controller lights that button's row. Tapping a row opens the function panel.</comment>
   </data>
   <data name="ButtonsNoController" xml:space="preserve">
     <value>Wake your controller</value>

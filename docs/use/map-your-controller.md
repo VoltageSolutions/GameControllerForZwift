@@ -3,7 +3,7 @@
 !!! tldr "TL;DR"
     Pick a Zwift function for each controller input on the **Buttons** tab. The functions match the buttons and paddles of a Zwift Ride: navigation, select, back, power-up, Ride On, shift up and down, steer left and right, and brake. Sticks and triggers give partial steering and braking. Changes apply immediately. Save them as a named mapping to keep them for next time.
 
-Each button, stick direction and trigger on your controller can do one Zwift function. The **Buttons** tab lists every input in a row, with what it does. I click a row, or press the button on my controller, and a panel opens with the functions grouped by what they do. Picking one applies it straight away. The row for the input I changed shows **Changed** until I save.
+Each button, stick direction and trigger on your controller can do one Zwift function. The **Buttons** tab lists every input in a row, with what it does. I click a row and a panel opens with the functions grouped by what they do. Picking one applies it straight away. The row for the input I changed shows **Changed** until I save.
 
 The **Buttons** tab has two tabs of its own. **Buttons** lists the buttons, the D-pad, and the bumpers. **Sticks and triggers** lists each stick with its live position, and each trigger with a bar that fills as I pull it.
 

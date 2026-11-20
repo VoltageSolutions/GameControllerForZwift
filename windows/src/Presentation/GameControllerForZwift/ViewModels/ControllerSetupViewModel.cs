@@ -171,7 +171,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         public string ControllerName =>
             _selectedController is { } controller ? Localizer.Format("ButtonsControllerName", controller.Name) : string.Empty;
 
-        /// <summary>Gets or sets the selected row, which a click or a controller press picks (SCR-BTN-005).</summary>
+        /// <summary>Gets or sets the selected row, which a click or tap picks (SCR-BTN-005).</summary>
         public ButtonRowViewModel? SelectedRow
         {
             get => _selectedRow;
@@ -226,8 +226,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether the Buttons screen is showing. A controller press only selects a row
-        /// while it is (SCR-BTN-005 and SCR-BTN-006). Hiding the screen closes the function panel.
+        /// Gets or sets a value indicating whether the Buttons screen is showing. Hiding the screen closes the function panel.
         /// </summary>
         public bool IsScreenActive
         {
@@ -1153,19 +1152,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         #endregion
 
 
-        /// <summary>
-        /// A press that starts while the screen shows selects its row and opens the function panel. It does nothing else: it
-        /// does not navigate, save, or go back (SCR-BTN-005 and SCR-BTN-006).
-        /// </summary>
-        internal void HandleControllerPress(ControllerData? previous, ControllerData current)
-        {
-            if (!_isScreenActive || _selectedController is null)
-                return;
-
-            if (ButtonsCatalog.FirstNewPress(previous, current) is { } input)
-                SelectRow(_rows.First(r => r.Input == input));
-        }
-
         private void _dataIntegrator_InputChanged(object? sender, InputStateChangedEventArgs e)
         {
             var app = Application.Current;
@@ -1176,9 +1162,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 // Ensure that UI updates happen on the UI thread
                 app.Dispatcher.Invoke(() =>
                 {
-                    var previous = CurrentControllerValues;
                     CurrentControllerValues = e.Data;
-                    HandleControllerPress(previous, e.Data);
                 });
             }
         }

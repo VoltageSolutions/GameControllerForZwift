@@ -55,7 +55,7 @@ namespace GameControllerForZwift.UI.WPF.Views
             DataContextChanged += OnDataContextChanged;
             SizeChanged += (_, e) => UpdateLayoutWidths(e.NewSize.Width);
 
-            // A controller press only selects a row while this screen shows (SCR-BTN-005 and SCR-BTN-006).
+            // Hiding the screen closes the function panel (SCR-BTN-005).
             Loaded += (_, _) => SetScreenActive(true);
             Unloaded += (_, _) => SetScreenActive(false);
         }
