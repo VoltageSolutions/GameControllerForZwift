@@ -1,13 +1,12 @@
 using GameControllerForZwift.Core;
-using GameControllerForZwift.Core.Controller;
+using GameControllerForZwift.UI.WPF.Controls;
+using GameControllerForZwift.UI.WPF.Theme;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace GameControllerForZwift.UI.WPF.Views
@@ -24,14 +23,6 @@ namespace GameControllerForZwift.UI.WPF.Views
         internal const double MaximumPickerWidth = 420;
         private const double TwoColumnBreakpointWidth = 900;
         private const double LandscapeControllerColumnWidth = 376;
-
-        // Max stick travel in SVG units (436x367 viewBox): well inside the 37.5px well radius minus 28px cap radius.
-        private const double MaxStickTravelSvgUnits = 8.0;
-
-        // Trigger pill bounds in controller.svg (436x367 viewBox): y from ~1 to ~48.3.
-        private const double TriggerTopY = 1.0;
-        private const double TriggerBottomY = 48.5;
-        private const double TriggerMaxValue = 32767.0;
 
         private const double RowGap = 12;
         private const double CardPadding = 24;
@@ -51,7 +42,6 @@ namespace GameControllerForZwift.UI.WPF.Views
         private readonly DispatcherTimer _noticeTimer;
         private ControllerSetupViewModel? _subscribedViewModel;
         private IInputElement? _focusBeforePanel;
-        private Dictionary<ControllerInput, Shape>? _inputHighlights;
 
         #endregion
 
@@ -60,8 +50,6 @@ namespace GameControllerForZwift.UI.WPF.Views
         public ControllerSetupPage()
         {
             InitializeComponent();
-
-            BuildInputHighlightMap();
 
             _noticeTimer = new DispatcherTimer { Interval = NoticeDuration };
             _noticeTimer.Tick += NoticeTimer_Tick;
@@ -72,7 +60,7 @@ namespace GameControllerForZwift.UI.WPF.Views
             {
                 SetScreenActive(true);
                 UpdateLayoutWidths(ActualWidth);
-                UpdateControllerDiagram();
+                BindDiagramThemeService();
             };
             Unloaded += (_, _) => SetScreenActive(false);
         }
@@ -103,6 +91,15 @@ namespace GameControllerForZwift.UI.WPF.Views
         {
             int columns = Math.Max(1, (int)Math.Floor(available / (minimum + RowGap)));
             return Math.Max(minimum, available / columns);
+        }
+
+        private void BindDiagramThemeService()
+        {
+            if (FindName("ControllerDiagram") is not ControllerDiagramView diagram)
+                return;
+
+            if (Application.Current is IServiceProvider sp && sp.GetService(typeof(ThemeService)) is ThemeService themeService)
+                diagram.ThemeService = themeService;
         }
 
         private void UpdateLayoutWidths(double pageWidth)
@@ -145,100 +142,6 @@ namespace GameControllerForZwift.UI.WPF.Views
             ConfigurationComboBox.Width = Math.Clamp(Math.Max(0, pageWidth - SystemParameters.VerticalScrollBarWidth) - RowGap, 240, MaximumPickerWidth);
         }
 
-        private void BuildInputHighlightMap()
-        {
-            _inputHighlights = new Dictionary<ControllerInput, Shape>();
-
-            TryRegisterInput(ControllerInput.A, ButtonAHighlight);
-            TryRegisterInput(ControllerInput.B, ButtonBHighlight);
-            TryRegisterInput(ControllerInput.X, ButtonXHighlight);
-            TryRegisterInput(ControllerInput.Y, ButtonYHighlight);
-            TryRegisterInput(ControllerInput.LeftBumper, LeftBumperHighlight);
-            TryRegisterInput(ControllerInput.RightBumper, RightBumperHighlight);
-            TryRegisterInput(ControllerInput.DPadUp, DPadUpHighlight);
-            TryRegisterInput(ControllerInput.DPadDown, DPadDownHighlight);
-            TryRegisterInput(ControllerInput.DPadLeft, DPadLeftHighlight);
-            TryRegisterInput(ControllerInput.DPadRight, DPadRightHighlight);
-            TryRegisterInput(ControllerInput.LeftThumbstickClick, LeftStickCap);
-            TryRegisterInput(ControllerInput.RightThumbstickClick, RightStickCap);
-            TryRegisterInput(ControllerInput.View, ViewButtonHighlight);
-            TryRegisterInput(ControllerInput.Menu, MenuButtonHighlight);
-        }
-
-        private void TryRegisterInput(ControllerInput input, Shape? shape)
-        {
-            if (shape is not null && !_inputHighlights!.ContainsKey(input))
-                _inputHighlights[input] = shape;
-        }
-
-        private void UpdateControllerDiagram()
-        {
-            if (_inputHighlights is null || DataContext is not ControllerSetupViewModel vm)
-                return;
-
-            var accentBrush = (Brush?)TryFindResource("Brush.accent") ?? Brushes.Gold;
-            var defaultCapBrush = new SolidColorBrush(Color.FromRgb(0xD6, 0xD3, 0xD1));
-            var defaultButtonBrush = new SolidColorBrush(Color.FromRgb(0xE7, 0xE5, 0xE4));
-
-            // Reset button highlights first
-            foreach (var (input, shape) in _inputHighlights)
-            {
-                bool isCap = ReferenceEquals(shape, LeftStickCap) || ReferenceEquals(shape, RightStickCap);
-                bool active = vm.SelectedRow?.Input == input;
-
-                if (!active && vm.Rows is not null)
-                {
-                    foreach (var row in vm.Rows)
-                    {
-                        if (row.Input == input && row.IsPressed)
-                        {
-                            active = true;
-                            break;
-                        }
-                    }
-                }
-
-                shape.Fill = active ? accentBrush : (isCap ? defaultCapBrush : defaultButtonBrush);
-            }
-
-            // Update stick offsets & analog trigger fills from CurrentControllerValues
-            var values = vm.CurrentControllerValues;
-            if (values is null)
-            {
-                LeftStickTransform.X = 0;
-                LeftStickTransform.Y = 0;
-                RightStickTransform.X = 0;
-                RightStickTransform.Y = 0;
-                SetTriggerClipHeight(LeftTriggerClip, 0);
-                SetTriggerClipHeight(RightTriggerClip, 0);
-                return;
-            }
-
-            double lx = Math.Clamp(values.LeftThumbstickX / 32767.0, -1.0, 1.0);
-            double ly = Math.Clamp(values.LeftThumbstickY / 32767.0, -1.0, 1.0);
-            LeftStickTransform.X = lx * MaxStickTravelSvgUnits;
-            LeftStickTransform.Y = ly * MaxStickTravelSvgUnits;
-
-            double rx = Math.Clamp(values.RightThumbstickX / 32767.0, -1.0, 1.0);
-            double ry = Math.Clamp(values.RightThumbstickY / 32767.0, -1.0, 1.0);
-            RightStickTransform.X = rx * MaxStickTravelSvgUnits;
-            RightStickTransform.Y = ry * MaxStickTravelSvgUnits;
-
-            double ltRatio = Math.Clamp(values.LeftTrigger / TriggerMaxValue, 0.0, 1.0);
-            double rtRatio = Math.Clamp(values.RightTrigger / TriggerMaxValue, 0.0, 1.0);
-
-            SetTriggerClipHeight(LeftTriggerClip, ltRatio);
-            SetTriggerClipHeight(RightTriggerClip, rtRatio);
-        }
-
-        private static void SetTriggerClipHeight(RectangleGeometry clip, double ratio)
-        {
-            double totalHeight = TriggerBottomY - TriggerTopY;
-            double fillHeight = totalHeight * ratio;
-            double top = TriggerBottomY - fillHeight;
-            clip.Rect = new Rect(clip.Rect.X, top, clip.Rect.Width, Math.Max(0, fillHeight));
-        }
-
         private void SetScreenActive(bool active)
         {
             if (DataContext is ControllerSetupViewModel viewModel)
@@ -251,11 +154,6 @@ namespace GameControllerForZwift.UI.WPF.Views
             {
                 _subscribedViewModel.PropertyChanged -= ViewModel_PropertyChanged;
                 _subscribedViewModel.FunctionPicker.PropertyChanged -= FunctionPicker_PropertyChanged;
-                if (_subscribedViewModel.Rows is not null)
-                {
-                    foreach (var row in _subscribedViewModel.Rows)
-                        row.PropertyChanged -= Row_PropertyChanged;
-                }
             }
 
             _subscribedViewModel = e.NewValue as ControllerSetupViewModel;
@@ -263,21 +161,8 @@ namespace GameControllerForZwift.UI.WPF.Views
             {
                 _subscribedViewModel.PropertyChanged += ViewModel_PropertyChanged;
                 _subscribedViewModel.FunctionPicker.PropertyChanged += FunctionPicker_PropertyChanged;
-                if (_subscribedViewModel.Rows is not null)
-                {
-                    foreach (var row in _subscribedViewModel.Rows)
-                        row.PropertyChanged += Row_PropertyChanged;
-                }
                 _subscribedViewModel.IsScreenActive = IsLoaded;
             }
-
-            UpdateControllerDiagram();
-        }
-
-        private void Row_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName is nameof(ButtonRowViewModel.IsPressed) or nameof(ButtonRowViewModel.IsSelected))
-                Dispatcher.BeginInvoke(DispatcherPriority.Render, UpdateControllerDiagram);
         }
 
         private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -287,10 +172,6 @@ namespace GameControllerForZwift.UI.WPF.Views
                 _noticeTimer.Stop();
                 if (ViewModel.NoticeText is not null)
                     _noticeTimer.Start();
-            }
-            else if (e.PropertyName is nameof(ControllerSetupViewModel.CurrentControllerValues) or nameof(ControllerSetupViewModel.SelectedRow))
-            {
-                Dispatcher.BeginInvoke(DispatcherPriority.Render, UpdateControllerDiagram);
             }
         }
 
