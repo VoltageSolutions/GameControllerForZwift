@@ -37,7 +37,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             var viewModel = _context.CreateViewModel(Xbox);
             ButtonRowViewModel row = viewModel.Rows.Single(r => r.Input == ControllerInput.X);
 
-            viewModel.Selector(ControllerInput.X).SelectedFunction = ZwiftFunction.ShiftUp;
+            viewModel.Selector(ControllerInput.X).SelectedZwiftFunction = ZwiftFunction.ShiftUp;
 
             Assert.Equal(ZwiftFunction.ShiftUp, row.Function);
             Assert.Equal("ButtonsRow_X", row.AutomationId);
@@ -80,7 +80,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
 
             viewModel.FunctionPicker.Choose(item);
 
-            Assert.Equal(ZwiftFunction.ShiftDown, viewModel.Selector(ControllerInput.B).SelectedFunction);
+            Assert.Equal(ZwiftFunction.ShiftDown, viewModel.Selector(ControllerInput.B).SelectedZwiftFunction);
             Assert.Equal(ZwiftFunction.ShiftDown, row.Function);
         }
 
@@ -97,7 +97,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         public void SCRBTN005_ClosingThePickerKeepsTheRowSelected()
         {
             var viewModel = _context.CreateViewModel(Xbox);
-            ButtonRowViewModel row = viewModel.Rows.First();
+            ButtonRowViewModel row = viewModel.Rows[0];
             viewModel.SelectRowCommand.Execute(row);
 
             viewModel.FunctionPicker.CloseCommand.Execute(null);
@@ -138,11 +138,11 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         {
             var viewModel = _context.CreateViewModel(Xbox);
             viewModel.IsScreenActive = true;
-            ZwiftFunction before = viewModel.Selector(ControllerInput.A).SelectedFunction;
+            ZwiftFunction before = viewModel.Selector(ControllerInput.A).SelectedZwiftFunction;
 
             viewModel.HandleControllerPress(new ControllerData(), new ControllerData { A = true });
 
-            Assert.Equal(before, viewModel.Selector(ControllerInput.A).SelectedFunction);
+            Assert.Equal(before, viewModel.Selector(ControllerInput.A).SelectedZwiftFunction);
         }
 
         [Fact]
@@ -157,12 +157,12 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         public void SCRBTN007_ResetToDefaultRestoresTheDefaultMapping()
         {
             var viewModel = _context.CreateViewModel(Xbox);
-            ZwiftFunction original = viewModel.Selector(ControllerInput.A).SelectedFunction;
-            viewModel.Selector(ControllerInput.A).SelectedFunction = original == ZwiftFunction.ShiftUp ? ZwiftFunction.ShiftDown : ZwiftFunction.ShiftUp;
+            ZwiftFunction original = viewModel.Selector(ControllerInput.A).SelectedZwiftFunction;
+            viewModel.Selector(ControllerInput.A).SelectedZwiftFunction = original == ZwiftFunction.ShiftUp ? ZwiftFunction.ShiftDown : ZwiftFunction.ShiftUp;
 
             viewModel.ResetToDefaultCommand.Execute(null);
 
-            Assert.Equal(original, viewModel.Selector(ControllerInput.A).SelectedFunction);
+            Assert.Equal(original, viewModel.Selector(ControllerInput.A).SelectedZwiftFunction);
         }
 
         [Fact]
