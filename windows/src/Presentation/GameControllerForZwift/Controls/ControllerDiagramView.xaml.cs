@@ -89,7 +89,15 @@ namespace GameControllerForZwift.UI.WPF.Controls
             }
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e) => ScheduleRefresh();
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            if (_subscribedThemeService is null && Application.Current is IServiceProvider sp && sp.GetService(typeof(ThemeService)) is ThemeService svc)
+                ThemeService = svc;
+
+            SubscribeRows(Rows);
+            SubscribeValues(ControllerValues);
+            ScheduleRefresh();
+        }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
@@ -107,7 +115,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
         private static void OnRowsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var view = (ControllerDiagramView)d;
-            view.UnsubscribeRows();
             view.SubscribeRows(e.NewValue as IEnumerable<ButtonRowViewModel>);
             view.ScheduleRefresh();
         }
@@ -122,6 +129,8 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
         private void SubscribeRows(IEnumerable<ButtonRowViewModel>? rows)
         {
+            UnsubscribeRows();
+
             _subscribedRows = rows;
             if (rows is null)
                 return;
@@ -170,6 +179,8 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
         private void SubscribeValues(object? values)
         {
+            UnsubscribeValues();
+
             if (values is INotifyPropertyChanged npc)
             {
                 _subscribedValues = npc;
@@ -190,11 +201,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
         private void ScheduleRefresh()
         {
-            if (!Dispatcher.CheckAccess())
-            {
-                Dispatcher.BeginInvoke(DispatcherPriority.Render, RefreshDiagram);
-                return;
-            }
             Dispatcher.BeginInvoke(DispatcherPriority.Render, RefreshDiagram);
         }
 
@@ -225,9 +231,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
         private void RefreshDiagram()
         {
-            var accentBrush = (Brush?)TryFindResource("Brush.accent") ?? Brushes.Orange;
-            var keyBrush = (Brush?)TryFindResource("Brush.pad-key") ?? Brushes.LightGray;
-
             foreach (var (input, shape) in _inputHighlights)
             {
                 bool active = SelectedInput == input;
@@ -244,7 +247,8 @@ namespace GameControllerForZwift.UI.WPF.Controls
                     }
                 }
 
-                shape.Fill = active ? accentBrush : keyBrush;
+                // SetResourceReference keeps a live DynamicResource binding so fills update across theme switches.
+                shape.SetResourceReference(Shape.FillProperty, active ? "Brush.accent" : "Brush.pad-key");
             }
 
             if (ControllerValues is null)
