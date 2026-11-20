@@ -59,7 +59,6 @@ namespace GameControllerForZwift.UI.WPF.Views
             // The import notice is non-blocking and hides itself (CFG-031).
             _noticeTimer = new DispatcherTimer { Interval = NoticeDuration };
             _noticeTimer.Tick += NoticeTimer_Tick;
-            SticksContent.MaxWidth = MaximumCardsWidth;
             DataContextChanged += OnDataContextChanged;
             SizeChanged += (_, e) => UpdateLayoutWidths(e.NewSize.Width);
 
