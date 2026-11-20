@@ -117,7 +117,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
 
                 _context.DataIntegrator.InputPolled += Raise.Event<EventHandler<InputStateChangedEventArgs>>(_context.DataIntegrator, new InputStateChangedEventArgs(new ControllerData { A = true }));
 
-                Assert.True(viewModel.CurrentControllerValues.A);
+                Assert.True(viewModel.CurrentControllerValues!.A);
                 Assert.Null(viewModel.SelectedRow);
                 Assert.False(viewModel.FunctionPicker.IsOpen);
                 Assert.False(row.IsSelected);
