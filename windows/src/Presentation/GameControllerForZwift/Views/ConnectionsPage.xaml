@@ -6,7 +6,7 @@
     <!-- docs/spec/screens/connections.md -->
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MaxWidth="720" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <StackPanel>
             <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc ConnectionsTitle}"
