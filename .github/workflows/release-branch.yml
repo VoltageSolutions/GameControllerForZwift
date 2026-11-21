@@ -1,11 +1,11 @@
 name: Release Branch
 
 # Keeps the version in step with a release branch made by hand: when release/vX.Y.Z is created, <Version> in
-# Directory.Build.props on that branch is set to X.Y.Z. The version must be higher than the latest release
+# windows/Directory.Build.props on that branch is set to X.Y.Z. The version must be higher than the latest release
 # (versions never go backwards).
 #
 # Branches pushed by a workflow with GITHUB_TOKEN do not trigger `create` events. That is why the branch the
-# CD Workflow opens after each release never runs this workflow: that job sets the version itself.
+# Windows CD workflow opens after each release never runs this workflow: that job sets the version itself.
 #
 # Run it by hand (workflow_dispatch) to try it: with dry_run (the default) it only reports what it would do.
 on:
@@ -68,16 +68,16 @@ jobs:
             git fetch --no-tags origin "+refs/heads/${BRANCH}:refs/remotes/origin/${BRANCH}"
             git switch -C "$BRANCH" "origin/${BRANCH}"
           elif [ "$DRY_RUN" = true ]; then
-            echo "${BRANCH} does not exist on origin; reading Directory.Build.props from ${GITHUB_REF_NAME} instead."
+            echo "${BRANCH} does not exist on origin; reading windows/Directory.Build.props from ${GITHUB_REF_NAME} instead."
           else
             echo "::error title=Branch not found::${BRANCH} does not exist on origin."
             exit 1
           fi
           current="$(bash "$vs" get)"
-          echo "Version in Directory.Build.props: ${current}"
+          echo "Version in windows/Directory.Build.props: ${current}"
           if [ "$current" = "$version" ]; then
-            echo "::notice title=Version already set::Directory.Build.props already has ${version}; nothing to commit."
-            echo "Directory.Build.props on ${BRANCH} already has ${version}; nothing to do." >> "$GITHUB_STEP_SUMMARY"
+            echo "::notice title=Version already set::windows/Directory.Build.props already has ${version}; nothing to commit."
+            echo "windows/Directory.Build.props on ${BRANCH} already has ${version}; nothing to do." >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
           if [ "$DRY_RUN" = true ]; then
@@ -86,7 +86,7 @@ jobs:
             exit 0
           fi
           bash "$vs" set "$version"
-          git add Directory.Build.props
+          git add windows/Directory.Build.props
           git -c user.name='github-actions[bot]' -c user.email='41898173+github-actions[bot]@users.noreply.github.com' \
             commit -m "Set version to ${version}" -m "Matches the branch name ${BRANCH}."
           git push origin "HEAD:refs/heads/${BRANCH}"

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# Version helpers for the workflows. The app version lives in one place: <Version> in Directory.Build.props.
+# Version helpers for the workflows. The app version lives in one place: <Version> in windows/Directory.Build.props.
 #
-#   version.sh get                 print the version from Directory.Build.props
-#   version.sh set X.Y.Z           write X.Y.Z into Directory.Build.props (keeps line endings and BOM)
+#   version.sh get                 print the version from windows/Directory.Build.props
+#   version.sh set X.Y.Z           write X.Y.Z into windows/Directory.Build.props (keeps line endings and BOM)
 #   version.sh latest-tag [--local] print the highest vX.Y.Z release tag as X.Y.Z (empty if none);
 #                                  reads origin's tags, or local tags with --local
 #   version.sh gt A B              exit 0 if version A is higher than version B
@@ -20,9 +20,9 @@ props_path() {
   if [ -n "${VERSION_PROPS:-}" ]; then echo "$VERSION_PROPS"; return; fi
   local top
   if top="$(git rev-parse --show-toplevel 2>/dev/null)"; then
-    echo "$top/Directory.Build.props"
+    echo "$top/windows/Directory.Build.props"
   else
-    echo "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/Directory.Build.props"
+    echo "$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)/windows/Directory.Build.props"
   fi
 }
 

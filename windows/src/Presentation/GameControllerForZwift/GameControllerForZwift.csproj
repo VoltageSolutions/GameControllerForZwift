@@ -1,0 +1,87 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+	<AssemblyName>GameControllerForZwift</AssemblyName>
+	<NoWarn>$(NoWarn);WPF0001</NoWarn>
+	<RepositoryUrl>https://github.com/VoltageSolutions/GameControllerForZwift</RepositoryUrl>
+	<RepositoryType>git</RepositoryType>
+	<PackageReadmeFile>README.md</PackageReadmeFile>
+	<ApplicationIcon>Assets\logo.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\kofi_logo.svg" />
+    <None Remove="Assets\logo.ico" />
+    <None Remove="Assets\logo.png" />
+    <None Remove="Assets\logo_transparent.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The window paints the warm bg token (UX-V-024), so the Fluent Mica backdrop is off. -->
+    <RuntimeHostConfigurationOption Include="Switch.System.Windows.Appearance.DisableFluentThemeWindowBackdrop" Value="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- UI strings. The fixed name keeps the resource name independent of folders and namespaces. -->
+    <EmbeddedResource Update="Resources\Strings.resx" LogicalName="GameControllerForZwift.Resources.Strings.resources" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="GameControllerForZwift.UnitTests" />
+  </ItemGroup>
+
+  <ItemGroup>
+		<None Include="..\..\..\..\ACKNOWLEDGEMENTS.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\kofi_logo.svg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Fonts\Figtree-Regular.ttf" />
+    <Resource Include="Assets\Fonts\Figtree-Medium.ttf" />
+    <Resource Include="Assets\Fonts\Figtree-SemiBold.ttf" />
+    <Resource Include="Assets\Fonts\Figtree-Bold.ttf" />
+    <Resource Include="Assets\Fonts\Figtree-ExtraBold.ttf" />
+    <!-- Release zips are flattened, so the license lands next to the exe. -->
+    <None Update="Assets\Fonts\OFL.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Figtree-OFL.txt</TargetPath>
+    </None>
+    <Resource Include="Assets\logo.ico" />
+    <Resource Include="Assets\logo.png" />
+    <Resource Include="Assets\logo_transparent.png" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageReference Include="DotNetProjects.SVGImage" Version="6.2.0" />
+    <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="10.0.15" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Application\GameControllerForZwift.Core\GameControllerForZwift.Core.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Gamepad\GameControllerForZwift.Gamepad.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\GameControllerForZwift.Network\GameControllerForZwift.Network.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>

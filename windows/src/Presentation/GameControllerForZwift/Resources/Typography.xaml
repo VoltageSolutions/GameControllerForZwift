@@ -1,0 +1,106 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:GameControllerForZwift.UI.WPF.Helpers"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+
+    <!--Typography-->
+
+    <!-- Figtree (UX-V-011). The app ships weights 400 to 800 in Assets/Fonts. Fluent control templates read
+         ContentControlThemeFontFamily, so every control uses Figtree too. -->
+    <FontFamily x:Key="Font.Figtree">pack://application:,,,/GameControllerForZwift;component/Assets/Fonts/#Figtree</FontFamily>
+    <FontFamily x:Key="ContentControlThemeFontFamily">pack://application:,,,/GameControllerForZwift;component/Assets/Fonts/#Figtree</FontFamily>
+    
+    <sys:Double x:Key="CaptionFontSize">12</sys:Double>
+    <sys:Double x:Key="BodyFontSize">14</sys:Double>
+    <sys:Double x:Key="SubtitleFontSize">20</sys:Double>
+    <sys:Double x:Key="TitleFontSize">28</sys:Double>
+    <sys:Double x:Key="TitleLargeFontSize">40</sys:Double>
+
+    <Style x:Key="BaseTextBlockStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource BodyFontSize}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="LineStackingStrategy" Value="MaxHeight" />
+    </Style>
+    <Style
+        x:Key="CaptionTextBlockStyle"
+        BasedOn="{StaticResource BaseTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource CaptionFontSize}" />
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style
+        x:Key="BodyTextBlockStyle"
+        BasedOn="{StaticResource BaseTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Normal" />
+    </Style>
+    <Style
+        x:Key="BodyStrongTextBlockStyle"
+        BasedOn="{StaticResource BaseTextBlockStyle}"
+        TargetType="TextBlock" />
+    <Style
+        x:Key="SubtitleTextBlockStyle"
+        BasedOn="{StaticResource BaseTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource SubtitleFontSize}" />
+    </Style>
+    <Style
+        x:Key="TitleTextBlockStyle"
+        BasedOn="{StaticResource BaseTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource TitleFontSize}" />
+    </Style>
+    <Style
+        x:Key="TitleLargeTextBlockStyle"
+        BasedOn="{StaticResource BaseTextBlockStyle}"
+        TargetType="TextBlock">
+        <Setter Property="FontSize" Value="{StaticResource TitleLargeFontSize}" />
+    </Style>
+
+    <!-- Type roles at desktop sizes (docs/spec/ux/visual-system.md, Type, tablet column). Headings are weight 800 and
+         body text 400 to 600 (UX-V-012). Every role uses tabular figures, so numbers do not jitter (UX-V-013). -->
+    <Style x:Key="Text.Body" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource Font.Figtree}" />
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Typography.NumeralAlignment" Value="Tabular" />
+    </Style>
+    <Style x:Key="Text.BodyStrong" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+    <Style x:Key="Text.Caption" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+    </Style>
+    <Style x:Key="Text.Title" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontSize" Value="28" />
+        <Setter Property="FontWeight" Value="ExtraBold" />
+    </Style>
+    <Style x:Key="Text.Display" TargetType="TextBlock" BasedOn="{StaticResource Text.Title}">
+        <Setter Property="FontSize" Value="52" />
+        <Setter Property="LineHeight" Value="56" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+    </Style>
+    <!-- A big live number, such as watts or gear. -->
+    <Style x:Key="Text.Readout" TargetType="TextBlock" BasedOn="{StaticResource Text.Title}">
+        <Setter Property="FontSize" Value="64" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
+    </Style>
+
+    <!--Other-->
+
+    <Style x:Key="ColorTilesPanelStyle" TargetType="{x:Type Border}">
+        <Style.Setters>
+            <Setter Property="Background" Value="{DynamicResource ControlExampleDisplayBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="{DynamicResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="CornerRadius" Value="8" />
+        </Style.Setters>
+    </Style>
+</ResourceDictionary>

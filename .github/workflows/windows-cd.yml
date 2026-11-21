@@ -1,0 +1,187 @@
+name: Windows CD
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'zensical.toml'
+      - '**/*.md'
+  # A manual run does the full release (publish, release, next branch) unless dry_run_next_branch is set.
+  # With dry_run_next_branch, only the "Open next release branch" job runs, in dry-run mode: it reports what it
+  # would do and never publishes, releases or pushes.
+  workflow_dispatch:
+    inputs:
+      dry_run_next_branch:
+        description: Only dry-run "Open next release branch" (no publish, no release, no push)
+        type: boolean
+        default: false
+
+concurrency:
+  group: windows-cd
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  publish:
+    name: Publish
+    if: ${{ !inputs.dry_run_next_branch }}
+    runs-on: windows-latest
+    timeout-minutes: 30
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      skip: ${{ steps.v.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Read version
+        id: v
+        shell: bash
+        run: |
+          version="$(bash .github/scripts/version.sh get)" || { echo "::error::Could not read <Version> from windows/Directory.Build.props"; exit 1; }
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "::notice title=No release::Tag v${version} already exists; nothing to publish."
+            echo "Tag v${version} already exists; no release created." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-dotnet@v6
+        if: steps.v.outputs.skip != 'true'
+        with:
+          global-json-file: windows/global.json
+          cache: true
+          cache-dependency-path: 'windows/**/*.csproj'
+
+      # dotnet publish restores and builds the app project (and the libraries it references) itself.
+      - name: Publish
+        if: steps.v.outputs.skip != 'true'
+        run: |
+          $proj = 'windows/src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj'
+          dotnet publish $proj -c Release -r win-x64 --self-contained false -o artifacts/fd
+          dotnet publish $proj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o artifacts/standalone
+          ./.github/scripts/check-publish.ps1 -Path artifacts/fd -RequireSdl2
+          ./.github/scripts/check-publish.ps1 -Path artifacts/standalone
+
+      - name: Package
+        if: steps.v.outputs.skip != 'true'
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          New-Item -ItemType Directory -Force release | Out-Null
+          # Flattened zips: publish output has no subfolders (verified above). PDBs are excluded.
+          Get-ChildItem artifacts/fd -File | Where-Object Extension -ne '.pdb' |
+            Compress-Archive -DestinationPath "release/GameControllerForZwift-$env:VERSION-win-x64.zip"
+          Get-ChildItem artifacts/standalone -File | Where-Object Extension -ne '.pdb' |
+            Compress-Archive -DestinationPath "release/GameControllerForZwift-$env:VERSION-win-x64-standalone.zip"
+          Get-ChildItem release/*.zip | ForEach-Object {
+            "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)"
+          } | Out-File -FilePath release/SHA256SUMS.txt -Encoding ascii
+          Get-Content release/SHA256SUMS.txt
+
+      - name: Upload release files
+        if: steps.v.outputs.skip != 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: release
+          path: release/*
+          if-no-files-found: error
+
+  deploy:
+    name: Deploy Release to GitHub
+    needs: publish
+    if: ${{ !inputs.dry_run_next_branch && needs.publish.outputs.skip != 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.publish.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: release
+          path: release
+
+      - name: Create release
+        run: |
+          notes="Two packages for Windows x64:
+
+          - GameControllerForZwift-${VERSION}-win-x64.zip: framework-dependent, requires the .NET 10 Desktop Runtime.
+          - GameControllerForZwift-${VERSION}-win-x64-standalone.zip: self-contained, no runtime install needed (larger download).
+
+          Verify downloads with SHA256SUMS.txt."
+          gh release create "v${VERSION}" --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --title "v${VERSION}" --notes "$notes" \
+            "release/GameControllerForZwift-${VERSION}-win-x64.zip" \
+            "release/GameControllerForZwift-${VERSION}-win-x64-standalone.zip" \
+            release/SHA256SUMS.txt
+
+  # After a release, open the branch for the next minor version (release/vX.(Y+1).0) with the version already set.
+  # Branches pushed with GITHUB_TOKEN do not trigger the Release Branch workflow (no `create` event for them),
+  # so this job sets the version itself.
+  next-branch:
+    name: Open next release branch
+    needs: [publish, deploy]
+    # Runs after a release was created, or alone in a dry run (publish and deploy are skipped then).
+    if: >-
+      !cancelled() && (
+        inputs.dry_run_next_branch ||
+        (needs.deploy.result == 'success' && needs.publish.outputs.skip != 'true'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    env:
+      DRY_RUN: ${{ inputs.dry_run_next_branch == true }}
+      RELEASED: ${{ needs.publish.outputs.version }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Create next release branch
+        run: |
+          vs=.github/scripts/version.sh
+          if [ "$DRY_RUN" = true ]; then
+            version="$(bash "$vs" get)"
+            latest="$(bash "$vs" latest-tag)"
+            echo "Dry run on ${GITHUB_REF_NAME} (${GITHUB_SHA}): nothing is published or pushed."
+            echo "Version in windows/Directory.Build.props: ${version}"
+            echo "Latest release tag: v${latest:-none}"
+            if git ls-remote --exit-code --tags origin "refs/tags/v${version}" > /dev/null; then
+              echo "A real run would NOT release: tag v${version} already exists, so it would stop before this job. For ${version}, this job would do:"
+            else
+              echo "A real run would release v${version}, then this job would do:"
+            fi
+          else
+            version="$RELEASED"
+          fi
+          next="$(bash "$vs" next-minor "$version")"
+          branch="release/v${next}"
+          if git ls-remote --exit-code --heads origin "refs/heads/${branch}" > /dev/null; then
+            echo "::notice title=Next release branch exists::${branch} already exists; nothing to do."
+            echo "Next release branch ${branch} already exists; not changed." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if [ "$DRY_RUN" = true ]; then
+            echo "Would create ${branch} from ${GITHUB_SHA}, set the version to ${next} and push it."
+            echo "Dry run: would open ${branch} (version ${next}) from ${GITHUB_SHA}." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git switch -c "$branch" "$GITHUB_SHA"
+          bash "$vs" set "$next"
+          git add windows/Directory.Build.props
+          git -c user.name='github-actions[bot]' -c user.email='41898173+github-actions[bot]@users.noreply.github.com' \
+            commit -m "Start ${next} development" -m "Opened automatically after v${version} was released."
+          git push origin "HEAD:refs/heads/${branch}"
+          echo "::notice title=Next release branch::Opened ${branch} with version ${next}."
+          echo "Opened next release branch ${branch} (version ${next})." >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,652 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- UI text, English (US) source strings (docs/spec/ux/localization.md). Every data element needs a comment for translators. -->
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WindowTitle" xml:space="preserve">
+    <value>Game Controller for Zwift</value>
+    <comment>Window title in the taskbar and Alt+Tab.</comment>
+  </data>
+  <data name="TitleBarText" xml:space="preserve">
+    <value>VOLTAGE · Game Controller for Zwift</value>
+    <comment>App name in the title bar. VOLTAGE and Zwift are brand names (UX-L-008).</comment>
+  </data>
+  <data name="CaptionMinimize" xml:space="preserve">
+    <value>Minimize</value>
+    <comment>Screen reader name of the title bar's minimize button.</comment>
+  </data>
+  <data name="CaptionMaximize" xml:space="preserve">
+    <value>Maximize</value>
+    <comment>Screen reader name of the title bar's maximize button.</comment>
+  </data>
+  <data name="CaptionRestore" xml:space="preserve">
+    <value>Restore</value>
+    <comment>Screen reader name of the title bar's maximize button while the window is maximized.</comment>
+  </data>
+  <data name="CaptionClose" xml:space="preserve">
+    <value>Close</value>
+    <comment>Screen reader name of the title bar's close button.</comment>
+  </data>
+  <data name="NavMain" xml:space="preserve">
+    <value>Main</value>
+    <comment>Screen reader name of the list of tabs.</comment>
+  </data>
+  <data name="NavRide" xml:space="preserve">
+    <value>Ride</value>
+    <comment>Tab label: the riding home screen.</comment>
+  </data>
+  <data name="NavButtons" xml:space="preserve">
+    <value>Buttons</value>
+    <comment>Tab label: what each controller button does.</comment>
+  </data>
+  <data name="NavConnections" xml:space="preserve">
+    <value>Connections</value>
+    <comment>Tab label: the controller and Zwift connections.</comment>
+  </data>
+  <data name="NavConnectionsAlert" xml:space="preserve">
+    <value>{0}, Zwift not connected</value>
+    <comment>Screen reader name of the Connections tab while its warning dot shows. {0} is the tab label.</comment>
+  </data>
+  <data name="NavBack" xml:space="preserve">
+    <value>Back</value>
+    <comment>Screen reader name of the back button on a screen opened from the More menu.</comment>
+  </data>
+  <data name="MenuMore" xml:space="preserve">
+    <value>More: settings, help, credits, support</value>
+    <comment>Screen reader name of the More button while its menu is closed.</comment>
+  </data>
+  <data name="MenuClose" xml:space="preserve">
+    <value>Close menu</value>
+    <comment>Screen reader name of the More button while its menu is open.</comment>
+  </data>
+  <data name="MenuName" xml:space="preserve">
+    <value>More</value>
+    <comment>Screen reader name of the More menu.</comment>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Settings</value>
+    <comment>More menu item.</comment>
+  </data>
+  <data name="MenuHelp" xml:space="preserve">
+    <value>Help and feedback</value>
+    <comment>More menu item.</comment>
+  </data>
+  <data name="MenuCredits" xml:space="preserve">
+    <value>Credits</value>
+    <comment>More menu item.</comment>
+  </data>
+  <data name="MenuSupport" xml:space="preserve">
+    <value>Support this project</value>
+    <comment>More menu item.</comment>
+  </data>
+  <data name="MenuStyleGallery" xml:space="preserve">
+    <value>Style gallery</value>
+    <comment>More menu item shown only in Debug builds, for developers.</comment>
+  </data>
+  <data name="RideTitle" xml:space="preserve">
+    <value>Ride</value>
+    <comment>Title of the Ride screen.</comment>
+  </data>
+  <data name="RidePlaceholder" xml:space="preserve">
+    <value>Set up what each button does on the Buttons tab.</value>
+    <comment>Text on the Ride screen, which has no content of its own yet.</comment>
+  </data>
+  <data name="ConnectionsTitle" xml:space="preserve">
+    <value>Connections</value>
+    <comment>Title of the Connections screen.</comment>
+  </data>
+  <data name="ConnectionsZwiftCard" xml:space="preserve">
+    <value>Zwift</value>
+    <comment>Screen reader name of the card on the Connections screen that shows the Zwift status.</comment>
+  </data>
+  <data name="ZwiftConnected" xml:space="preserve">
+    <value>Zwift is connected to Voltage Gamepad</value>
+    <comment>Zwift status on the Connections screen when Zwift is connected. Keep Voltage Gamepad, which is the device name Zwift shows for this app.</comment>
+  </data>
+  <data name="ZwiftNotConnected" xml:space="preserve">
+    <value>Zwift isn't connected yet</value>
+    <comment>Zwift status on the Connections screen when Zwift is not connected.</comment>
+  </data>
+  <data name="ConnectionsControllerCard" xml:space="preserve">
+    <value>Your controller</value>
+    <comment>Screen reader name of the card on the Connections screen that shows your controller.</comment>
+  </data>
+  <data name="ConnectionsControllerHere" xml:space="preserve">
+    <value>Your {0} is here</value>
+    <comment>Connections screen, your controller card, when a controller is connected. {0} is the controller name, for example Xbox Series X Controller.</comment>
+  </data>
+  <data name="ConnectionsControllerAwake" xml:space="preserve">
+    <value>Awake and connected</value>
+    <comment>Connections screen, second line under the controller name when a controller is connected.</comment>
+  </data>
+  <data name="ConnectionsNoController" xml:space="preserve">
+    <value>Wake your controller</value>
+    <comment>Connections screen, your controller card, when no controller is connected. It asks the person to press a button on the controller to wake it.</comment>
+  </data>
+  <data name="ConnectionsLooking" xml:space="preserve">
+    <value>Looking for your controller...</value>
+    <comment>Connections screen, second line when no controller is connected. The app is still scanning for one.</comment>
+  </data>
+  <data name="ConnectionsPickerLabel" xml:space="preserve">
+    <value>Use a different controller</value>
+    <comment>Connections screen, label of the dropdown that switches to another connected controller.</comment>
+  </data>
+  <data name="ConnectionsPairBluetooth" xml:space="preserve">
+    <value>Pair a new Bluetooth controller</value>
+    <comment>Connections screen, button that opens the Windows Bluetooth settings so the person can pair a controller.</comment>
+  </data>
+  <data name="ConnectionsShowMeHow" xml:space="preserve">
+    <value>Show me how</value>
+    <comment>Connections screen, button on the Zwift card that shows the three steps to pair with Zwift again.</comment>
+  </data>
+  <data name="ConnectionsHideSteps" xml:space="preserve">
+    <value>Hide steps</value>
+    <comment>Connections screen, button on the Zwift card that hides the three steps to pair with Zwift. It replaces Show me how while the steps are open.</comment>
+  </data>
+  <data name="ConnectionsTrainerReminder" xml:space="preserve">
+    <value>Set Power Source back to your trainer in Zwift.</value>
+    <comment>Connections screen, reminder under the Zwift status while Zwift is connected. Power Source is the Zwift setting that picks the trainer.</comment>
+  </data>
+  <data name="ZwiftStepPowerSource" xml:space="preserve">
+    <value>1. Power Source: Voltage Gamepad</value>
+    <comment>Zwift step 1, with its number. In Zwift, the person sets the Power Source device to Voltage Gamepad. Keep Power Source and Voltage Gamepad as they appear in Zwift.</comment>
+  </data>
+  <data name="ZwiftStepControls" xml:space="preserve">
+    <value>2. Controls: Voltage Gamepad</value>
+    <comment>Zwift step 2, with its number. In Zwift, the person sets the Controls device to Voltage Gamepad. Keep Controls and Voltage Gamepad as they appear in Zwift.</comment>
+  </data>
+  <data name="ZwiftStepTrainer" xml:space="preserve">
+    <value>3. Power Source: your trainer</value>
+    <comment>Zwift step 3, with its number. In Zwift, the person sets the Power Source device back to their trainer. Keep Power Source as it appears in Zwift.</comment>
+  </data>
+  <data name="AppearanceLight" xml:space="preserve">
+    <value>Light</value>
+    <comment>Settings, app theme choice.</comment>
+  </data>
+  <data name="AppearanceDark" xml:space="preserve">
+    <value>Dark</value>
+    <comment>Settings, app theme choice.</comment>
+  </data>
+  <data name="AppearanceMatchWindows" xml:space="preserve">
+    <value>Match Windows</value>
+    <comment>Settings, app theme choice that follows the Windows app mode.</comment>
+  </data>
+  <data name="ButtonsTitle" xml:space="preserve">
+    <value>Buttons</value>
+    <comment>Title of the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsControllerName" xml:space="preserve">
+    <value>Your {0}</value>
+    <comment>Buttons screen, line under the title that names the controller. {0} is the controller name, for example Xbox Series X Controller.</comment>
+  </data>
+  <data name="ButtonsControllerImageName" xml:space="preserve">
+    <value>Your controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsHint" xml:space="preserve">
+    <value>Press a button on your controller to see it light up. Tap a row to change what it does.</value>
+    <comment>Buttons screen hint under the title. Pressing a button on the controller lights that button's row. Tapping a row opens the function panel.</comment>
+  </data>
+  <data name="ButtonsNoController" xml:space="preserve">
+    <value>Wake your controller</value>
+    <comment>Buttons screen when no controller is connected. It asks the person to press a button on the controller to wake it.</comment>
+  </data>
+  <data name="ButtonsLooking" xml:space="preserve">
+    <value>Looking for your controller...</value>
+    <comment>Buttons screen, second line when no controller is connected. The app is still scanning for one.</comment>
+  </data>
+  <data name="ButtonsMappingPicker" xml:space="preserve">
+    <value>Mapping</value>
+    <comment>Screen reader name of the dropdown that lists the saved mappings (what each button does) for the controller.</comment>
+  </data>
+  <data name="ButtonsUnsaved" xml:space="preserve">
+    <value>Unsaved changes</value>
+    <comment>Buttons screen, shown next to the selected mapping when it has edits that are not saved.</comment>
+  </data>
+  <data name="ButtonsSave" xml:space="preserve">
+    <value>Save</value>
+    <comment>Button on the Buttons screen that saves the changes to the selected mapping.</comment>
+  </data>
+  <data name="ButtonsSaveAs" xml:space="preserve">
+    <value>Save as new</value>
+    <comment>Button on the Buttons screen that saves the current buttons as a new mapping.</comment>
+  </data>
+  <data name="ButtonsDelete" xml:space="preserve">
+    <value>Delete</value>
+    <comment>Button on the Buttons screen that deletes the selected mapping.</comment>
+  </data>
+  <data name="ButtonsMore" xml:space="preserve">
+    <value>More: rename, import, open folder, reset to default</value>
+    <comment>Screen reader name of the More button next to Save on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsMenuImport" xml:space="preserve">
+    <value>Import a mapping...</value>
+    <comment>Menu item on the Buttons screen. It opens a file picker to import a mapping.</comment>
+  </data>
+  <data name="ButtonsMenuRename" xml:space="preserve">
+    <value>Rename...</value>
+    <comment>Menu item on the Buttons screen. It renames the selected mapping.</comment>
+  </data>
+  <data name="ButtonsMenuOpenFolder" xml:space="preserve">
+    <value>Open folder</value>
+    <comment>Menu item on the Buttons screen. It opens the folder that holds the saved mappings in File Explorer.</comment>
+  </data>
+  <data name="ButtonsMenuReset" xml:space="preserve">
+    <value>Reset to default</value>
+    <comment>Menu item on the Buttons screen. It sets every button to what the Default mapping does.</comment>
+  </data>
+  <data name="ButtonsShowOthers" xml:space="preserve">
+    <value>Show mappings from other controllers</value>
+    <comment>Checkbox on the Buttons screen. When checked, the mapping list also shows mappings saved for other controllers.</comment>
+  </data>
+  <data name="ButtonsShowOthersTip" xml:space="preserve">
+    <value>Picking one saves a copy for this controller.</value>
+    <comment>Tooltip of the checkbox that shows mappings from other controllers.</comment>
+  </data>
+  <data name="ButtonsTabs" xml:space="preserve">
+    <value>Inputs</value>
+    <comment>Screen reader name of the two tabs on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsTabButtons" xml:space="preserve">
+    <value>Buttons</value>
+    <comment>Tab on the Buttons screen that lists the buttons, the D-pad, and the bumpers.</comment>
+  </data>
+  <data name="ButtonsTabSticks" xml:space="preserve">
+    <value>Sticks and triggers</value>
+    <comment>Tab on the Buttons screen that lists the sticks and the triggers.</comment>
+  </data>
+  <data name="ButtonsRowName" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>Screen reader name of a row on the Buttons screen. {0} is the input, for example Right bumper, and {1} is what it does, for example Shift up.</comment>
+  </data>
+  <data name="ButtonsChanged" xml:space="preserve">
+    <value>Changed</value>
+    <comment>Buttons screen, shown on a row when what that button does differs from the saved mapping.</comment>
+  </data>
+  <data name="ButtonsListName" xml:space="preserve">
+    <value>What each button does</value>
+    <comment>Screen reader name of the list of rows on the Buttons tab.</comment>
+  </data>
+  <data name="ButtonsSticksListName" xml:space="preserve">
+    <value>What each stick and trigger does</value>
+    <comment>Screen reader name of the list of rows on the Sticks and triggers tab.</comment>
+  </data>
+  <data name="ButtonsLeftStick" xml:space="preserve">
+    <value>Left stick</value>
+    <comment>Heading of the card for the left stick on the Sticks and triggers tab.</comment>
+  </data>
+  <data name="ButtonsRightStick" xml:space="preserve">
+    <value>Right stick</value>
+    <comment>Heading of the card for the right stick on the Sticks and triggers tab.</comment>
+  </data>
+  <data name="ButtonsTriggers" xml:space="preserve">
+    <value>Triggers</value>
+    <comment>Heading of the card for the two triggers on the Sticks and triggers tab.</comment>
+  </data>
+  <data name="ButtonsStickPosition" xml:space="preserve">
+    <value>Where the stick is now</value>
+    <comment>Screen reader name of the live drawing of a stick's position.</comment>
+  </data>
+  <data name="ButtonsTriggerFill" xml:space="preserve">
+    <value>How far the trigger is pulled</value>
+    <comment>Screen reader name of the live bar that shows how far a trigger is pulled.</comment>
+  </data>
+  <data name="ButtonsBrakeCaution" xml:space="preserve">
+    <value>Even a light squeeze can stop you.</value>
+    <comment>Caution on the Sticks and triggers tab. A trigger mapped to Brake slows the rider as soon as it is squeezed a little.</comment>
+  </data>
+  <data name="ButtonsPickerTitle" xml:space="preserve">
+    <value>What should {0} do?</value>
+    <comment>Heading of the panel where the person picks a Zwift function. {0} is the input, for example RB.</comment>
+  </data>
+  <data name="ButtonsPickerClose" xml:space="preserve">
+    <value>Close</value>
+    <comment>Screen reader name of the button that closes the panel where the person picks a Zwift function.</comment>
+  </data>
+  <data name="ButtonsNoticeDismiss" xml:space="preserve">
+    <value>Dismiss</value>
+    <comment>Screen reader name of the button that dismisses the notice on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsNoticeIcon" xml:space="preserve">
+    <value>Success</value>
+    <comment>Screen reader name of the check icon in the notice on the Buttons screen.</comment>
+  </data>
+  <data name="FunctionGroupRiding" xml:space="preserve">
+    <value>Riding</value>
+    <comment>Heading of a group of Zwift functions in the panel where the person picks what a button does. The groups are Riding, Zwift buttons, Menus, This app, and Nothing. Zwift is a brand name.</comment>
+  </data>
+  <data name="FunctionGroupZwift" xml:space="preserve">
+    <value>Zwift buttons</value>
+    <comment>Heading of a group of Zwift functions in the panel where the person picks what a button does. The groups are Riding, Zwift buttons, Menus, This app, and Nothing. Zwift is a brand name.</comment>
+  </data>
+  <data name="FunctionGroupMenus" xml:space="preserve">
+    <value>Menus</value>
+    <comment>Heading of a group of Zwift functions in the panel where the person picks what a button does. The groups are Riding, Zwift buttons, Menus, This app, and Nothing. Zwift is a brand name.</comment>
+  </data>
+  <data name="FunctionGroupApp" xml:space="preserve">
+    <value>This app</value>
+    <comment>Heading of a group of Zwift functions in the panel where the person picks what a button does. The groups are Riding, Zwift buttons, Menus, This app, and Nothing. Zwift is a brand name.</comment>
+  </data>
+  <data name="FunctionGroupNothing" xml:space="preserve">
+    <value>Nothing</value>
+    <comment>Heading of a group of Zwift functions in the panel where the person picks what a button does. The groups are Riding, Zwift buttons, Menus, This app, and Nothing. Zwift is a brand name.</comment>
+  </data>
+  <data name="FunctionShiftUpTitle" xml:space="preserve">
+    <value>Shift up</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionShiftUpHint" xml:space="preserve">
+    <value>Harder gear</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionShiftDownTitle" xml:space="preserve">
+    <value>Shift down</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionShiftDownHint" xml:space="preserve">
+    <value>Easier gear</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionSteerLeftTitle" xml:space="preserve">
+    <value>Steer left</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionSteerLeftHint" xml:space="preserve">
+    <value>Turn left in Zwift</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionSteerRightTitle" xml:space="preserve">
+    <value>Steer right</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionSteerRightHint" xml:space="preserve">
+    <value>Turn right in Zwift</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionBrakeTitle" xml:space="preserve">
+    <value>Brake</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionBrakeHint" xml:space="preserve">
+    <value>Even a light squeeze can stop you</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionRideOnTitle" xml:space="preserve">
+    <value>Ride On</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionRideOnHint" xml:space="preserve">
+    <value>Hold to send Ride Ons to nearby riders (Zwift's behavior)</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionPowerupTitle" xml:space="preserve">
+    <value>Power-up</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionPowerupHint" xml:space="preserve">
+    <value>Hold to skip a workout block (Zwift's behavior)</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionNavigateUpTitle" xml:space="preserve">
+    <value>Navigate up</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionNavigateUpHint" xml:space="preserve">
+    <value>In a ride, opens the action bar</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionNavigateDownTitle" xml:space="preserve">
+    <value>Navigate down</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionNavigateDownHint" xml:space="preserve">
+    <value>In a ride, makes a U-turn</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionNavigateLeftTitle" xml:space="preserve">
+    <value>Navigate left</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionNavigateLeftHint" xml:space="preserve">
+    <value>Move left in a Zwift menu</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionNavigateRightTitle" xml:space="preserve">
+    <value>Navigate right</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionNavigateRightHint" xml:space="preserve">
+    <value>Move right in a Zwift menu</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionSelectTitle" xml:space="preserve">
+    <value>Select</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionSelectHint" xml:space="preserve">
+    <value>Choose the highlighted item</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionGoBackTitle" xml:space="preserve">
+    <value>Back</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionGoBackHint" xml:space="preserve">
+    <value>Go back, or open the menu in a ride</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="FunctionNoneTitle" xml:space="preserve">
+    <value>No action</value>
+    <comment>Name of a Zwift function on the Buttons screen: in a row and in the panel where the person picks what a button does. It follows the name on a Zwift Ride controller.</comment>
+  </data>
+  <data name="FunctionNoneHint" xml:space="preserve">
+    <value>Nothing happens when you press it</value>
+    <comment>One line under the function's name in the panel where the person picks what a button does. It says what the function does.</comment>
+  </data>
+  <data name="ButtonsInputAChip" xml:space="preserve">
+    <value>A</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputAName" xml:space="preserve">
+    <value>A button</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputBChip" xml:space="preserve">
+    <value>B</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputBName" xml:space="preserve">
+    <value>B button</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputXChip" xml:space="preserve">
+    <value>X</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputXName" xml:space="preserve">
+    <value>X button</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputYChip" xml:space="preserve">
+    <value>Y</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputYName" xml:space="preserve">
+    <value>Y button</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputMenuChip" xml:space="preserve">
+    <value>Menu</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputMenuName" xml:space="preserve">
+    <value>Menu button</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputViewChip" xml:space="preserve">
+    <value>View</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputViewName" xml:space="preserve">
+    <value>View button</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputDPadUpChip" xml:space="preserve">
+    <value>D-pad ↑</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputDPadUpName" xml:space="preserve">
+    <value>D-pad up</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputDPadDownChip" xml:space="preserve">
+    <value>D-pad ↓</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputDPadDownName" xml:space="preserve">
+    <value>D-pad down</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputDPadLeftChip" xml:space="preserve">
+    <value>D-pad ←</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputDPadLeftName" xml:space="preserve">
+    <value>D-pad left</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputDPadRightChip" xml:space="preserve">
+    <value>D-pad →</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputDPadRightName" xml:space="preserve">
+    <value>D-pad right</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputLeftBumperChip" xml:space="preserve">
+    <value>LB</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputLeftBumperName" xml:space="preserve">
+    <value>Left bumper</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputRightBumperChip" xml:space="preserve">
+    <value>RB</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputRightBumperName" xml:space="preserve">
+    <value>Right bumper</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickClickChip" xml:space="preserve">
+    <value>LS click</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickClickName" xml:space="preserve">
+    <value>Left stick click</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickTiltUpChip" xml:space="preserve">
+    <value>LS ↑</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickTiltUpName" xml:space="preserve">
+    <value>Left stick up</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickTiltDownChip" xml:space="preserve">
+    <value>LS ↓</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickTiltDownName" xml:space="preserve">
+    <value>Left stick down</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickTiltLeftChip" xml:space="preserve">
+    <value>LS ←</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickTiltLeftName" xml:space="preserve">
+    <value>Left stick left</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickTiltRightChip" xml:space="preserve">
+    <value>LS →</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputLeftThumbstickTiltRightName" xml:space="preserve">
+    <value>Left stick right</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickClickChip" xml:space="preserve">
+    <value>RS click</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickClickName" xml:space="preserve">
+    <value>Right stick click</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickTiltUpChip" xml:space="preserve">
+    <value>RS ↑</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickTiltUpName" xml:space="preserve">
+    <value>Right stick up</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickTiltDownChip" xml:space="preserve">
+    <value>RS ↓</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickTiltDownName" xml:space="preserve">
+    <value>Right stick down</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickTiltLeftChip" xml:space="preserve">
+    <value>RS ←</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickTiltLeftName" xml:space="preserve">
+    <value>Right stick left</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickTiltRightChip" xml:space="preserve">
+    <value>RS →</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputRightThumbstickTiltRightName" xml:space="preserve">
+    <value>Right stick right</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputLeftTriggerChip" xml:space="preserve">
+    <value>LT</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputLeftTriggerName" xml:space="preserve">
+    <value>Left trigger</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsInputRightTriggerChip" xml:space="preserve">
+    <value>RT</value>
+    <comment>Short label of a controller input in a row on the Buttons screen and in the heading of the picker panel. Keep it short. LB, RB, LS, RS, LT, and RT mean left and right bumper, stick, and trigger as printed on the controller.</comment>
+  </data>
+  <data name="ButtonsInputRightTriggerName" xml:space="preserve">
+    <value>Right trigger</value>
+    <comment>Spoken name of a controller input, read out by screen readers on the Buttons screen.</comment>
+  </data>
+  <data name="FunctionItemName" xml:space="preserve">
+    <value>{0}, {1}</value>
+    <comment>Screen reader name of a function in the panel where the person picks what a button does. {0} is the function, for example Shift up, and {1} is the line that says what it does, for example Harder gear.</comment>
+  </data>
+</root>

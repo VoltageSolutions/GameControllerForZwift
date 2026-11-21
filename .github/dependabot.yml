@@ -9,14 +9,14 @@ updates:
         patterns: ['*']
 
   - package-ecosystem: nuget
-    directory: /
+    directory: /windows
     schedule:
       interval: weekly
     groups:
       nuget-minor-patch:
         update-types: [minor, patch]
     ignore:
-      # UI-test toolchain: majors need manual coordination with the Appium server/driver pinned in ci.yml
+      # UI-test toolchain: majors need manual coordination with the Appium server/driver pinned in windows-ci.yml
       - dependency-name: Appium.WebDriver
         update-types: ['version-update:semver-major']
       - dependency-name: Selenium.*

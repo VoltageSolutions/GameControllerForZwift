@@ -34,8 +34,28 @@ nav = [
   ] },
   { "Spec" = [
     "spec/index.md",
-    "spec/saved-configurations.md",
-    "spec/controller-detection.md",
+    { "Features" = [
+      "spec/features/saved-configurations.md",
+      "spec/features/controller-detection.md",
+    ] },
+    { "UX" = [
+      "spec/ux/index.md",
+      "spec/ux/principles.md",
+      "spec/ux/visual-system.md",
+      "spec/ux/voice.md",
+      "spec/ux/localization.md",
+      "spec/ux/navigation.md",
+      "spec/ux/controller-input.md",
+      "spec/ux/accessibility.md",
+      "spec/ux/platforms.md",
+    ] },
+    { "Screens" = [
+      "spec/screens/setup.md",
+      "spec/screens/ride.md",
+      "spec/screens/buttons.md",
+      "spec/screens/connections.md",
+      "spec/screens/settings-help.md",
+    ] },
   ] },
 ]
 

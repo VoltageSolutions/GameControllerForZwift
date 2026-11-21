@@ -1,0 +1,150 @@
+name: Windows CodeQL and Coverage
+
+# Refreshes what pull requests are compared against: CodeQL alerts and Codecov coverage for main.
+# Windows CI only runs on pull requests.
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - 'zensical.toml'
+      - '**/*.md'
+  workflow_dispatch:
+
+concurrency:
+  group: windows-codeql-and-coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  APP_PROJECT: windows/src/Presentation/GameControllerForZwift/GameControllerForZwift.csproj
+  PORTABLE_TESTS: >-
+    windows/tests/GameControllerForZwift.Core.UnitTests
+    windows/tests/GameControllerForZwift.Network.UnitTests
+    windows/tests/GameControllerForZwift.Network.IntegrationTests
+    windows/tests/GameControllerForZwift.Gamepad.UnitTests
+
+jobs:
+  codeql:
+    name: CodeQL
+    runs-on: windows-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: windows/global.json
+          cache: true
+          cache-dependency-path: 'windows/**/*.csproj'
+
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: csharp
+          build-mode: manual
+          config-file: ./.github/codeql/codeql-config.yml
+
+      # Only the shipping projects are built inside the CodeQL window (the app pulls in Core/Gamepad/Network):
+      # for compiled languages CodeQL analyzes what the build compiles, and paths-ignore is not applied to them.
+      - name: Build shipping projects
+        run: dotnet build $env:APP_PROJECT -c Release
+
+      - uses: github/codeql-action/analyze@v4
+        id: analyze
+        with:
+          category: '/language:csharp'
+          output: sarif-results
+          upload: never
+
+      # WPF generates *.g.cs / *.g.i.cs files under obj/ that get compiled and analyzed. paths-ignore does not apply to
+      # compiled languages, so alerts in generated files are removed from the SARIF before it is uploaded.
+      - name: Filter generated files from SARIF
+        uses: advanced-security/filter-sarif@v1
+        with:
+          patterns: |
+            -**/*.g.cs
+            -**/*.g.i.cs
+            -**/obj/**
+          input: sarif-results/csharp.sarif
+          output: sarif-results/csharp.sarif
+
+      - name: Upload SARIF
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: sarif-results/csharp.sarif
+          category: '/language:csharp'
+
+  coverage:
+    name: Coverage
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      # Checkout also gives Codecov the repository layout for path fixing.
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: windows/global.json
+          cache: true
+          cache-dependency-path: 'windows/**/*.csproj'
+
+      - name: Restore
+        run: dotnet restore windows/GameControllerForZwift.sln
+
+      - name: Build solution (Release)
+        run: dotnet build windows/GameControllerForZwift.sln -c Release --no-restore
+
+      # Unit and integration tests only (no UI tests). continue-on-error so coverage is still uploaded;
+      # the final step fails the job.
+      - name: Unit tests
+        id: unit-run
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $rc = 0
+          $projects = @('windows/tests/GameControllerForZwift.UnitTests') + @(($env:PORTABLE_TESTS -split '\s+') | Where-Object { $_ })
+          foreach ($p in $projects) {
+            $name = Split-Path $p -Leaf
+            dotnet test $p -c Release --no-build --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"
+            if ($LASTEXITCODE -ne 0) { $rc = 1 }
+          }
+          exit $rc
+
+      # On Windows the Codecov action expands a glob into several bare arguments, which its CLI rejects.
+      # List the files here and pass them as one comma-separated value. The copies under "In" folders are
+      # duplicates attached by the TRX logger, so skip them.
+      - name: Find coverage files
+        id: coverage-files
+        if: ${{ !cancelled() }}
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem TestResults -Recurse -Filter coverage.cobertura.xml -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -notmatch '[\\/]In[\\/]' } |
+            ForEach-Object { (Resolve-Path -Relative $_.FullName) -replace '\\', '/' }
+          if (-not $files) {
+            echo "::error title=Coverage skipped::Coverage skipped: unit tests did not produce coverage, see Unit tests"
+            exit 1
+          }
+          $files | ForEach-Object { Write-Host $_ }
+          "files=$($files -join ',')" >> $env:GITHUB_OUTPUT
+
+      - uses: codecov/codecov-action@v7
+        if: ${{ !cancelled() }}
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ${{ steps.coverage-files.outputs.files }}
+          fail_ci_if_error: true
+
+      - name: Fail if any test failed
+        if: ${{ !cancelled() && steps.unit-run.outcome == 'failure' }}
+        shell: bash
+        run: echo "::error title=Unit tests failed::unit tests failed (unit/integration test step reported failure)."; exit 1

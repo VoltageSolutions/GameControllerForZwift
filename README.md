@@ -10,16 +10,16 @@
 </p>
 
 <p align="center">
-  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img alt="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/docs-deploy.yml/badge.svg?branch=main"></a>
+  <a href="https://VoltageSolutions.github.io/GameControllerForZwift" title="Docs"><img alt="Docs" src="https://github.com/VoltageSolutions/GameControllerForZwift/actions/workflows/docs-cd.yml/badge.svg?branch=main"></a>
   &nbsp;
   <a href="https://github.com/VoltageSolutions/GameControllerForZwift/releases"><img alt="Current Release" src="https://img.shields.io/github/release/VoltageSolutions/GameControllerForZwift.svg"></a>
 </p>
 
 ## Introduction
 
-This project lets you use standard video game controllers with Zwift. It gives you the kind of control you get from Zwift-compatible controllers like the [Zwift Play Controllers](https://us.zwift.com/products/zwift-play?variant=43737779896576) or the [Wahoo Kickr Bike Shift](https://www.wahoofitness.com/devices/indoor-cycling/smart-bikes/kickr-bike-shift-buy): shifting, steering, braking and menu navigation. You can use controllers like Nintendo Switch Joy-Cons, Xbox controllers and other popular game controllers you already own.
+This project lets you use standard video game controllers with Zwift. It gives you the kind of control you get from Zwift-compatible controllers like the [Zwift Ride](https://us.zwift.com/products/zwift-ride-smart-frame), [Zwift Click](https://us.zwift.com/products/zwift-cog-and-click-upgrade-kit), or the [Wahoo Kickr Bike Shift](https://www.wahoofitness.com/devices/indoor-cycling/smart-bikes/kickr-bike-shift-buy): shifting, steering, braking, and menu navigation. You can use controllers like Nintendo Switch Joy-Cons, Xbox controllers, PlayStation DualSense, other game controllers you already own.
 
-The app shows up in Zwift as a Zwift Ride controller called **Voltage Gamepad**, over your local network. Zwift can run on the same Windows computer or on another device on the same network, such as a Mac, tablet or Apple TV.
+The app shows up in Zwift as a Zwift Ride controller called **Voltage Gamepad**, over your local network. Zwift can run on the same Windows computer or on another device on the same network, such as a Mac, Android or iOS phone or tablet, or Apple TV.
 
 Game Controller for Zwift uses one controller at a time, and treats a pair of connected Joy-Cons as a single controller.
 
@@ -60,7 +60,7 @@ Full instructions are on the documentation site: [Install and first run](https:/
 
 1. Install the .NET 10 SDK on Windows (for example with Visual Studio and the .NET desktop development workload).
 1. Clone the repo.
-1. Run `dotnet build GameControllerForZwift.sln`. The first build downloads the SDL2 native library.
+1. Run `dotnet build windows/GameControllerForZwift.sln`. The app's solution, source, tests and tools live in `windows/`. The first build downloads the SDL2 native library.
 
 See [Build and test](https://VoltageSolutions.github.io/GameControllerForZwift/build/build-and-test/) and [Architecture](https://VoltageSolutions.github.io/GameControllerForZwift/build/architecture/) for details.
 
@@ -81,6 +81,7 @@ Thank you to the following people whose code or support helped make this possibl
 - [OpenBikeControl](https://github.com/OpenBikeControl/openbikecontrol-protocol): the OpenBikeControl protocol
 - [MattW2](https://github.com/MattW2): provided a [Wireshark capture](https://github.com/MattW2/KickrShiftKey/tree/main/KickrBikeWireShark) of Wahoo KICKR BIKE SHIFT talking to Zwift
 - [Makinolo](https://www.makinolo.com/): [blog investigating Zwift Play and Ride devices](https://www.makinolo.com/blog/2024/07/26/zwift-ride-protocol/)
+- [controllertest.io](https://controllertest.io/): Gamepad Visualizer graphics
 
 See [Credits](https://VoltageSolutions.github.io/GameControllerForZwift/how-it-works/credits/) for what each one helped me understand.
 
@@ -92,13 +93,12 @@ Support this project on [ko-fi](https://ko-fi.com/voltagesolutions)!
 
 See the [Roadmap](https://VoltageSolutions.github.io/GameControllerForZwift/build/roadmap/) on the documentation site.
 
-## Known Bugs and Issues
+## Known Bugs, Issues, and Opportunities
 
-- Navigation within GameControllerForZwift is flaky. I've disabled the backstack until I can work it out.
-- The trigger gauges do not show up well in light mode when not in use, so it may look like they aren't there at all.
-- Windows 10 issues
-  - Clicking around the app can highlight the entire window.
-  - Dark-mode does not apply the intended color selections correctly.
+- The gamepad visualization uses the same controller layout for every controller type.
+- Improved logging for debugging.
+- Wider platform support - Android, iOS, Linux, arm64 Windows
+- Code signing and store distribution
 
 ## Technical Details
 
