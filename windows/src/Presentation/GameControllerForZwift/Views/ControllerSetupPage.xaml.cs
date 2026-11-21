@@ -87,9 +87,11 @@ namespace GameControllerForZwift.UI.WPF.Views
 
         internal static double ColumnWidth(double available, double minimum)
         {
-            int columns = Math.Max(1, (int)Math.Floor(available / (minimum + RowGap)));
-            return Math.Max(minimum, available / columns);
+            return Math.Max(minimum, available / ColumnCount(available, minimum));
         }
+
+        internal static int ColumnCount(double available, double minimum) =>
+            Math.Max(1, (int)Math.Floor(available / (minimum + RowGap)));
 
         private void UpdateLayoutWidths(double pageWidth)
         {
@@ -118,7 +120,7 @@ namespace GameControllerForZwift.UI.WPF.Views
                 Grid.SetColumn(DetailsHost, 0);
                 Grid.SetRow(DetailsHost, 1);
                 ControllerVisualCard.Margin = new Thickness(0, 0, 0, 16);
-                ControllerVisualCard.HorizontalAlignment = HorizontalAlignment.Stretch;
+                ControllerVisualCard.HorizontalAlignment = HorizontalAlignment.Left;
             }
 
             double rightColumnWidth = isLandscapeTwoColumn
@@ -126,6 +128,11 @@ namespace GameControllerForZwift.UI.WPF.Views
                 : Math.Max(0, pageWidth - SystemParameters.VerticalScrollBarWidth);
 
             RowWidth = ColumnWidth(rightColumnWidth);
+
+            // Stacked, the card spans the row columns below it. Each row's slot includes its right margin, so the drawn width is the slots minus one gap.
+            ControllerVisualCard.Width = isLandscapeTwoColumn
+                ? double.NaN
+                : Math.Max(0, ColumnCount(rightColumnWidth, MinimumRowWidth) * RowWidth - RowGap);
             CardWidth = ColumnWidth(Math.Min(rightColumnWidth, MaximumCardsWidth), MinimumRowWidth + 2 * CardPadding);
             CardRowWidth = ColumnWidth(Math.Max(0, CardWidth - RowGap - 2 * CardPadding));
             ConfigurationComboBox.Width = Math.Clamp(Math.Max(0, pageWidth - SystemParameters.VerticalScrollBarWidth) - RowGap, 240, MaximumPickerWidth);
