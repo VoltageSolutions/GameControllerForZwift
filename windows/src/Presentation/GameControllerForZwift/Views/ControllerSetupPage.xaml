@@ -1,4 +1,4 @@
-<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.ControllerSetupPage"
+﻿<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.ControllerSetupPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:GameControllerForZwift.UI.WPF.Views"
@@ -7,14 +7,11 @@
              xmlns:vm="clr-namespace:GameControllerForZwift.UI.WPF.ViewModels"
              xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
              AutomationProperties.AutomationId="ButtonsPage">
-    <!-- docs/spec/screens/buttons.md. The view model is the DataContext. -->
     <UserControl.Resources>
         <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" />
         <converters:DoubleToPointConverter x:Key="DoubleToPointConverter" />
 
-        <!-- A row: the input's chip, what it does, a Changed mark, and a chevron (SCR-BTN-003). Text wraps inside the row
-             (UX-V-044). The selected row is tinted, a pressed input lights its chip (SCR-BTN-004), and a free input is
-             dimmed. -->
+        <!-- A row: the input's chip, what it does, a Changed mark, and a chevron (SCR-BTN-003). -->
         <Style x:Key="Buttons.RowStyle" TargetType="Button">
             <Setter Property="MinHeight" Value="64" />
             <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -92,7 +89,6 @@
                     AutomationProperties.Name="{Binding AccessibleName}" />
         </DataTemplate>
 
-        <!-- Rows wrap into as many columns as fit. The page sets the width of a column (RowWidth). -->
         <ItemsPanelTemplate x:Key="Buttons.RowsPanel">
             <WrapPanel ItemWidth="{Binding RowWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}" />
         </ItemsPanelTemplate>
@@ -100,7 +96,6 @@
             <WrapPanel ItemWidth="{Binding CardRowWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}" />
         </ItemsPanelTemplate>
 
-        <!-- The one main action: accent only while it is enabled (SCR-BTN-008). -->
         <Style x:Key="Buttons.SaveStyle" TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="True">
@@ -112,7 +107,6 @@
             </Style.Triggers>
         </Style>
 
-        <!-- One tab of the two-tab switch. -->
         <Style x:Key="Buttons.TabStyle" TargetType="RadioButton">
             <Setter Property="Height" Value="48" />
             <Setter Property="MinWidth" Value="160" />
@@ -141,7 +135,6 @@
             </Setter>
         </Style>
 
-        <!-- A function in the picker: a radio row with a name, one line that says what it does, and a check (SCR-BTN-034). -->
         <Style x:Key="Buttons.FunctionStyle" TargetType="RadioButton">
             <Setter Property="MinHeight" Value="48" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -192,7 +185,7 @@
                 <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc ButtonsTitle}" TextWrapping="Wrap"
                            AutomationProperties.AutomationId="ButtonsPageTitle" AutomationProperties.HeadingLevel="Level1" />
 
-                <!-- No controller: the same Wake your controller state as Ride (docs/spec/screens/buttons.md, edge cases). -->
+                <!-- No controller state -->
                 <Border x:Name="NoControllerCard" Style="{StaticResource Surface.Card}" Margin="0,24,0,0"
                         Visibility="{Binding SelectedController, Converter={StaticResource NullToVisibilityConverter}, ConverterParameter=Invert}"
                         AutomationProperties.AutomationId="ButtonsNoControllerCard">
@@ -207,11 +200,8 @@
                             Visibility="{Binding SelectedController, Converter={StaticResource NullToVisibilityConverter}}">
                     <TextBlock x:Name="ControllerNameText" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{Binding ControllerName}"
                                AutomationProperties.AutomationId="ButtonsControllerName" />
-                    <TextBlock x:Name="HintText" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,4,0,0" Text="{loc:Loc ButtonsHint}"
-                               AutomationProperties.AutomationId="ButtonsHintStatus" />
 
-                    <!-- The mapping picker, Save, Save as new, Delete, and More (SCR-BTN-001). The row wraps and a button moves to
-                         its own line when it runs out of room (UX-V-030). -->
+                    <!-- Configuration toolbar -->
                     <WrapPanel Margin="0,20,0,0">
                         <ComboBox x:Name="ConfigurationComboBox" Width="420" Margin="0,0,12,12"
                                   ItemsSource="{Binding Configurations}" SelectedItem="{Binding SelectedConfiguration}"
@@ -243,8 +233,6 @@
                                 AutomationProperties.AutomationId="ButtonsMoreButton" AutomationProperties.Name="{loc:Loc ButtonsMore}">
                             <Path Width="24" Height="24" Stretch="None" Data="{StaticResource IconFill.More}"
                                   Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=ButtonBase}}" />
-                            <!-- A context menu is not in the page's visual tree. It takes the data context of the button it opens
-                                 from, which is the view model, so its items bind the view model's commands. -->
                             <Button.ContextMenu>
                                 <ContextMenu x:Name="MoreConfigurationActionsMenu" AutomationProperties.AutomationId="ButtonsMoreMenu"
                                              DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
@@ -262,7 +250,7 @@
                               IsChecked="{Binding ShowOtherControllersConfigurations}"
                               AutomationProperties.AutomationId="ButtonsShowOthersToggle" />
 
-                    <!-- Notice (non-blocking, hides itself after a few seconds). -->
+                    <!-- Notice -->
                     <Border x:Name="ConfigurationNotice" Style="{StaticResource Surface.Row}" Margin="0,0,0,12" HorizontalAlignment="Left" MinWidth="300"
                             Visibility="{Binding NoticeText, Converter={StaticResource NullToVisibilityConverter}}"
                             AutomationProperties.AutomationId="ButtonsNotice">
@@ -284,7 +272,7 @@
                         </Grid>
                     </Border>
 
-                    <!-- The two tabs (SCR-BTN-001). -->
+                    <!-- Tabs -->
                     <Border CornerRadius="28" Padding="4" HorizontalAlignment="Left" Margin="0,0,0,20" Background="{DynamicResource Brush.surface-2}"
                             AutomationProperties.Name="{loc:Loc ButtonsTabs}">
                         <StackPanel Orientation="Horizontal">
@@ -297,70 +285,123 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Buttons tab: buttons, D-pad, and bumpers. -->
-                    <ItemsControl x:Name="ButtonsList" ItemsSource="{Binding ButtonRows}" ItemTemplate="{StaticResource Buttons.RowTemplate}"
-                                  ItemsPanel="{StaticResource Buttons.RowsPanel}" IsTabStop="False"
-                                  Visibility="{Binding IsButtonsTabSelected, Converter={StaticResource BooleanToVisibility}}"
-                                  AutomationProperties.AutomationId="ButtonsList" AutomationProperties.Name="{loc:Loc ButtonsListName}" />
+                    <!-- Responsive workspace: 2 columns in landscape, stacked when narrow -->
+                    <Grid x:Name="WorkspaceGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="ControllerColumn" Width="Auto" />
+                            <ColumnDefinition x:Name="DetailsColumn" Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="ControllerRow" Height="Auto" />
+                            <RowDefinition x:Name="DetailsRow" Height="Auto" />
+                        </Grid.RowDefinitions>
 
-                    <!-- Sticks and triggers tab: each stick with its live position, and the triggers with their live fill
-                         (SCR-BTN-039 to SCR-BTN-042). -->
-                    <WrapPanel x:Name="SticksContent" HorizontalAlignment="Left" Visibility="{Binding IsSticksTabSelected, Converter={StaticResource BooleanToVisibility}}"
-                                AutomationProperties.AutomationId="ButtonsSticksList" AutomationProperties.Name="{loc:Loc ButtonsSticksListName}">
-                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top" Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}" AutomationProperties.AutomationId="ButtonsLeftStickCard">
+                        <!-- Left (or top when narrow): Live SVG controller preview -->
+                        <Border x:Name="ControllerVisualCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource Surface.Card}"
+                                Margin="0,0,29,16" Padding="16" VerticalAlignment="Top">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsLeftStick}" AutomationProperties.HeadingLevel="Level2" />
-                                <controls:ThumbstickGraph x:Name="LeftStickGraph" Width="120" Height="120" Margin="0,16,0,16" HorizontalAlignment="Left"
-                                                          MinX="-32768" MaxX="32767" MinY="-32768" MaxY="32676"
-                                                          AutomationProperties.AutomationId="ButtonsLeftStickImage" AutomationProperties.Name="{loc:Loc ButtonsStickPosition}">
-                                    <controls:ThumbstickGraph.Position>
-                                        <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
-                                            <Binding Path="CurrentControllerValues.LeftThumbstickX" />
-                                            <Binding Path="CurrentControllerValues.LeftThumbstickY" />
-                                        </MultiBinding>
-                                    </controls:ThumbstickGraph.Position>
-                                </controls:ThumbstickGraph>
-                                <ItemsControl ItemsSource="{Binding LeftStickRows}" ItemTemplate="{StaticResource Buttons.RowTemplate}"
-                                              ItemsPanel="{StaticResource Buttons.CardRowsPanel}" IsTabStop="False" />
+                                <controls:ControllerDiagramView x:Name="ControllerDiagram"
+                                    AutomationProperties.AutomationId="ButtonsControllerImage"
+                                    Width="296" Height="249"
+                                    HorizontalAlignment="Center"
+                                    SelectedInput="{Binding SelectedRow.Input}"
+                                    Rows="{Binding Rows}"
+                                    ControllerValues="{Binding CurrentControllerValues}" />
+
+                                <!-- Selected row title & hint underneath the diagram (no pill) -->
+                                <StackPanel HorizontalAlignment="Center" Margin="0,12,0,0">
+                                    <TextBlock Text="{Binding SelectedRow.FunctionTitle}" HorizontalAlignment="Center" TextAlignment="Center"
+                                               FontFamily="{DynamicResource Font.Figtree}" FontSize="17" FontWeight="Bold"
+                                               Foreground="{DynamicResource Brush.text}">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding SelectedRow}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                    <TextBlock x:Name="HintText" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" TextAlignment="Center"
+                                               Margin="0,6,0,0" Text="{loc:Loc ButtonsHint}" AutomationProperties.AutomationId="ButtonsHintStatus" />
+                                </StackPanel>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top" Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}" AutomationProperties.AutomationId="ButtonsRightStickCard">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsRightStick}" AutomationProperties.HeadingLevel="Level2" />
-                                <controls:ThumbstickGraph x:Name="RightStickGraph" Width="120" Height="120" Margin="0,16,0,16" HorizontalAlignment="Left"
-                                                          MinX="-32768" MaxX="32767" MinY="-32768" MaxY="32676"
-                                                          AutomationProperties.AutomationId="ButtonsRightStickImage" AutomationProperties.Name="{loc:Loc ButtonsStickPosition}">
-                                    <controls:ThumbstickGraph.Position>
-                                        <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
-                                            <Binding Path="CurrentControllerValues.RightThumbstickX" />
-                                            <Binding Path="CurrentControllerValues.RightThumbstickY" />
-                                        </MultiBinding>
-                                    </controls:ThumbstickGraph.Position>
-                                </controls:ThumbstickGraph>
-                                <ItemsControl ItemsSource="{Binding RightStickRows}" ItemTemplate="{StaticResource Buttons.RowTemplate}"
-                                              ItemsPanel="{StaticResource Buttons.CardRowsPanel}" IsTabStop="False" />
-                            </StackPanel>
-                        </Border>
-                        <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top" Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}" AutomationProperties.AutomationId="ButtonsTriggersCard">
-                            <StackPanel>
-                                <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsTriggers}" AutomationProperties.HeadingLevel="Level2" />
-                                <TextBlock x:Name="BrakeCaution" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,4,0,16" Text="{loc:Loc ButtonsBrakeCaution}"
-                                           AutomationProperties.AutomationId="ButtonsBrakeCautionStatus" />
-                                <ContentControl Content="{Binding TriggerRows[0]}" ContentTemplate="{StaticResource Buttons.RowTemplate}" IsTabStop="False" />
-                                <controls:GaugeControl x:Name="LeftTriggerGauge" Margin="0,0,12,20" MaxValue="32767" Value="{Binding CurrentControllerValues.LeftTrigger}"
-                                                       AutomationProperties.AutomationId="ButtonsLeftTriggerImage" AutomationProperties.Name="{loc:Loc ButtonsTriggerFill}" />
-                                <ContentControl Content="{Binding TriggerRows[1]}" ContentTemplate="{StaticResource Buttons.RowTemplate}" IsTabStop="False" />
-                                <controls:GaugeControl x:Name="RightTriggerGauge" Margin="0,0,12,0" MaxValue="32767" Value="{Binding CurrentControllerValues.RightTrigger}"
-                                                       AutomationProperties.AutomationId="ButtonsRightTriggerImage" AutomationProperties.Name="{loc:Loc ButtonsTriggerFill}" />
-                            </StackPanel>
-                        </Border>
-                    </WrapPanel>
+
+                        <!-- Right (or bottom when narrow): Buttons tab or Sticks and triggers tab -->
+                        <Grid x:Name="DetailsHost" Grid.Column="1" Grid.Row="0">
+                            <!-- Buttons tab -->
+                            <ItemsControl x:Name="ButtonsList" ItemsSource="{Binding ButtonRows}" ItemTemplate="{StaticResource Buttons.RowTemplate}"
+                                          ItemsPanel="{StaticResource Buttons.RowsPanel}" IsTabStop="False"
+                                          Visibility="{Binding IsButtonsTabSelected, Converter={StaticResource BooleanToVisibility}}"
+                                          AutomationProperties.AutomationId="ButtonsList" AutomationProperties.Name="{loc:Loc ButtonsListName}" />
+
+                            <!-- Sticks and triggers tab -->
+                            <WrapPanel x:Name="SticksContent" HorizontalAlignment="Left"
+                                       Visibility="{Binding IsSticksTabSelected, Converter={StaticResource BooleanToVisibility}}"
+                                       AutomationProperties.AutomationId="ButtonsSticksList" AutomationProperties.Name="{loc:Loc ButtonsSticksListName}">
+                                <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top"
+                                        Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}"
+                                        AutomationProperties.AutomationId="ButtonsLeftStickCard">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsLeftStick}" AutomationProperties.HeadingLevel="Level2" />
+                                        <controls:ThumbstickGraph x:Name="LeftStickGraph" Width="120" Height="120" Margin="0,16,0,16" HorizontalAlignment="Left"
+                                                                  MinX="-32768" MaxX="32767" MinY="-32768" MaxY="32676"
+                                                                  AutomationProperties.AutomationId="ButtonsLeftStickImage" AutomationProperties.Name="{loc:Loc ButtonsStickPosition}">
+                                            <controls:ThumbstickGraph.Position>
+                                                <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
+                                                    <Binding Path="CurrentControllerValues.LeftThumbstickX" />
+                                                    <Binding Path="CurrentControllerValues.LeftThumbstickY" />
+                                                </MultiBinding>
+                                            </controls:ThumbstickGraph.Position>
+                                        </controls:ThumbstickGraph>
+                                        <ItemsControl ItemsSource="{Binding LeftStickRows}" ItemTemplate="{StaticResource Buttons.RowTemplate}"
+                                                      ItemsPanel="{StaticResource Buttons.CardRowsPanel}" IsTabStop="False" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top"
+                                        Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}"
+                                        AutomationProperties.AutomationId="ButtonsRightStickCard">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsRightStick}" AutomationProperties.HeadingLevel="Level2" />
+                                        <controls:ThumbstickGraph x:Name="RightStickGraph" Width="120" Height="120" Margin="0,16,0,16" HorizontalAlignment="Left"
+                                                                  MinX="-32768" MaxX="32767" MinY="-32768" MaxY="32676"
+                                                                  AutomationProperties.AutomationId="ButtonsRightStickImage" AutomationProperties.Name="{loc:Loc ButtonsStickPosition}">
+                                            <controls:ThumbstickGraph.Position>
+                                                <MultiBinding Converter="{StaticResource DoubleToPointConverter}">
+                                                    <Binding Path="CurrentControllerValues.RightThumbstickX" />
+                                                    <Binding Path="CurrentControllerValues.RightThumbstickY" />
+                                                </MultiBinding>
+                                            </controls:ThumbstickGraph.Position>
+                                        </controls:ThumbstickGraph>
+                                        <ItemsControl ItemsSource="{Binding RightStickRows}" ItemTemplate="{StaticResource Buttons.RowTemplate}"
+                                                      ItemsPanel="{StaticResource Buttons.CardRowsPanel}" IsTabStop="False" />
+                                    </StackPanel>
+                                </Border>
+                                <Border Style="{StaticResource Surface.Card}" Margin="0,0,12,16" VerticalAlignment="Top"
+                                        Width="{Binding CardWidth, RelativeSource={RelativeSource AncestorType=local:ControllerSetupPage}}"
+                                        AutomationProperties.AutomationId="ButtonsTriggersCard">
+                                    <StackPanel>
+                                        <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc ButtonsTriggers}" AutomationProperties.HeadingLevel="Level2" />
+                                        <TextBlock x:Name="BrakeCaution" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Margin="0,4,0,16" Text="{loc:Loc ButtonsBrakeCaution}"
+                                                   AutomationProperties.AutomationId="ButtonsBrakeCautionStatus" />
+                                        <ContentControl Content="{Binding TriggerRows[0]}" ContentTemplate="{StaticResource Buttons.RowTemplate}" IsTabStop="False" />
+                                        <controls:GaugeControl x:Name="LeftTriggerGauge" Margin="0,0,12,20" MaxValue="32767" Value="{Binding CurrentControllerValues.LeftTrigger}"
+                                                               AutomationProperties.AutomationId="ButtonsLeftTriggerImage" AutomationProperties.Name="{loc:Loc ButtonsTriggerFill}" />
+                                        <ContentControl Content="{Binding TriggerRows[1]}" ContentTemplate="{StaticResource Buttons.RowTemplate}" IsTabStop="False" />
+                                        <controls:GaugeControl x:Name="RightTriggerGauge" Margin="0,0,12,0" MaxValue="32767" Value="{Binding CurrentControllerValues.RightTrigger}"
+                                                               AutomationProperties.AutomationId="ButtonsRightTriggerImage" AutomationProperties.Name="{loc:Loc ButtonsTriggerFill}" />
+                                    </StackPanel>
+                                </Border>
+                            </WrapPanel>
+                        </Grid>
+                    </Grid>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
 
-        <!-- The function panel: a side panel over the screen. It traps focus, Esc closes it, and a click outside closes it
-             (SCR-BTN-037). -->
+        <!-- Function picker overlay -->
         <Grid x:Name="FunctionOverlay" Visibility="{Binding FunctionPicker.IsOpen, Converter={StaticResource BooleanToVisibility}}">
             <Border x:Name="FunctionScrim" Background="{DynamicResource Brush.scrim}" MouseLeftButtonDown="FunctionScrim_MouseLeftButtonDown" />
             <Border x:Name="FunctionPanel" HorizontalAlignment="Right" Width="440" MaxWidth="{Binding ActualWidth, RelativeSource={RelativeSource AncestorType=UserControl}}"

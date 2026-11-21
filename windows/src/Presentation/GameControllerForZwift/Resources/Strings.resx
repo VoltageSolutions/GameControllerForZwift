@@ -189,6 +189,10 @@
     <value>Your {0}</value>
     <comment>Buttons screen, line under the title that names the controller. {0} is the controller name, for example Xbox Series X Controller.</comment>
   </data>
+  <data name="ButtonsControllerImageName" xml:space="preserve">
+    <value>Your controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen.</comment>
+  </data>
   <data name="ButtonsHint" xml:space="preserve">
     <value>Press a button on your controller to see it light up. Tap a row to change what it does.</value>
     <comment>Buttons screen hint under the title. Pressing a button on the controller lights that button's row. Tapping a row opens the function panel.</comment>
