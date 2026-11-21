@@ -2,17 +2,9 @@
 
 These are the next big pieces of work. They are plans, not promises, and the order may change. Ideas and help are welcome on the [Issues page](https://github.com/VoltageSolutions/GameControllerForZwift/issues).
 
-## A refreshed user interface
+## User onboarding flow
 
-A calmer, more guided main page.
-
-## Rebuild the existing screens to the UX spec
-
-Bring the existing screens in line with the [UX spec](../spec/ux/index.md) (setup, ride, buttons, connections, settings and help) before adding new components.
-
-## An on-screen controller view
-
-A picture of your controller that lights up as you press buttons.
+Intro screen that guides new users with initial setup.
 
 ## A Zwift simulator for end-to-end tests
 
