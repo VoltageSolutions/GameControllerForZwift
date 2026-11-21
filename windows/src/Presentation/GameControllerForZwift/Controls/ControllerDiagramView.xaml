@@ -1,7 +1,7 @@
 ﻿<UserControl x:Class="GameControllerForZwift.UI.WPF.Controls.ControllerDiagramView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Name="Root">
+             Focusable="False" IsTabStop="False">
     <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="Uniform">
         <Canvas x:Name="ControllerCanvas" Width="436" Height="367">
             <!-- Base controller body (436x367) -->

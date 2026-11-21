@@ -1,9 +1,10 @@
 ﻿using GameControllerForZwift.Core.Controller;
-using GameControllerForZwift.UI.WPF.Theme;
+using GameControllerForZwift.UI.WPF.Localization;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Automation.Peers;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
@@ -12,18 +13,22 @@ using System.Windows.Threading;
 namespace GameControllerForZwift.UI.WPF.Controls
 {
     /// <summary>
-    /// Reusable live SVG controller diagram that tracks button states, stick offsets,
-    /// analog triggers, and theme changes across screens.
+    /// The controller illustration. It lights the selected input and any pressed row, moves the sticks, and fills the
+    /// triggers from the live controller state. Colors are <c>DynamicResource</c> theme tokens, so it follows the
+    /// appearance without any code.
     /// </summary>
     public partial class ControllerDiagramView : UserControl
     {
-        // Max stick travel in SVG units (436x367 viewBox): well inside the 37.5px well radius minus 28px cap radius.
-        private const double MaxStickTravelSvgUnits = 8.0;
+        // Max stick travel in drawing units (436x367 canvas): inside the 37.5 well radius minus the 28 cap radius.
+        internal const double MaxStickTravel = 8.0;
 
-        // Trigger pill bounds in controller.svg (436x367 viewBox): y from ~1 to ~48.5.
-        private const double TriggerTopY = 1.0;
-        private const double TriggerBottomY = 48.5;
-        private const double TriggerMaxValue = 32767.0;
+        // Trigger pill bounds in the drawing: y from about 1 to 48.5.
+        internal const double TriggerTopY = 1.0;
+        internal const double TriggerBottomY = 48.5;
+
+        private const double AxisMax = 32767.0;
+        private const string LitBrushKey = "Brush.accent";
+        private const string RestBrushKey = "Brush.pad-key";
 
         public static readonly DependencyProperty SelectedInputProperty =
             DependencyProperty.Register(nameof(SelectedInput), typeof(ControllerInput?), typeof(ControllerDiagramView),
@@ -34,13 +39,12 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 new PropertyMetadata(null, OnRowsChanged));
 
         public static readonly DependencyProperty ControllerValuesProperty =
-            DependencyProperty.Register(nameof(ControllerValues), typeof(object), typeof(ControllerDiagramView),
-                new PropertyMetadata(null, OnControllerValuesChanged));
+            DependencyProperty.Register(nameof(ControllerValues), typeof(ControllerData), typeof(ControllerDiagramView),
+                new PropertyMetadata(null, OnVisualStateChanged));
 
-        private readonly Dictionary<ControllerInput, Shape> _inputHighlights = new();
+        private readonly Dictionary<ControllerInput, Shape> _inputHighlights = [];
         private IEnumerable<ButtonRowViewModel>? _subscribedRows;
-        private INotifyPropertyChanged? _subscribedValues;
-        private ThemeService? _subscribedThemeService;
+        private bool _refreshPending;
 
         public ControllerDiagramView()
         {
@@ -51,79 +55,84 @@ namespace GameControllerForZwift.UI.WPF.Controls
             Unloaded += OnUnloaded;
         }
 
+        /// <summary>The input drawn lit as the selected one, or null for none.</summary>
         public ControllerInput? SelectedInput
         {
             get => (ControllerInput?)GetValue(SelectedInputProperty);
             set => SetValue(SelectedInputProperty, value);
         }
 
+        /// <summary>The Buttons rows. A row that reports <see cref="ButtonRowViewModel.IsPressed"/> lights its input.</summary>
         public IEnumerable<ButtonRowViewModel>? Rows
         {
             get => (IEnumerable<ButtonRowViewModel>?)GetValue(RowsProperty);
             set => SetValue(RowsProperty, value);
         }
 
-        public object? ControllerValues
+        /// <summary>The live controller state that moves the sticks and fills the triggers, or null for the resting pose.</summary>
+        public ControllerData? ControllerValues
         {
-            get => GetValue(ControllerValuesProperty);
+            get => (ControllerData?)GetValue(ControllerValuesProperty);
             set => SetValue(ControllerValuesProperty, value);
         }
 
-        public ThemeService? ThemeService
+        /// <summary>Where a stick cap sits for a thumbstick reading, in drawing units from its resting place.</summary>
+        internal static double StickOffset(double axis) =>
+            Math.Clamp(axis / AxisMax, -1.0, 1.0) * MaxStickTravel;
+
+        /// <summary>The share of a trigger that is pulled, 0 to 1.</summary>
+        internal static double TriggerRatio(double value) =>
+            Math.Clamp(value / AxisMax, 0.0, 1.0);
+
+        /// <summary>The clip that shows the pulled part of a trigger, rising from the bottom of the pill.</summary>
+        internal static Rect TriggerClip(Rect current, double ratio)
         {
-            get => _subscribedThemeService;
-            set
-            {
-                if (ReferenceEquals(_subscribedThemeService, value))
-                    return;
+            double fillHeight = (TriggerBottomY - TriggerTopY) * Math.Clamp(ratio, 0.0, 1.0);
+            return new Rect(current.X, TriggerBottomY - fillHeight, current.Width, fillHeight);
+        }
 
-                if (_subscribedThemeService is not null)
-                    _subscribedThemeService.TokensChanged -= OnTokensChanged;
+        /// <summary>Redraws now. Property changes call this once per dispatcher turn.</summary>
+        internal void RefreshDiagram()
+        {
+            _refreshPending = false;
 
-                _subscribedThemeService = value;
+            foreach (var (input, shape) in _inputHighlights)
+                shape.SetResourceReference(Shape.FillProperty, IsLit(input) ? LitBrushKey : RestBrushKey);
 
-                if (_subscribedThemeService is not null)
-                    _subscribedThemeService.TokensChanged += OnTokensChanged;
+            ControllerData? values = ControllerValues;
+            LeftStickTransform.X = StickOffset(values?.LeftThumbstickX ?? 0);
+            LeftStickTransform.Y = StickOffset(values?.LeftThumbstickY ?? 0);
+            RightStickTransform.X = StickOffset(values?.RightThumbstickX ?? 0);
+            RightStickTransform.Y = StickOffset(values?.RightThumbstickY ?? 0);
+            LeftTriggerClip.Rect = TriggerClip(LeftTriggerClip.Rect, TriggerRatio(values?.LeftTrigger ?? 0));
+            RightTriggerClip.Rect = TriggerClip(RightTriggerClip.Rect, TriggerRatio(values?.RightTrigger ?? 0));
+        }
 
-                ScheduleRefresh();
-            }
+        protected override AutomationPeer OnCreateAutomationPeer() => new ControllerDiagramViewAutomationPeer(this);
+
+        private bool IsLit(ControllerInput input)
+        {
+            if (SelectedInput == input)
+                return true;
+
+            return _subscribedRows?.Any(row => row.Input == input && row.IsPressed) == true;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_subscribedThemeService is null && Application.Current is IServiceProvider sp && sp.GetService(typeof(ThemeService)) is ThemeService svc)
-                ThemeService = svc;
-
             SubscribeRows(Rows);
-            SubscribeValues(ControllerValues);
             ScheduleRefresh();
         }
 
-        private void OnUnloaded(object sender, RoutedEventArgs e)
-        {
-            UnsubscribeRows();
-            UnsubscribeValues();
-        }
+        private void OnUnloaded(object sender, RoutedEventArgs e) => UnsubscribeRows();
 
-        private void OnTokensChanged(object? sender, EventArgs e) => ScheduleRefresh();
-
-        private static void OnVisualStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
+        private static void OnVisualStateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
             ((ControllerDiagramView)d).ScheduleRefresh();
-        }
 
         private static void OnRowsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var view = (ControllerDiagramView)d;
             view.SubscribeRows(e.NewValue as IEnumerable<ButtonRowViewModel>);
-            view.ScheduleRefresh();
-        }
-
-        private static void OnControllerValuesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var view = (ControllerDiagramView)d;
-            view.UnsubscribeValues();
-            view.SubscribeValues(e.NewValue);
             view.ScheduleRefresh();
         }
 
@@ -158,172 +167,73 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
         private void OnRowsCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.OldItems is not null)
+            // A reset leaves no list of what went, so listen again to what is there now.
+            if (e.Action == NotifyCollectionChangedAction.Reset)
             {
-                foreach (ButtonRowViewModel row in e.OldItems)
-                    row.PropertyChanged -= OnRowPropertyChanged;
+                SubscribeRows(Rows);
             }
-            if (e.NewItems is not null)
+            else
             {
-                foreach (ButtonRowViewModel row in e.NewItems)
-                    row.PropertyChanged += OnRowPropertyChanged;
+                if (e.OldItems is not null)
+                {
+                    foreach (ButtonRowViewModel row in e.OldItems)
+                        row.PropertyChanged -= OnRowPropertyChanged;
+                }
+                if (e.NewItems is not null)
+                {
+                    foreach (ButtonRowViewModel row in e.NewItems)
+                        row.PropertyChanged += OnRowPropertyChanged;
+                }
             }
             ScheduleRefresh();
         }
 
         private void OnRowPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is nameof(ButtonRowViewModel.IsPressed) or nameof(ButtonRowViewModel.IsSelected) or nameof(ButtonRowViewModel.Input))
+            if (e.PropertyName is nameof(ButtonRowViewModel.IsPressed) or nameof(ButtonRowViewModel.Input))
                 ScheduleRefresh();
         }
 
-        private void SubscribeValues(object? values)
-        {
-            UnsubscribeValues();
-
-            if (values is INotifyPropertyChanged npc)
-            {
-                _subscribedValues = npc;
-                _subscribedValues.PropertyChanged += OnValuesPropertyChanged;
-            }
-        }
-
-        private void UnsubscribeValues()
-        {
-            if (_subscribedValues is not null)
-            {
-                _subscribedValues.PropertyChanged -= OnValuesPropertyChanged;
-                _subscribedValues = null;
-            }
-        }
-
-        private void OnValuesPropertyChanged(object? sender, PropertyChangedEventArgs e) => ScheduleRefresh();
-
+        // Many changes in one turn (every row, every controller poll) redraw once.
         private void ScheduleRefresh()
         {
+            if (_refreshPending)
+                return;
+
+            _refreshPending = true;
             Dispatcher.BeginInvoke(DispatcherPriority.Render, RefreshDiagram);
         }
 
         private void BuildInputHighlightMap()
         {
-            _inputHighlights.Clear();
-            TryRegisterInput(ControllerInput.A, ButtonAHighlight);
-            TryRegisterInput(ControllerInput.B, ButtonBHighlight);
-            TryRegisterInput(ControllerInput.X, ButtonXHighlight);
-            TryRegisterInput(ControllerInput.Y, ButtonYHighlight);
-            TryRegisterInput(ControllerInput.LeftBumper, LeftBumperHighlight);
-            TryRegisterInput(ControllerInput.RightBumper, RightBumperHighlight);
-            TryRegisterInput(ControllerInput.DPadUp, DPadUpHighlight);
-            TryRegisterInput(ControllerInput.DPadDown, DPadDownHighlight);
-            TryRegisterInput(ControllerInput.DPadLeft, DPadLeftHighlight);
-            TryRegisterInput(ControllerInput.DPadRight, DPadRightHighlight);
-            TryRegisterInput(ControllerInput.LeftThumbstickClick, LeftStickCap);
-            TryRegisterInput(ControllerInput.RightThumbstickClick, RightStickCap);
-            TryRegisterInput(ControllerInput.View, ViewButtonHighlight);
-            TryRegisterInput(ControllerInput.Menu, MenuButtonHighlight);
+            _inputHighlights[ControllerInput.A] = ButtonAHighlight;
+            _inputHighlights[ControllerInput.B] = ButtonBHighlight;
+            _inputHighlights[ControllerInput.X] = ButtonXHighlight;
+            _inputHighlights[ControllerInput.Y] = ButtonYHighlight;
+            _inputHighlights[ControllerInput.LeftBumper] = LeftBumperHighlight;
+            _inputHighlights[ControllerInput.RightBumper] = RightBumperHighlight;
+            _inputHighlights[ControllerInput.DPadUp] = DPadUpHighlight;
+            _inputHighlights[ControllerInput.DPadDown] = DPadDownHighlight;
+            _inputHighlights[ControllerInput.DPadLeft] = DPadLeftHighlight;
+            _inputHighlights[ControllerInput.DPadRight] = DPadRightHighlight;
+            _inputHighlights[ControllerInput.LeftThumbstickClick] = LeftStickCap;
+            _inputHighlights[ControllerInput.RightThumbstickClick] = RightStickCap;
+            _inputHighlights[ControllerInput.View] = ViewButtonHighlight;
+            _inputHighlights[ControllerInput.Menu] = MenuButtonHighlight;
         }
 
-        private void TryRegisterInput(ControllerInput input, Shape? shape)
+        /// <summary>Reports the illustration as an image named "Your controller" (accessibility spec, <c>ButtonsControllerImage</c>).</summary>
+        private sealed class ControllerDiagramViewAutomationPeer(ControllerDiagramView owner) : FrameworkElementAutomationPeer(owner)
         {
-            if (shape is not null && !_inputHighlights.ContainsKey(input))
-                _inputHighlights[input] = shape;
-        }
+            protected override AutomationControlType GetAutomationControlTypeCore() => AutomationControlType.Image;
 
-        private void RefreshDiagram()
-        {
-            foreach (var (input, shape) in _inputHighlights)
+            protected override string GetClassNameCore() => nameof(ControllerDiagramView);
+
+            protected override string GetNameCore()
             {
-                bool active = SelectedInput == input;
-
-                if (!active && _subscribedRows is not null)
-                {
-                    foreach (var row in _subscribedRows)
-                    {
-                        if (row.Input == input && row.IsPressed)
-                        {
-                            active = true;
-                            break;
-                        }
-                    }
-                }
-
-                // SetResourceReference keeps a live DynamicResource binding so fills update across theme switches.
-                shape.SetResourceReference(Shape.FillProperty, active ? "Brush.accent" : "Brush.pad-key");
+                string name = base.GetNameCore();
+                return string.IsNullOrEmpty(name) ? Localizer.Get("ButtonsControllerImageName") : name;
             }
-
-            if (ControllerValues is null)
-            {
-                LeftStickTransform.X = 0;
-                LeftStickTransform.Y = 0;
-                RightStickTransform.X = 0;
-                RightStickTransform.Y = 0;
-                SetTriggerClipHeight(LeftTriggerClip, 0);
-                SetTriggerClipHeight(RightTriggerClip, 0);
-                return;
-            }
-
-            double lx = ReadAxis(ControllerValues, "LeftThumbstickX");
-            double ly = ReadAxis(ControllerValues, "LeftThumbstickY");
-            LeftStickTransform.X = lx * MaxStickTravelSvgUnits;
-            LeftStickTransform.Y = ly * MaxStickTravelSvgUnits;
-
-            double rx = ReadAxis(ControllerValues, "RightThumbstickX");
-            double ry = ReadAxis(ControllerValues, "RightThumbstickY");
-            RightStickTransform.X = rx * MaxStickTravelSvgUnits;
-            RightStickTransform.Y = ry * MaxStickTravelSvgUnits;
-
-            double lt = ReadTrigger(ControllerValues, "LeftTrigger");
-            double rt = ReadTrigger(ControllerValues, "RightTrigger");
-            SetTriggerClipHeight(LeftTriggerClip, lt);
-            SetTriggerClipHeight(RightTriggerClip, rt);
-        }
-
-        private static double ReadAxis(object source, string propertyName)
-        {
-            var prop = source.GetType().GetProperty(propertyName);
-            if (prop is null)
-                return 0;
-
-            var raw = prop.GetValue(source);
-            double value = raw switch
-            {
-                short s => s,
-                int i => i,
-                double d => d,
-                float f => f,
-                _ => 0
-            };
-
-            return Math.Clamp(value / 32767.0, -1.0, 1.0);
-        }
-
-        private static double ReadTrigger(object source, string propertyName)
-        {
-            var prop = source.GetType().GetProperty(propertyName);
-            if (prop is null)
-                return 0;
-
-            var raw = prop.GetValue(source);
-            double value = raw switch
-            {
-                short s => s,
-                ushort us => us,
-                int i => i,
-                byte b => b * 128.45,
-                double d => d,
-                float f => f,
-                _ => 0
-            };
-
-            return Math.Clamp(value / TriggerMaxValue, 0.0, 1.0);
-        }
-
-        private static void SetTriggerClipHeight(RectangleGeometry clip, double ratio)
-        {
-            double totalHeight = TriggerBottomY - TriggerTopY;
-            double fillHeight = totalHeight * ratio;
-            double top = TriggerBottomY - fillHeight;
-            clip.Rect = new Rect(clip.Rect.X, top, clip.Rect.Width, Math.Max(0, fillHeight));
         }
     }
 }

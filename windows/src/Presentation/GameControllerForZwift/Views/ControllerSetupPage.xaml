@@ -1,4 +1,4 @@
-<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.ControllerSetupPage"
+﻿<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.ControllerSetupPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:GameControllerForZwift.UI.WPF.Views"
@@ -298,10 +298,10 @@
 
                         <!-- Left (or top when narrow): Live SVG controller preview -->
                         <Border x:Name="ControllerVisualCard" Grid.Column="0" Grid.Row="0" Style="{StaticResource Surface.Card}"
-                                Margin="0,0,16,16" Padding="16" VerticalAlignment="Top"
-                                AutomationProperties.AutomationId="ButtonsControllerDiagramCard">
+                                Margin="0,0,16,16" Padding="16" VerticalAlignment="Top">
                             <StackPanel>
                                 <controls:ControllerDiagramView x:Name="ControllerDiagram"
+                                    AutomationProperties.AutomationId="ButtonsControllerImage"
                                     Width="296" Height="249"
                                     HorizontalAlignment="Center"
                                     SelectedInput="{Binding SelectedRow.Input}"

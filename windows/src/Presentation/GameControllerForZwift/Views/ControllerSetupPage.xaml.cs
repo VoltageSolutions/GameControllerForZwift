@@ -1,6 +1,5 @@
-using GameControllerForZwift.Core;
+﻿using GameControllerForZwift.Core;
 using GameControllerForZwift.UI.WPF.Controls;
-using GameControllerForZwift.UI.WPF.Theme;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using System.ComponentModel;
 using System.Windows;
@@ -60,7 +59,6 @@ namespace GameControllerForZwift.UI.WPF.Views
             {
                 SetScreenActive(true);
                 UpdateLayoutWidths(ActualWidth);
-                BindDiagramThemeService();
             };
             Unloaded += (_, _) => SetScreenActive(false);
         }
@@ -91,15 +89,6 @@ namespace GameControllerForZwift.UI.WPF.Views
         {
             int columns = Math.Max(1, (int)Math.Floor(available / (minimum + RowGap)));
             return Math.Max(minimum, available / columns);
-        }
-
-        private void BindDiagramThemeService()
-        {
-            if (FindName("ControllerDiagram") is not ControllerDiagramView diagram)
-                return;
-
-            if (Application.Current is IServiceProvider sp && sp.GetService(typeof(ThemeService)) is ThemeService themeService)
-                diagram.ThemeService = themeService;
         }
 
         private void UpdateLayoutWidths(double pageWidth)
