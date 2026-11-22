@@ -54,6 +54,50 @@ namespace GameControllerForZwift.Core.Tests.Configurations
         }
 
         [Fact]
+        public void SCRSET002_Appearance_IsMissingUntilSavedAndPersists()
+        {
+            var store = new AppSettingsStore(new FileService(), _path);
+            Assert.Null(store.GetAppearance());
+
+            store.SetAppearance("Dark");
+
+            Assert.Equal("Dark", new AppSettingsStore(new FileService(), _path).GetAppearance());
+        }
+
+        [Fact]
+        public void SCRSET012_RideTimeout_DefaultsToTenAndPersists()
+        {
+            var store = new AppSettingsStore(new FileService(), _path);
+            Assert.Equal(10, store.GetRideTimeoutMinutes());
+
+            store.SetRideTimeoutMinutes(25);
+
+            Assert.Equal(25, new AppSettingsStore(new FileService(), _path).GetRideTimeoutMinutes());
+        }
+
+        [Theory]
+        [InlineData(4)]
+        [InlineData(0)]
+        [InlineData(-3)]
+        public void SCRSET012_RideTimeout_NeverGoesBelowFive(int minutes)
+        {
+            var store = new AppSettingsStore(new FileService(), _path);
+
+            store.SetRideTimeoutMinutes(minutes);
+
+            Assert.Equal(5, store.GetRideTimeoutMinutes());
+        }
+
+        [Fact]
+        public void SCRSET012_RideTimeout_AFileValueBelowFiveIsRaised()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
+            File.WriteAllText(_path, """{ "rideTimeoutMinutes": 1 }""");
+
+            Assert.Equal(5, new AppSettingsStore(new FileService(), _path).GetRideTimeoutMinutes());
+        }
+
+        [Fact]
         public void CFG039_ShowOtherControllers_NotABoolean_IsOff()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);

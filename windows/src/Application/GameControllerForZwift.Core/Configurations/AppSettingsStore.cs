@@ -13,6 +13,8 @@ namespace GameControllerForZwift.Core.Configurations
     {
         private const string LastUsedProperty = "lastUsedConfigurations";
         private const string ShowOtherControllersProperty = "showConfigurationsFromOtherControllers";
+        private const string AppearanceProperty = "appearance";
+        private const string RideTimeoutProperty = "rideTimeoutMinutes";
         private static readonly JsonSerializerOptions WriteOptions = new() { WriteIndented = true };
 
         private readonly IFileService _fileService;
@@ -95,6 +97,45 @@ namespace GameControllerForZwift.Core.Configurations
             {
                 var root = Load();
                 root[ShowOtherControllersProperty] = show;
+                Write(root);
+            }
+        }
+
+        public string? GetAppearance()
+        {
+            lock (_sync)
+            {
+                return Load()[AppearanceProperty] is JsonValue v && v.TryGetValue<string>(out var text) && !string.IsNullOrWhiteSpace(text) ? text : null;
+            }
+        }
+
+        public void SetAppearance(string appearance)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(appearance);
+            lock (_sync)
+            {
+                var root = Load();
+                root[AppearanceProperty] = appearance;
+                Write(root);
+            }
+        }
+
+        public int GetRideTimeoutMinutes()
+        {
+            lock (_sync)
+            {
+                return Load()[RideTimeoutProperty] is JsonValue v && v.TryGetValue<int>(out var minutes)
+                    ? Math.Max(minutes, IAppSettingsStore.MinimumRideTimeoutMinutes)
+                    : IAppSettingsStore.DefaultRideTimeoutMinutes;
+            }
+        }
+
+        public void SetRideTimeoutMinutes(int minutes)
+        {
+            lock (_sync)
+            {
+                var root = Load();
+                root[RideTimeoutProperty] = Math.Max(minutes, IAppSettingsStore.MinimumRideTimeoutMinutes);
                 Write(root);
             }
         }
