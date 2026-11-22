@@ -7,27 +7,32 @@ last-updated: 2026-11-22
 # Ride screens
 
 !!! tldr "TL;DR"
-    Ride is the home tab. It shows your controller, honest stats, your mapping, and whether Zwift can see you. There is no Start riding button: a ride starts by itself when a controller and Zwift are both connected, and it ends when the app closes or no button is pressed for 10 minutes. While riding you get one big readout of your last press. Problems are said in words: "Your controller is fine", "Wake your controller".
+    Ride is the home tab. It shows your controller, honest stats, your mapping, and whether Zwift can see you. There is no Start riding button: a ride starts by itself when a controller and Zwift are both connected, in any order. A brief loss of either does not end it. It ends when the app closes, or when the ride timeout (10 minutes by default, set in Settings) passes with no button press or with either connection missing. While riding you get one big readout of your last press. Problems are said in words: "Your controller is fine", "Wake your controller".
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ```mermaid
 flowchart TD
-    N["No controller:<br/>Wake your controller"] -->|"Controller wakes"| H
-    H["Home:<br/>Ready when you are"] -->|"Controller and Zwift<br/>both connected"| R["Riding view"]
-    H -->|"Zwift not connected"| Z["Home: Zwift isn't<br/>connected yet"]
-    Z -->|"Pair with Zwift"| C["Connections"]
+    W["Home: waiting<br/>(controller, Zwift, or both missing)"] -->|"Both connected,<br/>in any order"| R["Riding view"]
+    W -->|"Go to Connections"| C["Connections"]
     R -->|"Zwift lost"| L["Zwift lost the connection"]
     R -->|"Controller asleep"| S["Controller asleep"]
-    R -->|"10 minutes without a press"| F["Ride finished"]
-    F --> H
+    L -->|"Zwift back"| R
+    S -->|"Controller back"| R
+    R -->|"Ride timeout:<br/>no press, or no connection"| F["Ride finished"]
+    L -->|"Ride timeout"| F
+    S -->|"Ride timeout"| F
+    F --> W
 ```
 
 ## Home
 
-**What it is for:** the screen you see every day. It tells you that you are ready, or what is missing.
+![The VOLTAGE wordmark in light mode](../../assets/images/voltage_wordmark_light.svg#only-light)
+![The VOLTAGE wordmark in dark mode](../../assets/images/voltage_wordmark_dark.svg#only-dark)
 
-**Content, top to bottom:** a reserved place for the VOLTAGE wordmark (`RideWordmark`), the screen title "Ready when you are" (`RidePageTitle`), your controller card (for example "Your Xbox controller is here", `RideControllerCard`), your stats (`RideStats`), your current mapping (`RideMappingCard`), and the Zwift status (`RideZwiftStatus`). There is no Start riding button.
+**What it is for:** the screen you see every day. It tells you that you are ready, or what is missing. The controller and Zwift can connect in any order. Until both are connected, Home says which is missing and suggests going to Connections.
+
+**Content, top to bottom:** the VOLTAGE wordmark (`RideWordmark`), the screen title "Ready when you are" (`RidePageTitle`), your controller card (for example "Your Xbox controller is here", `RideControllerCard`), your stats (`RideStats`), your current mapping (`RideMappingCard`), and the Zwift status (`RideZwiftStatus`). There is no Start riding button.
 
 *Example: "12 rides together, 1,086 shifts, riding since September."*
 
@@ -40,7 +45,8 @@ flowchart TD
 | The Zwift status must say "Zwift is connected to Voltage Gamepad" when `IsZwiftConnected` is true. Zwift can see Voltage Gamepad whether or not a controller is connected. | SCR-RIDE-005 |
 | Home must not have a **Start riding** button or any other control that starts a ride. The app must work without one. | SCR-RIDE-006 |
 | The status text must be a live region and announce only changes. | SCR-RIDE-007 |
-| Home must reserve a place at the top of the content, above the title, for the VOLTAGE wordmark (`RideWordmark`). Until the wordmark exists, the place must stay empty and must not be announced. | SCR-RIDE-034 |
+| When the controller, Zwift, or both are not connected, Home must say which is missing and offer a way to go to [Connections](connections.md). | SCR-RIDE-040 |
+| Home must show the VOLTAGE wordmark at the top of the content, above the title (`RideWordmark`). In light mode, the letters VOLT must use the accent color and AGE must be near-black. In dark mode, all letters must be white. It must have the accessible name "VOLTAGE". | SCR-RIDE-034 |
 | Home must have one level 1 heading, the title, and no other level 1 heading (UX-A-021). | SCR-RIDE-035 |
 
 ## Home, no controller
@@ -74,14 +80,15 @@ flowchart TD
 
 **What it is for:** a glance from the saddle. One big readout, nothing else competing.
 
-A ride starts when the app knows both that a controller is connected and that Zwift is connected. It continues until you close the app or you press no button for 10 minutes. There is nothing to press to start or stop it.
+A ride starts when the app knows both that a controller is connected and that Zwift is connected. It continues until you close the app, or until the ride timeout passes with no button press or with the controller or Zwift disconnected. A short loss of either connection does not end the ride. There is nothing to press to start or stop it.
 
 **Content:** the big "You just pressed" readout (`RideLastPressStatus`, for example "Shift up, right bumper"), shifts this ride, and a quick reference of your main buttons.
 
 | Rule | ID |
 |---|---|
 | A ride must start when a controller and Zwift are both connected, with no action from you. | SCR-RIDE-036 |
-| A ride must end when the app closes, or when no controller button has been pressed for 10 minutes. | SCR-RIDE-037 |
+| A ride must end when the app closes, or when for the ride timeout in Settings (SCR-SET-012) no controller button has been pressed, or the controller has been disconnected, or Zwift has been disconnected. The default timeout is 10 minutes. | SCR-RIDE-037 |
+| A ride must not end when the controller or Zwift disconnects for less than the ride timeout. The ride must return to the riding readout when the connection returns. | SCR-RIDE-041 |
 | The riding view must have one big readout (the last press) readable at arm's length. | SCR-RIDE-016 |
 | The riding view must show shifts this ride and a quick reference of the main buttons. | SCR-RIDE-017 |
 | The riding view must have no **Stop riding** button. | SCR-RIDE-038 |
@@ -96,7 +103,7 @@ A ride starts when the app knows both that a controller is connected and that Zw
 
 **What it is for:** tell you the controller is fine and Zwift is the one that needs a nudge.
 
-**Copy:** "Your controller is fine." Then: pick **Voltage Gamepad** under **Controls** in Zwift again.
+**Copy:** "Your controller is fine." The ride continues until the ride timeout. Then: pick **Voltage Gamepad** under **Controls** in Zwift again.
 
 | Rule | ID |
 |---|---|
@@ -142,7 +149,7 @@ On Home and the riding view, a controller press goes to Zwift as mapped. See [Co
 
 | ID | Where |
 |---|---|
-| `RideWordmark`, `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideMappingCard`, `RideZwiftStatus` | Home |
+| `RideWordmark`, `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideMappingCard`, `RideZwiftStatus`, `RideGoToConnectionsButton` | Home |
 | `RideLastPressStatus` | Riding view |
 | `NavConnectionsTab` | Name adds ", Zwift not connected" when the dot shows |
 
@@ -156,3 +163,5 @@ On Home and the riding view, a controller press goes to Zwift as mapped. See [Co
 | `ZwiftNotConnected` | Zwift isn't connected yet | SCR-RIDE-012 |
 | `RideNoControllerTitle` | Wake your controller | SCR-RIDE-008 |
 | `RideNoControllerStatus` | Looking for your controller... | SCR-RIDE-008 |
+| `RideWordmarkName` | VOLTAGE | SCR-RIDE-034 |
+| `RideGoToConnections` | Go to Connections | SCR-RIDE-040 |

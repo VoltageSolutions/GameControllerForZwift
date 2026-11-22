@@ -7,7 +7,7 @@ last-updated: 2026-11-22
 # Settings screen
 
 !!! tldr "TL;DR"
-    Settings opens from the More menu as a pushed screen with a back button. It has four short sections: Appearance, Mappings, Help, and About. It changes how the app looks, manages saved mappings, and points to the log folder, Help, and Credits. Your choices are kept between runs.
+    Settings opens from the More menu as a pushed screen with a back button. It has five short sections: Appearance, Rides, Mappings, Help, and About. It changes how the app looks, sets when a ride ends, manages saved mappings, and points to the log folder, Help, and Credits. Your choices are kept between runs.
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md). A **mapping** is what the saved configurations spec (`CFG`) calls a configuration.
 
@@ -15,11 +15,12 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 **What it is for:** change how the app looks and manage saved mappings and logs.
 
-**Content, top to bottom:** the screen title "Settings" (`SettingsPageTitle`), then four sections, each with a level 2 heading.
+**Content, top to bottom:** the screen title "Settings" (`SettingsPageTitle`), then five sections, each with a level 2 heading.
 
 | Section | Content |
 |---|---|
 | Appearance | A choice of **Light**, **Dark**, or **Match Windows** (`SettingsAppearanceGroup`). |
+| Rides | **End a ride after** a number of minutes (`SettingsRideTimeoutInput`). |
 | Mappings | **Open the mappings folder** (`SettingsOpenMappingsButton`) and **Delete all saved mappings** (`SettingsDeleteAllButton`). |
 | Help | **Open the log folder** (`SettingsOpenLogsButton`) and a link to Help and feedback (`SettingsHelpLink`). |
 | About | The version (`SettingsVersion`) and a link to Credits (`SettingsCreditsLink`). |
@@ -39,6 +40,8 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | The screen must open as a pushed screen with a back button (UX-N-009, UX-N-016). | SCR-SET-009 |
 | The screen must have one level 1 heading, the title, and a level 2 heading for each section (UX-A-021). | SCR-SET-010 |
 | Every row must follow the left-to-right reading order at every window size, and the layout must hold at 200% text size (UX-A-029). | SCR-SET-011 |
+| Settings must offer **End a ride after**, the ride timeout in whole minutes. It must default to 10, and it must not accept a value below 5. See SCR-RIDE-037. | SCR-SET-012 |
+| When a value below 5 is entered, the app must say the minimum in words and keep the last valid value. | SCR-SET-013 |
 
 ??? note "Edge cases"
     - Match Windows follows the Windows app mode and switches when it changes. See the [visual system](../ux/visual-system.md).
@@ -53,6 +56,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | `MenuSettingsItem` | The More menu item that opens this screen |
 | `SettingsPageTitle` | The screen title |
 | `SettingsAppearanceGroup` | The appearance choice |
+| `SettingsRideTimeoutInput` | **End a ride after** |
 | `SettingsOpenMappingsButton` | **Open the mappings folder** |
 | `SettingsDeleteAllButton` | **Delete all saved mappings** |
 | `SettingsOpenLogsButton` | **Open the log folder** |
@@ -73,6 +77,10 @@ On Settings, a controller press goes to Zwift as mapped. Dialogs work with touch
 | `AppearanceLight` | Light | SCR-SET-001 |
 | `AppearanceDark` | Dark | SCR-SET-001 |
 | `AppearanceMatchWindows` | Match Windows | SCR-SET-001 |
+| `SettingsRidesSection` | Rides | SCR-SET-012 |
+| `SettingsRideTimeout` | End a ride after | SCR-SET-012 |
+| `SettingsRideTimeoutDescription` | Minutes without a button press or a connection before a ride ends. The minimum is 5. | SCR-SET-012 |
+| `SettingsRideTimeoutMinimum` | The ride timeout must be 5 minutes or more. | SCR-SET-013 |
 | `SettingsMappingsSection` | Mappings | SCR-SET-003 |
 | `SettingsOpenMappings` | Open the mappings folder | SCR-SET-003 |
 | `SettingsDeleteAll` | Delete all saved mappings | SCR-SET-004 |

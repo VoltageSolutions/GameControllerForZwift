@@ -50,6 +50,7 @@ The table is a section headed `## Quoted strings` with three columns: **Key**, *
 |---|---|
 | A screen spec that quotes a string the app shows must list it in a `## Quoted strings` table with its resx key, its exact English text, and the rule that needs it. | UX-L-012 |
 | A unit test must fail when a key in a spec Quoted strings table is missing from `Strings.resx`, or when its English value differs from the spec text. The failure must name the spec file, the rule ID, the key, the expected text, and the actual text. | UX-L-013 |
+| The string checks (UX-L-010, UX-L-011, and UX-L-013) must run for every language the app ships, and a pull request must report them as their own check, separate from the functional unit tests. | UX-L-014 |
 
 ??? note "Edge cases"
     - The table checks the strings listed in it. A quote in running text that is not in the table is not checked, so list every string a rule depends on.
