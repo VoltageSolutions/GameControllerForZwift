@@ -259,7 +259,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     window.ViewModel.OpenSettingsCommand.Execute(null);
                     Pump(window);
                     var page = Assert.IsType<SettingsPage>(((ContentControl)window.FindName("RootContent")).Content);
-                    var deleteAll = Element<Button>(page, "DeleteAllButton");
+                    var deleteAll = Element<UI.WPF.Controls.ActionRow>(page, "DeleteAllButton");
                     Assert.Same(provider.GetRequiredService<SettingsViewModel>().DeleteAllConfigurationsCommand, deleteAll.Command);
 
                     _context.Dialogs.ConfirmAnswers.Enqueue(true);

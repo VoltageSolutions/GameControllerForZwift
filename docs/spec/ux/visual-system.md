@@ -162,6 +162,21 @@ Dropdowns, text boxes, checkboxes, switches, and radio buttons share one look, s
 | A choice and its label must form one 48 px target (UX-V-020). Clicking the label toggles the choice. | UX-V-042 |
 | An unchecked checkbox, an off switch, and an empty radio button must have a 2 px `muted` outline, so the control stands out from the background at 3:1 or more. This is one of the outlines accessibility needs (see the edge cases under Surfaces). | UX-V-043 |
 
+## Rows and two-column screens
+
+Settings, Help and feedback, Credits, and Support share one layout, so a person who has seen one has seen them all.
+
+| Rule | ID |
+|---|---|
+| A row that does something must be one button, at least 64 px high, radius 20, on `surface` with the soft shadow. It must show a title (17, weight 700), an optional line under it (14, `muted`), and at its right edge a chevron when it opens another screen or an arrow out of a box when it opens something outside the app. The whole row must be the target. | UX-V-045 |
+| A row that deletes something must show its title in `err`. A disabled row must use `surface-2` and `muted`, with no shadow. | UX-V-046 |
+| A label over a group of rows must be 17, weight 700, `muted`, with 4 px of indent. | UX-V-047 |
+| A choice among a few labeled options, such as Appearance, must be a segmented track: pills on `surface-2`, with the chosen pill raised on `surface`. | UX-V-048 |
+| On a window at least 900 px wide, these screens must show two columns: the title and the explanation on the left, and a 520 px column of rows on the right. Below 900 px they must show one column, in the same order. | UX-V-049 |
+| A screen title on tablet and desktop must be 48, weight 800. | UX-V-050 |
+
+On Windows the row is the `ActionRow` control, the segmented track is the `Segmented` style, and the two columns are the `AdaptiveColumns` panel.
+
 On Windows the buttons, fields, and surfaces live in `Resources/Controls.xaml` and `Resources/Surfaces.xaml`. In Debug builds, the style gallery in the More menu shows each one in every state.
 
 ## Illustration

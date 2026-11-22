@@ -1,6 +1,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:converters="clr-namespace:GameControllerForZwift.UI.WPF.Converters">
+                    xmlns:converters="clr-namespace:GameControllerForZwift.UI.WPF.Converters"
+                    xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls">
 
     <!-- Shared controls: buttons, dropdowns, text boxes, checkboxes, switches, and radio buttons
          (docs/spec/ux/visual-system.md, Buttons and Fields and choices). Colors come from the tokens.
@@ -104,6 +105,177 @@
         <Setter Property="FontWeight" Value="ExtraBold" />
         <Setter Property="Background" Value="{DynamicResource Brush.accent}" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.on-accent}" />
+    </Style>
+
+    <!-- Action row: a row-sized button with a title, a line under it, and a chevron or external-link mark. At least 64 high,
+         radius 20, on the surface color with the soft shadow (UX-V-017, UX-V-022, UX-V-023). -->
+    <Style TargetType="controls:ActionRow">
+        <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
+        <Setter Property="FontFamily" Value="{DynamicResource Font.Figtree}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Cursor" Value="Hand" />
+        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ActionRow">
+                    <Grid SnapsToDevicePixels="True">
+                        <Border x:Name="Fill" CornerRadius="20" Background="{DynamicResource Brush.surface}" Effect="{DynamicResource Effect.shadow}" />
+                        <Border x:Name="Film" CornerRadius="20" Background="{DynamicResource Brush.text}" Opacity="0" IsHitTestVisible="False" />
+                        <Grid MinHeight="44" Margin="20,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock x:Name="TitleText" Text="{TemplateBinding Title}" FontSize="17" FontWeight="Bold" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource Brush.text}" />
+                                <TextBlock x:Name="DescriptionText" Margin="0,2,0,0" Text="{TemplateBinding Description}" FontSize="14" TextWrapping="Wrap"
+                                           Foreground="{DynamicResource Brush.muted}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </StackPanel>
+                            <Viewbox x:Name="Mark" Grid.Column="1" Width="18" Height="18" Margin="16,0,0,0" VerticalAlignment="Center" Visibility="Collapsed">
+                                <Path x:Name="MarkPath" Width="24" Height="24" Stretch="None" Stroke="{DynamicResource Brush.text}" StrokeThickness="2.4"
+                                      StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+                            </Viewbox>
+                        </Grid>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Trailing" Value="Chevron">
+                            <Setter TargetName="Mark" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="MarkPath" Property="Data" Value="{StaticResource Icon.Chevron}" />
+                        </Trigger>
+                        <Trigger Property="Trailing" Value="External">
+                            <Setter TargetName="Mark" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="MarkPath" Property="Data" Value="{StaticResource Icon.External}" />
+                            <Setter TargetName="Mark" Property="Width" Value="16" />
+                            <Setter TargetName="Mark" Property="Height" Value="16" />
+                            <Setter TargetName="MarkPath" Property="StrokeThickness" Value="2" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Film" Property="Opacity" Value="0.06" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Film" Property="Opacity" Value="0.12" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Fill" Property="Background" Value="{DynamicResource Brush.surface-2}" />
+                            <Setter TargetName="Fill" Property="Effect" Value="{x:Null}" />
+                            <Setter TargetName="TitleText" Property="Foreground" Value="{DynamicResource Brush.muted}" />
+                            <Setter TargetName="MarkPath" Property="Stroke" Value="{DynamicResource Brush.muted}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Danger action row: the title is in the error color. -->
+    <Style x:Key="ActionRow.Danger" TargetType="controls:ActionRow" BasedOn="{StaticResource {x:Type controls:ActionRow}}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ActionRow">
+                    <Grid SnapsToDevicePixels="True">
+                        <Border x:Name="Fill" CornerRadius="20" Background="{DynamicResource Brush.surface}" Effect="{DynamicResource Effect.shadow}" />
+                        <Border x:Name="Film" CornerRadius="20" Background="{DynamicResource Brush.text}" Opacity="0" IsHitTestVisible="False" />
+                        <StackPanel MinHeight="44" Margin="20,10" VerticalAlignment="Center">
+                            <TextBlock x:Name="TitleText" Text="{TemplateBinding Title}" FontSize="17" FontWeight="Bold" TextWrapping="Wrap"
+                                       Foreground="{DynamicResource Brush.err}" />
+                            <TextBlock Margin="0,2,0,0" Text="{TemplateBinding Description}" FontSize="14" TextWrapping="Wrap"
+                                       Foreground="{DynamicResource Brush.muted}">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Style.Triggers>
+                                            <Trigger Property="Text" Value="">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Film" Property="Opacity" Value="0.06" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="Film" Property="Opacity" Value="0.12" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Fill" Property="Background" Value="{DynamicResource Brush.surface-2}" />
+                            <Setter TargetName="Fill" Property="Effect" Value="{x:Null}" />
+                            <Setter TargetName="TitleText" Property="Foreground" Value="{DynamicResource Brush.muted}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Segmented choice: a list box drawn as a track of pills; the chosen pill is raised (UX-V-016). -->
+    <Style x:Key="Segmented" TargetType="ListBox">
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+        <Setter Property="BorderThickness" Value="0" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Disabled" />
+        <Setter Property="KeyboardNavigation.DirectionalNavigation" Value="Cycle" />
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <UniformGrid Rows="1" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="ItemContainerStyle">
+            <Setter.Value>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Height" Value="48" />
+                    <Setter Property="Cursor" Value="Hand" />
+                    <Setter Property="FontFamily" Value="{DynamicResource Font.Figtree}" />
+                    <Setter Property="FontSize" Value="15" />
+                    <Setter Property="FontWeight" Value="Bold" />
+                    <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+                    <Setter Property="FocusVisualStyle" Value="{StaticResource FocusRing}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <Grid SnapsToDevicePixels="True">
+                                    <Border x:Name="Fill" CornerRadius="22" Background="Transparent" />
+                                    <ContentPresenter Margin="4,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Fill" Property="Background" Value="{DynamicResource Brush.surface}" />
+                                        <Setter TargetName="Fill" Property="Effect" Value="{DynamicResource Effect.shadow}" />
+                                        <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBox">
+                    <Border CornerRadius="26" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                        <ItemsPresenter />
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <!-- An icon-only button: a 48 px circle. It needs a screen reader name. -->
