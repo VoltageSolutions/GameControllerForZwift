@@ -38,7 +38,7 @@ namespace GameControllerForZwift.UI.WPF
         // first visit is instant. The document pages are the slow ones: they convert markdown into a FlowDocument.
         private static readonly Type[] _pagesToPrepare =
         [
-            typeof(RideViewModel), typeof(ConnectionsViewModel), typeof(CreditsViewModel), typeof(SettingsViewModel), typeof(SupportViewModel),
+            typeof(ControllerSetupViewModel), typeof(ConnectionsViewModel), typeof(CreditsViewModel), typeof(SettingsViewModel), typeof(SupportViewModel),
         ];
         private int _nextPageToPrepare;
 

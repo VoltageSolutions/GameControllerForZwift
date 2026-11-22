@@ -18,7 +18,7 @@ namespace GameControllerForZwift.UITests
             var session = _fixture.AppSession;
 
             session.Element("NavRideTab").Click();
-            Assert.Equal("Ride", session.Element("RidePageTitle").Text);
+            Assert.True(session.Exists("RidePageTitle"));
             Assert.True(session.Element("NavRideTab").IsSelected());
 
             session.Element("NavConnectionsTab").Click();

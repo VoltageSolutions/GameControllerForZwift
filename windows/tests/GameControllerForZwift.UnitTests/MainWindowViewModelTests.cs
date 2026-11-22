@@ -46,11 +46,11 @@ namespace GameControllerForZwift.UI.WPF.Tests
         }
 
         [Fact]
-        public void NavigateToStartPage_ShowsTheButtonsTabWithAnEmptyHistory()
+        public void UXN018_NavigateToStartPage_ShowsTheRideTabWithAnEmptyHistory()
         {
             _viewModel.NavigateToStartPage();
 
-            _navigation.Received(1).NavigateToRoot(typeof(ControllerSetupViewModel));
+            _navigation.Received(1).NavigateToRoot(typeof(RideViewModel));
         }
 
         [Theory]
@@ -81,7 +81,12 @@ namespace GameControllerForZwift.UI.WPF.Tests
             var changed = new List<string?>();
             _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
-            Show(new RideViewModel());
+            using var context = new GameControllerForZwift.UI.WPF.Tests.ViewModels.ConfigurationTestContext();
+            using var status = new ZwiftStatus();
+            var setup = context.CreateViewModel();
+            using var ride = new RideViewModel(status, setup, context.Settings, context.Dialogs, _navigation,
+                new ConnectionsViewModel(status, setup, _ => { }));
+            Show(ride);
 
             Assert.Equal(ShellTab.Ride, _viewModel.SelectedTab!.Tab);
             Assert.False(_viewModel.IsPushedScreen);

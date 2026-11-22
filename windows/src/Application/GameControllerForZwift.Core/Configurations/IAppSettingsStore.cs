@@ -56,5 +56,17 @@ namespace GameControllerForZwift.Core.Configurations
         /// Records the ride timeout in minutes. A value below <see cref="MinimumRideTimeoutMinutes"/> is raised to it (SCR-SET-012).
         /// </summary>
         void SetRideTimeoutMinutes(int minutes);
+
+        /// <summary>Returns the totals of all finished rides, or <see cref="Rides.RideStats.None"/> (SCR-RIDE-003).</summary>
+        Rides.RideStats GetRideStats();
+
+        /// <summary>Adds a finished ride to the totals (SCR-RIDE-003).</summary>
+        void RecordRide(int shifts, DateTimeOffset startedAt);
+
+        /// <summary>Returns whether the donation ask has been shown. It is shown at most once (SCR-RIDE-030).</summary>
+        bool GetDonationAskShown();
+
+        /// <summary>Records that the donation ask has been shown (SCR-RIDE-031).</summary>
+        void SetDonationAskShown();
     }
 }

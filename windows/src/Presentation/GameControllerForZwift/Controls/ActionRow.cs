@@ -36,6 +36,14 @@ namespace GameControllerForZwift.UI.WPF.Controls
             nameof(Trailing), typeof(ActionRowTrailing), typeof(ActionRow), new PropertyMetadata(ActionRowTrailing.None));
 
 
+        /// <summary>Identifies <see cref="Eyebrow"/>.</summary>
+        public static readonly DependencyProperty EyebrowProperty = DependencyProperty.Register(
+            nameof(Eyebrow), typeof(string), typeof(ActionRow), new PropertyMetadata(string.Empty));
+
+        /// <summary>Identifies <see cref="TrailingText"/>.</summary>
+        public static readonly DependencyProperty TrailingTextProperty = DependencyProperty.Register(
+            nameof(TrailingText), typeof(string), typeof(ActionRow), new PropertyMetadata(string.Empty));
+
         static ActionRow()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ActionRow), new FrameworkPropertyMetadata(typeof(ActionRow)));
@@ -53,6 +61,20 @@ namespace GameControllerForZwift.UI.WPF.Controls
         {
             get => (string)GetValue(DescriptionProperty);
             set => SetValue(DescriptionProperty, value);
+        }
+
+        /// <summary>Gets or sets the small line over the title.</summary>
+        public string Eyebrow
+        {
+            get => (string)GetValue(EyebrowProperty);
+            set => SetValue(EyebrowProperty, value);
+        }
+
+        /// <summary>Gets or sets the word before the trailing mark, for example "Change".</summary>
+        public string TrailingText
+        {
+            get => (string)GetValue(TrailingTextProperty);
+            set => SetValue(TrailingTextProperty, value);
         }
 
         /// <summary>Gets or sets the mark at the trailing edge.</summary>

@@ -63,6 +63,9 @@ namespace GameControllerForZwift
             // Lists controllers as they connect and disconnect (CTRL-002). Started here, on the UI thread, which owns SDL.
             ServiceProvider.GetRequiredService<ControllerSetupViewModel>().StartControllerDetection();
 
+            // Follows the controller and Zwift so a ride starts and ends by itself, whichever tab is showing (SCR-RIDE-036).
+            ServiceProvider.GetRequiredService<RideViewModel>().StartTimer();
+
             // Start the Zwift Ride output (Direct Connect server + mDNS advertisement) in the background. It always runs and is the only output.
             {
                 var output = ServiceProvider.GetRequiredService<ZwiftRideOutputService>();
@@ -87,6 +90,9 @@ namespace GameControllerForZwift
             {
                 // Stop asking SDL for controllers before the input service shuts SDL down.
                 ServiceProvider?.GetService<ControllerSetupViewModel>()?.StopControllerDetection();
+
+                // A ride ends when the app closes, and it counts in the stats (SCR-RIDE-037).
+                ServiceProvider?.GetService<RideViewModel>()?.EndRideForExit();
 
                 if (ServiceProvider is IAsyncDisposable provider)
                 {

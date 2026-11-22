@@ -148,7 +148,7 @@ namespace GameControllerForZwift.UI.WPF
         public void UpdateLayoutForWidth(double width) => NavLayout = LayoutForWidth(width);
 
         /// <summary>Shows the first tab after start. The history starts empty.</summary>
-        public void NavigateToStartPage() => SelectTab(ShellTab.Buttons);
+        public void NavigateToStartPage() => SelectTab(ShellTab.Ride);
 
         /// <summary>Shows a tab and clears the history.</summary>
         public void SelectTab(ShellTab tab) => SelectedTab = Tabs.Single(t => t.Tab == tab);
