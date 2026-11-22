@@ -49,7 +49,7 @@ The download happens once. Later builds reuse `windows/.cache/sdl2/SDL2.dll`.
 | `GameControllerForZwift.Network.UnitTests` | Unit | Direct Connect framing and sessions, UUIDs, keypad frames, analog input, mDNS profile, replies that match the known-good Zwift Ride presentation | Any OS |
 | `GameControllerForZwift.Network.IntegrationTests` | Integration | `MdnsAdvertiser` and `ZwiftRideOutputService` over real sockets | Any OS |
 | `GameControllerForZwift.UnitTests` | Unit (WPF) | App startup, view models, converters, controls, navigation | Windows |
-| `GameControllerForZwift.UITests` | UI | Drives the real app with Appium and WinAppDriver (About and Settings pages) | Windows, with WinAppDriver and Appium installed |
+| `GameControllerForZwift.UITests` | UI | Drives the real app with Appium and WinAppDriver (Settings, Credits, and Support screens) | Windows, with WinAppDriver and Appium installed |
 
 The tests use xUnit and NSubstitute. Run them all with:
 
@@ -62,6 +62,16 @@ Or run one project:
 ```powershell
 dotnet test windows/tests/GameControllerForZwift.Network.UnitTests
 ```
+
+### String and accessibility checks
+
+Some unit tests keep the app equal to the specs. They carry the trait `Category=Localization` or `Category=Accessibility`. The string checks compare the English text in `Strings.resx` with the **Quoted strings** table of each screen spec, and they check every `Strings.<culture>.resx` for missing keys and changed placeholders. The accessibility check looks for every ID in the **Accessibility IDs** table of each screen spec. Run only these checks with:
+
+```powershell
+dotnet test windows/tests/GameControllerForZwift.UnitTests --filter "Category=Localization|Category=Accessibility"
+```
+
+On a pull request, CI runs them as their own check, **Localization and Accessibility Results**, and leaves them out of **Unit Test Results**.
 
 !!! note "UI tests need extra tools"
     The UI tests need WinAppDriver and an Appium server with the Windows driver. CI installs both. Locally, you can skip that project and run the others.
@@ -94,7 +104,7 @@ The GitHub Actions workflows live in `.github/workflows/`.
 
 | Workflow | File | When it runs | What it does |
 |---|---|---|---|
-| Windows CI | `windows-ci.yml` | Every pull request | Builds and publishes the app, runs the unit, integration and UI tests, checks formatting, the version, CodeQL and vulnerable packages, and uploads coverage. |
+| Windows CI | `windows-ci.yml` | Every pull request | Builds and publishes the app, runs the unit, integration and UI tests, runs the string and accessibility checks as their own check, checks formatting, the version, CodeQL and vulnerable packages, and uploads coverage. |
 | Windows CD | `windows-cd.yml` | Push to `main` (not for docs-only changes) | Publishes both zips, creates the GitHub release and opens the next release branch. |
 | Windows CodeQL and Coverage | `windows-codeql-and-coverage.yml` | Push to `main` (not for docs-only changes) | Refreshes the CodeQL alerts and Codecov coverage that pull requests compare against. |
 | Docs CI | `docs-ci.yml` | Pull requests that change the docs | Builds the docs site with `--strict`. |
