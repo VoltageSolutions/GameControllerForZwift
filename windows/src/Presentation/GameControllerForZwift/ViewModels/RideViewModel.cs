@@ -288,6 +288,11 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 _tracker.RegisterPress(function is ZwiftFunction.ShiftUp or ZwiftFunction.ShiftDown);
                 if (_tracker.IsRiding)
                 {
+                    if (function == ZwiftFunction.None)
+                    {
+                        continue;
+                    }
+
                     LastPressText = Localizer.Format("RidePressFormat",
                         Localizer.Get(ButtonsCatalog.Function(function).TitleKey),
                         Localizer.Get(ButtonsCatalog.Input(input).NameKey).ToLower(Localizer.Instance.Culture));

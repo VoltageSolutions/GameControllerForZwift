@@ -117,7 +117,7 @@ A ride starts when the app knows both that a controller is connected and that Zw
 
 | Rule | ID |
 |---|---|
-| When the controller goes to sleep or disconnects while riding, the riding view must say so in words and say how to wake it. | SCR-RIDE-026 |
+| When the controller goes to sleep or disconnects while riding, the riding view must say the controller disconnected, and ask the person to wake it to reconnect and keep riding. It must not say the controller fell asleep, because not every controller sleeps. | SCR-RIDE-026 |
 | The app must announce the message. | SCR-RIDE-027 |
 | When the controller is back, the app must say so and return to the riding readout. | SCR-RIDE-028 |
 
@@ -185,8 +185,8 @@ On Home and the riding view, a controller press goes to Zwift as mapped. See [Co
 | `RideQuickReferenceFormat` | {0}: {1} | SCR-RIDE-017 |
 | `RideZwiftLostTitle` | Your controller is fine | SCR-RIDE-023 |
 | `RideZwiftLostBody` | Pick Voltage Gamepad under Controls in Zwift again. | SCR-RIDE-023 |
-| `RideControllerAsleepTitle` | Your controller fell asleep | SCR-RIDE-026 |
-| `RideControllerAsleepBody` | Press any button on it to wake it. Shifting picks up where you left off. | SCR-RIDE-026 |
+| `RideControllerAsleepTitle` | Your controller disconnected. | SCR-RIDE-026 |
+| `RideControllerAsleepBody` | Wake it up to reconnect and continue riding. | SCR-RIDE-026 |
 | `RideControllerBack` | Your controller is back | SCR-RIDE-028 |
 | `RideFinishedTitle` | Ride finished | SCR-RIDE-029 |
 | `RideFinishedTime` | Ride time: {0} | SCR-RIDE-029 |

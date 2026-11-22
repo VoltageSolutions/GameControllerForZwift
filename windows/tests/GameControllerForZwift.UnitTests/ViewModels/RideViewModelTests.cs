@@ -105,8 +105,8 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         public void SCRRIDE011_TheTitleReturnsWhenTheControllerWakes()
         {
             RideViewModel ride = Create();
-            var changed = new List<string?>();
-            ride.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+            var changed = new System.Collections.Concurrent.ConcurrentQueue<string?>();
+            ride.PropertyChanged += (_, e) => changed.Enqueue(e.PropertyName);
 
             _setup!.DetectControllers();
             _setup.SelectedController = Controller(Xbox);
@@ -205,14 +205,15 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         }
 
         [Fact]
-        public void SCRRIDE016_AButtonWithNoFunctionIsStillAPress()
+        public void SCRRIDE016_AButtonWithNoFunctionIsNotShownInTheReadout()
         {
             RideViewModel ride = Riding();
+            string before = ride.LastPressText;
             _setup!.ButtonFunctionMappings.First(m => m.SelectedInput == ControllerInput.A).SelectedZwiftFunction = ZwiftFunction.None;
 
             Press(ControllerInput.A);
 
-            Assert.StartsWith("No action, ", ride.LastPressText, StringComparison.Ordinal);
+            Assert.Equal(before, ride.LastPressText);
             Assert.Equal("Shifts this ride: 0", ride.ShiftsThisRideText);
         }
 
@@ -242,8 +243,8 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             _setup!.SelectedController = null;
 
             Assert.True(ride.IsRiding);
-            Assert.Equal("Your controller fell asleep", ride.ProblemTitle);
-            Assert.Contains("Press any button", ride.ProblemBody, StringComparison.Ordinal);
+            Assert.Equal("Your controller disconnected.", ride.ProblemTitle);
+            Assert.Contains("Wake it up", ride.ProblemBody, StringComparison.Ordinal);
 
             _setup.SelectedController = Controller(Xbox);
 

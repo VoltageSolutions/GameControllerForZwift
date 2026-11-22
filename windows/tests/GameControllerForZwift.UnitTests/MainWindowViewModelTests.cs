@@ -46,11 +46,11 @@ namespace GameControllerForZwift.UI.WPF.Tests
         }
 
         [Fact]
-        public void NavigateToStartPage_ShowsTheButtonsTabWithAnEmptyHistory()
+        public void UXN018_NavigateToStartPage_ShowsTheRideTabWithAnEmptyHistory()
         {
             _viewModel.NavigateToStartPage();
 
-            _navigation.Received(1).NavigateToRoot(typeof(ControllerSetupViewModel));
+            _navigation.Received(1).NavigateToRoot(typeof(RideViewModel));
         }
 
         [Theory]

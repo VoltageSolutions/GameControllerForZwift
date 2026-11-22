@@ -902,12 +902,12 @@
     <comment>Instruction on the Ride screen when Zwift lost the connection. Keep Voltage Gamepad, which is the device name Zwift shows, and keep Controls and Zwift.</comment>
   </data>
   <data name="RideControllerAsleepTitle" xml:space="preserve">
-    <value>Your controller fell asleep</value>
-    <comment>Title on the Ride screen while riding when the controller went to sleep or disconnected.</comment>
+    <value>Your controller disconnected.</value>
+    <comment>Title on the Ride screen while riding when the controller disconnected, for example because it went to sleep or was turned off.</comment>
   </data>
   <data name="RideControllerAsleepBody" xml:space="preserve">
-    <value>Press any button on it to wake it. Shifting picks up where you left off.</value>
-    <comment>Instruction on the Ride screen when the controller went to sleep.</comment>
+    <value>Wake it up to reconnect and continue riding.</value>
+    <comment>Instruction on the Ride screen when the controller disconnected. It asks the person to wake the controller so it reconnects.</comment>
   </data>
   <data name="RideControllerBack" xml:space="preserve">
     <value>Your controller is back</value>

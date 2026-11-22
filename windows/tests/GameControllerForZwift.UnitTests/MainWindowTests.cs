@@ -108,13 +108,13 @@ namespace GameControllerForZwift.UnitTests
             });
 
         [Fact]
-        public void Start_ShowsTheButtonsTabWithEmptyHistory()
+        public void Start_ShowsTheRideTabWithEmptyHistory()
         {
             WithWindow((provider, window) =>
             {
-                var page = Assert.IsType<ControllerSetupPage>(ShownContent(window));
-                Assert.Same(provider.GetRequiredService<ControllerSetupViewModel>(), page.DataContext);
-                Assert.Equal(ShellTab.Buttons, window.ViewModel.SelectedTab!.Tab);
+                var page = Assert.IsType<RidePage>(ShownContent(window));
+                Assert.Same(provider.GetRequiredService<RideViewModel>(), page.DataContext);
+                Assert.Equal(ShellTab.Ride, window.ViewModel.SelectedTab!.Tab);
                 Assert.Same(window.ViewModel.SelectedTab, Find<UI.WPF.Controls.NavTabList>(window, "SidebarTabs").SelectedItem);
                 Assert.False(window.ViewModel.CanGoBack);
                 Assert.Equal(Visibility.Collapsed, Find<Button>(window, "BackButton").Visibility);
@@ -293,7 +293,7 @@ namespace GameControllerForZwift.UnitTests
                 PressKey(window, Key.Escape);
 
                 Assert.False(window.ViewModel.IsMoreMenuOpen);
-                Assert.IsType<ControllerSetupPage>(ShownContent(window));
+                Assert.IsType<RidePage>(ShownContent(window));
             });
         }
 
@@ -411,7 +411,7 @@ namespace GameControllerForZwift.UnitTests
                 window.RaiseEvent(args);
 
                 Assert.True(args.Handled);
-                Assert.IsType<ControllerSetupViewModel>(window.ViewModel.CurrentViewModel);
+                Assert.IsType<RideViewModel>(window.ViewModel.CurrentViewModel);
             });
         }
 
@@ -425,7 +425,7 @@ namespace GameControllerForZwift.UnitTests
                 window.RaiseEvent(args);
 
                 Assert.False(args.Handled);
-                Assert.IsType<ControllerSetupViewModel>(window.ViewModel.CurrentViewModel);
+                Assert.IsType<RideViewModel>(window.ViewModel.CurrentViewModel);
             });
         }
 
