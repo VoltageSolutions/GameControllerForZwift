@@ -100,7 +100,7 @@ Default is listed first and is locked. Saved mappings follow, sorted by name. Th
 | Importing a mapping made for a different controller must ask whether to use it with this controller. See `CFG-033`. | SCR-BTN-028 |
 | Importing a mapping whose name is used must ask for a new name, filled in with a suggestion such as "Climbing (2)". See `CFG-032`. | SCR-BTN-029 |
 | After a successful import the app must show "Saved a copy to your mappings." with an Undo. See `CFG-031`. | SCR-BTN-030 |
-| Settings must offer **Delete all saved mappings**, stating the count and that it can't be undone. See `CFG-035` and [Settings and help](settings-help.md). | SCR-BTN-031 |
+| Settings must offer **Delete all saved mappings**, stating the count and that it can't be undone. See `CFG-035` and [Settings](settings.md). | SCR-BTN-031 |
 
 ??? note "Edge cases"
     - The saved configurations spec describes the notice and the dialog buttons in its own words ("configuration", "Don't save"). The words in this page are the UI words and are used in the app.

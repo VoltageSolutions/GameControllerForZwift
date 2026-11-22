@@ -97,7 +97,6 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | `RideControllerCard` | Group | "Your Xbox controller, awake and connected" |
 | `RideStats` | Group | "12 rides together, 1,086 shifts, riding since September" |
 | `RideZwiftStatus` | Live status | "Zwift is connected to Voltage Gamepad" or "Zwift isn't connected yet" |
-| `RideStartButton` | Button | "Start riding" |
 | `RideLastPressStatus` | Live status | "Shift up, right bumper" |
 | `RideWindowSizeGroup` | Radio group | "Window size: Full, Float, Mini" |
 | `RideStopButton` | Button | "Stop riding" |

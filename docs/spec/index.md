@@ -51,6 +51,9 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 | [Ride screens](screens/ride.md) | `SCR-RIDE` | Home, riding view, connection lost, ride finished. |
 | [Buttons screens](screens/buttons.md) | `SCR-BTN` | Mappings, the function picker, and sticks and triggers. |
 | [Connections screens](screens/connections.md) | `SCR-CONN` | Controller and Zwift status, "Zwift can't find Voltage Gamepad". |
-| [Settings and help screens](screens/settings-help.md) | `SCR-SET` | Settings, Help and feedback, Credits, and Support this project. |
+| [Settings screen](screens/settings.md) | `SCR-SET` | Appearance, riding options, saved mappings, and logs. |
+| [Help and feedback screen](screens/help.md) | `SCR-HELP` | Common problems, the log folder, and reporting a problem. |
+| [Credits screen](screens/credits.md) | `SCR-CRD` | Version, GitHub link, credits, license, and the Zwift disclaimer. |
+| [Support screen](screens/support.md) | `SCR-SUP` | Ko-fi, a GitHub star, telling a friend, and contributing. |
 
 The saved configurations spec calls a saved set of button assignments a "configuration". The app calls it a **mapping**. The screen specs use "mapping" and refer to the `CFG` rules by ID.

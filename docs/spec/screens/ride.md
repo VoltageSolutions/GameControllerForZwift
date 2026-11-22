@@ -1,19 +1,20 @@
 ---
 id: SPEC-SCR-RIDE
 title: Ride screens
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Ride screens
 
 !!! tldr "TL;DR"
-    Ride is the home tab. It shows your controller, honest stats, your mapping, and whether Zwift can see you. The one main action is **Start riding**, or **Pair with Zwift** when Zwift is not connected. While riding you get one big readout and three window sizes: Full, Float, and Mini. Problems are said in words: "Your controller is fine", "Wake your controller".
+    Ride is the home tab. It shows the VOLTAGE wordmark, your controller, honest stats, your mapping, and whether Zwift can see you. There is no Start riding button: the app works without it. When Zwift is not connected, the main action is **Pair with Zwift**. While riding you get one big readout and three window sizes: Full, Float, and Mini. Problems are said in words: "Your controller is fine", "Wake your controller".
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
 ```mermaid
 flowchart TD
-    H["Home:<br/>Ready when you are"] -->|"Start riding"| R["Riding view"]
+    H["Home:<br/>Ready when you are"]
+    R["Riding view"]
     N["No controller:<br/>Wake your controller"] -->|"Controller wakes"| H
     Z["Home: Zwift isn't<br/>connected yet"] -->|"Pair with Zwift"| C["Connections"]
     R -->|"Zwift lost"| L["Zwift lost the connection"]
@@ -26,19 +27,21 @@ flowchart TD
 
 **What it is for:** the screen you see every day. It tells you that you are ready, or what is missing.
 
-**Content, top to bottom:** the screen title "Ready when you are" (`RidePageTitle`), your controller card (for example "Your Xbox controller, awake and connected", `RideControllerCard`), your stats (`RideStats`), your current mapping, the Zwift status (`RideZwiftStatus`), and the main action **Start riding** (`RideStartButton`).
+**Content, top to bottom:** the VOLTAGE wordmark (`RideWordmark`), the screen title "Ready when you are" (`RidePageTitle`), your controller card (for example "Your Xbox controller is here", `RideControllerCard`), your stats (`RideStats`), your current mapping (`RideMappingCard`), and the Zwift status (`RideZwiftStatus`). There is no Start riding button.
 
 *Example: "12 rides together, 1,086 shifts, riding since September."*
 
 | Rule | ID |
 |---|---|
 | The title must be "Ready when you are". | SCR-RIDE-001 |
-| The controller card must name your controller and say its state in words, such as "Your Xbox controller, awake and connected". | SCR-RIDE-002 |
+| The controller card must name your controller and say its state in words, such as "Your Xbox controller is here". | SCR-RIDE-002 |
 | The stats must show only real values the app counts: rides together, shifts, and riding since. Until there is something real to show, the app must hide the stats or say nothing. | SCR-RIDE-003 |
 | The screen must show the selected mapping and let you change it by going to Buttons. | SCR-RIDE-004 |
 | The Zwift status must say "Zwift is connected to Voltage Gamepad" when `IsZwiftConnected` is true. | SCR-RIDE-005 |
-| The one main action must be **Start riding**. | SCR-RIDE-006 |
+| Home must not have a **Start riding** button or any other control that starts a ride. The app must work without one. | SCR-RIDE-006 |
 | The status text must be a live region and announce only changes. | SCR-RIDE-007 |
+| Home must show the VOLTAGE wordmark at the top of the content, above the title. The wordmark is the brand name as a picture, so it must have the accessible name "VOLTAGE" (`RideWordmark`) and must keep the same color treatment in light and dark. | SCR-RIDE-034 |
+| Home must have one level 1 heading, the title, and no other level 1 heading (UX-A-021). | SCR-RIDE-035 |
 
 ## Home, no controller
 
@@ -52,7 +55,6 @@ flowchart TD
 |---|---|
 | When no controller is found after first run, Ride must show "Wake your controller" with "Looking for your controller..." and a faded controller. | SCR-RIDE-008 |
 | It must offer two ways out: use a different controller, and pair a new Bluetooth controller. | SCR-RIDE-009 |
-| It must not offer Start riding as the main action while there is no controller. | SCR-RIDE-010 |
 | The screen must return to Home by itself when the controller wakes, and announce that it is back. | SCR-RIDE-011 |
 
 ## Home, Zwift not connected
@@ -143,6 +145,17 @@ On Home and the riding view, a controller press goes to Zwift as mapped. The onl
 
 | ID | Where |
 |---|---|
-| `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideZwiftStatus`, `RideStartButton` | Home |
+| `RideWordmark`, `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideMappingCard`, `RideZwiftStatus` | Home |
 | `RideLastPressStatus`, `RideWindowSizeGroup`, `RideStopButton` | Riding view |
 | `NavConnectionsTab` | Name adds ", Zwift not connected" when the dot shows |
+
+## Quoted strings
+
+| Key | English text | Rule |
+|---|---|---|
+| `RideTitle` | Ready when you are | SCR-RIDE-001 |
+| `RideControllerHere` | Your {0} is here | SCR-RIDE-002 |
+| `ZwiftConnected` | Zwift is connected to Voltage Gamepad | SCR-RIDE-005 |
+| `ZwiftNotConnected` | Zwift isn't connected yet | SCR-RIDE-012 |
+| `RideNoControllerTitle` | Wake your controller | SCR-RIDE-008 |
+| `RideNoControllerStatus` | Looking for your controller... | SCR-RIDE-008 |

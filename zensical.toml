@@ -54,7 +54,10 @@ nav = [
       "spec/screens/ride.md",
       "spec/screens/buttons.md",
       "spec/screens/connections.md",
-      "spec/screens/settings-help.md",
+      "spec/screens/settings.md",
+      "spec/screens/help.md",
+      "spec/screens/credits.md",
+      "spec/screens/support.md",
     ] },
   ] },
 ]
