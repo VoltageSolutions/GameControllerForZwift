@@ -98,6 +98,42 @@ namespace GameControllerForZwift.Core.Tests.Configurations
         }
 
         [Fact]
+        public void SCRRIDE003_RideStats_StartEmptyAndAddEachRide()
+        {
+            var store = new AppSettingsStore(new FileService(), _path);
+            Assert.Equal(GameControllerForZwift.Core.Rides.RideStats.None, store.GetRideStats());
+
+            var first = new DateTimeOffset(2026, 9, 3, 7, 0, 0, TimeSpan.Zero);
+            store.RecordRide(40, first);
+            store.RecordRide(-5, first.AddDays(10));
+
+            var reloaded = new AppSettingsStore(new FileService(), _path).GetRideStats();
+            Assert.Equal(2, reloaded.Rides);
+            Assert.Equal(40, reloaded.Shifts);
+            Assert.Equal(first, reloaded.Since);
+        }
+
+        [Fact]
+        public void SCRRIDE003_RideStats_AnUnreadableValueCountsAsZero()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
+            File.WriteAllText(_path, """{ "rideStats": { "rides": "many", "shifts": -4, "since": "never" } }""");
+
+            Assert.Equal(GameControllerForZwift.Core.Rides.RideStats.None, new AppSettingsStore(new FileService(), _path).GetRideStats());
+        }
+
+        [Fact]
+        public void SCRRIDE031_DonationAsk_IsNotShownUntilRecordedAndThenStaysShown()
+        {
+            var store = new AppSettingsStore(new FileService(), _path);
+            Assert.False(store.GetDonationAskShown());
+
+            store.SetDonationAskShown();
+
+            Assert.True(new AppSettingsStore(new FileService(), _path).GetDonationAskShown());
+        }
+
+        [Fact]
         public void CFG039_ShowOtherControllers_NotABoolean_IsOff()
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_path)!);
