@@ -60,6 +60,7 @@ On Credits, a controller press goes to Zwift as mapped. See [Controller input](.
 | Key | English text | Rule |
 |---|---|---|
 | `CreditsTitle` | Credits | SCR-CRD-009 |
+| `AppName` | Game Controller for Zwift | SCR-CRD-001 |
 | `CreditsVersionFormat` | Version {0} | SCR-CRD-001 |
 | `CreditsDescription` | Use the controller you already own to shift and steer in Zwift. Free and open source, with no ads and no account. | SCR-CRD-006 |
 | `CreditsNotAffiliated` | Not made by or affiliated with Zwift. Zwift and Zwift Ride are trademarks of Zwift, Inc. | SCR-CRD-005 |

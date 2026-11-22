@@ -1,0 +1,53 @@
+<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.CreditsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
+             AutomationProperties.AutomationId="CreditsPage">
+    <!-- docs/spec/screens/credits.md -->
+    <StackPanel MaxWidth="720" HorizontalAlignment="Left">
+        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc CreditsTitle}"
+                   AutomationProperties.AutomationId="CreditsPageTitle" AutomationProperties.HeadingLevel="Level1" />
+
+        <Border Style="{StaticResource Surface.Card}" Margin="0,24,0,0">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Image Source="pack://application:,,,/Assets/logo_transparent.png" Width="48" Height="48" />
+                    <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
+                        <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc AppName}" AutomationProperties.HeadingLevel="Level2" />
+                        <TextBlock x:Name="VersionText" Style="{StaticResource Text.Caption}" Text="{Binding VersionText}"
+                                   AutomationProperties.AutomationId="CreditsVersion" />
+                    </StackPanel>
+                </StackPanel>
+                <TextBlock Margin="0,16,0,0" Style="{StaticResource Text.Body}" TextWrapping="Wrap" Text="{loc:Loc CreditsDescription}" />
+                <TextBlock Margin="0,12,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc CreditsNotAffiliated}"
+                           AutomationProperties.AutomationId="CreditsNotAffiliated" />
+            </StackPanel>
+        </Border>
+
+        <Border Style="{StaticResource Surface.Card}" Margin="0,16,0,24">
+            <StackPanel>
+                <Button x:Name="GitHubButton" HorizontalAlignment="Left" Command="{Binding OpenGitHubCommand}"
+                        AutomationProperties.AutomationId="CreditsGitHubLink" AutomationProperties.Name="{loc:Loc CreditsGitHub}">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc CreditsGitHub}" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc CreditsGitHubDescription}" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="CreditsListButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding OpenCreditsListCommand}"
+                        AutomationProperties.AutomationId="CreditsListLink" AutomationProperties.Name="{loc:Loc CreditsList}">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc CreditsList}" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc CreditsListDescription}" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="LicenseButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding OpenLicenseCommand}"
+                        AutomationProperties.AutomationId="CreditsLicenseLink" AutomationProperties.Name="{loc:Loc CreditsLicenseName}">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc CreditsLicenseName}" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc CreditsLicenseValue}" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>

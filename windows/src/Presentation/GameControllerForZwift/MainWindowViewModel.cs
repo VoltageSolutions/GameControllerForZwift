@@ -172,7 +172,7 @@ namespace GameControllerForZwift.UI.WPF
         private void OpenCredits()
         {
             IsMoreMenuOpen = false;
-            _navigationService.NavigateTo<AboutPageViewModel>();
+            _navigationService.NavigateTo<CreditsViewModel>();
         }
 
         /// <summary>
@@ -195,15 +195,15 @@ namespace GameControllerForZwift.UI.WPF
         {
         }
 
-        /// <summary>Support this project has no screen, so its menu item is disabled.</summary>
-        [RelayCommand(CanExecute = nameof(HasSupportScreen))]
+        /// <summary>Opens Support this project as a pushed screen (UX-N-009).</summary>
+        [RelayCommand]
         private void OpenSupport()
         {
+            IsMoreMenuOpen = false;
+            _navigationService.NavigateTo<SupportViewModel>();
         }
 
         private static bool HasHelpScreen() => false;
-
-        private static bool HasSupportScreen() => false;
 
         [RelayCommand(CanExecute = nameof(CanGoBack))]
         private void Back()

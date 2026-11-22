@@ -90,6 +90,24 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         public void ShowNotice(string title, string message) => Notices.Add(title + ": " + message);
 
         public void OpenFolder(string folderPath) => OpenedFolders.Add(folderPath);
+
+        public List<string> OpenedUrls { get; } = [];
+
+        public List<string> CopiedTexts { get; } = [];
+
+        public bool ClipboardAvailable { get; set; } = true;
+
+        public void OpenUrl(string url) => OpenedUrls.Add(url);
+
+        public bool CopyText(string text)
+        {
+            if (ClipboardAvailable)
+            {
+                CopiedTexts.Add(text);
+            }
+
+            return ClipboardAvailable;
+        }
     }
 
     internal static class TestControllers

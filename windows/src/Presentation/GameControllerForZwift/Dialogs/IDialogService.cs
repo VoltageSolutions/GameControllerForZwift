@@ -50,5 +50,11 @@ namespace GameControllerForZwift.UI.WPF.Dialogs
         /// Opens a folder in File Explorer (CFG-034).
         /// </summary>
         void OpenFolder(string folderPath);
+
+        /// <summary>Opens a web address in the default browser.</summary>
+        void OpenUrl(string url);
+
+        /// <summary>Puts text on the clipboard. Returns false when the clipboard is not available.</summary>
+        bool CopyText(string text);
     }
 }

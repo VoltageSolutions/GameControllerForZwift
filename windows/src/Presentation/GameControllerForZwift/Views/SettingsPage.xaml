@@ -1,205 +1,72 @@
-﻿<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.SettingsPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:GameControllerForZwift.UI.WPF.Views"
-      xmlns:vm="clr-namespace:GameControllerForZwift.UI.WPF.ViewModels"
-      mc:Ignorable="d"   
-    d:DesignHeight="450"
-    d:DesignWidth="800"
-    Foreground="{DynamicResource TextFillColorPrimaryBrush}"
-    >
-    <UserControl.Resources>
-        <Style x:Key="LinkTextBlockStyle" TargetType="TextBlock">
-            <Setter Property="Margin" Value="0,4,0,4" />
-        </Style>
-        <Style x:Key="DefaultHyperlinkStyle" TargetType="Hyperlink">
-            <Setter Property="TextDecorations" Value="None" />
-            <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorPrimaryBrush}" />
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Foreground" Value="{DynamicResource AccentTextFillColorSecondaryBrush}" />
-                    <Setter Property="TextDecorations" Value="Underline" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
+<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
+             xmlns:vm="clr-namespace:GameControllerForZwift.UI.WPF.ViewModels"
+             AutomationProperties.AutomationId="SettingsPage">
+    <!-- docs/spec/screens/settings.md -->
+    <StackPanel MaxWidth="720" HorizontalAlignment="Left">
+        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc SettingsTitle}"
+                   AutomationProperties.AutomationId="SettingsPageTitle" AutomationProperties.HeadingLevel="Level1" />
 
-        <Style x:Key="SettingsCardStyle" TargetType="Border">
-            <Setter Property="Padding" Value="0,16,0,16" />
-            <Setter Property="BorderThickness" Value="0,0,0,1" />
-            <Setter Property="BorderBrush" Value="{DynamicResource ExpanderHeaderBorderBrush}" />
-        </Style>
+        <!-- Appearance (SCR-SET-001) -->
+        <TextBlock Margin="0,24,0,8" Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc SettingsAppearanceSection}" AutomationProperties.HeadingLevel="Level2" />
+        <Border Style="{StaticResource Surface.Card}">
+            <ComboBox x:Name="AppearancePicker" HorizontalAlignment="Left" MinWidth="280"
+                      ItemsSource="{x:Static vm:SettingsViewModel.AppearanceOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                      SelectedValue="{Binding Appearance}"
+                      AutomationProperties.AutomationId="SettingsAppearanceGroup" AutomationProperties.Name="{loc:Loc SettingsAppearanceSection}" />
+        </Border>
 
-        <Style x:Key="BottomSettingsCardStyle" TargetType="Border">
-            <Setter Property="Padding" Value="0,16,0,16" />
-        </Style>
-    </UserControl.Resources>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!--<controls:PageHeader
-            Grid.Row="0"
-            Margin="0,0,0,40"
-            Title="{Binding ViewModel.PageTitle}"
-            Description="{Binding ViewModel.PageDescription}"/>-->
-
-        <ScrollViewer Grid.Row="1" Margin="0,0,0,24" Padding="0,0,24,0">
+        <!-- Rides: the ride timeout (SCR-SET-012, SCR-SET-013) -->
+        <TextBlock Margin="0,24,0,8" Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc SettingsRidesSection}" AutomationProperties.HeadingLevel="Level2" />
+        <Border Style="{StaticResource Surface.Card}">
             <StackPanel>
-                <TextBlock x:Name="PageTitle"  Text="Appearance &amp; behavior" FontWeight="SemiBold" Margin="10" FontSize="14"/>
-                <Grid Background="Transparent" Margin="0,0,0,20">
-                    <Border Background="{DynamicResource ExpanderHeaderBackground}" BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}" BorderThickness="{StaticResource ExpanderBorderThemeThickness}" Padding="{StaticResource ExpanderPadding}" CornerRadius="{DynamicResource ControlCornerRadius}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock x:Name="AppIcon" AutomationProperties.Name="App Icon" Grid.Column="0" Width="20" Height="20"  Margin="10,5,10,5" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE790;" FontSize="20"/>
-
-                            <StackPanel
-                                Grid.Column="1"
-                                Margin="12"
-                                Orientation="Vertical">
-                                <TextBlock Text="App theme" FontSize="14"/>
-                                <TextBlock Opacity="0.7" FontSize="12" Style="{StaticResource CaptionTextBlockStyle}">Select which app theme to display</TextBlock>
-                            </StackPanel>
-
-
-                            <ComboBox x:Name="Change_ThemeMode" MinWidth="200" HorizontalAlignment="Right" Grid.Column="2" AutomationProperties.Name="App theme" Margin="10"
-                                      ItemsSource="{x:Static vm:SettingsViewModel.AppearanceOptions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Appearance}" />
-                        </Grid>
-                    </Border>
-                </Grid>
-
-                <TextBlock x:Name="ConfigurationsSectionTitle" Text="Saved configurations" FontWeight="SemiBold" Margin="10" FontSize="14"/>
-                <Grid Background="Transparent" Margin="0,0,0,20">
-                    <Border Background="{DynamicResource ExpanderHeaderBackground}" BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}" BorderThickness="{StaticResource ExpanderBorderThemeThickness}" Padding="{StaticResource ExpanderPadding}" CornerRadius="{DynamicResource ControlCornerRadius}">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock x:Name="DeleteConfigurationsIcon" AutomationProperties.Name="Delete icon" Grid.Column="0" Width="20" Height="20" Margin="10,5,10,5" VerticalAlignment="Center" FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xE74D;" FontSize="20"/>
-
-                            <StackPanel
-                                Grid.Column="1"
-                                Margin="12"
-                                Orientation="Vertical">
-                                <TextBlock Text="Delete all saved configurations" FontSize="14"/>
-                                <TextBlock Opacity="0.7" FontSize="12" Style="{StaticResource CaptionTextBlockStyle}" TextWrapping="Wrap">Removes every configuration you saved or imported. The Default configuration stays.</TextBlock>
-                            </StackPanel>
-
-                            <Button x:Name="DeleteAllConfigurationsButton" Grid.Column="2" MinWidth="120" Margin="10" HorizontalAlignment="Right" VerticalAlignment="Center" Content="Delete all" Command="{Binding DeleteAllConfigurationsCommand}" AutomationProperties.AutomationId="DeleteAllConfigurationsButton" AutomationProperties.Name="Delete all saved configurations"/>
-                        </Grid>
-                    </Border>
-                </Grid>
-
-                <!-- <TextBlock Text="About" FontWeight="SemiBold" Margin="10" FontSize="14"/>
-                <Expander AutomationProperties.Name="Game Controller For Zwift">
-                    <Expander.Header>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Image
-                                Grid.Column="0"
-                                Width="20"
-                                Height="20"
-                                Margin="10,5,10,5"
-                                VerticalAlignment="Center"
-                                Source="pack://application:,,,/Assets/WPFGalleryPreviewIcon.png" />
-
-                            <StackPanel
-                                Grid.Column="1"
-                                Margin="12"
-                                Orientation="Vertical">
-                                <TextBlock Text="Game Controller For Zwift" />
-                                <TextBlock Opacity="0.7" Style="{StaticResource CaptionTextBlockStyle}">Voltage Solutions</TextBlock>
-                            </StackPanel>
-                        </Grid>
-                    </Expander.Header>
-                    <Expander.Content>
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-
-                            <Border Grid.Row="0" Style="{StaticResource SettingsCardStyle}">
-                                <Grid Margin="48,0,16,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="To clone this repository" />
-                                    <TextBox Grid.Column="2" Style="{StaticResource SelectionTextBox}" Text="git clone https://github.com/microsoft/WPF-Samples.git" Focusable="False"/>
-                                </Grid>
-                            </Border>
-
-                            <Border Grid.Row="1" Style="{StaticResource SettingsCardStyle}">
-                                <Grid Margin="48,0,16,0">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="File a bug or request a new sample" />
-                                    <Button AutomationProperties.Name="Open Issues" Grid.Column="2" Padding="8" FocusManager.IsFocusScope="True" Click="Open_Issues">
-                                        <TextBlock FontFamily="{StaticResource SymbolThemeFontFamily}" Text="&#xe8a7;" />
-                                    </Button>
-                                </Grid>
-                            </Border>
-
-                            <GroupBox Grid.Row="2" AutomationProperties.Name="Dependencies and References" BorderThickness="0">
-                                <Border Style="{StaticResource SettingsCardStyle}">
-                                    <StackPanel Margin="48,0,16,0" Orientation="Vertical">
-                                        <TextBlock Margin="0,0,0,12" Text="Dependencies and References" />
-                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Open_ToolkitInformation" Style="{StaticResource DefaultHyperlinkStyle}">CommunityToolkit.Mvvm</Hyperlink>
-                                        </TextBlock>
-                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Open_DIInformation" AutomationProperties.Name="Link to Dependency Injection NuGet Package" Style="{StaticResource DefaultHyperlinkStyle}">Microsoft.Extensions.DependencyInjection</Hyperlink>
-                                        </TextBlock>
-                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Open_HostingInformation" AutomationProperties.Name="Link to .NET Generic Host Package" Style="{StaticResource DefaultHyperlinkStyle}">Microsoft.Extensions.Hosting</Hyperlink>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </Border>
-                            </GroupBox>
-
-                            <GroupBox Grid.Row="3" AutomationProperties.Name="THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE." BorderThickness="0">
-                                <Border Style="{StaticResource BottomSettingsCardStyle}">
-                                    <StackPanel Margin="48,0,16,0" Orientation="Vertical">
-                                        <TextBlock
-                                            Margin="0,0,0,12"
-                                            Text="THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
-                                            TextWrapping="Wrap" />
-                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Services_Click" Style="{StaticResource DefaultHyperlinkStyle}">Microsoft Services Agreement</Hyperlink>
-                                        </TextBlock>
-                                        <TextBlock Style="{StaticResource LinkTextBlockStyle}">
-                                            <Hyperlink Click="Privacy_Click" Style="{StaticResource DefaultHyperlinkStyle}">Microsoft Privacy Statement</Hyperlink>
-                                        </TextBlock>
-                                    </StackPanel>
-                                </Border>
-                            </GroupBox>
-                        </Grid>
-                    </Expander.Content>
-                </Expander> -->
+                <TextBlock Style="{StaticResource Text.Body}" Text="{loc:Loc SettingsRideTimeout}" />
+                <TextBlock Margin="0,4,0,12" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc SettingsRideTimeoutDescription}" />
+                <TextBox x:Name="RideTimeoutBox" HorizontalAlignment="Left" Width="120"
+                         Text="{Binding RideTimeoutText, UpdateSourceTrigger=LostFocus}"
+                         AutomationProperties.AutomationId="SettingsRideTimeoutInput" AutomationProperties.Name="{loc:Loc SettingsRideTimeout}" />
+                <TextBlock x:Name="RideTimeoutMessage" Margin="0,8,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                           Foreground="{DynamicResource Brush.accent-ink}" Text="{Binding RideTimeoutMessage}"
+                           Visibility="{Binding HasRideTimeoutMessage, Converter={StaticResource BooleanToVisibility}}"
+                           AutomationProperties.AutomationId="SettingsRideTimeoutMessage" AutomationProperties.LiveSetting="Polite" />
             </StackPanel>
-        </ScrollViewer>
-    </Grid>
+        </Border>
+
+        <!-- Mappings (SCR-SET-003 to SCR-SET-005) -->
+        <TextBlock Margin="0,24,0,8" Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc SettingsMappingsSection}" AutomationProperties.HeadingLevel="Level2" />
+        <Border Style="{StaticResource Surface.Card}">
+            <StackPanel>
+                <Button x:Name="OpenMappingsButton" HorizontalAlignment="Left" Command="{Binding OpenMappingsFolderCommand}"
+                        Content="{loc:Loc SettingsOpenMappings}" AutomationProperties.AutomationId="SettingsOpenMappingsButton" />
+                <Button x:Name="DeleteAllButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding DeleteAllConfigurationsCommand}"
+                        Content="{loc:Loc SettingsDeleteAll}" AutomationProperties.AutomationId="SettingsDeleteAllButton" />
+                <TextBlock x:Name="DeleteDescription" Margin="0,8,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
+                           Text="{Binding DeleteDescription}" AutomationProperties.AutomationId="SettingsDeleteDescription" />
+            </StackPanel>
+        </Border>
+
+        <!-- Help (SCR-SET-006, SCR-SET-007) -->
+        <TextBlock Margin="0,24,0,8" Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc SettingsHelpSection}" AutomationProperties.HeadingLevel="Level2" />
+        <Border Style="{StaticResource Surface.Card}">
+            <StackPanel>
+                <Button x:Name="OpenLogsButton" HorizontalAlignment="Left" Command="{Binding OpenLogsFolderCommand}"
+                        Content="{loc:Loc SettingsOpenLogs}" AutomationProperties.AutomationId="SettingsOpenLogsButton" />
+                <Button x:Name="HelpLinkButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding OpenHelpCommand}"
+                        Content="{loc:Loc SettingsHelpLinkText}" AutomationProperties.AutomationId="SettingsHelpLink" />
+            </StackPanel>
+        </Border>
+
+        <!-- About (SCR-SET-008) -->
+        <TextBlock Margin="0,24,0,8" Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc SettingsAboutSection}" AutomationProperties.HeadingLevel="Level2" />
+        <Border Style="{StaticResource Surface.Card}" Margin="0,0,0,24">
+            <StackPanel>
+                <TextBlock x:Name="VersionText" Style="{StaticResource Text.Body}" Text="{Binding VersionText}"
+                           AutomationProperties.AutomationId="SettingsVersion" />
+                <Button x:Name="CreditsLinkButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding OpenCreditsCommand}"
+                        Content="{loc:Loc SettingsCreditsLinkText}" AutomationProperties.AutomationId="SettingsCreditsLink" />
+            </StackPanel>
+        </Border>
+    </StackPanel>
 </UserControl>

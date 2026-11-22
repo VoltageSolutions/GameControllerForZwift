@@ -1,0 +1,50 @@
+<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.SupportPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
+             AutomationProperties.AutomationId="SupportPage">
+    <!-- docs/spec/screens/support.md -->
+    <StackPanel MaxWidth="720" HorizontalAlignment="Left">
+        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc SupportTitle}"
+                   AutomationProperties.AutomationId="SupportPageTitle" AutomationProperties.HeadingLevel="Level1" />
+
+        <Border Style="{StaticResource Surface.Card}" Margin="0,24,0,0">
+            <StackPanel>
+                <TextBlock Style="{StaticResource Text.Body}" TextWrapping="Wrap" Text="{loc:Loc SupportPitch}" />
+                <!-- The one accent action of the screen (SCR-SUP-006). -->
+                <Button x:Name="KofiButton" Margin="0,20,0,0" HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"
+                        Command="{Binding OpenKofiCommand}" Content="{loc:Loc SupportKofi}"
+                        AutomationProperties.AutomationId="SupportKofiButton" />
+            </StackPanel>
+        </Border>
+
+        <TextBlock Margin="0,24,0,8" Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc SupportOtherWays}" AutomationProperties.HeadingLevel="Level2" />
+        <Border Style="{StaticResource Surface.Card}" Margin="0,0,0,24">
+            <StackPanel>
+                <Button x:Name="StarButton" HorizontalAlignment="Left" Command="{Binding OpenStarCommand}"
+                        AutomationProperties.AutomationId="SupportStarButton" AutomationProperties.Name="{loc:Loc SupportStar}">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc SupportStar}" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc SupportStarDescription}" />
+                    </StackPanel>
+                </Button>
+                <Button x:Name="ShareButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding CopyShareLinkCommand}"
+                        AutomationProperties.AutomationId="SupportShareButton" AutomationProperties.Name="{loc:Loc SupportShare}">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc SupportShare}" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc SupportShareDescription}" />
+                    </StackPanel>
+                </Button>
+                <TextBlock x:Name="ShareStatus" Margin="0,8,0,0" Style="{StaticResource Text.Caption}" Text="{Binding ShareStatus}"
+                           AutomationProperties.AutomationId="SupportShareStatus" AutomationProperties.LiveSetting="Polite" />
+                <Button x:Name="ContributeButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding OpenContributingCommand}"
+                        AutomationProperties.AutomationId="SupportContributeButton" AutomationProperties.Name="{loc:Loc SupportContribute}">
+                    <StackPanel>
+                        <TextBlock Text="{loc:Loc SupportContribute}" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc SupportContributeDescription}" />
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Border>
+    </StackPanel>
+</UserControl>
