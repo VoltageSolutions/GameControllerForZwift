@@ -74,7 +74,6 @@ You pick the kind of controller, see the steps to put it in pairing mode, and th
 | The screen must let you pick the kind of controller, then show its pairing-mode steps, then hand off to the operating system. | SCR-SETUP-010 |
 | On Windows the hand-off must open Windows Bluetooth settings. | SCR-SETUP-011 |
 | Other platforms must follow [Platforms](../ux/platforms.md). | SCR-SETUP-012 |
-| The screen should link to the list of supported controllers once that list exists. | SCR-SETUP-013 |
 
 ## Windows network permission
 

@@ -15,7 +15,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 **What it is for:** solve common problems and reach the maintainer.
 
-**Content:** common problems, **Open log folder**, **Report a problem** (opens GitHub, with what to attach), **Send feedback** (GitHub), the list of supported controllers, and a link to "Zwift can't find Voltage Gamepad".
+**Content:** common problems, **Open log folder**, **Report a problem** (opens GitHub, with what to attach), **Send feedback** (the Issues page of the project on GitHub), and a link to "Zwift can't find Voltage Gamepad".
 
 | Rule | ID |
 |---|---|
@@ -24,8 +24,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | Help must offer **Open log folder**. | SCR-HELP-003 |
 | **Report a problem** must open GitHub and say what to attach: the app version, the controller, and the log file. | SCR-HELP-004 |
 | The screen should tell you to check the log before sharing it publicly, because it lists local network addresses. | SCR-HELP-005 |
-| **Send feedback** must open GitHub. | SCR-HELP-006 |
-| Help should offer the list of supported controllers once that list exists. | SCR-HELP-007 |
+| **Send feedback** must open the Issues page of the project on GitHub (`https://github.com/VoltageSolutions/GameControllerForZwift/issues`). | SCR-HELP-006 |
 
 ## Controller input on this screen
 

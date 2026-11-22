@@ -15,7 +15,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 **What it is for:** let a rider who wants to help find out how, without pressure.
 
-**Content, top to bottom:** the screen title "Support this project" (`SupportPageTitle`), a short pitch, **Chip in on Ko-fi** (`SupportKofiButton`), then a section "Other ways to help" with three rows: **Star it on GitHub** (`SupportStarButton`), **Tell a friend** (`SupportShareButton`), and **Help with the code or docs** (`SupportContributeButton`).
+**Content, top to bottom:** the screen title "Support this project" (`SupportPageTitle`), a short pitch, **Chip in on Ko-fi** (`SupportKofiButton`), then a section "Other ways to help" with three rows: **Star it on GitHub** (`SupportStarButton`), **Tell a friend** (`SupportShareButton`, which copies a link), and **Help with the code or docs** (`SupportContributeButton`).
 
 | Rule | ID |
 |---|---|
@@ -23,7 +23,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | **Chip in on Ko-fi** must open the project's Ko-fi page in the default browser. | SCR-SUP-002 |
 | **Star it on GitHub** must open the project's GitHub page. | SCR-SUP-003 |
 | **Help with the code or docs** must open the contributing guide on GitHub. | SCR-SUP-004 |
-| **Tell a friend** must lead to the download page for the app. | SCR-SUP-005 |
+| **Tell a friend** must copy the link to the project's GitHub page (`https://github.com/VoltageSolutions/GameControllerForZwift`) to the clipboard, and say "Link copied" in words as a live region. It must not need a mail app. | SCR-SUP-005 |
 | Only **Chip in on Ko-fi** may use the accent fill. | SCR-SUP-006 |
 | The pitch must be short and honest, and it must frame the ask as supporting the project. It must not make claims the app cannot verify (UX-W-006). | SCR-SUP-007 |
 | The screen must follow the platform's donation rules (see [Platforms](../ux/platforms.md)). | SCR-SUP-008 |
@@ -60,6 +60,7 @@ On Support, a controller press goes to Zwift as mapped. See [Controller input](.
 | `SupportStar` | Star it on GitHub | SCR-SUP-003 |
 | `SupportStarDescription` | Helps other riders find it | SCR-SUP-003 |
 | `SupportShare` | Tell a friend | SCR-SUP-005 |
-| `SupportShareDescription` | Share the download page | SCR-SUP-005 |
+| `SupportShareDescription` | Copy a link to share | SCR-SUP-005 |
+| `SupportShareCopied` | Link copied | SCR-SUP-005 |
 | `SupportContribute` | Help with the code or docs | SCR-SUP-004 |
 | `SupportContributeDescription` | Contributing guide on GitHub | SCR-SUP-004 |

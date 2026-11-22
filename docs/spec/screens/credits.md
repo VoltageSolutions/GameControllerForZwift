@@ -7,7 +7,7 @@ last-updated: 2026-11-22
 # Credits screen
 
 !!! tldr "TL;DR"
-    Credits opens from the More menu as a pushed screen. It says what the app is, which version you have, and who made it and what it builds on. It links to the project on GitHub, lists the credits, shows the GPLv3 license, and says the app is not affiliated with Zwift. It has no donation button. That lives on [Support](support.md).
+    Credits opens from the More menu as a pushed screen. It says what the app is, which version you have, and who made it and what it builds on. It links to the project on GitHub, says the app is not affiliated with Zwift, and has two rows, Credits and License, that each open their own pushed screen with a back button, as Settings does. It has no donation button. That lives on [Support](support.md).
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -15,7 +15,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 **What it is for:** say who made the app, which version it is, and what it uses.
 
-**Content, top to bottom:** the screen title "Credits" (`CreditsPageTitle`), the app name with its logo, the version (`CreditsVersion`, for example "Version 0.5.0"), a short description, the not-affiliated statement, **Project on GitHub** (`CreditsGitHubLink`), **Credits** (`CreditsListLink`), and **License** (`CreditsLicense`).
+**Content, top to bottom:** the screen title "Credits" (`CreditsPageTitle`), the app name with its logo, the version (`CreditsVersion`, for example "Version 0.5.0"), a short description, the not-affiliated statement, **Project on GitHub** (`CreditsGitHubLink`), **Credits** (`CreditsListLink`), and **License** (`CreditsLicenseLink`). **Credits** opens the Credits list screen (`CreditsListPageTitle`). **License** opens the License screen (`CreditsLicensePageTitle`).
 
 *Example: "Game Controller for Zwift, Version 0.5.0. Not made by or affiliated with Zwift. Zwift and Zwift Ride are trademarks of Zwift, Inc."*
 
@@ -23,8 +23,11 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 |---|---|
 | Credits must show the app name and the app version. The version must be the real version of the running app. | SCR-CRD-001 |
 | Credits must link to the project on GitHub (`CreditsGitHubLink`). | SCR-CRD-002 |
-| Credits must list the credits and dependencies, from the project's acknowledgements. | SCR-CRD-003 |
-| Credits must show the license, GNU General Public License v3, and must link to its text. | SCR-CRD-004 |
+| Credits must have a **Credits** row that opens a pushed screen, with a back button, that lists the projects and people the app builds on. | SCR-CRD-003 |
+| Credits must have a **License** row, labeled with the license name, GNU General Public License v3. It must open a pushed screen, with a back button, that shows the license text. | SCR-CRD-004 |
+| The Credits list screen must show the text of the project's acknowledgements shipped with the app. It must group entries under level 2 headings, and a link in it must open in the default browser. | SCR-CRD-011 |
+| The License screen must show the full license text shipped with the app. | SCR-CRD-012 |
+| Back on the Credits list and License screens must return to Credits (UX-N-016). | SCR-CRD-013 |
 | Credits must say the app is not affiliated with Zwift, and that Zwift and Zwift Ride are trademarks of Zwift, Inc. | SCR-CRD-005 |
 | Credits must say the app is free and open source, with no ads and no account. | SCR-CRD-006 |
 | Credits must not show a donation button. Support lives on its own screen. | SCR-CRD-007 |
@@ -44,7 +47,9 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | `CreditsVersion` | The version line |
 | `CreditsGitHubLink` | **Project on GitHub** |
 | `CreditsListLink` | **Credits** |
-| `CreditsLicense` | **License** |
+| `CreditsLicenseLink` | **License** |
+| `CreditsListPageTitle` | The title of the Credits list screen |
+| `CreditsLicensePageTitle` | The title of the License screen |
 
 ## Controller input on this screen
 

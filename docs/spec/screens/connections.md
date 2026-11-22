@@ -33,7 +33,6 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | The card must show a live-updating status, and the app must announce it as a live region. | SCR-CONN-005 |
 | When Zwift is not connected, the Connections tab must show its dot, and the card's main action must be **Pair with Zwift** (or **Show me how** if the steps are collapsed). | SCR-CONN-006 |
 | When Zwift is connected, the screen must not use the accent fill for any action. | SCR-CONN-007 |
-| The screen must link to the list of supported controllers once that list exists. | SCR-CONN-008 |
 
 ## The three Zwift steps
 
