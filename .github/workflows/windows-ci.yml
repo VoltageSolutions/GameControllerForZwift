@@ -2,6 +2,9 @@ name: Windows CI
 
 on:
   pull_request:
+    paths:
+      - 'windows/**'
+      - '.github/workflows/windows-ci.yml'
 
 concurrency:
   group: windows-ci-${{ github.ref }}
