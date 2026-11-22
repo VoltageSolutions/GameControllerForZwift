@@ -40,7 +40,7 @@
                                         Command="{Binding ChangeMappingCommand}"
                                         AutomationProperties.AutomationId="RideChangeMappingButton" AutomationProperties.Name="{loc:Loc RideChangeMapping}" />
 
-                    <Border x:Name="ZwiftCard" Margin="0,8,0,0" Style="{StaticResource Surface.Row}" CornerRadius="20"
+                    <Border x:Name="ZwiftCard" Margin="0,12,0,0" Style="{StaticResource Surface.Row}" CornerRadius="20"
                             AutomationProperties.AutomationId="RideZwiftCard">
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                             <Grid Width="28" Height="28" VerticalAlignment="Center">
