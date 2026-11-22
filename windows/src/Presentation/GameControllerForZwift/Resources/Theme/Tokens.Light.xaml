@@ -33,6 +33,10 @@
     <SolidColorBrush x:Key="Brush.pad-2" Color="{StaticResource Color.pad-2}" />
     <SolidColorBrush x:Key="Brush.pad-key" Color="{StaticResource Color.pad-key}" />
 
+    <!-- The VOLTAGE wordmark: VOLT in the accent color and AGE in the text color (SCR-RIDE-034). -->
+    <SolidColorBrush x:Key="Brush.wordmark-volt" Color="{StaticResource Color.accent}" />
+    <SolidColorBrush x:Key="Brush.wordmark-age" Color="{StaticResource Color.text}" />
+
     <!-- Fluent theme keys, pointed at the tokens so Fluent controls and the existing screens use the same colors. -->
     <SolidColorBrush x:Key="TextFillColorPrimaryBrush" Color="{StaticResource Color.text}" />
     <SolidColorBrush x:Key="TextFillColorSecondaryBrush" Color="{StaticResource Color.muted}" />

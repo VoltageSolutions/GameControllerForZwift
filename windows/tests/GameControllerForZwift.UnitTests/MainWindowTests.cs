@@ -34,7 +34,9 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton(dataIntegrator);
             services.AddSingleton(profileService);
             services.AddSingleton(Substitute.For<IConfigurationStore>());
-            services.AddSingleton(Substitute.For<IAppSettingsStore>());
+            var settings = Substitute.For<IAppSettingsStore>();
+            settings.GetRideStats().Returns(GameControllerForZwift.Core.Rides.RideStats.None);
+            services.AddSingleton(settings);
             services.AddSingleton(Substitute.For<IDialogService>());
             services.AddSingleton<ControllerModelMatcher>();
             services.AddSingleton<INavigationService, NavigationService>();

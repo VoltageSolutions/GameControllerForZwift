@@ -2,12 +2,133 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
+             xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
              AutomationProperties.AutomationId="RidePage">
-    <!-- The Ride tab is a placeholder (docs/spec/screens/ride.md describes the screen). -->
-    <StackPanel>
-        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc RideTitle}"
-                   AutomationProperties.AutomationId="RidePageTitle" AutomationProperties.HeadingLevel="Level1" />
-        <TextBlock Margin="0,12,0,0" Style="{StaticResource Text.Body}" Foreground="{DynamicResource Brush.muted}"
-                   Text="{loc:Loc RidePlaceholder}" />
-    </StackPanel>
+    <!-- docs/spec/screens/ride.md. Home, the riding view, and the ride summary share this page. -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
+        <Grid MaxWidth="720" HorizontalAlignment="Left">
+            <!-- Home (SCR-RIDE-001 to SCR-RIDE-015, SCR-RIDE-034, SCR-RIDE-035, SCR-RIDE-040) -->
+            <StackPanel x:Name="HomePanel" Visibility="{Binding IsHome, Converter={StaticResource BooleanToVisibility}}">
+                <controls:VoltageWordmark x:Name="Wordmark" Height="28" HorizontalAlignment="Left"
+                                          AutomationProperties.AutomationId="RideWordmark" AutomationProperties.Name="{loc:Loc RideWordmarkName}" />
+                <TextBlock x:Name="PageTitle" Margin="0,12,0,0" Style="{StaticResource Text.Title}" Text="{Binding TitleText}"
+                           AutomationProperties.AutomationId="RidePageTitle" AutomationProperties.HeadingLevel="Level1" />
+
+                <Border x:Name="ControllerCard" Margin="0,24,0,0" Style="{StaticResource Surface.Card}"
+                        AutomationProperties.AutomationId="RideControllerCard" AutomationProperties.Name="{Binding ControllerText}">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{Binding ControllerText}" AutomationProperties.LiveSetting="Polite" />
+                        <StackPanel Margin="0,16,0,0" Visibility="{Binding ShowNoControllerActions, Converter={StaticResource BooleanToVisibility}}">
+                            <Button x:Name="UseDifferentControllerButton" HorizontalAlignment="Left" Command="{Binding GoToConnectionsCommand}"
+                                    Content="{loc:Loc ConnectionsPickerLabel}" AutomationProperties.AutomationId="RideUseDifferentControllerButton" />
+                            <Button x:Name="PairBluetoothButton" Margin="0,12,0,0" HorizontalAlignment="Left" Command="{Binding PairBluetoothCommand}"
+                                    Content="{loc:Loc ConnectionsPairBluetooth}" AutomationProperties.AutomationId="RidePairBluetoothButton" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="StatsCard" Margin="0,16,0,0" Style="{StaticResource Surface.Card}"
+                        Visibility="{Binding HasStats, Converter={StaticResource BooleanToVisibility}}"
+                        AutomationProperties.AutomationId="RideStats">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Body}" Text="{Binding RidesText}" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Body}" Text="{Binding ShiftsText}" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Caption}" Text="{Binding SinceText}" />
+                    </StackPanel>
+                </Border>
+
+                <Border x:Name="MappingCard" Margin="0,16,0,0" Style="{StaticResource Surface.Card}" AutomationProperties.AutomationId="RideMappingCard">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc RideMappingLabel}" />
+                            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{Binding MappingName}" />
+                        </StackPanel>
+                        <Button x:Name="ChangeMappingButton" Grid.Column="1" Command="{Binding ChangeMappingCommand}"
+                                Content="{loc:Loc RideChangeMapping}" AutomationProperties.AutomationId="RideChangeMappingButton" />
+                    </Grid>
+                </Border>
+
+                <Border x:Name="ZwiftCard" Margin="0,16,0,24" Style="{StaticResource Surface.Card}">
+                    <StackPanel>
+                        <TextBlock x:Name="ZwiftStatusText" Style="{StaticResource Text.BodyStrong}" Text="{Binding ZwiftStatusText}"
+                                   AutomationProperties.AutomationId="RideZwiftStatus" AutomationProperties.LiveSetting="Polite" />
+                        <StackPanel Margin="0,16,0,0" Visibility="{Binding ShowPairWithZwift, Converter={StaticResource BooleanToVisibility}}">
+                            <ItemsControl ItemsSource="{Binding Steps}" IsTabStop="False">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Margin="0,0,0,8" Style="{StaticResource Text.Body}" Text="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <Button x:Name="PairWithZwiftButton" Margin="0,8,0,0" HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"
+                                    Command="{Binding GoToConnectionsCommand}" Content="{loc:Loc RidePairWithZwift}"
+                                    AutomationProperties.AutomationId="RidePairWithZwiftButton" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+
+            <!-- Riding view (SCR-RIDE-016 to SCR-RIDE-028) -->
+            <StackPanel x:Name="RidingPanel" Visibility="{Binding IsRiding, Converter={StaticResource BooleanToVisibility}}">
+                <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc RideJustPressed}"
+                           AutomationProperties.HeadingLevel="Level1" />
+                <TextBlock x:Name="LastPressText" Margin="0,4,0,0" Style="{StaticResource Text.Readout}" TextWrapping="Wrap"
+                           Text="{Binding LastPressText}"
+                           AutomationProperties.AutomationId="RideLastPressStatus" AutomationProperties.LiveSetting="Polite" />
+                <TextBlock x:Name="ShiftsThisRide" Margin="0,12,0,0" Style="{StaticResource Text.Body}" Text="{Binding ShiftsThisRideText}" />
+
+                <Border x:Name="ProblemCard" Margin="0,24,0,0" Style="{StaticResource Surface.Card}"
+                        Visibility="{Binding HasProblem, Converter={StaticResource BooleanToVisibility}}"
+                        AutomationProperties.AutomationId="RideProblem" AutomationProperties.LiveSetting="Assertive">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.BodyStrong}" TextWrapping="Wrap" Text="{Binding ProblemTitle}" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Body}" TextWrapping="Wrap" Text="{Binding ProblemBody}" />
+                    </StackPanel>
+                </Border>
+                <TextBlock x:Name="RecoveryText" Margin="0,16,0,0" Style="{StaticResource Text.Body}" TextWrapping="Wrap" Text="{Binding RecoveryText}"
+                           AutomationProperties.AutomationId="RideRecovery" AutomationProperties.LiveSetting="Polite" />
+
+                <TextBlock Margin="0,24,0,8" Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc RideQuickReference}" AutomationProperties.HeadingLevel="Level2" />
+                <ItemsControl x:Name="QuickReference" ItemsSource="{Binding QuickReference}" IsTabStop="False" Margin="0,0,0,24">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Margin="0,0,0,6" Style="{StaticResource Text.Body}" Text="{Binding Text}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+
+            <!-- Ride finished (SCR-RIDE-029 to SCR-RIDE-032, SCR-RIDE-039) -->
+            <StackPanel x:Name="FinishedPanel" Visibility="{Binding IsFinished, Converter={StaticResource BooleanToVisibility}}">
+                <TextBlock Style="{StaticResource Text.Title}" Text="{loc:Loc RideFinishedTitle}"
+                           AutomationProperties.AutomationId="RideFinishedTitle" AutomationProperties.HeadingLevel="Level1" />
+                <Border Margin="0,24,0,0" Style="{StaticResource Surface.Card}" AutomationProperties.AutomationId="RideSummary">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Body}" Text="{Binding FinishedTimeText}" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Body}" Text="{Binding FinishedShiftsText}" />
+                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Body}" Text="{Binding FinishedRidesText}" />
+                    </StackPanel>
+                </Border>
+                <Border x:Name="DonationAsk" Margin="0,16,0,0" Style="{StaticResource Surface.Card}"
+                        Visibility="{Binding ShowDonationAsk, Converter={StaticResource BooleanToVisibility}}"
+                        AutomationProperties.AutomationId="RideDonationAsk">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource Text.Body}" TextWrapping="Wrap" Text="{loc:Loc RideAskPitch}" />
+                        <StackPanel Margin="0,16,0,0" Orientation="Horizontal">
+                            <Button x:Name="ChipInButton" Style="{StaticResource Button.Primary}" Command="{Binding ChipInCommand}"
+                                    Content="{loc:Loc SupportKofi}" AutomationProperties.AutomationId="RideChipInButton" />
+                            <Button x:Name="MaybeLaterButton" Margin="12,0,0,0" Command="{Binding MaybeLaterCommand}"
+                                    Content="{loc:Loc RideAskLater}" AutomationProperties.AutomationId="RideMaybeLaterButton" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                <Button x:Name="DoneButton" Margin="0,16,0,24" HorizontalAlignment="Left" Command="{Binding DoneCommand}"
+                        Content="{loc:Loc RideFinishedDone}" AutomationProperties.AutomationId="RideDoneButton" />
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </UserControl>

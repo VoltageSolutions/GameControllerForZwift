@@ -45,7 +45,7 @@ flowchart TD
 | The Zwift status must say "Zwift is connected to Voltage Gamepad" when `IsZwiftConnected` is true. Zwift can see Voltage Gamepad whether or not a controller is connected. | SCR-RIDE-005 |
 | Home must not have a **Start riding** button or any other control that starts a ride. The app must work without one. | SCR-RIDE-006 |
 | The status text must be a live region and announce only changes. | SCR-RIDE-007 |
-| When the controller, Zwift, or both are not connected, Home must say which is missing and offer a way to go to [Connections](connections.md). | SCR-RIDE-040 |
+| When the controller, Zwift, or both are not connected, Home must say which is missing and offer a way to [Connections](connections.md): **Use a different controller** and **Pair a new Bluetooth controller** with no controller, and **Pair with Zwift** when Zwift is not connected. | SCR-RIDE-040 |
 | Home must show the VOLTAGE wordmark at the top of the content, above the title (`RideWordmark`). In light mode, the letters VOLT must use the accent color and AGE must be near-black. In dark mode, all letters must be white. It must have the accessible name "VOLTAGE". | SCR-RIDE-034 |
 | Home must have one level 1 heading, the title, and no other level 1 heading (UX-A-021). | SCR-RIDE-035 |
 
@@ -90,7 +90,7 @@ A ride starts when the app knows both that a controller is connected and that Zw
 | A ride must end when the app closes, or when for the ride timeout in Settings (SCR-SET-012) no controller button has been pressed, or the controller has been disconnected, or Zwift has been disconnected. The default timeout is 10 minutes. | SCR-RIDE-037 |
 | A ride must not end when the controller or Zwift disconnects for less than the ride timeout. The ride must return to the riding readout when the connection returns. | SCR-RIDE-041 |
 | The riding view must have one big readout (the last press) readable at arm's length. | SCR-RIDE-016 |
-| The riding view must show shifts this ride and a quick reference of the main buttons. | SCR-RIDE-017 |
+| The riding view must show shifts this ride and a quick reference of the main buttons, which are the buttons the current mapping sets to Shift up and Shift down. | SCR-RIDE-017 |
 | The riding view must have no **Stop riding** button. | SCR-RIDE-038 |
 | The riding view must show the same problems (Zwift lost, controller asleep) as the other Ride states. | SCR-RIDE-020 |
 | The riding view must follow platform limits in [Platforms](../ux/platforms.md). | SCR-RIDE-021 |
@@ -136,6 +136,8 @@ A ride starts when the app knows both that a controller is connected and that Zw
 | The ask must never block anything. "Maybe later" must dismiss it, and the app must not ask again. The app must keep that choice between runs. | SCR-RIDE-031 |
 | The app must frame the ask as supporting the project. It must not claim impact the app cannot verify. | SCR-RIDE-032 |
 | **Chip in on Ko-fi** must open the Ko-fi page, as it does on [Support](support.md). | SCR-RIDE-039 |
+| Ride finished must have a **Done** button that returns to Home. | SCR-RIDE-042 |
+| After a ride ends while the controller and Zwift are still connected, the next button press must start a new ride. | SCR-RIDE-043 |
 
 ## Controller input on these screens
 
@@ -149,8 +151,9 @@ On Home and the riding view, a controller press goes to Zwift as mapped. See [Co
 
 | ID | Where |
 |---|---|
-| `RideWordmark`, `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideMappingCard`, `RideZwiftStatus`, `RideGoToConnectionsButton` | Home |
-| `RideLastPressStatus` | Riding view |
+| `RideWordmark`, `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideMappingCard`, `RideChangeMappingButton`, `RideZwiftStatus`, `RidePairWithZwiftButton`, `RideUseDifferentControllerButton`, `RidePairBluetoothButton` | Home |
+| `RideLastPressStatus`, `RideProblem`, `RideRecovery` | Riding view |
+| `RideFinishedTitle`, `RideSummary`, `RideDonationAsk`, `RideChipInButton`, `RideMaybeLaterButton`, `RideDoneButton` | Ride finished |
 | `NavConnectionsTab` | Name adds ", Zwift not connected" when the dot shows |
 
 ## Quoted strings
@@ -163,5 +166,35 @@ On Home and the riding view, a controller press goes to Zwift as mapped. See [Co
 | `ZwiftNotConnected` | Zwift isn't connected yet | SCR-RIDE-012 |
 | `RideNoControllerTitle` | Wake your controller | SCR-RIDE-008 |
 | `RideNoControllerStatus` | Looking for your controller... | SCR-RIDE-008 |
+| `ConnectionsPickerLabel` | Use a different controller | SCR-RIDE-009 |
+| `ConnectionsPairBluetooth` | Pair a new Bluetooth controller | SCR-RIDE-009 |
+| `RidePairWithZwift` | Pair with Zwift | SCR-RIDE-013 |
+| `RideMappingLabel` | Mapping | SCR-RIDE-004 |
+| `RideChangeMapping` | Change | SCR-RIDE-004 |
 | `RideWordmarkName` | VOLTAGE | SCR-RIDE-034 |
-| `RideGoToConnections` | Go to Connections | SCR-RIDE-040 |
+| `RideStatsRidesOne` | 1 ride together | SCR-RIDE-003 |
+| `RideStatsRidesOther` | {0} rides together | SCR-RIDE-003 |
+| `RideStatsShiftsOne` | 1 shift | SCR-RIDE-003 |
+| `RideStatsShiftsOther` | {0} shifts | SCR-RIDE-003 |
+| `RideStatsSince` | Riding since {0} | SCR-RIDE-003 |
+| `RideJustPressed` | You just pressed | SCR-RIDE-016 |
+| `RidePressFormat` | {0}, {1} | SCR-RIDE-016 |
+| `RideNoPress` | Nothing yet | SCR-RIDE-016 |
+| `RideShiftsThisRide` | Shifts this ride: {0} | SCR-RIDE-017 |
+| `RideQuickReference` | Your main buttons | SCR-RIDE-017 |
+| `RideQuickReferenceFormat` | {0}: {1} | SCR-RIDE-017 |
+| `RideZwiftLostTitle` | Your controller is fine | SCR-RIDE-023 |
+| `RideZwiftLostBody` | Pick Voltage Gamepad under Controls in Zwift again. | SCR-RIDE-023 |
+| `RideControllerAsleepTitle` | Your controller fell asleep | SCR-RIDE-026 |
+| `RideControllerAsleepBody` | Press any button on it to wake it. Shifting picks up where you left off. | SCR-RIDE-026 |
+| `RideControllerBack` | Your controller is back | SCR-RIDE-028 |
+| `RideFinishedTitle` | Ride finished | SCR-RIDE-029 |
+| `RideFinishedTime` | Ride time: {0} | SCR-RIDE-029 |
+| `RideFinishedShifts` | Shifts: {0} | SCR-RIDE-029 |
+| `RideFinishedRides` | Rides together: {0} | SCR-RIDE-029 |
+| `RideDurationHoursMinutes` | {0} h {1} min | SCR-RIDE-029 |
+| `RideDurationMinutes` | {0} min | SCR-RIDE-029 |
+| `RideAskPitch` | This app is free. If it's earned a place in your rides, you can support the project. | SCR-RIDE-032 |
+| `SupportKofi` | Chip in on Ko-fi | SCR-RIDE-030 |
+| `RideAskLater` | Maybe later | SCR-RIDE-030 |
+| `RideFinishedDone` | Done | SCR-RIDE-042 |

@@ -94,12 +94,8 @@
     <comment>More menu item shown only in Debug builds, for developers.</comment>
   </data>
   <data name="RideTitle" xml:space="preserve">
-    <value>Ride</value>
-    <comment>Title of the Ride screen.</comment>
-  </data>
-  <data name="RidePlaceholder" xml:space="preserve">
-    <value>Set up what each button does on the Buttons tab.</value>
-    <comment>Text on the Ride screen, which has no content of its own yet.</comment>
+    <value>Ready when you are</value>
+    <comment>Title of the Ride screen, shown while the controller and Zwift are ready or being set up.</comment>
   </data>
   <data name="ConnectionsTitle" xml:space="preserve">
     <value>Connections</value>
@@ -824,5 +820,133 @@
   <data name="SupportContributeDescription" xml:space="preserve">
     <value>Contributing guide on GitHub</value>
     <comment>Description under the Help with the code or docs row. Keep GitHub.</comment>
+  </data>
+  <data name="RideControllerHere" xml:space="preserve">
+    <value>Your {0} is here</value>
+    <comment>Ride screen, controller card, when a controller is connected. {0} is the controller name, for example Xbox Controller.</comment>
+  </data>
+  <data name="RideNoControllerTitle" xml:space="preserve">
+    <value>Wake your controller</value>
+    <comment>Title of the Ride screen when no controller is connected. It asks the person to press a button on the controller to wake it.</comment>
+  </data>
+  <data name="RideNoControllerStatus" xml:space="preserve">
+    <value>Looking for your controller...</value>
+    <comment>Ride screen status while the app looks for a controller.</comment>
+  </data>
+  <data name="RidePairWithZwift" xml:space="preserve">
+    <value>Pair with Zwift</value>
+    <comment>Main button on the Ride screen when Zwift is not connected. It opens the Connections tab, which has the pairing steps. Keep Zwift.</comment>
+  </data>
+  <data name="RideMappingLabel" xml:space="preserve">
+    <value>Mapping</value>
+    <comment>Label on the Ride screen above the name of the selected mapping. A mapping is a saved set of button assignments.</comment>
+  </data>
+  <data name="RideChangeMapping" xml:space="preserve">
+    <value>Change</value>
+    <comment>Button on the Ride screen that opens the Buttons tab so the person can pick another mapping.</comment>
+  </data>
+  <data name="RideWordmarkName" xml:space="preserve">
+    <value>VOLTAGE</value>
+    <comment>Screen reader name of the VOLTAGE wordmark at the top of the Ride screen. VOLTAGE is a brand name and stays as it is.</comment>
+  </data>
+  <data name="RideStatsRidesOne" xml:space="preserve">
+    <value>1 ride together</value>
+    <comment>Ride screen stat, shown when exactly one ride has been counted.</comment>
+  </data>
+  <data name="RideStatsRidesOther" xml:space="preserve">
+    <value>{0} rides together</value>
+    <comment>Ride screen stat. {0} is how many rides have been counted, two or more.</comment>
+  </data>
+  <data name="RideStatsShiftsOne" xml:space="preserve">
+    <value>1 shift</value>
+    <comment>Ride screen stat, shown when exactly one shift has been counted.</comment>
+  </data>
+  <data name="RideStatsShiftsOther" xml:space="preserve">
+    <value>{0} shifts</value>
+    <comment>Ride screen stat. {0} is how many shifts have been counted, zero or two or more.</comment>
+  </data>
+  <data name="RideStatsSince" xml:space="preserve">
+    <value>Riding since {0}</value>
+    <comment>Ride screen stat. {0} is the month and year of the first counted ride, for example September 2026.</comment>
+  </data>
+  <data name="RideJustPressed" xml:space="preserve">
+    <value>You just pressed</value>
+    <comment>Small label above the big readout of the last button press on the Ride screen while riding.</comment>
+  </data>
+  <data name="RidePressFormat" xml:space="preserve">
+    <value>{0}, {1}</value>
+    <comment>Big readout of the last button press while riding. {0} is what the button does, for example Shift up, and {1} is the button, for example right bumper.</comment>
+  </data>
+  <data name="RideNoPress" xml:space="preserve">
+    <value>Nothing yet</value>
+    <comment>Big readout while riding before any button was pressed.</comment>
+  </data>
+  <data name="RideShiftsThisRide" xml:space="preserve">
+    <value>Shifts this ride: {0}</value>
+    <comment>Line while riding. {0} is the number of shifts so far.</comment>
+  </data>
+  <data name="RideQuickReference" xml:space="preserve">
+    <value>Your main buttons</value>
+    <comment>Heading above the shift buttons while riding.</comment>
+  </data>
+  <data name="RideQuickReferenceFormat" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>Quick reference line while riding. {0} is the button, for example Right bumper, and {1} is what it does, for example Shift up.</comment>
+  </data>
+  <data name="RideZwiftLostTitle" xml:space="preserve">
+    <value>Your controller is fine</value>
+    <comment>Title on the Ride screen while riding when Zwift lost the connection. It tells the person the controller is not the problem.</comment>
+  </data>
+  <data name="RideZwiftLostBody" xml:space="preserve">
+    <value>Pick Voltage Gamepad under Controls in Zwift again.</value>
+    <comment>Instruction on the Ride screen when Zwift lost the connection. Keep Voltage Gamepad, which is the device name Zwift shows, and keep Controls and Zwift.</comment>
+  </data>
+  <data name="RideControllerAsleepTitle" xml:space="preserve">
+    <value>Your controller fell asleep</value>
+    <comment>Title on the Ride screen while riding when the controller went to sleep or disconnected.</comment>
+  </data>
+  <data name="RideControllerAsleepBody" xml:space="preserve">
+    <value>Press any button on it to wake it. Shifting picks up where you left off.</value>
+    <comment>Instruction on the Ride screen when the controller went to sleep.</comment>
+  </data>
+  <data name="RideControllerBack" xml:space="preserve">
+    <value>Your controller is back</value>
+    <comment>Status on the Ride screen, read out by screen readers, when the controller returned during a ride.</comment>
+  </data>
+  <data name="RideFinishedTitle" xml:space="preserve">
+    <value>Ride finished</value>
+    <comment>Title of the summary that shows when a ride ends.</comment>
+  </data>
+  <data name="RideFinishedTime" xml:space="preserve">
+    <value>Ride time: {0}</value>
+    <comment>Line in the ride summary. {0} is the length of the ride, for example 1 h 5 min.</comment>
+  </data>
+  <data name="RideFinishedShifts" xml:space="preserve">
+    <value>Shifts: {0}</value>
+    <comment>Line in the ride summary. {0} is the number of shifts.</comment>
+  </data>
+  <data name="RideFinishedRides" xml:space="preserve">
+    <value>Rides together: {0}</value>
+    <comment>Line in the ride summary. {0} is how many rides have been counted in total.</comment>
+  </data>
+  <data name="RideDurationHoursMinutes" xml:space="preserve">
+    <value>{0} h {1} min</value>
+    <comment>Length of a ride of an hour or more. {0} is hours and {1} is minutes.</comment>
+  </data>
+  <data name="RideDurationMinutes" xml:space="preserve">
+    <value>{0} min</value>
+    <comment>Length of a ride under an hour. {0} is minutes.</comment>
+  </data>
+  <data name="RideFinishedDone" xml:space="preserve">
+    <value>Done</value>
+    <comment>Button on the ride summary that returns to the Ride screen.</comment>
+  </data>
+  <data name="RideAskPitch" xml:space="preserve">
+    <value>This app is free. If it's earned a place in your rides, you can support the project.</value>
+    <comment>One-time message on the ride summary that asks for support. It does not claim any result.</comment>
+  </data>
+  <data name="RideAskLater" xml:space="preserve">
+    <value>Maybe later</value>
+    <comment>Button on the one-time support message that dismisses it. The message does not come back.</comment>
   </data>
 </root>
