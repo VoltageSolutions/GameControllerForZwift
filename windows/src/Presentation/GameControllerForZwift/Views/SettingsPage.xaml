@@ -47,7 +47,7 @@
                 <TextBlock Margin="4,0,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SettingsMappingsSection}" AutomationProperties.HeadingLevel="Level2" />
                 <controls:ActionRow x:Name="OpenMappingsButton" Title="{loc:Loc SettingsOpenMappings}" Trailing="External"
                                     Command="{Binding OpenMappingsFolderCommand}" AutomationProperties.AutomationId="SettingsOpenMappingsButton" />
-                <controls:ActionRow x:Name="DeleteAllButton" Margin="0,8,0,0" Style="{StaticResource ActionRow.Danger}"
+                <controls:ActionRow x:Name="DeleteAllButton" Margin="0,12,0,0" Style="{StaticResource ActionRow.Danger}"
                                     Title="{loc:Loc SettingsDeleteAll}" Description="{Binding DeleteDescription}"
                                     Command="{Binding DeleteAllConfigurationsCommand}" AutomationProperties.AutomationId="SettingsDeleteAllButton" />
 
@@ -55,7 +55,7 @@
                 <TextBlock Margin="4,24,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SettingsHelpSection}" AutomationProperties.HeadingLevel="Level2" />
                 <controls:ActionRow x:Name="OpenLogsButton" Title="{loc:Loc SettingsOpenLogs}" Trailing="External"
                                     Command="{Binding OpenLogsFolderCommand}" AutomationProperties.AutomationId="SettingsOpenLogsButton" />
-                <controls:ActionRow x:Name="HelpLinkButton" Margin="0,8,0,0" Title="{loc:Loc SettingsHelpLinkText}" Trailing="Chevron"
+                <controls:ActionRow x:Name="HelpLinkButton" Margin="0,12,0,0" Title="{loc:Loc SettingsHelpLinkText}" Trailing="Chevron"
                                     Command="{Binding OpenHelpCommand}" AutomationProperties.AutomationId="SettingsHelpLink" />
 
                 <!-- About (SCR-SET-008) -->

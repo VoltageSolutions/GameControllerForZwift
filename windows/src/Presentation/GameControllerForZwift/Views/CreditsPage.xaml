@@ -26,9 +26,9 @@
             <StackPanel>
                 <controls:ActionRow x:Name="GitHubButton" Title="{loc:Loc CreditsGitHub}" Description="{loc:Loc CreditsGitHubDescription}" Trailing="External"
                                     Command="{Binding OpenGitHubCommand}" AutomationProperties.AutomationId="CreditsGitHubLink" />
-                <controls:ActionRow x:Name="CreditsListButton" Margin="0,8,0,0" Title="{loc:Loc CreditsList}" Description="{loc:Loc CreditsListDescription}" Trailing="Chevron"
+                <controls:ActionRow x:Name="CreditsListButton" Margin="0,12,0,0" Title="{loc:Loc CreditsList}" Description="{loc:Loc CreditsListDescription}" Trailing="Chevron"
                                     Command="{Binding OpenCreditsListCommand}" AutomationProperties.AutomationId="CreditsListLink" />
-                <controls:ActionRow x:Name="LicenseButton" Margin="0,8,0,0" Title="{loc:Loc CreditsLicenseName}" Description="{loc:Loc CreditsLicenseValue}" Trailing="Chevron"
+                <controls:ActionRow x:Name="LicenseButton" Margin="0,12,0,0" Title="{loc:Loc CreditsLicenseName}" Description="{loc:Loc CreditsLicenseValue}" Trailing="Chevron"
                                     Command="{Binding OpenLicenseCommand}" AutomationProperties.AutomationId="CreditsLicenseLink" />
             </StackPanel>
         </controls:AdaptiveColumns>

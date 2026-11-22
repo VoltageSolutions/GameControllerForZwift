@@ -22,7 +22,7 @@
                 <TextBlock Margin="4,0,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SupportOtherWays}" AutomationProperties.HeadingLevel="Level2" />
                 <controls:ActionRow x:Name="StarButton" Title="{loc:Loc SupportStar}" Description="{loc:Loc SupportStarDescription}" Trailing="External"
                                     Command="{Binding OpenStarCommand}" AutomationProperties.AutomationId="SupportStarButton" />
-                <controls:ActionRow x:Name="ShareButton" Margin="0,8,0,0" Title="{loc:Loc SupportShare}" Description="{loc:Loc SupportShareDescription}"
+                <controls:ActionRow x:Name="ShareButton" Margin="0,12,0,0" Title="{loc:Loc SupportShare}" Description="{loc:Loc SupportShareDescription}"
                                     Command="{Binding CopyShareLinkCommand}" AutomationProperties.AutomationId="SupportShareButton" />
                 <TextBlock x:Name="ShareStatus" Margin="4,4,0,0" Text="{Binding ShareStatus}"
                            AutomationProperties.AutomationId="SupportShareStatus" AutomationProperties.LiveSetting="Polite">
@@ -37,7 +37,7 @@
                         </Style>
                     </TextBlock.Style>
                 </TextBlock>
-                <controls:ActionRow x:Name="ContributeButton" Margin="0,8,0,0" Title="{loc:Loc SupportContribute}" Description="{loc:Loc SupportContributeDescription}" Trailing="External"
+                <controls:ActionRow x:Name="ContributeButton" Margin="0,12,0,0" Title="{loc:Loc SupportContribute}" Description="{loc:Loc SupportContributeDescription}" Trailing="External"
                                     Command="{Binding OpenContributingCommand}" AutomationProperties.AutomationId="SupportContributeButton" />
             </StackPanel>
         </controls:AdaptiveColumns>
