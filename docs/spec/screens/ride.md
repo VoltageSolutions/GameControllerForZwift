@@ -154,7 +154,7 @@ On Home and the riding view, a controller press goes to Zwift as mapped. See [Co
 
 | ID | Where |
 |---|---|
-| `RideWordmark`, `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideMappingCard`, `RideChangeMappingButton`, `RideZwiftStatus`, `RidePairWithZwiftButton`, `RideUseDifferentControllerButton`, `RidePairBluetoothButton` | Home |
+| `RideWordmark`, `RidePageTitle`, `RideControllerCard`, `RideStats`, `RideChangeMappingButton`, `RideZwiftStatus`, `RidePairWithZwiftButton`, `RideUseDifferentControllerButton`, `RidePairBluetoothButton` | Home |
 | `RideLastPressStatus`, `RideProblem`, `RideRecovery` | Riding view |
 | `RideFinishedTitle`, `RideSummary`, `RideDonationAsk`, `RideChipInButton`, `RideMaybeLaterButton`, `RideDoneButton` | Ride finished |
 | `NavConnectionsTab` | Name adds ", Zwift not connected" when the dot shows |
