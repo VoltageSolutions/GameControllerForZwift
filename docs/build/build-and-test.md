@@ -71,7 +71,7 @@ Some unit tests keep the app equal to the specs. They carry the trait `Category=
 dotnet test windows/tests/GameControllerForZwift.UnitTests --filter "Category=Localization|Category=Accessibility"
 ```
 
-On a pull request, CI runs them as their own check, **Localization and Accessibility Results**, and leaves them out of **Unit Test Results**.
+On a pull request, the Localization CI workflow runs them as their own check, **Localization and Accessibility Results**, for changes under `docs/spec` or `windows`. Windows CI leaves them out of **Unit Test Results**.
 
 !!! note "UI tests need extra tools"
     The UI tests need WinAppDriver and an Appium server with the Windows driver. CI installs both. Locally, you can skip that project and run the others.

@@ -308,7 +308,7 @@ jobs:
           $projects = @('windows/tests/GameControllerForZwift.UnitTests') + @(($env:PORTABLE_TESTS -split '\s+') | Where-Object { $_ })
           foreach ($p in $projects) {
             $name = Split-Path $p -Leaf
-            # The string and accessibility checks report in their own job (Localization and accessibility).
+            # The string and accessibility checks report from Localization CI (localization-ci.yml).
             dotnet test $p -c Release --no-build --filter "Category!=Localization&Category!=Accessibility" --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"
             if ($LASTEXITCODE -ne 0) { $rc = 1 }
           }
@@ -447,44 +447,6 @@ jobs:
           if [ -n "$UNIT_SKIPPED" ] && [ "$UNIT_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::skipped tests in unit tests: $UNIT_SKIPPED unit test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
           if [ -n "$UI_SKIPPED" ] && [ "$UI_SKIPPED" != 0 ]; then echo "::error title=Skipped tests::skipped tests in UI tests: $UI_SKIPPED ui test(s) were skipped. Skipped tests are not allowed."; fail=1; fi
           exit $fail
-
-  # The checks that keep the app's strings and accessibility IDs equal to the specs (UX-L-010 to UX-L-014, UX-A-018).
-  # They run for every language the app ships and report as their own check, apart from the functional unit tests.
-  localization:
-    name: Localization and accessibility
-    runs-on: windows-latest
-    timeout-minutes: 20
-    permissions:
-      contents: read
-      checks: write
-    steps:
-      - uses: actions/checkout@v7
-
-      - uses: actions/setup-dotnet@v6
-        with:
-          global-json-file: windows/global.json
-          cache: true
-          cache-dependency-path: 'windows/**/*.csproj'
-
-      - name: Restore
-        run: dotnet restore windows/tests/GameControllerForZwift.UnitTests
-
-      - name: Build
-        run: dotnet build windows/tests/GameControllerForZwift.UnitTests -c Release --no-restore
-
-      - name: Run the string and accessibility checks
-        run: dotnet test windows/tests/GameControllerForZwift.UnitTests -c Release --no-build --filter "Category=Localization|Category=Accessibility" --logger "trx;LogFileName=Localization.trx" --results-directory TestResults-Localization
-
-      - name: Localization and Accessibility Results
-        if: ${{ !cancelled() }}
-        uses: EnricoMi/publish-unit-test-result-action/windows@v2
-        with:
-          check_name: Localization and Accessibility Results
-          trx_files: TestResults-Localization/**/*.trx
-          comment_mode: 'off'
-          check_run: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
-          job_summary: 'true'
-          github_retries: '10'
 
   lint:
     name: Lint
