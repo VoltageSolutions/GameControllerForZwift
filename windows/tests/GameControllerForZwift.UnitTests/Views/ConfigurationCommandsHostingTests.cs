@@ -48,7 +48,10 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
             services.AddSingleton<RideViewModel>();
             services.AddSingleton<ConnectionsViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();
-            services.AddSingleton(new AboutPageViewModel("# Acknowledgements"));
+            services.AddSingleton<CreditsViewModel>();
+            services.AddSingleton(new CreditsListViewModel("# Credits", Substitute.For<IDialogService>()));
+            services.AddSingleton(new LicenseViewModel("# License", Substitute.For<IDialogService>()));
+            services.AddSingleton<SupportViewModel>();
             services.AddSingleton<SettingsViewModel>();
             services.AddTransient<MainWindow>();
             return services.BuildServiceProvider();
@@ -256,7 +259,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     window.ViewModel.OpenSettingsCommand.Execute(null);
                     Pump(window);
                     var page = Assert.IsType<SettingsPage>(((ContentControl)window.FindName("RootContent")).Content);
-                    var deleteAll = Element<Button>(page, "DeleteAllConfigurationsButton");
+                    var deleteAll = Element<UI.WPF.Controls.ActionRow>(page, "DeleteAllButton");
                     Assert.Same(provider.GetRequiredService<SettingsViewModel>().DeleteAllConfigurationsCommand, deleteAll.Command);
 
                     _context.Dialogs.ConfirmAnswers.Enqueue(true);

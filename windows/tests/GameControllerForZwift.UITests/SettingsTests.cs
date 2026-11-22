@@ -16,7 +16,7 @@ namespace GameControllerForZwift.UITests
         {
             _fixture.AppSession.OpenFromMenu("MenuSettingsItem");
 
-            Assert.Equal("Appearance & behavior", _fixture.AppSession.Element("PageTitle").Text);
+            Assert.Equal("Settings", _fixture.AppSession.Element("SettingsPageTitle").Text);
             Assert.True(_fixture.AppSession.Exists("NavBackButton"));
         }
 

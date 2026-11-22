@@ -43,7 +43,10 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton<RideViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();
             services.AddSingleton<ConnectionsViewModel>();
-            services.AddSingleton(new AboutPageViewModel("# Acknowledgements"));
+            services.AddSingleton<CreditsViewModel>();
+            services.AddSingleton(new CreditsListViewModel("# Credits", Substitute.For<IDialogService>()));
+            services.AddSingleton(new LicenseViewModel("# License", Substitute.For<IDialogService>()));
+            services.AddSingleton<SupportViewModel>();
             services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<StyleGalleryViewModel>();
             services.AddTransient<MainWindow>();
@@ -161,7 +164,7 @@ namespace GameControllerForZwift.UnitTests
                 window.ViewModel.SelectTab(ShellTab.Connections);
                 window.ViewModel.OpenCreditsCommand.Execute(null);
                 Pump(window);
-                Assert.IsType<AboutPage>(ShownContent(window));
+                Assert.IsType<CreditsPage>(ShownContent(window));
 
                 Click(Find<Button>(window, "BackButton"));
                 Pump(window);
@@ -214,8 +217,8 @@ namespace GameControllerForZwift.UnitTests
                     .GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
                     .GetValue(viewCache)!;
 
-                Assert.Equal(5, views.Count);
-                Assert.True(((FrameworkElement)views[typeof(AboutPageViewModel)]!).IsMeasureValid);
+                Assert.Equal(6, views.Count);
+                Assert.True(((FrameworkElement)views[typeof(CreditsViewModel)]!).IsMeasureValid);
                 Assert.Null(((FrameworkElement)views[typeof(SettingsViewModel)]!).Parent);
             });
         }
@@ -322,7 +325,7 @@ namespace GameControllerForZwift.UnitTests
                 Assert.True(Find<Button>(window, "MenuSettingsItem").IsEnabled);
                 Assert.True(Find<Button>(window, "MenuCreditsItem").IsEnabled);
                 Assert.False(Find<Button>(window, "MenuHelpItem").IsEnabled);
-                Assert.False(Find<Button>(window, "MenuSupportItem").IsEnabled);
+                Assert.True(Find<Button>(window, "MenuSupportItem").IsEnabled);
             });
         }
 

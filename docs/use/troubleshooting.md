@@ -39,6 +39,8 @@ The app writes a log file every time it starts. It is in the `logs` folder next 
 <folder where you unpacked the app>\logs\app-yyyyMMdd-HHmmss.log
 ```
 
+I can open that folder from **Settings**: I click the **...** menu, then **Settings**, then **Open the log folder**.
+
 The file name holds the date and time the app started, for example `app-20260314-183005.log`. The newest file is the one you want.
 
 To share it:

@@ -39,6 +39,9 @@
 		<None Include="..\..\..\..\ACKNOWLEDGEMENTS.md">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Include="..\..\..\..\LICENSE.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
   <ItemGroup>
