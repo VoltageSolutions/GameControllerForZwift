@@ -1,7 +1,7 @@
 ---
 id: SPEC-UX-NAV
 title: Navigation
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Navigation
@@ -83,7 +83,7 @@ A small floating button with a ⋯ (more) icon. It is not a hamburger: there is 
 | First run must have no navigation. The flow is connect controller, then choose or pair if needed, then pair with Zwift, then try a shift, then it lands on Ride. | UX-N-012 |
 | Dialogs and sheets must cover the navigation. | UX-N-013 |
 | The Float and Mini windows must have no navigation. | UX-N-014 |
-| Page actions must stay on the page (Save on Buttons, Start riding on Ride). | UX-N-015 |
+| Page actions must stay on the page (Save on Buttons, Pair with Zwift on Ride). | UX-N-015 |
 | A pushed screen must have a back button, and the back button must return to the screen it was opened from. | UX-N-016 |
 
 ??? note "Edge cases"

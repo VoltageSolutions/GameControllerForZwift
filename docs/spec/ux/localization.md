@@ -1,7 +1,7 @@
 ---
 id: SPEC-UX-LOC
 title: Localization
-last-updated: 2026-11-18
+last-updated: 2026-11-22
 ---
 
 # Localization
@@ -28,6 +28,34 @@ A string is one label, sentence, or name, stored under a key with a note for tra
 | Layouts must leave room for longer text. Labels grow and wrap as the [visual system](visual-system.md#buttons) says, and the app must never clip text. | UX-L-007 |
 | Brand and product names must stay as they are in every language: VOLTAGE, Voltage Gamepad, Zwift, Zwift Ride, Ko-fi, and GitHub. | UX-L-008 |
 | Screens only developers see, such as the style gallery in Debug builds, may use English only. | UX-L-009 |
+
+## Quoted strings in the specs
+
+A screen spec says in words what the screen shows, and it often quotes the text. A quote can drift from the real string. To catch that, each screen spec lists the strings it quotes in one **Quoted strings** table at the end of the page. A unit test reads the table and compares each row with `Strings.resx`.
+
+The table is a section headed `## Quoted strings` with three columns: **Key**, **English text**, and **Rule**. The key is the resx key in backticks. The English text is the exact value of the string, without quotes. The rule is the ID of the rule that needs the string. A placeholder keeps its `{0}` form. A message with a count has one row for one item and one row for other counts (UX-L-004). A key that a spec names but does not yet have a string must still be listed, so the test fails until the string exists.
+
+*Example:*
+
+```markdown
+## Quoted strings
+
+| Key | English text | Rule |
+|---|---|---|
+| `RideTitle` | Ready when you are | SCR-RIDE-001 |
+| `SettingsDeleteAllConfirm` | Delete all {0} saved mappings? This can't be undone. Default stays. | SCR-SET-006 |
+```
+
+| Rule | ID |
+|---|---|
+| A screen spec that quotes a string the app shows must list it in a `## Quoted strings` table with its resx key, its exact English text, and the rule that needs it. | UX-L-012 |
+| A unit test must fail when a key in a spec Quoted strings table is missing from `Strings.resx`, or when its English value differs from the spec text. The failure must name the spec file, the rule ID, the key, the expected text, and the actual text. | UX-L-013 |
+| The string checks (UX-L-010, UX-L-011, and UX-L-013) must run for every language the app ships, and a pull request must report them as their own check, separate from the functional unit tests. | UX-L-014 |
+
+??? note "Edge cases"
+    - The table checks the strings listed in it. A quote in running text that is not in the table is not checked, so list every string a rule depends on.
+    - Spec text uses straight apostrophes and quotation marks, as `Strings.resx` does.
+    - A Quoted strings table lists only the strings of that screen. A string that two screens share may be listed in both specs, as long as the text is the same.
 
 ## On Windows
 

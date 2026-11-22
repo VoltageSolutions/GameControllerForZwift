@@ -97,10 +97,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | `RideControllerCard` | Group | "Your Xbox controller, awake and connected" |
 | `RideStats` | Group | "12 rides together, 1,086 shifts, riding since September" |
 | `RideZwiftStatus` | Live status | "Zwift is connected to Voltage Gamepad" or "Zwift isn't connected yet" |
-| `RideStartButton` | Button | "Start riding" |
 | `RideLastPressStatus` | Live status | "Shift up, right bumper" |
-| `RideWindowSizeGroup` | Radio group | "Window size: Full, Float, Mini" |
-| `RideStopButton` | Button | "Stop riding" |
 | `ButtonsMappingPicker` | Button, opens | "Mapping: Climbing, unsaved changes" |
 | `ButtonsSaveButton`, `ButtonsSaveAsButton` | Button | "Save", "Save as new" |
 | `ButtonsRow_{input}` | Button | "Right bumper: shift up" |
@@ -135,7 +132,6 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | Rule | ID |
 |---|---|
 | The app must announce changes, not repeats: Zwift connected or lost, controller asleep or back, and the first press in setup. | UX-A-025 |
-| While riding, shift announcements must be optional: Settings has "Announce each shift", off by default. | UX-A-026 |
 | The app must always announce connection problems. | UX-A-027 |
 | The app must never move focus to announce something. | UX-A-028 |
 
