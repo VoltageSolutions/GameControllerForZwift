@@ -32,14 +32,14 @@ flowchart TD
 
 **What it is for:** the screen you see every day. It tells you that you are ready, or what is missing. The controller and Zwift can connect in any order. Until both are connected, Home says which is missing and suggests going to Connections.
 
-**Content, top to bottom:** the VOLTAGE wordmark (`RideWordmark`), the screen title "Ready when you are" (`RidePageTitle`), your controller card (for example "Your Xbox controller is here", `RideControllerCard`), your stats (`RideStats`), your current mapping (`RideMappingCard`), and the Zwift status (`RideZwiftStatus`). There is no Start riding button.
+**Content, top to bottom:** the VOLTAGE wordmark (`RideWordmark`), the screen title "Ready when you are" (`RidePageTitle`), your current mapping as a row (`RideChangeMappingButton`), the Zwift status (`RideZwiftStatus`), and your controller card (for example "Your Xbox controller", with "Awake and connected" under it, `RideControllerCard`) with your stats (`RideStats`) as three numbers: rides together, shifts, and riding since. There is no Start riding button.
 
 *Example: "12 rides together, 1,086 shifts, riding since September."*
 
 | Rule | ID |
 |---|---|
 | The title must be "Ready when you are". | SCR-RIDE-001 |
-| The controller card must name your controller and say its state in words, such as "Your Xbox controller is here". | SCR-RIDE-002 |
+| The controller card must name your controller and say its state in words, such as "Awake and connected". | SCR-RIDE-002 |
 | The stats must show only real values the app counts: rides together, shifts, and riding since. The app must count them and keep them between runs. Until there is something real to show, the app must hide the stats or say nothing. | SCR-RIDE-003 |
 | The screen must show the selected mapping and let you change it by going to Buttons. | SCR-RIDE-004 |
 | The Zwift status must say "Zwift is connected to Voltage Gamepad" when `IsZwiftConnected` is true. Zwift can see Voltage Gamepad whether or not a controller is connected. | SCR-RIDE-005 |
@@ -138,6 +138,9 @@ A ride starts when the app knows both that a controller is connected and that Zw
 | **Chip in on Ko-fi** must open the Ko-fi page, as it does on [Support](support.md). | SCR-RIDE-039 |
 | Ride finished must have a **Done** button that returns to Home. | SCR-RIDE-042 |
 | After a ride ends while the controller and Zwift are still connected, the next button press must start a new ride. | SCR-RIDE-043 |
+| On a window at least 900 px wide, Home must show two columns: the title, the mapping row, and the Zwift status on the left, and the controller card on the right. Below 900 px it must show one column in the same order. The mapping and Zwift status must be rows as in [Visual system](../ux/visual-system.md#rows-and-two-column-screens). | SCR-RIDE-044 |
+| The riding view must start with two status chips, one for the controller and one for Zwift, each with a dot in `ok` when it works and `err` when it does not, and the words say the same ("Controller ready", "Zwift sees it", "Zwift lost"). Under them it must say "Riding with" and the mapping name. | SCR-RIDE-045 |
+| The big readout must show the pressed input as an accent pill with its short label, such as "RB", before the function's name, such as "Shift up". A press of an input with no function must not change the readout. | SCR-RIDE-046 |
 
 ## Controller input on these screens
 
@@ -162,6 +165,8 @@ On Home and the riding view, a controller press goes to Zwift as mapped. See [Co
 |---|---|---|
 | `RideTitle` | Ready when you are | SCR-RIDE-001 |
 | `RideControllerHere` | Your {0} is here | SCR-RIDE-002 |
+| `RideControllerName` | Your {0} | SCR-RIDE-002 |
+| `RideControllerAwake` | Awake and connected | SCR-RIDE-002 |
 | `ZwiftConnected` | Zwift is connected to Voltage Gamepad | SCR-RIDE-005 |
 | `ZwiftNotConnected` | Zwift isn't connected yet | SCR-RIDE-012 |
 | `RideNoControllerTitle` | Wake your controller | SCR-RIDE-008 |
@@ -177,6 +182,16 @@ On Home and the riding view, a controller press goes to Zwift as mapped. See [Co
 | `RideStatsShiftsOne` | 1 shift | SCR-RIDE-003 |
 | `RideStatsShiftsOther` | {0} shifts | SCR-RIDE-003 |
 | `RideStatsSince` | Riding since {0} | SCR-RIDE-003 |
+| `RideStatRidesOne` | ride together | SCR-RIDE-003 |
+| `RideStatRidesOther` | rides together | SCR-RIDE-003 |
+| `RideStatShiftsOne` | shift | SCR-RIDE-003 |
+| `RideStatShiftsOther` | shifts | SCR-RIDE-003 |
+| `RideStatSince` | riding since | SCR-RIDE-003 |
+| `RideChipControllerReady` | Controller ready | SCR-RIDE-045 |
+| `RideChipControllerGone` | Controller disconnected | SCR-RIDE-045 |
+| `RideChipZwiftSees` | Zwift sees it | SCR-RIDE-045 |
+| `RideChipZwiftLost` | Zwift lost | SCR-RIDE-045 |
+| `RideRidingWith` | Riding with | SCR-RIDE-045 |
 | `RideJustPressed` | You just pressed | SCR-RIDE-016 |
 | `RidePressFormat` | {0}, {1} | SCR-RIDE-016 |
 | `RideNoPress` | Nothing yet | SCR-RIDE-016 |

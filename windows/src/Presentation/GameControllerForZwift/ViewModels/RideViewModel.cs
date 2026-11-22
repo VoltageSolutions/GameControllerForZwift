@@ -27,8 +27,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
     }
 
     /// <summary>One line of the quick reference of the main buttons (SCR-RIDE-017).</summary>
-    /// <param name="Text">For example "Right bumper: Shift up".</param>
-    public sealed record QuickReferenceItem(string Text);
+    /// <param name="Text">For example "Right bumper: Shift up", for screen readers.</param>
+    /// <param name="Chip">The short label of the input, for example "RB".</param>
+    /// <param name="Function">The function's name, for example "Shift up".</param>
+    public sealed record QuickReferenceItem(string Text, string Chip, string Function);
 
     /// <summary>
     /// View model of the Ride tab (docs/spec/screens/ride.md). It shows Home until a controller and Zwift are both
@@ -107,6 +109,14 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             ? Localizer.Format("RideControllerHere", controller.Name)
             : Localizer.Get("RideNoControllerStatus");
 
+        /// <summary>The line over the controller's state, for example "Your Xbox Controller" (SCR-RIDE-002).</summary>
+        public string ControllerName => _controllers.SelectedController is { } controller
+            ? Localizer.Format("RideControllerName", controller.Name)
+            : Localizer.Get("RideNoControllerStatus");
+
+        /// <summary>The controller's state in words, or empty without a controller (SCR-RIDE-002).</summary>
+        public string ControllerStateText => HasController ? Localizer.Get("RideControllerAwake") : string.Empty;
+
         /// <summary>The Zwift status in words (SCR-RIDE-005, SCR-RIDE-012).</summary>
         public string ZwiftStatusText => _zwift.StatusText;
 
@@ -145,6 +155,30 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         [ObservableProperty]
         private bool _hasStats;
 
+        /// <summary>The number of rides, for example "12" (SCR-RIDE-003).</summary>
+        [ObservableProperty]
+        private string _ridesValue = string.Empty;
+
+        /// <summary>The label of the number of rides, for example "rides together".</summary>
+        [ObservableProperty]
+        private string _ridesLabel = string.Empty;
+
+        /// <summary>The number of shifts, for example "1,086".</summary>
+        [ObservableProperty]
+        private string _shiftsValue = string.Empty;
+
+        /// <summary>The label of the number of shifts, for example "shifts".</summary>
+        [ObservableProperty]
+        private string _shiftsLabel = string.Empty;
+
+        /// <summary>The month the app first counted a ride, for example "Sep".</summary>
+        [ObservableProperty]
+        private string _sinceValue = string.Empty;
+
+        /// <summary>The label of the month, "riding since".</summary>
+        [ObservableProperty]
+        private string _sinceLabel = string.Empty;
+
         /// <summary>For example "12 rides together".</summary>
         [ObservableProperty]
         private string _ridesText = string.Empty;
@@ -164,8 +198,16 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             if (!HasStats)
             {
                 RidesText = ShiftsText = SinceText = string.Empty;
+                RidesValue = RidesLabel = ShiftsValue = ShiftsLabel = SinceValue = SinceLabel = string.Empty;
                 return;
             }
+
+            RidesValue = stats.Rides.ToString("N0", Localizer.Instance.Culture);
+            RidesLabel = Localizer.Get(stats.Rides == 1 ? "RideStatRidesOne" : "RideStatRidesOther");
+            ShiftsValue = stats.Shifts.ToString("N0", Localizer.Instance.Culture);
+            ShiftsLabel = Localizer.Get(stats.Shifts == 1 ? "RideStatShiftsOne" : "RideStatShiftsOther");
+            SinceValue = stats.Since is { } first ? first.LocalDateTime.ToString("MMM", Localizer.Instance.Culture) : string.Empty;
+            SinceLabel = stats.Since is null ? string.Empty : Localizer.Get("RideStatSince");
 
             RidesText = Count("RideStatsRidesOne", "RideStatsRidesOther", stats.Rides);
             ShiftsText = Count("RideStatsShiftsOne", "RideStatsShiftsOther", stats.Shifts);
@@ -181,9 +223,27 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Riding
 
-        /// <summary>The big readout of the last press, for example "Shift up, right bumper" (SCR-RIDE-016).</summary>
+        /// <summary>The last press in words, for example "Shift up, right bumper", for screen readers (SCR-RIDE-016).</summary>
         [ObservableProperty]
         private string _lastPressText = Localizer.Get("RideNoPress");
+
+        /// <summary>The short label of the last input pressed, for example "RB", or empty before a press (SCR-RIDE-016).</summary>
+        [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(HasLastPress))]
+        private string _lastPressKey = string.Empty;
+
+        /// <summary>The big readout of the last press: the function's name, for example "Shift up" (SCR-RIDE-016).</summary>
+        [ObservableProperty]
+        private string _lastPressAction = Localizer.Get("RideNoPress");
+
+        /// <summary>True once a press shows in the readout.</summary>
+        public bool HasLastPress => LastPressKey.Length > 0;
+
+        /// <summary>The controller chip of the riding view: ready or disconnected (SCR-RIDE-018).</summary>
+        public string ControllerChipText => Localizer.Get(HasController ? "RideChipControllerReady" : "RideChipControllerGone");
+
+        /// <summary>The Zwift chip of the riding view: seen or lost (SCR-RIDE-018).</summary>
+        public string ZwiftChipText => Localizer.Get(_zwift.IsConnected ? "RideChipZwiftSees" : "RideChipZwiftLost");
 
         /// <summary>"Shifts this ride: 3" (SCR-RIDE-017).</summary>
         [ObservableProperty]
@@ -213,6 +273,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         {
             Mode = RideMode.Riding;
             LastPressText = Localizer.Get("RideNoPress");
+            LastPressKey = string.Empty;
+            LastPressAction = Localizer.Get("RideNoPress");
             RecoveryText = string.Empty;
             UpdateShifts();
             UpdateQuickReference();
@@ -226,8 +288,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             IReadOnlyDictionary<ControllerInput, ZwiftFunction> mappings = _controllers.GetCurrentMappings();
             QuickReference = ButtonsCatalog.Inputs
                 .Where(i => mappings.TryGetValue(i.Input, out ZwiftFunction f) && f is ZwiftFunction.ShiftUp or ZwiftFunction.ShiftDown)
-                .Select(i => new QuickReferenceItem(Localizer.Format("RideQuickReferenceFormat", Localizer.Get(i.NameKey),
-                    Localizer.Get(ButtonsCatalog.Function(mappings[i.Input]).TitleKey))))
+                .Select(i => new QuickReferenceItem(
+                    Localizer.Format("RideQuickReferenceFormat", Localizer.Get(i.NameKey), Localizer.Get(ButtonsCatalog.Function(mappings[i.Input]).TitleKey)),
+                    Localizer.Get(i.ChipKey),
+                    Localizer.Get(ButtonsCatalog.Function(mappings[i.Input]).TitleKey)))
                 .ToList();
         }
 
@@ -293,6 +357,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                         continue;
                     }
 
+                    LastPressKey = Localizer.Get(ButtonsCatalog.Input(input).ChipKey);
+                    LastPressAction = Localizer.Get(ButtonsCatalog.Function(function).TitleKey);
                     LastPressText = Localizer.Format("RidePressFormat",
                         Localizer.Get(ButtonsCatalog.Function(function).TitleKey),
                         Localizer.Get(ButtonsCatalog.Input(input).NameKey).ToLower(Localizer.Instance.Culture));
@@ -407,6 +473,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             OnPropertyChanged(nameof(ZwiftStatusText));
             OnPropertyChanged(nameof(IsZwiftConnected));
             OnPropertyChanged(nameof(ShowPairWithZwift));
+            OnPropertyChanged(nameof(ZwiftChipText));
             _tracker.SetZwiftConnected(_zwift.IsConnected);
             UpdateProblem();
         }
@@ -419,6 +486,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                     OnPropertyChanged(nameof(HasController));
                     OnPropertyChanged(nameof(TitleText));
                     OnPropertyChanged(nameof(ControllerText));
+                    OnPropertyChanged(nameof(ControllerName));
+                    OnPropertyChanged(nameof(ControllerStateText));
+                    OnPropertyChanged(nameof(ControllerChipText));
                     OnPropertyChanged(nameof(ShowNoControllerActions));
                     _tracker.SetControllerConnected(HasController);
                     UpdateProblem();

@@ -25,6 +25,18 @@ namespace GameControllerForZwift.UI.WPF.Controls
             nameof(StackBelow), typeof(double), typeof(AdaptiveColumns),
             new FrameworkPropertyMetadata(900.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
 
+        /// <summary>Identifies <see cref="SideOffset"/>.</summary>
+        public static readonly DependencyProperty SideOffsetProperty = DependencyProperty.Register(
+            nameof(SideOffset), typeof(double), typeof(AdaptiveColumns),
+            new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure));
+
+        /// <summary>Gets or sets how far the second column starts below the first when they sit side by side.</summary>
+        public double SideOffset
+        {
+            get => (double)GetValue(SideOffsetProperty);
+            set => SetValue(SideOffsetProperty, value);
+        }
+
         /// <summary>Gets or sets the width of the second column.</summary>
         public double SideWidth
         {
@@ -57,7 +69,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 UIElement side = InternalChildren[1];
                 side.Measure(new Size(SideWidth, double.PositiveInfinity));
                 main.Measure(new Size(Math.Max(0, width - SideWidth - Gap), double.PositiveInfinity));
-                return new Size(width, Math.Max(main.DesiredSize.Height, side.DesiredSize.Height));
+                return new Size(width, Math.Max(main.DesiredSize.Height, side.DesiredSize.Height + SideOffset));
             }
 
             double height = 0;
@@ -80,7 +92,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 UIElement side = InternalChildren[1];
                 double mainWidth = Math.Max(0, finalSize.Width - SideWidth - Gap);
                 main.Arrange(new Rect(0, 0, mainWidth, finalSize.Height));
-                side.Arrange(new Rect(mainWidth + Gap, 0, SideWidth, Math.Min(finalSize.Height, side.DesiredSize.Height)));
+                side.Arrange(new Rect(mainWidth + Gap, SideOffset, SideWidth, side.DesiredSize.Height));
                 return finalSize;
             }
 

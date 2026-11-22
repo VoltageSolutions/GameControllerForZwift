@@ -167,14 +167,58 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             Assert.Equal("1 ride together", ride.RidesText);
             Assert.Equal("1 shift", ride.ShiftsText);
             Assert.StartsWith("Riding since ", ride.SinceText, StringComparison.Ordinal);
+            Assert.Equal("1", ride.RidesValue);
+            Assert.Equal("ride together", ride.RidesLabel);
+            Assert.Equal("shift", ride.ShiftsLabel);
+            Assert.Equal("riding since", ride.SinceLabel);
+            Assert.Equal("Sep", ride.SinceValue);
 
             _context.Settings.RecordRide(1085, new DateTimeOffset(2026, 9, 4, 12, 0, 0, TimeSpan.Zero));
             RideViewModel again = new(_status!, _setup!, _context.Settings, _context.Dialogs, _navigation,
                 new ConnectionsViewModel(_status!, _setup!, _opened.Add), _time);
 
             Assert.Equal("2 rides together", again.RidesText);
+            Assert.Equal("rides together", again.RidesLabel);
+            Assert.Equal("1,086", again.ShiftsValue);
+            Assert.Equal("shifts", again.ShiftsLabel);
             Assert.Contains("1,086", again.ShiftsText, StringComparison.Ordinal);
             again.Dispose();
+        }
+
+        [Fact]
+        public void SCRRIDE002_TheControllerCardNamesTheControllerAndSaysItIsAwake()
+        {
+            RideViewModel ride = Create(controller: true);
+
+            Assert.Equal("Your Xbox Series X Controller", ride.ControllerName);
+            Assert.Equal("Awake and connected", ride.ControllerStateText);
+
+            _setup!.SelectedController = null;
+
+            Assert.Equal("Looking for your controller...", ride.ControllerName);
+            Assert.Equal(string.Empty, ride.ControllerStateText);
+        }
+
+        [Fact]
+        public void SCRRIDE045_SCRRIDE046_TheReadoutHasAKeyPillAndTheChipsFollowTheConnections()
+        {
+            RideViewModel ride = Riding();
+            Assert.False(ride.HasLastPress);
+            Assert.Equal("Controller ready", ride.ControllerChipText);
+            Assert.Equal("Zwift sees it", ride.ZwiftChipText);
+
+            Press(ControllerInput.X);
+
+            Assert.True(ride.HasLastPress);
+            Assert.Equal("X", ride.LastPressKey);
+            Assert.Equal("Shift up", ride.LastPressAction);
+            Assert.All(ride.QuickReference, item => Assert.False(string.IsNullOrEmpty(item.Chip)));
+
+            RaiseZwift(false);
+            _setup!.SelectedController = null;
+
+            Assert.Equal("Zwift lost", ride.ZwiftChipText);
+            Assert.Equal("Controller disconnected", ride.ControllerChipText);
         }
 
         [Fact]

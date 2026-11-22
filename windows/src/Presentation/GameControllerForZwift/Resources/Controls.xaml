@@ -128,6 +128,17 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel VerticalAlignment="Center">
+                                <TextBlock x:Name="EyebrowText" Text="{TemplateBinding Eyebrow}" FontSize="14" Foreground="{DynamicResource Brush.muted}">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <Trigger Property="Text" Value="">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                                 <TextBlock x:Name="TitleText" Text="{TemplateBinding Title}" FontSize="17" FontWeight="Bold" TextWrapping="Wrap"
                                            Foreground="{DynamicResource Brush.text}" />
                                 <TextBlock x:Name="DescriptionText" Margin="0,2,0,0" Text="{TemplateBinding Description}" FontSize="14" TextWrapping="Wrap"
@@ -143,10 +154,14 @@
                                     </TextBlock.Style>
                                 </TextBlock>
                             </StackPanel>
-                            <Viewbox x:Name="Mark" Grid.Column="1" Width="18" Height="18" Margin="16,0,0,0" VerticalAlignment="Center" Visibility="Collapsed">
+                            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="{TemplateBinding TrailingText}" Margin="16,0,0,0" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource Brush.muted}" />
+                            <Viewbox x:Name="Mark" Width="18" Height="18" Margin="12,0,0,0" VerticalAlignment="Center" Visibility="Collapsed">
                                 <Path x:Name="MarkPath" Width="24" Height="24" Stretch="None" Stroke="{DynamicResource Brush.text}" StrokeThickness="2.4"
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
                             </Viewbox>
+                            </StackPanel>
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>

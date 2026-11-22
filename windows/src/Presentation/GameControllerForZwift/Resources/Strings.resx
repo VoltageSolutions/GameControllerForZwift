@@ -825,6 +825,54 @@
     <value>Your {0} is here</value>
     <comment>Ride screen, controller card, when a controller is connected. {0} is the controller name, for example Xbox Controller.</comment>
   </data>
+  <data name="RideControllerName" xml:space="preserve">
+    <value>Your {0}</value>
+    <comment>Ride screen, controller panel, the line over the controller state. {0} is the controller name, for example Xbox Controller.</comment>
+  </data>
+  <data name="RideControllerAwake" xml:space="preserve">
+    <value>Awake and connected</value>
+    <comment>Ride screen, controller panel, the state of a connected controller.</comment>
+  </data>
+  <data name="RideStatRidesOne" xml:space="preserve">
+    <value>ride together</value>
+    <comment>Ride screen, label under the number 1 in the stats: one ride with this controller. Lower case, it follows the number.</comment>
+  </data>
+  <data name="RideStatRidesOther" xml:space="preserve">
+    <value>rides together</value>
+    <comment>Ride screen, label under the number of rides in the stats. Lower case, it follows the number.</comment>
+  </data>
+  <data name="RideStatShiftsOne" xml:space="preserve">
+    <value>shift</value>
+    <comment>Ride screen, label under the number 1 in the stats: one shift. Lower case, it follows the number.</comment>
+  </data>
+  <data name="RideStatShiftsOther" xml:space="preserve">
+    <value>shifts</value>
+    <comment>Ride screen, label under the number of shifts in the stats. Lower case, it follows the number.</comment>
+  </data>
+  <data name="RideStatSince" xml:space="preserve">
+    <value>riding since</value>
+    <comment>Ride screen, label under the month in the stats, for example Sep. Lower case, it follows the month.</comment>
+  </data>
+  <data name="RideChipControllerReady" xml:space="preserve">
+    <value>Controller ready</value>
+    <comment>Ride screen, riding view, chip that says the controller is connected.</comment>
+  </data>
+  <data name="RideChipControllerGone" xml:space="preserve">
+    <value>Controller disconnected</value>
+    <comment>Ride screen, riding view, chip that says the controller is not connected.</comment>
+  </data>
+  <data name="RideChipZwiftSees" xml:space="preserve">
+    <value>Zwift sees it</value>
+    <comment>Ride screen, riding view, chip that says Zwift can see the controller as Voltage Gamepad. Keep Zwift.</comment>
+  </data>
+  <data name="RideChipZwiftLost" xml:space="preserve">
+    <value>Zwift lost</value>
+    <comment>Ride screen, riding view, chip that says Zwift lost the connection. Keep Zwift.</comment>
+  </data>
+  <data name="RideRidingWith" xml:space="preserve">
+    <value>Riding with</value>
+    <comment>Ride screen, riding view, small label over the name of the mapping in use. The mapping name follows it.</comment>
+  </data>
   <data name="RideNoControllerTitle" xml:space="preserve">
     <value>Wake your controller</value>
     <comment>Title of the Ride screen when no controller is connected. It asks the person to press a button on the controller to wake it.</comment>

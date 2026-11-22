@@ -15,7 +15,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 **What it is for:** say who made the app, which version it is, and what it uses.
 
-**Content, top to bottom:** the screen title "Credits" (`CreditsPageTitle`), the app name with its logo, the version (`CreditsVersion`, for example "Version 0.5.0"), a short description, the not-affiliated statement, **Project on GitHub** (`CreditsGitHubLink`), **Credits** (`CreditsListLink`), and **License** (`CreditsLicenseLink`). **Credits** opens the Credits list screen (`CreditsListPageTitle`). **License** opens the License screen (`CreditsLicensePageTitle`).
+**Content, top to bottom:** the screen title "Credits" (`CreditsPageTitle`), the VOLTAGE wordmark, the app name, the version (`CreditsVersion`, for example "Version 0.5.0"), a short description, the not-affiliated statement, **Project on GitHub** (`CreditsGitHubLink`), **Credits** (`CreditsListLink`), and **License** (`CreditsLicenseLink`). **Credits** opens the Credits list screen (`CreditsListPageTitle`). **License** opens the License screen (`CreditsLicensePageTitle`).
 
 *Example: "Game Controller for Zwift, Version 0.5.0. Not made by or affiliated with Zwift. Zwift and Zwift Ride are trademarks of Zwift, Inc."*
 
