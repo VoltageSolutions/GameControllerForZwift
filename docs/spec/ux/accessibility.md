@@ -158,3 +158,4 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 |---|---|
 | Every new screen must pass a contrast check and have a written reading order before I build it. | UX-A-032 |
 | I must check every new Windows screen with Accessibility Insights and Narrator. | UX-A-033 |
+| A unit test must fail when an ID listed in the Accessibility IDs table of a screen spec is missing from the app. It must report as its own check on a pull request (UX-L-014). | UX-A-034 |

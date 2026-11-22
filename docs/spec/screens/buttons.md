@@ -173,4 +173,4 @@ A controller press lights the matching row. Dialogs work with touch, mouse, and 
 | `ButtonsControllerImage` | Illustration |
 | `FunctionItem_{function}` | Function picker |
 | `MappingItem_{id}` | A saved mapping in the picker (the mapping's GUID) |
-| `DialogPrimaryButton`, `DialogSecondaryButton`, `DialogCancelButton` | Dialogs |
+| `MessageDialogPrimaryButton`, `MessageDialogSecondaryButton`, `MessageDialogCloseButton` | Message dialogs |

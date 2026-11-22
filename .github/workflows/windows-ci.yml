@@ -308,7 +308,8 @@ jobs:
           $projects = @('windows/tests/GameControllerForZwift.UnitTests') + @(($env:PORTABLE_TESTS -split '\s+') | Where-Object { $_ })
           foreach ($p in $projects) {
             $name = Split-Path $p -Leaf
-            dotnet test $p -c Release --no-build --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"
+            # The string and accessibility checks report from Localization CI (localization-ci.yml).
+            dotnet test $p -c Release --no-build --filter "Category!=Localization&Category!=Accessibility" --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"
             if ($LASTEXITCODE -ne 0) { $rc = 1 }
           }
 
