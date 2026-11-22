@@ -4,6 +4,7 @@
              xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
              AutomationProperties.AutomationId="SupportPage">
     <!-- docs/spec/screens/support.md -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
     <StackPanel MaxWidth="720" HorizontalAlignment="Left">
         <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc SupportTitle}"
                    AutomationProperties.AutomationId="SupportPageTitle" AutomationProperties.HeadingLevel="Level1" />
@@ -35,9 +36,9 @@
                         <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc SupportShareDescription}" />
                     </StackPanel>
                 </Button>
-                <TextBlock x:Name="ShareStatus" Margin="0,8,0,0" Style="{StaticResource Text.Caption}" Text="{Binding ShareStatus}"
+                <TextBlock x:Name="ShareStatus" Margin="0,4,0,0" Style="{StaticResource Text.Caption}" Text="{Binding ShareStatus}"
                            AutomationProperties.AutomationId="SupportShareStatus" AutomationProperties.LiveSetting="Polite" />
-                <Button x:Name="ContributeButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding OpenContributingCommand}"
+                <Button x:Name="ContributeButton" Margin="0,12,0,0" HorizontalAlignment="Left" Command="{Binding OpenContributingCommand}"
                         AutomationProperties.AutomationId="SupportContributeButton" AutomationProperties.Name="{loc:Loc SupportContribute}">
                     <StackPanel>
                         <TextBlock Text="{loc:Loc SupportContribute}" />
@@ -47,4 +48,5 @@
             </StackPanel>
         </Border>
     </StackPanel>
+    </ScrollViewer>
 </UserControl>

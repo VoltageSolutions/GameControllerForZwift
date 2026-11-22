@@ -4,6 +4,7 @@
              xmlns:loc="clr-namespace:GameControllerForZwift.UI.WPF.Localization"
              AutomationProperties.AutomationId="CreditsPage">
     <!-- docs/spec/screens/credits.md -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
     <StackPanel MaxWidth="720" HorizontalAlignment="Left">
         <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc CreditsTitle}"
                    AutomationProperties.AutomationId="CreditsPageTitle" AutomationProperties.HeadingLevel="Level1" />
@@ -11,7 +12,7 @@
         <Border Style="{StaticResource Surface.Card}" Margin="0,24,0,0">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Image Source="pack://application:,,,/Assets/logo_transparent.png" Width="48" Height="48" />
+                    <Image Source="pack://application:,,,/Assets/logo.png" Width="48" Height="48" />
                     <StackPanel Margin="16,0,0,0" VerticalAlignment="Center">
                         <TextBlock Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc AppName}" AutomationProperties.HeadingLevel="Level2" />
                         <TextBlock x:Name="VersionText" Style="{StaticResource Text.Caption}" Text="{Binding VersionText}"
@@ -50,4 +51,5 @@
             </StackPanel>
         </Border>
     </StackPanel>
+    </ScrollViewer>
 </UserControl>

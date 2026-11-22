@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:GameControllerForZwift.UI.WPF.ViewModels"
              AutomationProperties.AutomationId="SettingsPage">
     <!-- docs/spec/screens/settings.md -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
     <StackPanel MaxWidth="720" HorizontalAlignment="Left">
         <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{loc:Loc SettingsTitle}"
                    AutomationProperties.AutomationId="SettingsPageTitle" AutomationProperties.HeadingLevel="Level1" />
@@ -69,4 +70,5 @@
             </StackPanel>
         </Border>
     </StackPanel>
+    </ScrollViewer>
 </UserControl>
