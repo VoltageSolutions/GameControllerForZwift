@@ -71,7 +71,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.15" />
-    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="10.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>
