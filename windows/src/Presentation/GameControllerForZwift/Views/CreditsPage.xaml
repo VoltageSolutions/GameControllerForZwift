@@ -27,27 +27,21 @@
 
         <Border Style="{StaticResource Surface.Card}" Margin="0,16,0,24">
             <StackPanel>
-                <Button x:Name="GitHubButton" HorizontalAlignment="Left" Command="{Binding OpenGitHubCommand}"
-                        AutomationProperties.AutomationId="CreditsGitHubLink" AutomationProperties.Name="{loc:Loc CreditsGitHub}">
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc CreditsGitHub}" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc CreditsGitHubDescription}" />
-                    </StackPanel>
-                </Button>
-                <Button x:Name="CreditsListButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding OpenCreditsListCommand}"
-                        AutomationProperties.AutomationId="CreditsListLink" AutomationProperties.Name="{loc:Loc CreditsList}">
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc CreditsList}" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc CreditsListDescription}" />
-                    </StackPanel>
-                </Button>
-                <Button x:Name="LicenseButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding OpenLicenseCommand}"
-                        AutomationProperties.AutomationId="CreditsLicenseLink" AutomationProperties.Name="{loc:Loc CreditsLicenseName}">
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc CreditsLicenseName}" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc CreditsLicenseValue}" />
-                    </StackPanel>
-                </Button>
+                <StackPanel>
+                    <Button x:Name="GitHubButton" HorizontalAlignment="Left" Command="{Binding OpenGitHubCommand}" Content="{loc:Loc CreditsGitHub}"
+                            AutomationProperties.AutomationId="CreditsGitHubLink" />
+                    <TextBlock Margin="24,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc CreditsGitHubDescription}" />
+                </StackPanel>
+                <StackPanel Margin="0,16,0,0">
+                    <Button x:Name="CreditsListButton" HorizontalAlignment="Left" Command="{Binding OpenCreditsListCommand}" Content="{loc:Loc CreditsList}"
+                            AutomationProperties.AutomationId="CreditsListLink" />
+                    <TextBlock Margin="24,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc CreditsListDescription}" />
+                </StackPanel>
+                <StackPanel Margin="0,16,0,0">
+                    <Button x:Name="LicenseButton" HorizontalAlignment="Left" Command="{Binding OpenLicenseCommand}" Content="{loc:Loc CreditsLicenseName}"
+                            AutomationProperties.AutomationId="CreditsLicenseLink" />
+                    <TextBlock Margin="24,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc CreditsLicenseValue}" />
+                </StackPanel>
             </StackPanel>
         </Border>
     </StackPanel>

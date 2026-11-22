@@ -22,29 +22,23 @@
         <TextBlock Margin="0,24,0,8" Style="{StaticResource Text.BodyStrong}" Text="{loc:Loc SupportOtherWays}" AutomationProperties.HeadingLevel="Level2" />
         <Border Style="{StaticResource Surface.Card}" Margin="0,0,0,24">
             <StackPanel>
-                <Button x:Name="StarButton" HorizontalAlignment="Left" Command="{Binding OpenStarCommand}"
-                        AutomationProperties.AutomationId="SupportStarButton" AutomationProperties.Name="{loc:Loc SupportStar}">
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc SupportStar}" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc SupportStarDescription}" />
-                    </StackPanel>
-                </Button>
-                <Button x:Name="ShareButton" Margin="0,16,0,0" HorizontalAlignment="Left" Command="{Binding CopyShareLinkCommand}"
-                        AutomationProperties.AutomationId="SupportShareButton" AutomationProperties.Name="{loc:Loc SupportShare}">
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc SupportShare}" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc SupportShareDescription}" />
-                    </StackPanel>
-                </Button>
+                <StackPanel>
+                    <Button x:Name="StarButton" HorizontalAlignment="Left" Command="{Binding OpenStarCommand}" Content="{loc:Loc SupportStar}"
+                            AutomationProperties.AutomationId="SupportStarButton" />
+                    <TextBlock Margin="24,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc SupportStarDescription}" />
+                </StackPanel>
+                <StackPanel Margin="0,16,0,0">
+                    <Button x:Name="ShareButton" HorizontalAlignment="Left" Command="{Binding CopyShareLinkCommand}" Content="{loc:Loc SupportShare}"
+                            AutomationProperties.AutomationId="SupportShareButton" />
+                    <TextBlock Margin="24,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc SupportShareDescription}" />
+                </StackPanel>
                 <TextBlock x:Name="ShareStatus" Margin="0,4,0,0" Style="{StaticResource Text.Caption}" Text="{Binding ShareStatus}"
                            AutomationProperties.AutomationId="SupportShareStatus" AutomationProperties.LiveSetting="Polite" />
-                <Button x:Name="ContributeButton" Margin="0,12,0,0" HorizontalAlignment="Left" Command="{Binding OpenContributingCommand}"
-                        AutomationProperties.AutomationId="SupportContributeButton" AutomationProperties.Name="{loc:Loc SupportContribute}">
-                    <StackPanel>
-                        <TextBlock Text="{loc:Loc SupportContribute}" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="{loc:Loc SupportContributeDescription}" />
-                    </StackPanel>
-                </Button>
+                <StackPanel Margin="0,12,0,0">
+                    <Button x:Name="ContributeButton" HorizontalAlignment="Left" Command="{Binding OpenContributingCommand}" Content="{loc:Loc SupportContribute}"
+                            AutomationProperties.AutomationId="SupportContributeButton" />
+                    <TextBlock Margin="24,4,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc SupportContributeDescription}" />
+                </StackPanel>
             </StackPanel>
         </Border>
     </StackPanel>
