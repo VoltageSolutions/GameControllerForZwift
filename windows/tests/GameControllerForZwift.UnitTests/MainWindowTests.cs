@@ -275,6 +275,45 @@ namespace GameControllerForZwift.UnitTests
         }
 
         [Fact]
+        public void UXN013_TheMenuLayerAndTheOverlayLayerSitAboveTheNavigationAndTheMoreButton()
+        {
+            WithWindow((_, window) =>
+            {
+                int overlay = Panel.GetZIndex(Find<Grid>(window, "OverlayHost"));
+                int menu = Panel.GetZIndex(Find<Grid>(window, "MoreMenuLayer"));
+
+                Assert.True(menu > Panel.GetZIndex(Find<Border>(window, "NavBottomBar")));
+                Assert.True(menu > Panel.GetZIndex(Find<UI.WPF.Controls.MoreMenuButton>(window, "MoreButton")));
+                Assert.True(overlay > menu);
+            });
+        }
+
+        [Fact]
+        public void UXN013_TheFunctionPickerSheetCoversTheNavigationWhileItIsOpen()
+        {
+            WithWindow((provider, window) =>
+            {
+                window.ViewModel.SelectTab(ShellTab.Buttons);
+                Pump(window);
+                var host = Find<Grid>(window, "OverlayHost");
+                var setup = provider.GetRequiredService<ControllerSetupViewModel>();
+                Assert.Empty(host.Children);
+
+                setup.SelectRowCommand.Execute(setup.Rows[0]);
+                Pump(window);
+
+                var sheet = Assert.IsType<Grid>(Assert.Single(host.Children));
+                Assert.Equal("FunctionOverlay", sheet.Name);
+                Assert.Same(setup, sheet.DataContext);
+
+                setup.FunctionPicker.Close();
+                Pump(window);
+
+                Assert.Empty(host.Children);
+            });
+        }
+
+        [Fact]
         public void MoreMenu_EscapeClosesIt()
         {
             WithWindow((_, window) =>

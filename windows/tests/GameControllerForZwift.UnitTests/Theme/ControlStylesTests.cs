@@ -173,13 +173,22 @@ namespace GameControllerForZwift.UnitTests.Theme
         [InlineData("Surface.Card", 28)]
         [InlineData("Surface.Row", 20)]
         [InlineData("Surface.Panel", 32)]
-        [InlineData("Surface.Chip", 999)]
         public void UXV017_UXV018_UXV019_SurfacesUseTheSpecRadii(string key, double radius)
         {
             Hosted(() => new Border { Style = Named(key) }, border =>
             {
                 Assert.Equal(radius, border.CornerRadius.TopLeft);
                 Assert.Equal(default, border.BorderThickness);
+            });
+        }
+
+        [Fact]
+        public void UXV016_AChipIsAPillOfHalfItsHeight()
+        {
+            Hosted(() => new Border { Style = Named("Surface.Chip") }, border =>
+            {
+                Assert.Equal(32, border.ActualHeight);
+                Assert.Equal(16, border.CornerRadius.TopLeft);
             });
         }
 

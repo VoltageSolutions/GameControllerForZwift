@@ -1,0 +1,3 @@
+# Exceptions to the no-raw-values rule for screen files (docs/spec/ux/style-system.md, UX-S-014).
+# One entry per line: file | attribute | value | reason
+# The file is relative to the app project. The test fails when an entry matches nothing, so an entry cannot outlive its need.

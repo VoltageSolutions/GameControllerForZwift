@@ -29,17 +29,6 @@
         <ItemsPanelTemplate x:Key="Buttons.ItemsPanel">
             <controls:Stack Gap="{StaticResource Space.4}" />
         </ItemsPanelTemplate>
-
-        <Style x:Key="Buttons.SaveStyle" TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
-            <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource Brush.accent}" />
-                    <Setter Property="Foreground" Value="{DynamicResource Brush.on-accent}" />
-                    <Setter Property="FontWeight" Value="ExtraBold" />
-                    <Setter Property="MinWidth" Value="160" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
     </UserControl.Resources>
 
     <Grid x:Name="PageRoot">

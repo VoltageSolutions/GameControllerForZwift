@@ -51,14 +51,19 @@
                 <Border x:Name="ConnectionsZwiftCard" Style="{StaticResource Surface.Card}"
                         AutomationProperties.AutomationId="ConnectionsZwiftCard" AutomationProperties.Name="{loc:Loc ConnectionsZwiftCard}">
                     <controls:Stack Gap="{DynamicResource Layout.CardGap}">
-                        <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.12}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="{StaticResource Gap.12}" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
                             <controls:StatusDot x:Name="StatusMark" IsOk="{Binding Zwift.IsConnected, Mode=OneWay}" />
-                            <TextBlock x:Name="ZwiftStatusText" VerticalAlignment="Center" Style="{StaticResource Text.RowTitle}"
+                            <TextBlock x:Name="ZwiftStatusText" Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource Text.RowTitle}"
                                        Text="{Binding Zwift.StatusText, NotifyOnTargetUpdated=True}"
                                        Binding.TargetUpdated="ZwiftStatusText_TargetUpdated"
                                        AutomationProperties.AutomationId="ConnectionsZwiftStatus"
                                        AutomationProperties.LiveSetting="Polite" />
-                        </controls:Stack>
+                        </Grid>
 
                         <TextBlock x:Name="TrainerReminder" Style="{StaticResource Text.Body}"
                                    Text="{loc:Loc ConnectionsTrainerReminder}"

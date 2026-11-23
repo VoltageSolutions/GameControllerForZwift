@@ -38,12 +38,17 @@
                              (SCR-RIDE-005, SCR-RIDE-012, SCR-RIDE-013). -->
                         <Border x:Name="ZwiftCard" Style="{StaticResource Surface.Card}" AutomationProperties.AutomationId="RideZwiftCard">
                             <controls:Stack Gap="{DynamicResource Layout.CardGap}">
-                                <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.12}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="{StaticResource Gap.12}" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
                                     <controls:StatusDot IsOk="{Binding IsZwiftConnected, Mode=OneWay}" />
-                                    <TextBlock x:Name="ZwiftStatusText" Style="{StaticResource Text.RowTitle}" VerticalAlignment="Center"
+                                    <TextBlock x:Name="ZwiftStatusText" Grid.Column="2" Style="{StaticResource Text.RowTitle}" VerticalAlignment="Center"
                                                Text="{Binding ZwiftStatusText}"
                                                AutomationProperties.AutomationId="RideZwiftStatus" AutomationProperties.LiveSetting="Polite" />
-                                </controls:Stack>
+                                </Grid>
                                 <ItemsControl ItemsSource="{Binding Steps}" ItemsPanel="{StaticResource Ride.StepsPanel}" IsTabStop="False"
                                               Visibility="{Binding ShowPairWithZwift, Converter={StaticResource BooleanToVisibility}}">
                                     <ItemsControl.ItemTemplate>
@@ -124,10 +129,15 @@
                         Visibility="{Binding HasProblem, Converter={StaticResource BooleanToVisibility}}"
                         AutomationProperties.AutomationId="RideProblem" AutomationProperties.LiveSetting="Assertive">
                     <controls:Stack Gap="{StaticResource Space.12}">
-                        <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.8}">
-                            <controls:StatusDot IsOk="False" VerticalAlignment="Top" />
-                            <TextBlock Style="{StaticResource Text.RowTitle}" Text="{Binding ProblemTitle}" />
-                        </controls:Stack>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="{StaticResource Gap.8}" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <controls:StatusDot IsOk="False" />
+                            <TextBlock Grid.Column="2" Style="{StaticResource Text.RowTitle}" Text="{Binding ProblemTitle}" />
+                        </Grid>
                         <TextBlock Style="{StaticResource Text.Body}" Text="{Binding ProblemBody}" />
                     </controls:Stack>
                 </Border>

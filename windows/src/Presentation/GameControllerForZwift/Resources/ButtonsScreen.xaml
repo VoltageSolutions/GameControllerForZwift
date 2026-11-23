@@ -74,6 +74,18 @@
         </Setter>
     </Style>
 
+    <!-- Save is the one accent action of the Buttons screen while there is something to save (UX-V-033). -->
+    <Style x:Key="Buttons.SaveStyle" TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
+        <Style.Triggers>
+            <Trigger Property="IsEnabled" Value="True">
+                <Setter Property="Background" Value="{DynamicResource Brush.accent}" />
+                <Setter Property="Foreground" Value="{DynamicResource Brush.on-accent}" />
+                <Setter Property="FontWeight" Value="ExtraBold" />
+                <Setter Property="MinWidth" Value="160" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- The track of a segmented choice made of radio buttons, such as the two tabs (UX-V-048). It fits the page width:
          the pills share the track and their words wrap. -->
     <Style x:Key="Segmented.Track" TargetType="Border">
