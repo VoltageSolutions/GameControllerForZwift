@@ -1,0 +1,41 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Layout tokens for the phone size class (docs/spec/ux/style-system.md, docs/spec/ux/visual-system.md, Layout and
+         spacing and Type). The three Layout.*.xaml files hold the same keys. LayoutService swaps them when the
+         navigation layout changes, and screens read them with DynamicResource. LayoutSpecTests compares them with the spec. -->
+
+    <!-- Page: padding inside the scroll area, and the room the floating bottom bar needs (UX-V-051, UX-V-052). -->
+    <Thickness x:Key="Layout.PagePadding">20,24,20,24</Thickness>
+    <sys:Double x:Key="Layout.NavClearance">88</sys:Double>
+    <Thickness x:Key="Layout.BackMargin">20,24,0,0</Thickness>
+
+    <!-- Gaps and padding. -->
+    <sys:Double x:Key="Layout.SectionGap">24</sys:Double>
+    <sys:Double x:Key="Layout.LabelGap">8</sys:Double>
+    <sys:Double x:Key="Layout.RowGap">8</sys:Double>
+    <sys:Double x:Key="Layout.CardGap">16</sys:Double>
+    <Thickness x:Key="Layout.CardPadding">20,20,20,20</Thickness>
+    <Thickness x:Key="Layout.RowPadding">20,12,20,12</Thickness>
+    <sys:Double x:Key="Layout.ButtonGap">8</sys:Double>
+
+    <!-- Status chip (UX-V-056). -->
+    <sys:Double x:Key="Layout.ChipHeight">40</sys:Double>
+    <Thickness x:Key="Layout.ChipPadding">16,0,16,0</Thickness>
+
+    <!-- Type roles by size class (UX-V-050 and the type table). -->
+    <sys:Double x:Key="Layout.PageTitleSize">34</sys:Double>
+    <sys:Double x:Key="Layout.PageTitleLineHeight">38</sys:Double>
+    <sys:Double x:Key="Layout.DisplaySize">34</sys:Double>
+    <sys:Double x:Key="Layout.DisplayLineHeight">38</sys:Double>
+    <sys:Double x:Key="Layout.ReadoutSize">56</sys:Double>
+    <sys:Double x:Key="Layout.TitleSize">24</sys:Double>
+    <sys:Double x:Key="Layout.BodySize">16</sys:Double>
+    <sys:Double x:Key="Layout.CaptionSize">14</sys:Double>
+
+    <!-- The More button and its menu, over the content area (UX-N-004). -->
+    <Thickness x:Key="Layout.MoreMargin">0,12,16,0</Thickness>
+    <Thickness x:Key="Layout.MenuMargin">0,72,16,0</Thickness>
+
+</ResourceDictionary>

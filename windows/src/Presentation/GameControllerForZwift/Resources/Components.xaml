@@ -1,0 +1,121 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls">
+
+    <!-- Components of the style system (docs/spec/ux/style-system.md): Page, Section, StatusDot, StatusChip, Stat, and
+         the key chip. Each is built from tokens, and the values that vary by size class come from the Layout.* keys. -->
+
+    <!-- Page: a scroll area that spans the window, with the page padding inside it so a shadow never clips
+         (UX-V-051, UX-V-052). The bottom clearance keeps the content above the floating bottom bar. -->
+    <Style TargetType="controls:ScreenPage">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:ScreenPage">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                        <controls:Stack>
+                            <ContentPresenter Margin="{DynamicResource Layout.PagePadding}" />
+                            <Border Height="{DynamicResource Layout.NavClearance}" />
+                        </controls:Stack>
+                    </ScrollViewer>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Section: a label over its rows, with the label gap between them (UX-V-047). -->
+    <Style TargetType="controls:Section">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:Section">
+                    <controls:Stack Gap="{DynamicResource Layout.LabelGap}">
+                        <TextBlock x:Name="LabelText" Style="{StaticResource Text.Section}" Text="{TemplateBinding Label}"
+                                   AutomationProperties.HeadingLevel="Level2" />
+                        <ContentPresenter />
+                    </controls:Stack>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Label" Value="">
+                            <Setter TargetName="LabelText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- StatusDot: 8 px, ok or err (UX-V-056). -->
+    <Style TargetType="controls:StatusDot">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:StatusDot">
+                    <Ellipse x:Name="Dot" Width="{StaticResource Size.StatusDot}" Height="{StaticResource Size.StatusDot}" Fill="{DynamicResource Brush.err}" />
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsOk" Value="True">
+                            <Setter TargetName="Dot" Property="Fill" Value="{DynamicResource Brush.ok}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- StatusChip: 40 high, 16 padding, a dot, 8 of space, and words in the text color (UX-V-056, UX-V-057). -->
+    <Style TargetType="controls:StatusChip">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:StatusChip">
+                    <Border Height="{DynamicResource Layout.ChipHeight}" Padding="{DynamicResource Layout.ChipPadding}"
+                            CornerRadius="{StaticResource Radius.Pill}" Background="{DynamicResource Brush.surface-2}">
+                        <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.8}" VerticalAlignment="Center">
+                            <controls:StatusDot IsOk="{TemplateBinding IsOk}" />
+                            <TextBlock VerticalAlignment="Center" Style="{StaticResource Text.Status}" Text="{TemplateBinding Text}" />
+                        </controls:Stack>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Stat: a number over a label. -->
+    <Style TargetType="controls:Stat">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:Stat">
+                    <controls:Stack>
+                        <TextBlock Style="{StaticResource Text.Stat}" Text="{TemplateBinding Value}" />
+                        <TextBlock Style="{StaticResource Text.Caption}" Text="{TemplateBinding Label}" />
+                    </controls:Stack>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- Key chip: the label of an input, such as RB, in a pill of one fixed width so rows line up. -->
+    <Style x:Key="Chip.Key" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+        <Setter Property="CornerRadius" Value="{StaticResource Radius.Pill}" />
+        <Setter Property="Width" Value="{StaticResource Size.KeyChipWidth}" />
+        <Setter Property="Height" Value="{StaticResource Size.KeyChipHeight}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- The default size of the thumbstick graph. -->
+    <Style TargetType="controls:ThumbstickGraph">
+        <Setter Property="MinX" Value="-1" />
+        <Setter Property="MaxX" Value="1" />
+        <Setter Property="MinY" Value="-1" />
+        <Setter Property="MaxY" Value="1" />
+        <Setter Property="Width" Value="300" />
+    </Style>
+
+</ResourceDictionary>

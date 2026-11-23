@@ -1,5 +1,6 @@
-﻿using GameControllerForZwift.UI.WPF.Localization;
+using GameControllerForZwift.UI.WPF.Localization;
 using GameControllerForZwift.UI.WPF.Navigation;
+using GameControllerForZwift.UI.WPF.Theme;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using GameControllerForZwift.UI.WPF.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,8 +18,15 @@ namespace GameControllerForZwift.UI.WPF
     /// </summary>
     public partial class MainWindow : Window
     {
+        // The window opens at a desktop size and does not go below a phone's.
+        private const double InitialWidth = 1600;
+        private const double InitialHeight = 800;
+        private const double MinimumWidth = 400;
+        private const double MinimumHeight = 450;
+
         public MainWindowViewModel ViewModel { get; }
         private readonly IServiceProvider _serviceProvider;
+        private readonly LayoutService _layout;
 
         // One view per page view model, created on first navigation and reused afterwards.
         private readonly ViewCache _viewCache = new(new Dictionary<Type, Func<FrameworkElement>>
@@ -46,9 +54,15 @@ namespace GameControllerForZwift.UI.WPF
         {
             ViewModel = mainWindowViewModel;
             _serviceProvider = serviceProvider;
+            _layout = serviceProvider.GetService<LayoutService>() ?? new LayoutService();
             DataContext = this;
+            Width = InitialWidth;
+            Height = InitialHeight;
+            MinWidth = MinimumWidth;
+            MinHeight = MinimumHeight;
 
             InitializeComponent();
+            _layout.Apply(ViewModel.NavLayout);
 
             ViewModel.PropertyChanged += ViewModel_PropertyChanged;
             ViewModel.NavigateToStartPage();
@@ -78,6 +92,23 @@ namespace GameControllerForZwift.UI.WPF
             System.Windows.Automation.AutomationProperties.SetName(MaximizeButton, Localizer.Get(WindowState == WindowState.Maximized ? "CaptionRestore" : "CaptionMaximize"));
         }
 
+        /// <summary>
+        /// Shows a sheet above the navigation and the More button, over the whole content area (UX-N-013). The element
+        /// leaves its page while it shows, so the page gives it back with <see cref="HideOverlay"/>.
+        /// </summary>
+        public void ShowOverlay(FrameworkElement overlay)
+        {
+            ArgumentNullException.ThrowIfNull(overlay);
+            OverlayHost.Children.Add(overlay);
+        }
+
+        /// <summary>Takes a sheet out of the overlay layer.</summary>
+        public void HideOverlay(FrameworkElement overlay)
+        {
+            ArgumentNullException.ThrowIfNull(overlay);
+            OverlayHost.Children.Remove(overlay);
+        }
+
         private void MinimizeWindow(object sender, RoutedEventArgs e) => WindowState = WindowState.Minimized;
 
         private void MaximizeWindow(object sender, RoutedEventArgs e) =>
@@ -100,6 +131,10 @@ namespace GameControllerForZwift.UI.WPF
                     break;
                 case nameof(MainWindowViewModel.IsMoreMenuOpen):
                     MoveFocusForMenu(ViewModel.IsMoreMenuOpen);
+                    break;
+                case nameof(MainWindowViewModel.NavLayout):
+                    // The size class is chosen here, once, from the navigation layout (UX-S-004, UX-S-005).
+                    _layout.Apply(ViewModel.NavLayout);
                     break;
             }
         }

@@ -2,37 +2,44 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- Surfaces (docs/spec/ux/visual-system.md, Spacing and Surfaces). Color, spacing, and rounded corners separate
-         them, never outlines (UX-V-022). The shadow token is soft in light mode and absent in dark mode (UX-V-023). -->
+         them, never outlines (UX-V-022). The shadow token is soft in light mode and absent in dark mode (UX-V-023).
+         Radius comes from the Radius.* tokens and padding from the Layout.* tokens of the size class. -->
 
-    <!-- Card: radius 24 (UX-V-018). -->
+    <!-- Card: radius 28 (UX-V-018). -->
     <Style x:Key="Surface.Card" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource Brush.surface}" />
-        <Setter Property="CornerRadius" Value="24" />
-        <Setter Property="Padding" Value="24" />
+        <Setter Property="CornerRadius" Value="{StaticResource Radius.Card}" />
+        <Setter Property="Padding" Value="{DynamicResource Layout.CardPadding}" />
         <Setter Property="Effect" Value="{DynamicResource Effect.shadow}" />
     </Style>
 
-    <!-- Row: radius 18 (UX-V-017), at least 64 high. -->
+    <!-- Row: radius 20 (UX-V-017), at least 64 high. -->
     <Style x:Key="Surface.Row" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource Brush.surface}" />
-        <Setter Property="CornerRadius" Value="18" />
-        <Setter Property="Padding" Value="20,12" />
+        <Setter Property="CornerRadius" Value="{StaticResource Radius.Row}" />
+        <Setter Property="Padding" Value="{DynamicResource Layout.RowPadding}" />
         <Setter Property="MinHeight" Value="64" />
         <Setter Property="Effect" Value="{DynamicResource Effect.shadow}" />
+    </Style>
+
+    <!-- A row that is not available: surface-2, no shadow (UX-V-046). -->
+    <Style x:Key="Surface.RowDisabled" TargetType="Border" BasedOn="{StaticResource Surface.Row}">
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+        <Setter Property="Effect" Value="{x:Null}" />
     </Style>
 
     <!-- Panel: radius 32 (UX-V-019), for the large areas of a tablet or desktop layout. -->
     <Style x:Key="Surface.Panel" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource Brush.surface}" />
-        <Setter Property="CornerRadius" Value="32" />
-        <Setter Property="Padding" Value="32" />
+        <Setter Property="CornerRadius" Value="{StaticResource Radius.Panel}" />
+        <Setter Property="Padding" Value="{DynamicResource Layout.CardPadding}" />
         <Setter Property="Effect" Value="{DynamicResource Effect.shadow}" />
     </Style>
 
     <!-- Chip or keycap: a 32 px pill on surface-2 (UX-V-016). -->
     <Style x:Key="Surface.Chip" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
-        <Setter Property="CornerRadius" Value="16" />
+        <Setter Property="CornerRadius" Value="{StaticResource Radius.Pill}" />
         <Setter Property="Padding" Value="12,0" />
         <Setter Property="Height" Value="32" />
         <Setter Property="HorizontalAlignment" Value="Left" />

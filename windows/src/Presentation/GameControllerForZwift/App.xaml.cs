@@ -1,4 +1,4 @@
-﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.FileSystem;
 using GameControllerForZwift.Core.Mapping;
@@ -183,6 +183,7 @@ namespace GameControllerForZwift
 
             services.AddSingleton<INavigationService, NavigationService>();
             services.AddSingleton<ThemeService>();
+            services.AddSingleton<LayoutService>();
 
             // GameControllerForZwift.UI.WPF
             // ViewModels. The page view models are singletons on purpose: navigation resolves them from the container, so
@@ -204,7 +205,6 @@ namespace GameControllerForZwift
             services.AddTransient<ZwiftFunctionSelectorViewModel>();
 
             // Register MainWindow with DI so it can receive MainWindowViewModel
-            services.AddTransient<InputMapper>();
             services.AddTransient<MainWindow>();
         }
 

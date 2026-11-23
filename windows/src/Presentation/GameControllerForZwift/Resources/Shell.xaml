@@ -52,8 +52,8 @@
     <DataTemplate x:Key="NavIcon">
         <Grid Width="24" Height="24">
             <Path x:Name="Icon" Style="{StaticResource IconStroke}" />
-            <Ellipse Width="8" Height="8" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-2,-3,0"
-                     Fill="{DynamicResource Brush.accent-ink}"
+            <Ellipse Width="14" Height="14" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,-5,-6,0"
+                     Fill="{DynamicResource Brush.err}" Stroke="{DynamicResource Brush.surface-2}" StrokeThickness="2"
                      Visibility="{Binding HasAlert, Converter={StaticResource BooleanToVisibility}}" />
         </Grid>
         <DataTemplate.Triggers>
@@ -145,8 +145,7 @@
     <Style x:Key="MenuPill" TargetType="Button">
         <Setter Property="Height" Value="52" />
         <Setter Property="Padding" Value="16,0,20,0" />
-        <Setter Property="Margin" Value="0,0,0,8" />
-        <Setter Property="HorizontalAlignment" Value="Right" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
         <Setter Property="Background" Value="{DynamicResource Brush.surface}" />
         <Setter Property="FontSize" Value="18" />
@@ -156,8 +155,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Pill" CornerRadius="26" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" Effect="{DynamicResource Effect.shadow}">
-                        <ContentPresenter VerticalAlignment="Center" />
+                    <Border x:Name="Pill" CornerRadius="{StaticResource Radius.Pill}" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" Effect="{DynamicResource Effect.shadow}">
+                        <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
@@ -236,6 +235,89 @@
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- ===== Parts of MainWindow.xaml. The window holds no raw sizes (docs/spec/ux/style-system.md). ===== -->
+
+    <!-- Title bar (UX-N-006): the app name and the window buttons. -->
+    <Style x:Key="Shell.TitleBarBrand" TargetType="StackPanel">
+        <Setter Property="Orientation" Value="Horizontal" />
+        <Setter Property="Margin" Value="16,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="Shell.TitleBarDot" TargetType="Ellipse">
+        <Setter Property="Width" Value="14" />
+        <Setter Property="Height" Value="14" />
+        <Setter Property="Fill" Value="{DynamicResource Brush.accent}" />
+    </Style>
+    <Style x:Key="Shell.TitleBarName" TargetType="TextBlock">
+        <Setter Property="Margin" Value="10,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+    </Style>
+    <Style x:Key="Shell.CaptionGlyph" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize" Value="10" />
+    </Style>
+
+    <!-- The three tab placements (UX-N-010). -->
+    <Style x:Key="Shell.Sidebar" TargetType="Border">
+        <Setter Property="Width" Value="240" />
+        <Setter Property="Padding" Value="12,16" />
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+    </Style>
+    <Style x:Key="Shell.Rail" TargetType="Border">
+        <Setter Property="Width" Value="112" />
+        <Setter Property="Padding" Value="0,24,0,0" />
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+    </Style>
+    <Style x:Key="Shell.BottomBar" TargetType="Border">
+        <Setter Property="VerticalAlignment" Value="Bottom" />
+        <Setter Property="Margin" Value="12,0,12,16" />
+        <Setter Property="Padding" Value="4" />
+        <Setter Property="CornerRadius" Value="{StaticResource Radius.Pill}" />
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+        <Setter Property="Effect" Value="{DynamicResource Effect.shadow}" />
+    </Style>
+
+    <!-- An icon in the More menu: 20 px (UX-V-054). -->
+    <Style x:Key="Shell.MenuIcon" TargetType="Viewbox">
+        <Setter Property="Width" Value="20" />
+        <Setter Property="Height" Value="20" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="Shell.MenuIconFill" TargetType="Path">
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="Fill" Value="{DynamicResource Brush.text}" />
+    </Style>
+
+    <!-- The More button's icons, drawn in the background color on the text-colored circle. -->
+    <Style x:Key="Shell.MoreIcon" TargetType="Path">
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="Fill" Value="{DynamicResource Brush.bg}" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="0.84" ScaleY="0.84" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="Shell.CloseIcon" TargetType="Path">
+        <Setter Property="Width" Value="24" />
+        <Setter Property="Height" Value="24" />
+        <Setter Property="StrokeThickness" Value="2.4" />
+        <Setter Property="StrokeStartLineCap" Value="Round" />
+        <Setter Property="StrokeEndLineCap" Value="Round" />
+        <Setter Property="Stroke" Value="{DynamicResource Brush.bg}" />
+        <Setter Property="RenderTransformOrigin" Value="0.5,0.5" />
+        <Setter Property="RenderTransform">
+            <Setter.Value>
+                <ScaleTransform ScaleX="0.75" ScaleY="0.75" />
             </Setter.Value>
         </Setter>
     </Style>

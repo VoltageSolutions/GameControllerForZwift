@@ -1,0 +1,37 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- Tokens that do not vary by size class (docs/spec/ux/style-system.md). LayoutSpecTests compares them with the
+         spacing and radius rows of docs/spec/ux/visual-system.md. -->
+
+    <!-- Spacing scale (UX-V-015). -->
+    <sys:Double x:Key="Space.4">4</sys:Double>
+    <sys:Double x:Key="Space.8">8</sys:Double>
+    <sys:Double x:Key="Space.12">12</sys:Double>
+    <sys:Double x:Key="Space.16">16</sys:Double>
+    <sys:Double x:Key="Space.20">20</sys:Double>
+    <sys:Double x:Key="Space.24">24</sys:Double>
+    <sys:Double x:Key="Space.32">32</sys:Double>
+    <sys:Double x:Key="Space.40">40</sys:Double>
+    <sys:Double x:Key="Space.48">48</sys:Double>
+
+    <!-- Radius: rows 16 to 20 (UX-V-017), cards 24 to 28 (UX-V-018), panels 32 (UX-V-019). A pill is half its height
+         (UX-V-016): a radius this large always gives a full pill, because a border clamps its corners to fit. -->
+    <CornerRadius x:Key="Radius.Row">20</CornerRadius>
+    <CornerRadius x:Key="Radius.Card">28</CornerRadius>
+    <CornerRadius x:Key="Radius.Panel">32</CornerRadius>
+    <CornerRadius x:Key="Radius.Pill">999</CornerRadius>
+
+    <!-- Sizes shared by components. -->
+    <sys:Double x:Key="Size.Target">48</sys:Double>
+    <sys:Double x:Key="Size.KeyChipWidth">56</sys:Double>
+    <sys:Double x:Key="Size.KeyChipHeight">32</sys:Double>
+    <sys:Double x:Key="Size.StatusDot">8</sys:Double>
+    <sys:Double x:Key="Size.IconSmall">18</sys:Double>
+    <sys:Double x:Key="Size.Icon">24</sys:Double>
+    <sys:Double x:Key="Size.ButtonMaxWidth">480</sys:Double>
+    <sys:Double x:Key="Size.SideColumn">520</sys:Double>
+    <GridLength x:Key="Size.TitleBarHeight">48</GridLength>
+
+</ResourceDictionary>
