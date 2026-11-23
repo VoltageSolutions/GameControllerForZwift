@@ -63,6 +63,23 @@ Or run one project:
 dotnet test windows/tests/GameControllerForZwift.Network.UnitTests
 ```
 
+### Screenshot catalog
+
+I keep an opt-in test that renders every screen and state of the app to PNG files. I use it to compare screens with the mockups and the spec without clicking through the app. It carries the trait `Category=Screenshots`. It does nothing unless the environment variable `GCFZ_SCREENSHOTS` names an output folder, so a normal `dotnet test` passes it at once and writes nothing. Windows CI leaves it out.
+
+```powershell
+$env:GCFZ_SCREENSHOTS = "$PWD\.shots"
+dotnet test windows/tests/GameControllerForZwift.UnitTests --filter Category=Screenshots
+```
+
+The test drives each state through the real view models, with fakes for the controller, the Zwift connection, and the dialogs. It renders every state in light and dark at three window sizes: phone (400 x 860, bottom bar), tablet (820 x 1100, rail), and desktop (1280 x 800, sidebar). A screen that scrolls also gets a full-height image. The output folder holds:
+
+- one PNG per variant, named `{screen}-{state}-{theme}-{size}.png`;
+- one contact sheet per state, `sheet-{screen}-{state}.png`, with light and dark as rows and the three sizes as columns;
+- `index.md`, which lists every file and any state that was skipped, with the reason.
+
+The `.shots/` folder is git-ignored.
+
 ### String and accessibility checks
 
 Some unit tests keep the app equal to the specs. They carry the trait `Category=Localization` or `Category=Accessibility`. The string checks compare the English text in `Strings.resx` with the **Quoted strings** table of each screen spec, and they check every `Strings.<culture>.resx` for missing keys and changed placeholders. The accessibility check looks for every ID in the **Accessibility IDs** table of each screen spec. Run only these checks with:

@@ -309,7 +309,7 @@ jobs:
           foreach ($p in $projects) {
             $name = Split-Path $p -Leaf
             # The string and accessibility checks report from Localization CI (localization-ci.yml).
-            dotnet test $p -c Release --no-build --filter "Category!=Localization&Category!=Accessibility" --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"
+            dotnet test $p -c Release --no-build --filter "Category!=Localization&Category!=Accessibility&Category!=Screenshots" --collect:"XPlat Code Coverage" --logger "trx;LogFileName=$name.trx" --results-directory "TestResults/$name"
             if ($LASTEXITCODE -ne 0) { $rc = 1 }
           }
 
