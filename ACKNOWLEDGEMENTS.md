@@ -30,6 +30,25 @@ This application is made possible through the use of open source libraries. The 
 - Light and darkmode colors
 - Button press colors and animations
 
+- [DualSense Gamepad](https://www.figma.com/community/file/1443422876457138371/dualsense-gamepad) - by Jonathan Lancaster - *CC BY 4.0*
+
+**DualSense Gamepad changes**
+
+- Redrawn as a wireframe outline for the PlayStation DualSense diagram
+
+- [Game controller visualized and controlled with Interactive compoenents!](https://www.figma.com/community/file/949547428657638502/game-controller-visualized-and-controlled-with-interactive-compoenents) - by Max Nie (Lei) - *CC BY 4.0*
+
+**Game controller visualized changes**
+
+- Redrawn as a wireframe outline for the Xbox diagram
+
+- [Gaming Devices](https://www.figma.com/community/file/817697371474907588/gaming-devices) - by Oscar Nilsson - *CC BY 4.0*
+
+**Gaming Devices changes**
+
+- Redrawn as wireframe outlines for the Xbox, PlayStation DualShock 4, Switch Pro, Joy-Con right, and Joy-Con pair diagrams
+- Added the Joy-Con left diagram, and the plus and minus buttons on the Joy-Con pair
+
 ### Licenses
 
 

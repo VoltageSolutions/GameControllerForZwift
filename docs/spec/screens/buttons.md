@@ -47,6 +47,9 @@ The screen's hint says: "Press a button on your controller to see it light up. T
 | The Save button is the screen's one main action, and it must be an accent button only when it is enabled (that is, when a saved mapping has unsaved changes, see `CFG-037`). | SCR-BTN-008 |
 | The screen must have a **Reset to default** action for the current mapping's mappings. | SCR-BTN-009 |
 | The Buttons screen must stay visual: the illustration first, the list as the text version. | SCR-BTN-010 |
+| The illustration must match the selected controller's kind (CTRL-011 and UX-V-059). When the kind changes because you select another controller, the illustration changes with it. | SCR-BTN-046 |
+| The accessible name of `ButtonsControllerImage` must include the kind, for example "Your Xbox controller". | SCR-BTN-047 |
+| The illustration must show only the inputs the kind has, and the list must list only those inputs. | SCR-BTN-048 |
 | A row stays selected only while its function picker is open. When the picker closes, by any means, no row is selected. A row then looks selected only while you hold its button, so you can test your controller. | SCR-BTN-044 |
 | On Windows, the function picker is a side panel. On Android and iOS, it must be a bottom sheet built with the platform's native bottom sheet component, not a custom one. | SCR-BTN-045 |
 
@@ -170,7 +173,7 @@ A controller press lights the matching row. Dialogs work with touch, mouse, and 
 |---|---|
 | `ButtonsMappingPicker`, `ButtonsSaveButton`, `ButtonsSaveAsButton` | Top of the screen |
 | `ButtonsRow_{input}` | List rows |
-| `ButtonsControllerImage` | Illustration |
+| `ButtonsControllerImage` | Illustration. Its name includes the controller kind, for example "Your Xbox controller". |
 | `FunctionItem_{function}` | Function picker |
 | `MappingItem_{id}` | A saved mapping in the picker (the mapping's GUID) |
 | `MessageDialogPrimaryButton`, `MessageDialogSecondaryButton`, `MessageDialogCloseButton` | Message dialogs |

@@ -2,7 +2,7 @@
 id: SPEC-CTRL
 title: Controller detection
 target: Windows v0.4.0
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Controller detection
@@ -86,6 +86,32 @@ Some third-party controllers present themselves to Windows as an Xbox controller
 ??? note "Edge cases"
     - The same 8BitDo controller in another mode (for example Switch mode) reports a different model, so it has its own configurations.
     - Two controllers that report the same model are still two entries in the list (CTRL-001).
+
+## Controller kind
+
+The app also works out what kind of controller it is, so the Buttons screen can draw the right diagram. The kind never changes the controller's name, model, or saved configurations.
+
+*Example: an 8BitDo controller that reports as "Xbox One S Controller" is the Xbox kind. A controller the app does not recognize is the Generic kind and gets the generic drawing.*
+
+| Kind | Used for |
+|---|---|
+| `Generic` | A controller the app cannot identify. The default. |
+| `Xbox` | Every Xbox variant, and third-party controllers that identify as Xbox. |
+| `PlayStationDualShock4` | DualShock 4. |
+| `PlayStationDualSense` | DualSense and DualSense Edge. |
+| `SwitchPro` | Switch Pro Controller, including the Switch 2 Pro Controller. |
+| `JoyConLeft` | A single left Joy-Con. |
+| `JoyConRight` | A single right Joy-Con. |
+| `JoyConPair` | A left and right Joy-Con used together as one controller (CTRL-001). |
+
+| Rule | ID |
+|---|---|
+| The app must give every connected controller one kind from the `ControllerKind` list above. | CTRL-011 |
+| The app must identify the kind from the SDL controller name (`SDL_GameControllerName`) first, then from the SDL controller type, then from the vendor and product IDs. The first step that gives a kind wins. | CTRL-012 |
+| The app must treat a controller no step identifies as `Generic`. | CTRL-013 |
+| Name matching must use case-insensitive substring rules held in one table in the code, so I can add a rule without changing the lookup. | CTRL-014 |
+| A third-party controller that identifies as an Xbox controller must get the `Xbox` kind (CTRL-010). | CTRL-015 |
+| The kind must not change the controller's model, its list entry, or which configurations it shares (CFG-011). | CTRL-016 |
 
 ## Out of scope
 

@@ -33,6 +33,11 @@ On Windows the tokens live in `Resources/Theme/Tokens.Dark.xaml` and `Tokens.Lig
 | `pad` | Controller illustration body | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#3A3633;color:#F5F2EC;padding:2px 8px;border-radius:8px">#3A3633</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E6E0D5;color:#1F1B16;padding:2px 8px;border-radius:8px">#E6E0D5</span> |
 | `pad-2` | Illustration shading | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#2A2725;color:#F5F2EC;padding:2px 8px;border-radius:8px">#2A2725</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#D5CDBF;color:#1F1B16;padding:2px 8px;border-radius:8px">#D5CDBF</span> |
 | `pad-key` | Illustration keys | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#4A4542;color:#F5F2EC;padding:2px 8px;border-radius:8px">#4A4542</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#F6F2EB;color:#1F1B16;padding:2px 8px;border-radius:8px">#F6F2EB</span> |
+| `art-body` | Controller art: body and touchpad fill | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#34302D;color:#F5F2EC;padding:2px 8px;border-radius:8px">#34302D</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#EFEAE0;color:#1F1B16;padding:2px 8px;border-radius:8px">#EFEAE0</span> |
+| `art-shade` | Controller art: shade for keys, wells, sticks, caps | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#3E3A36;color:#F5F2EC;padding:2px 8px;border-radius:8px">#3E3A36</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E5DECF;color:#1F1B16;padding:2px 8px;border-radius:8px">#E5DECF</span> |
+| `art-line` | Controller art: outline strokes | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#A89F94;color:#1F1B16;padding:2px 8px;border-radius:8px">#A89F94</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#6F675C;color:#F5F2EC;padding:2px 8px;border-radius:8px">#6F675C</span> |
+| `art-detail` | Controller art: detail strokes (well and cap rings) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#8F877D;color:#1F1B16;padding:2px 8px;border-radius:8px">#8F877D</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#82796B;color:#F5F2EC;padding:2px 8px;border-radius:8px">#82796B</span> |
+| `art-glyph` | Controller art: glyph on a key | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E4DDD2;color:#1F1B16;padding:2px 8px;border-radius:8px">#E4DDD2</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#4F483F;color:#F5F2EC;padding:2px 8px;border-radius:8px">#4F483F</span> |
 | `shadow` | Elevation | none | `0 1px 2px rgba(60,40,20,.06), 0 8px 24px rgba(60,40,20,.08)` |
 
 The accent is the VOLTAGE brand orange.
@@ -72,6 +77,12 @@ Text needs 4.5:1. Icons, focus rings, status dots, and graphics people need to s
 | `focus` on `bg` | 9.89 | 5.55 |
 | `ok` on `bg` | 9.96 | 5.02 |
 | `err` on `bg` | 7.31 | 6.16 |
+| `art-line` on `art-body` | 5.01 | 4.65 |
+| `art-line` on `art-shade` | 4.32 | 4.16 |
+| `art-detail` on `art-body` | 3.69 | 3.58 |
+| `art-detail` on `art-shade` | 3.18 | 3.20 |
+| `art-glyph` on `art-shade` | 8.36 | 6.73 |
+| `art-body` on `bg` (graphic) | 1.42 | 1.13 |
 | accent fill on `bg` (graphic) | 6.36 | 2.75 |
 | illustration key on body | 1.27 | 1.18 |
 
@@ -226,9 +237,24 @@ On Windows the buttons, fields, and surfaces live in `Resources/Controls.xaml` a
 
 | Rule | ID |
 |---|---|
-| The app must fill the controller illustration with soft shapes and a ground shadow. It must never draw a wireframe. | UX-V-034 |
+| The controller illustration must be a wireframe outline with a ground shadow. It must use theme tokens only (`Brush.pad` and the other `pad` tokens), so it works in light and dark mode. | UX-V-034 |
 | Keys on the illustration must have a thin muted outline, free keys a dashed outline, and the lit key a dark outline plus the accent fill. | UX-V-035 |
 | The illustration must never be the only way to know a mapping. The Buttons list says the same in text. | UX-V-036 |
+| The app must draw an illustration that matches the controller's kind (CTRL-011). Generic and PlayStation DualShock 4 each have their own drawing. Generic is the default. | UX-V-059 |
+| Every kind must behave the same: the selected input is lit, pressed inputs are lit, stick caps move with the axis, and free keys are dashed (UX-V-035). | UX-V-060 |
+| Art must be original or licensed CC BY 4.0, with credit in ACKNOWLEDGEMENTS. The app must never use art copied from another site, such as controllertest.io. | UX-V-061 |
+| In every drawing that includes bumpers and triggers, they must be drawn attached to the body at its top edge. A bumper must light when pressed. | UX-V-062 |
+| In every drawing that includes analog triggers, they must fill in proportion to the pull, from 0 to 100 percent. | UX-V-063 |
+| In every drawing that includes digital triggers, they must light when pressed and must not fill. | UX-V-064 |
+| Face button glyphs must follow the drawing's labels: A, B, X, and Y for the Generic drawing, and Cross, Circle, Square, and Triangle for the PlayStation drawing. Logical inputs keep their `ControllerInput` names. | UX-V-065 |
+| A drawing must show only the inputs it has. Logical inputs map to the shapes by id (UX-V-068). | UX-V-066 |
+| Vector assets must live in the repo as SVG files under `docs/assets/controllers/<kind>/`, one folder per kind that has its own drawing. | UX-V-067 |
+| Each interactive shape in an SVG must carry an `id` equal to its `ControllerInput` name, for example `A`, `LeftBumper`, `LeftTrigger`, `LeftThumbstick`, `LeftThumbstickClick`, and `DPadUp`. Each analog trigger must also carry `LeftTriggerFill` or `RightTriggerFill`. WPF, Android, and iOS must build their native components from the same files. | UX-V-068 |
+| A kind without its own drawing must use the Generic drawing. | UX-V-069 |
+
+??? note "Edge cases"
+    - A kind has no shape for an input it lacks, so the app lights nothing for it. A Joy-Con pair uses the left Joy-Con's ids for the left half and the right Joy-Con's ids for the right half.
+    - A single Joy-Con is drawn sideways, so a stick direction on screen is rotated from the logical direction. The logical input stays the same.
 
 ## Motion
 

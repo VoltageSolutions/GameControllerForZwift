@@ -28,7 +28,7 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 | Spec | ID prefix | What it covers |
 |---|---|---|
 | [Saved configurations](features/saved-configurations.md) | `CFG` | Save, reload, rename, delete, import, and share mappings. |
-| [Controller detection](features/controller-detection.md) | `CTRL` | How the controller list follows controllers as they connect and disconnect, and which one is selected. |
+| [Controller detection](features/controller-detection.md) | `CTRL` | How the controller list follows controllers as they connect and disconnect, and which one is selected, and what kind each one is. |
 
 ### UX
 
