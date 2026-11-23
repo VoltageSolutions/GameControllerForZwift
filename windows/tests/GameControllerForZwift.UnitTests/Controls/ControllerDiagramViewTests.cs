@@ -53,6 +53,8 @@ namespace GameControllerForZwift.UnitTests.Controls
         /// <summary>The inputs each kind draws (SCR-BTN-048): the Xbox and DualShock 4 drawings have no bumpers or triggers; every other kind shows the Generic drawing.</summary>
         private static ControllerInput[] InputsOf(ControllerKind kind) => kind switch
         {
+            // The Switch Pro drawing has bumpers (its shoulder arcs) and no triggers.
+            ControllerKind.SwitchPro => [.. CommonInputs.Where(i => i is not (ControllerInput.LeftTrigger or ControllerInput.RightTrigger))],
             ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 => [.. CommonInputs.Where(i => i is not (ControllerInput.LeftBumper or ControllerInput.RightBumper or ControllerInput.LeftTrigger or ControllerInput.RightTrigger))],
             _ => CommonInputs,
         };
