@@ -419,5 +419,8 @@ publish/
 # Zensical docs build output
 /site/
 
+# Screenshot catalog output (docs/build/build-and-test.md)
+/.shots/
+
 # Agent git bundles
 .sync.bundle

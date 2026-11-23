@@ -35,6 +35,13 @@ dotnet format windows/src/Application/GameControllerForZwift.Core --verify-no-ch
 - Docs build: `pip install -r docs/requirements.txt`, then `zensical build --clean --strict`. It must pass with no issues.
 - Workflows in `.github/workflows/`: `windows-ci.yml` (Windows CI, pull requests), `windows-cd.yml` (Windows CD, release on `main`), `windows-codeql-and-coverage.yml` (baseline for `main`), `docs-ci.yml` (Docs CI), `docs-cd.yml` (Docs CD) and `release-branch.yml` (sets the version on new release branches).
 
+To render every screen and state to PNG files, I run the opt-in screenshot catalog. It does nothing unless `GCFZ_SCREENSHOTS` names an output folder, and CI leaves it out. Open `index.md` in the folder first.
+
+```powershell
+$env:GCFZ_SCREENSHOTS = "$PWD\.shots"
+dotnet test windows/tests/GameControllerForZwift.UnitTests --filter Category=Screenshots
+```
+
 ## Source of truth
 
 - Read `docs/spec/` before you change behavior. Each rule has an ID such as `CFG-015`.
