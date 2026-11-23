@@ -167,7 +167,7 @@ namespace GameControllerForZwift.UI.WPF.Tests
         {
             var changed = new List<string?>();
             _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
-            Assert.Equal("More: settings, help, credits, support", _viewModel.MoreButtonName);
+            Assert.Equal("More: settings, help, about, support", _viewModel.MoreButtonName);
 
             _viewModel.ToggleMoreMenuCommand.Execute(null);
             Assert.True(_viewModel.IsMoreMenuOpen);

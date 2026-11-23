@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace GameControllerForZwift.UI.WPF
 {
-    /// <summary>The version of the running app (SCR-CRD-001, SCR-SET-008).</summary>
+    /// <summary>The version of the running app (SCR-CRD-001).</summary>
     public static class AppVersion
     {
         /// <summary>The version number, for example 0.6.0, without any build metadata.</summary>

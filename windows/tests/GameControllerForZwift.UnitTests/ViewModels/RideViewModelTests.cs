@@ -204,8 +204,8 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         {
             RideViewModel ride = Riding();
             Assert.False(ride.HasLastPress);
-            Assert.Equal("Controller ready", ride.ControllerChipText);
-            Assert.Equal("Zwift sees it", ride.ZwiftChipText);
+            Assert.Equal("Controller connected", ride.ControllerChipText);
+            Assert.Equal("Zwift can see your controller", ride.ZwiftChipText);
 
             Press(ControllerInput.X);
 
@@ -217,7 +217,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             RaiseZwift(false);
             _setup!.SelectedController = null;
 
-            Assert.Equal("Zwift lost", ride.ZwiftChipText);
+            Assert.Equal("Zwift can't see your controller", ride.ZwiftChipText);
             Assert.Equal("Controller disconnected", ride.ControllerChipText);
         }
 
@@ -244,8 +244,18 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             Press(ControllerInput.X);
 
             Assert.StartsWith("Shift up, ", ride.LastPressText, StringComparison.Ordinal);
-            Assert.Equal("Shifts this ride: 2", ride.ShiftsThisRideText);
+            Assert.Equal("2 shifts this ride", ride.ShiftsThisRideText);
             Assert.Contains("Shift up", Assert.Single(ride.QuickReference).Text, StringComparison.Ordinal);
+        }
+
+        [Fact]
+        public void SCRRIDE017_OneShiftUsesTheSingularLine()
+        {
+            RideViewModel ride = Riding();
+
+            Press(ControllerInput.X);
+
+            Assert.Equal("1 shift this ride", ride.ShiftsThisRideText);
         }
 
         [Fact]
@@ -258,11 +268,11 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             Press(ControllerInput.A);
 
             Assert.Equal(before, ride.LastPressText);
-            Assert.Equal("Shifts this ride: 0", ride.ShiftsThisRideText);
+            Assert.Equal("0 shifts this ride", ride.ShiftsThisRideText);
         }
 
         [Fact]
-        public void SCRRIDE023_SCRRIDE041_ZwiftLostSaysTheControllerIsFineAndTheRideContinues()
+        public void SCRRIDE023_SCRRIDE041_ZwiftLostSaysTheControllerIsStillConnectedAndTheRideContinues()
         {
             RideViewModel ride = Riding();
 
@@ -270,8 +280,8 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
 
             Assert.True(ride.IsRiding);
             Assert.True(ride.HasProblem);
-            Assert.Equal("Your controller is fine", ride.ProblemTitle);
-            Assert.Contains("Voltage Gamepad", ride.ProblemBody, StringComparison.Ordinal);
+            Assert.Equal("Zwift can't see your controller", ride.ProblemTitle);
+            Assert.Equal("Your controller is still connected. In Zwift, pick Voltage Gamepad under Controls again.", ride.ProblemBody);
 
             RaiseZwift(true);
 
@@ -309,9 +319,12 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             ride.CheckTimeout();
 
             Assert.True(ride.IsFinished);
-            Assert.Equal("Ride time: 0 min", ride.FinishedTimeText);
-            Assert.Equal("Shifts: 1", ride.FinishedShiftsText);
-            Assert.Equal("Rides together: 1", ride.FinishedRidesText);
+            Assert.Equal("0 min", ride.FinishedTimeValue);
+            Assert.Equal("ride time", ride.FinishedTimeLabel);
+            Assert.Equal("1", ride.FinishedShiftsValue);
+            Assert.Equal("shift", ride.FinishedShiftsLabel);
+            Assert.Equal("1", ride.FinishedRidesValue);
+            Assert.Equal("ride together", ride.FinishedRidesLabel);
             Assert.True(ride.HasStats);
             Assert.Equal("1 ride together", ride.RidesText);
         }
@@ -340,7 +353,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
             _time.Advance(TimeSpan.FromMinutes(10));
             ride.CheckTimeout();
 
-            Assert.Equal("Ride time: 1 h 5 min", ride.FinishedTimeText);
+            Assert.Equal("1 h 5 min", ride.FinishedTimeValue);
         }
 
         [Fact]

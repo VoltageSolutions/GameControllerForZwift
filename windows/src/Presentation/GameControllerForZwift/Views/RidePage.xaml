@@ -92,6 +92,8 @@
                                     Content="{loc:Loc ConnectionsPickerLabel}" AutomationProperties.AutomationId="RideUseDifferentControllerButton" />
                             <Button x:Name="PairBluetoothButton" Margin="0,12,0,0" HorizontalAlignment="Left" Command="{Binding PairBluetoothCommand}"
                                     Content="{loc:Loc ConnectionsPairBluetooth}" AutomationProperties.AutomationId="RidePairBluetoothButton" />
+                            <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc ConnectionsUsbHint}"
+                                       AutomationProperties.AutomationId="RideUsbHint" />
                         </StackPanel>
                         <Grid x:Name="StatsCard" Margin="0,20,0,0" Visibility="{Binding HasStats, Converter={StaticResource BooleanToVisibility}}"
                               AutomationProperties.AutomationId="RideStats">
@@ -231,11 +233,25 @@
                 <TextBlock Style="{StaticResource Text.PageTitle}" Text="{loc:Loc RideFinishedTitle}"
                            AutomationProperties.AutomationId="RideFinishedTitle" AutomationProperties.HeadingLevel="Level1" />
                 <Border Margin="0,24,0,0" Style="{StaticResource Surface.Card}" CornerRadius="28" AutomationProperties.AutomationId="RideSummary">
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource Text.Body}" Text="{Binding FinishedTimeText}" />
-                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Body}" Text="{Binding FinishedShiftsText}" />
-                        <TextBlock Margin="0,4,0,0" Style="{StaticResource Text.Body}" Text="{Binding FinishedRidesText}" />
-                    </StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock FontSize="32" FontWeight="ExtraBold" Style="{StaticResource Text.Body}" Text="{Binding FinishedTimeValue}" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding FinishedTimeLabel}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock FontSize="32" FontWeight="ExtraBold" Style="{StaticResource Text.Body}" Text="{Binding FinishedShiftsValue}" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding FinishedShiftsLabel}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock FontSize="32" FontWeight="ExtraBold" Style="{StaticResource Text.Body}" Text="{Binding FinishedRidesValue}" />
+                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding FinishedRidesLabel}" />
+                        </StackPanel>
+                    </Grid>
                 </Border>
                 <Border x:Name="DonationAsk" Margin="0,16,0,0" Style="{StaticResource Surface.Card}" CornerRadius="28"
                         Visibility="{Binding ShowDonationAsk, Converter={StaticResource BooleanToVisibility}}"

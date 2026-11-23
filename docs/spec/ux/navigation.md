@@ -7,7 +7,7 @@ last-updated: 2026-11-22
 # Navigation
 
 !!! tldr "TL;DR"
-    Three tabs that never change (Ride, Buttons, Connections) plus a floating More button (⋯) that opens Settings, Help and feedback, Credits, and Support this project. The tabs move with screen size. The More button never moves. First run has no navigation.
+    Three tabs that never change (Ride, Buttons, Connections) plus a floating More button (⋯) that opens Settings, Help and feedback, About, and Support this project. The tabs move with screen size. The More button never moves. First run has no navigation.
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -23,7 +23,7 @@ flowchart TD
     end
     MORE["More button"] --> SET["Settings"]
     MORE --> HELP["Help and feedback"]
-    MORE --> CRED["Credits"]
+    MORE --> CRED["About"]
     MORE --> SUP["Support this project"]
     RIDE --> RV["Riding view"]
     RV --> FIN["Ride finished"]
@@ -38,18 +38,18 @@ The tabs are always in the same order. They are the same on every screen after f
 |---|---|
 | **Ride** | Home ("Ready when you are"), the live riding view, ride finished. |
 | **Buttons** | Mappings, buttons, and sticks and triggers. |
-| **Connections** | Your controller (use a different one, pair a new one), Zwift (status, pair Voltage Gamepad, the three steps), and "Zwift can't find Voltage Gamepad". |
+| **Connections** | Your controller (use a different one, pair a new Bluetooth one, or plug one in with USB), Zwift (status, pair Voltage Gamepad, the three steps), and "Zwift can't find Voltage Gamepad". |
 
 | Rule | ID |
 |---|---|
 | The tabs must be Ride, Buttons, and Connections, in that order, on every screen after first run. | UX-N-001 |
-| The Connections tab must show an `accent-ink` dot whenever Zwift is not connected, so the warning is visible from any tab. The dot must also have words in its accessible name. | UX-N-002 |
+| The Connections tab must show an `err` dot whenever Zwift is not connected, so the warning is visible from any tab. The dot must also have words in its accessible name. | UX-N-002 |
 | The tab bar must not hold page actions. The app must never put a screen's one accent action in the navigation. | UX-N-003 |
 | Choosing a tab must show that tab's screen and clear the back history, so back never returns to another tab. | UX-N-017 |
 
 ## The More button
 
-A small floating button with a ⋯ (more) icon. It is not a hamburger: there is no side menu behind it. It opens a menu downward with Settings, Help and feedback, Credits, and Support this project.
+A small floating button with a ⋯ (more) icon. It is not a hamburger: there is no side menu behind it. It opens a menu downward with Settings, Help and feedback, About, and Support this project.
 
 | Rule | ID |
 |---|---|
@@ -57,7 +57,7 @@ A small floating button with a ⋯ (more) icon. It is not a hamburger: there is 
 | The button must be a 40 px circle with a 48 px hit area, in a neutral color (not accent). | UX-N-005 |
 | On desktop it must sit just below the title bar, never in it. | UX-N-006 |
 | The button must float over the content. It must not reserve its own row or column. Content starts at the normal top margin and may scroll under it. Only the area directly beneath it must stay free of other controls. | UX-N-007 |
-| The menu must list Settings, Help and feedback, Credits, and Support this project, in that order. | UX-N-008 |
+| The menu must list Settings, Help and feedback, About, and Support this project, in that order. | UX-N-008 |
 | Each menu item must open a pushed screen with a back button. The tabs stay visible with none selected. | UX-N-009 |
 
 ## Where the tabs go
@@ -82,12 +82,11 @@ A small floating button with a ⋯ (more) icon. It is not a hamburger: there is 
 |---|---|
 | First run must have no navigation. The flow is connect controller, then choose or pair if needed, then pair with Zwift, then try a shift, then it lands on Ride. | UX-N-012 |
 | Dialogs and sheets must cover the navigation. | UX-N-013 |
-| The Float and Mini windows must have no navigation. | UX-N-014 |
 | The app must open on the Ride tab after first run. | UX-N-018 |
 | Page actions must stay on the page (Save on Buttons, Pair with Zwift on Ride). | UX-N-015 |
 | A pushed screen must have a back button, and the back button must return to the screen it was opened from. | UX-N-016 |
 
 ??? note "Edge cases"
     - Only the very first run hides the tabs. Choosing a different controller or pairing a new one later happens inside the Connections tab, with the tabs visible.
-    - Pushed screens (Settings, Help and feedback, Credits, and Support this project) keep the tabs visible with none selected.
+    - Pushed screens (Settings, Help and feedback, About, and Support this project) keep the tabs visible with none selected.
     - Debug builds add a fifth menu item, Style gallery, at the end of the menu. It opens a pushed screen that shows every component in each state, for development. Release builds never show it.

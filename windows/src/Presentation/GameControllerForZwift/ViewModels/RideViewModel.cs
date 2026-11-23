@@ -245,9 +245,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         /// <summary>The Zwift chip of the riding view: seen or lost (SCR-RIDE-018).</summary>
         public string ZwiftChipText => Localizer.Get(_zwift.IsConnected ? "RideChipZwiftSees" : "RideChipZwiftLost");
 
-        /// <summary>"Shifts this ride: 3" (SCR-RIDE-017).</summary>
+        /// <summary>"3 shifts this ride" (SCR-RIDE-017).</summary>
         [ObservableProperty]
-        private string _shiftsThisRideText = Localizer.Format("RideShiftsThisRide", 0);
+        private string _shiftsThisRideText = ShiftsThisRide(0);
 
         /// <summary>The shift buttons of the current mapping (SCR-RIDE-017).</summary>
         [ObservableProperty]
@@ -281,7 +281,10 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             UpdateProblem();
         }
 
-        private void UpdateShifts() => ShiftsThisRideText = Localizer.Format("RideShiftsThisRide", _tracker.Shifts);
+        private void UpdateShifts() => ShiftsThisRideText = ShiftsThisRide(_tracker.Shifts);
+
+        private static string ShiftsThisRide(int shifts) =>
+            Localizer.Format(shifts == 1 ? "RideShiftsThisRideOne" : "RideShiftsThisRideOther", shifts.ToString("N0", Localizer.Instance.Culture));
 
         private void UpdateQuickReference()
         {
@@ -373,17 +376,29 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 
         #region Ride finished
 
-        /// <summary>The ride time, for example "1 h 5 min".</summary>
+        /// <summary>The ride time, for example "1 h 5 min" (SCR-RIDE-029).</summary>
         [ObservableProperty]
-        private string _finishedTimeText = string.Empty;
+        private string _finishedTimeValue = string.Empty;
+
+        /// <summary>The label under the ride time: "ride time".</summary>
+        [ObservableProperty]
+        private string _finishedTimeLabel = string.Empty;
 
         /// <summary>The shifts of the ride that ended.</summary>
         [ObservableProperty]
-        private string _finishedShiftsText = string.Empty;
+        private string _finishedShiftsValue = string.Empty;
+
+        /// <summary>The label under the shifts: "shift" or "shifts".</summary>
+        [ObservableProperty]
+        private string _finishedShiftsLabel = string.Empty;
 
         /// <summary>The rides together, counting the ride that ended.</summary>
         [ObservableProperty]
-        private string _finishedRidesText = string.Empty;
+        private string _finishedRidesValue = string.Empty;
+
+        /// <summary>The label under the rides together: "ride together" or "rides together".</summary>
+        [ObservableProperty]
+        private string _finishedRidesLabel = string.Empty;
 
         /// <summary>True when the one-time donation ask shows (SCR-RIDE-030).</summary>
         [ObservableProperty]
@@ -410,9 +425,12 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _settings.RecordRide(summary.Shifts, summary.StartedAt);
             RefreshStats();
             RideStats stats = _settings.GetRideStats();
-            FinishedTimeText = Localizer.Format("RideFinishedTime", FormatDuration(summary.Duration));
-            FinishedShiftsText = Localizer.Format("RideFinishedShifts", summary.Shifts.ToString("N0", Localizer.Instance.Culture));
-            FinishedRidesText = Localizer.Format("RideFinishedRides", stats.Rides.ToString("N0", Localizer.Instance.Culture));
+            FinishedTimeValue = FormatDuration(summary.Duration);
+            FinishedTimeLabel = Localizer.Get("RideFinishedTimeLabel");
+            FinishedShiftsValue = summary.Shifts.ToString("N0", Localizer.Instance.Culture);
+            FinishedShiftsLabel = Localizer.Get(summary.Shifts == 1 ? "RideStatShiftsOne" : "RideStatShiftsOther");
+            FinishedRidesValue = stats.Rides.ToString("N0", Localizer.Instance.Culture);
+            FinishedRidesLabel = Localizer.Get(stats.Rides == 1 ? "RideStatRidesOne" : "RideStatRidesOther");
             ShowDonationAsk = !_settings.GetDonationAskShown();
             if (ShowDonationAsk)
             {

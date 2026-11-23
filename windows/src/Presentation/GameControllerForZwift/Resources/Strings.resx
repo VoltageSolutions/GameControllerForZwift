@@ -62,7 +62,7 @@
     <comment>Screen reader name of the back button on a screen opened from the More menu.</comment>
   </data>
   <data name="MenuMore" xml:space="preserve">
-    <value>More: settings, help, credits, support</value>
+    <value>More: settings, help, about, support</value>
     <comment>Screen reader name of the More button while its menu is closed.</comment>
   </data>
   <data name="MenuClose" xml:space="preserve">
@@ -81,9 +81,9 @@
     <value>Help and feedback</value>
     <comment>More menu item.</comment>
   </data>
-  <data name="MenuCredits" xml:space="preserve">
-    <value>Credits</value>
-    <comment>More menu item.</comment>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>About</value>
+    <comment>More menu item that opens the About screen, which shows the app version and links to the Credits and License screens.</comment>
   </data>
   <data name="MenuSupport" xml:space="preserve">
     <value>Support this project</value>
@@ -140,6 +140,10 @@
   <data name="ConnectionsPairBluetooth" xml:space="preserve">
     <value>Pair a new Bluetooth controller</value>
     <comment>Connections screen, button that opens the Windows Bluetooth settings so the person can pair a controller.</comment>
+  </data>
+  <data name="ConnectionsUsbHint" xml:space="preserve">
+    <value>Or plug it in with a USB cable.</value>
+    <comment>Line under the Pair a new Bluetooth controller button. It says a wired controller works too. It follows the button, so it starts with Or.</comment>
   </data>
   <data name="ConnectionsShowMeHow" xml:space="preserve">
     <value>Show me how</value>
@@ -737,9 +741,9 @@
     <value>Game Controller for Zwift</value>
     <comment>The name of the app. Keep Zwift, which is a product name.</comment>
   </data>
-  <data name="CreditsTitle" xml:space="preserve">
-    <value>Credits</value>
-    <comment>Title of the Credits screen.</comment>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>About</value>
+    <comment>Accessible name of the About screen, which has no visible title. The VOLTAGE wordmark at its top is the heading.</comment>
   </data>
   <data name="CreditsVersionFormat" xml:space="preserve">
     <value>Version {0}</value>
@@ -854,7 +858,7 @@
     <comment>Ride screen, label under the month in the stats, for example Sep. Lower case, it follows the month.</comment>
   </data>
   <data name="RideChipControllerReady" xml:space="preserve">
-    <value>Controller ready</value>
+    <value>Controller connected</value>
     <comment>Ride screen, riding view, chip that says the controller is connected.</comment>
   </data>
   <data name="RideChipControllerGone" xml:space="preserve">
@@ -862,12 +866,12 @@
     <comment>Ride screen, riding view, chip that says the controller is not connected.</comment>
   </data>
   <data name="RideChipZwiftSees" xml:space="preserve">
-    <value>Zwift sees it</value>
+    <value>Zwift can see your controller</value>
     <comment>Ride screen, riding view, chip that says Zwift can see the controller as Voltage Gamepad. Keep Zwift.</comment>
   </data>
   <data name="RideChipZwiftLost" xml:space="preserve">
-    <value>Zwift lost</value>
-    <comment>Ride screen, riding view, chip that says Zwift lost the connection. Keep Zwift.</comment>
+    <value>Zwift can't see your controller</value>
+    <comment>Ride screen, riding view, chip that says Zwift cannot see the controller. Keep Zwift.</comment>
   </data>
   <data name="RideRidingWith" xml:space="preserve">
     <value>Riding with</value>
@@ -929,9 +933,13 @@
     <value>Nothing yet</value>
     <comment>Big readout while riding before any button was pressed.</comment>
   </data>
-  <data name="RideShiftsThisRide" xml:space="preserve">
-    <value>Shifts this ride: {0}</value>
-    <comment>Line while riding. {0} is the number of shifts so far.</comment>
+  <data name="RideShiftsThisRideOne" xml:space="preserve">
+    <value>1 shift this ride</value>
+    <comment>Line while riding, for exactly one shift so far.</comment>
+  </data>
+  <data name="RideShiftsThisRideOther" xml:space="preserve">
+    <value>{0} shifts this ride</value>
+    <comment>Line while riding. {0} is the number of shifts so far. Used for any number except one.</comment>
   </data>
   <data name="RideQuickReference" xml:space="preserve">
     <value>Your main buttons</value>
@@ -942,12 +950,12 @@
     <comment>Quick reference line while riding. {0} is the button, for example Right bumper, and {1} is what it does, for example Shift up.</comment>
   </data>
   <data name="RideZwiftLostTitle" xml:space="preserve">
-    <value>Your controller is fine</value>
-    <comment>Title on the Ride screen while riding when Zwift lost the connection. It tells the person the controller is not the problem.</comment>
+    <value>Zwift can't see your controller</value>
+    <comment>Title on the Ride screen while riding when Zwift can no longer see the controller. Keep Zwift.</comment>
   </data>
   <data name="RideZwiftLostBody" xml:space="preserve">
-    <value>Pick Voltage Gamepad under Controls in Zwift again.</value>
-    <comment>Instruction on the Ride screen when Zwift lost the connection. Keep Voltage Gamepad, which is the device name Zwift shows, and keep Controls and Zwift.</comment>
+    <value>Your controller is still connected. In Zwift, pick Voltage Gamepad under Controls again.</value>
+    <comment>Body on the Ride screen when Zwift can no longer see the controller. Keep Voltage Gamepad, which is the device name Zwift shows, and keep Controls and Zwift.</comment>
   </data>
   <data name="RideControllerAsleepTitle" xml:space="preserve">
     <value>Your controller disconnected.</value>
@@ -962,20 +970,12 @@
     <comment>Status on the Ride screen, read out by screen readers, when the controller returned during a ride.</comment>
   </data>
   <data name="RideFinishedTitle" xml:space="preserve">
-    <value>Ride finished</value>
+    <value>Nice ride</value>
     <comment>Title of the summary that shows when a ride ends.</comment>
   </data>
-  <data name="RideFinishedTime" xml:space="preserve">
-    <value>Ride time: {0}</value>
-    <comment>Line in the ride summary. {0} is the length of the ride, for example 1 h 5 min.</comment>
-  </data>
-  <data name="RideFinishedShifts" xml:space="preserve">
-    <value>Shifts: {0}</value>
-    <comment>Line in the ride summary. {0} is the number of shifts.</comment>
-  </data>
-  <data name="RideFinishedRides" xml:space="preserve">
-    <value>Rides together: {0}</value>
-    <comment>Line in the ride summary. {0} is how many rides have been counted in total.</comment>
+  <data name="RideFinishedTimeLabel" xml:space="preserve">
+    <value>ride time</value>
+    <comment>Short label under the length of the ride in the ride summary, for example under 1 h 5 min. Lowercase.</comment>
   </data>
   <data name="RideDurationHoursMinutes" xml:space="preserve">
     <value>{0} h {1} min</value>

@@ -43,7 +43,7 @@ The table is a section headed `## Quoted strings` with three columns: **Key**, *
 | Key | English text | Rule |
 |---|---|---|
 | `RideTitle` | Ready when you are | SCR-RIDE-001 |
-| `SettingsDeleteAllConfirm` | Delete all {0} saved mappings? This can't be undone. Default stays. | SCR-SET-006 |
+| `SettingsDeleteAllConfirm` | Delete all {0} saved mappings? This can't be undone. Default stays. | SCR-SET-004 |
 ```
 
 | Rule | ID |
