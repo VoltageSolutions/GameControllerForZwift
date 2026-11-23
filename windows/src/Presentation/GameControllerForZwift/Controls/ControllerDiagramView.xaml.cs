@@ -126,6 +126,11 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 bool lit = IsLit(input);
                 string rest = _drawing?.RestBrushes.GetValueOrDefault(input.ToString()) ?? RestBrushKey;
                 shape.SetResourceReference(Shape.FillProperty, lit ? LitBrushKey : rest);
+                if (_drawing?.ArmIds.Contains(input.ToString()) == true)
+                {
+                    if (lit) shape.SetResourceReference(Shape.StrokeProperty, "Brush.art-line");
+                    else shape.Stroke = null;
+                }
                 if (_drawing?.GlyphFor.GetValueOrDefault(input.ToString()) is { } glyph)
                     glyph.SetResourceReference(Shape.StrokeProperty, lit ? ControllerSvgLoader.GlyphLitBrushKey : ControllerSvgLoader.GlyphBrushKey);
             }

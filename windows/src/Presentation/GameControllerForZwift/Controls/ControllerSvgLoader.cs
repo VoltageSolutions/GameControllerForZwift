@@ -27,6 +27,8 @@ namespace GameControllerForZwift.UI.WPF.Controls
         public double RightTravel { get; init; } = ControllerSvgLoader.DefaultTravel;
         /// <summary>Theme brush key a shape rests at, by id, when it is not <c>Brush.pad-key</c> (flat-art drawings).</summary>
         public required Dictionary<string, string> RestBrushes { get; init; }
+        /// <summary>Ids of arm shapes (class <c>arm</c>): drawn without a stroke at rest and stroked when lit.</summary>
+        public required HashSet<string> ArmIds { get; init; }
         /// <summary>Glyph strokes by the id of the key they mark (<c>data-for</c>); they turn to the ink color when that key is lit.</summary>
         public required Dictionary<string, Path> GlyphFor { get; init; }
     }
@@ -110,6 +112,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 LeftTravel = context.LeftTravel,
                 RightTravel = context.RightTravel,
                 RestBrushes = context.RestBrushes,
+                ArmIds = context.ArmIds,
                 GlyphFor = context.GlyphFor,
             };
         }
@@ -125,6 +128,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
             public double LeftTravel { get; set; } = DefaultTravel;
             public double RightTravel { get; set; } = DefaultTravel;
             public Dictionary<string, string> RestBrushes { get; } = [];
+            public HashSet<string> ArmIds { get; } = [];
             public Dictionary<string, Path> GlyphFor { get; } = [];
         }
 
@@ -167,6 +171,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 element = path;
                 if (context.Styles.IsFlatArt)
                 {
+                    if (!string.IsNullOrEmpty(id) && classes.Contains("arm")) { context.RestBrushes[id] = "Brush.art-shade"; context.ArmIds.Add(id); }
                     if (!string.IsNullOrEmpty(id) && classes.Contains("key")) context.RestBrushes[id] = "Brush.art-shade";
                     if (!string.IsNullOrEmpty(id) && classes.Contains("cap")) context.RestBrushes[id] = "Brush.art-shade";
                     if ((string?)source.Attribute("data-for") is { Length: > 0 } target && classes.Contains("glyph"))
@@ -201,6 +206,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
             {
                 _ when classes.Contains("ol") => (null, "Brush.art-line", "ol"),
                 _ when classes.Contains("body-fill") => ("Brush.art-body", null, "body-fill"),
+                _ when classes.Contains("arm") => ("Brush.art-shade", null, "arm"),
                 _ when classes.Contains("key") => ("Brush.art-shade", "Brush.art-line", "key"),
                 _ when classes.Contains("well") => ("Brush.art-shade", "Brush.art-detail", "well"),
                 _ when classes.Contains("stick") => ("Brush.art-shade", "Brush.art-line", "stick"),
@@ -215,6 +221,11 @@ namespace GameControllerForZwift.UI.WPF.Controls
             {
                 path.SetResourceReference(Shape.StrokeProperty, stroke);
                 path.StrokeThickness = styles.Width(cls) ?? 1;
+                path.StrokeLineJoin = PenLineJoin.Round;
+            }
+            if (cls == "arm")
+            {
+                path.StrokeThickness = styles.Width("key") ?? 1.35;
                 path.StrokeLineJoin = PenLineJoin.Round;
             }
             if (cls == "glyph")
