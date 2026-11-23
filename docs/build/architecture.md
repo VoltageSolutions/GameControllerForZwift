@@ -16,6 +16,10 @@ The app's solution (`windows/GameControllerForZwift.sln`) and everything it buil
 | `ZwiftLanProbe` | `windows/tools/` | A console app that runs the Direct Connect server and mDNS advertiser on their own, driven from the keyboard. See [ZwiftLanProbe](probe.md). |
 | Tests | `windows/tests/` | Unit, integration and UI tests. See [Build and test](build-and-test.md#tests). |
 
+## The style system
+
+The WPF app keeps its look in a style system: color, spacing, and type tokens, layout tokens for each size class, and components. Pages only compose components. [The style system spec](../spec/ux/style-system.md) lists the layers and where each one lives, and two tests keep the spec, the tokens, and the pages in line.
+
 ## How input flows
 
 ```mermaid

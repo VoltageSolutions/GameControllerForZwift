@@ -98,6 +98,7 @@ The last two rows are below 3:1, so they carry extra cues. See [Accessibility](a
 |---|---|---|
 | Display | 32 to 34 | 52 to 56 |
 | Readout (big number) | 44 to 56 | 64 |
+| Screen title | 34 | 48 |
 | Title | 22 to 24 | 26 to 30 |
 | Body | 16 to 17 | 18 to 20 |
 | Caption | 14 | 15 to 16 |
@@ -131,15 +132,18 @@ Every screen uses the same margins and gaps, so a person who has seen one screen
 | Gap between cards | 16 | 24 | 24 |
 | Card padding | 20 | 32 | 32 |
 | Row padding (vertical, horizontal) | 12, 20 | 12, 20 | 12, 20 |
+| Gap between buttons in a group | 8 | 12 | 12 |
+| Status chip height | 40 | 40 | 40 |
+| Status chip padding, left and right | 16 | 16 | 16 |
 
-A status chip is 40 high with 16 of padding left and right. It holds an 8 px dot, then 8 px of space, then the words.
+A status chip holds an 8 px dot, then 8 px of space, then the words.
 
 | Rule | ID |
 |---|---|
 | Every screen must take the values in this section from shared styles. A screen must not set its own margins, gaps, or padding. | UX-V-051 |
 | A scrolling area must never clip a shadow. The scroll area must span the window width, and its content must keep the page side margin as padding inside the scroll area, so a card's shadow has room on every side. | UX-V-052 |
 
-On Windows the card, row, and chip styles live in `Resources/Surfaces.xaml`, and the page margins and gaps live in `Resources/Layout.xaml`. A screen refers to them by key and never writes a number.
+On Windows the card, row, and chip styles live in `Resources/Surfaces.xaml`, and the page margins and gaps live in `Resources/Layout.Phone.xaml`, `Layout.Tablet.xaml`, and `Layout.Desktop.xaml`. A screen refers to them by key and never writes a number. The [style system](style-system.md) says how.
 
 ## Icons
 
@@ -216,7 +220,7 @@ Settings, Help and feedback, About, and Support share one layout, so a person wh
 | A label over a group of rows must be 17, weight 700, `muted`, with 4 px of indent. | UX-V-047 |
 | A choice among a few labeled options, such as Appearance, must be a segmented track: pills on `surface-2`, with the chosen pill raised on `surface`. | UX-V-048 |
 | On a window at least 900 px wide, these screens must show two columns: the title and the explanation on the left, and a 520 px column of rows on the right. Below 900 px they must show one column, in the same order. | UX-V-049 |
-| A screen title on tablet and desktop must be 48, weight 800. | UX-V-050 |
+| A screen title on tablet and desktop must be 48, weight 800. On phone it must be 34. | UX-V-050 |
 
 On Windows the row is the `ActionRow` control, the segmented track is the `Segmented` style, and the two columns are the `AdaptiveColumns` panel.
 
