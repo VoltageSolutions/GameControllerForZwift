@@ -73,7 +73,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:StatusChip">
                     <Border Height="{DynamicResource Layout.ChipHeight}" Padding="{DynamicResource Layout.ChipPadding}"
-                            CornerRadius="{StaticResource Radius.Pill}" Background="{DynamicResource Brush.surface-2}">
+                            CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource PillRadius}}" Background="{DynamicResource Brush.surface-2}">
                         <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.8}" VerticalAlignment="Center">
                             <controls:StatusDot IsOk="{TemplateBinding IsOk}" />
                             <TextBlock VerticalAlignment="Center" Style="{StaticResource Text.Status}" Text="{TemplateBinding Text}" />
@@ -103,9 +103,45 @@
     <!-- Key chip: the label of an input, such as RB, in a pill of one fixed width so rows line up. -->
     <Style x:Key="Chip.Key" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
-        <Setter Property="CornerRadius" Value="{StaticResource Radius.Pill}" />
+        <Setter Property="CornerRadius" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource PillRadius}}" />
         <Setter Property="Width" Value="{StaticResource Size.KeyChipWidth}" />
         <Setter Property="Height" Value="{StaticResource Size.KeyChipHeight}" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Dialogs: a window with a body and a footer of buttons, separated by color and not by an outline (UX-V-022).
+         A dialog is its own window, so it always covers the navigation (UX-N-013). -->
+    <Style x:Key="Dialog.Window" TargetType="Window">
+        <Setter Property="Width" Value="{StaticResource Size.DialogWidth}" />
+        <Setter Property="Background" Value="{DynamicResource Brush.bg}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
+        <Setter Property="FontFamily" Value="{StaticResource Font.Figtree}" />
+    </Style>
+    <Style x:Key="Dialog.Body" TargetType="Border">
+        <Setter Property="Padding" Value="24,20,24,24" />
+    </Style>
+    <Style x:Key="Dialog.Footer" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+        <Setter Property="Padding" Value="18,24" />
+    </Style>
+    <Style x:Key="Dialog.ButtonCell" TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
+        <Setter Property="Margin" Value="{StaticResource Inset.DialogButton}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="Dialog.ButtonCellPrimary" TargetType="Button" BasedOn="{StaticResource Button.Primary}">
+        <Setter Property="Margin" Value="{StaticResource Inset.DialogButton}" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- The live key: the input just pressed, in the one accent pill of the riding view (UX-V-001). -->
+    <Style x:Key="Chip.Live" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource Brush.accent}" />
+        <Setter Property="CornerRadius" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource PillRadius}}" />
+        <Setter Property="MinWidth" Value="64" />
+        <Setter Property="Height" Value="44" />
+        <Setter Property="Padding" Value="10,0" />
         <Setter Property="VerticalAlignment" Value="Center" />
     </Style>
 

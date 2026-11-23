@@ -94,7 +94,7 @@ The tokens and components live in the WPF app under `windows/src/Presentation/Ga
 |---|---|---|---|
 | Tokens | Color | `Resources/Theme/Tokens.Dark.xaml`, `Tokens.Light.xaml` | `Color.<token>`, `Brush.<token>` |
 | Tokens | Spacing scale | `Resources/Space.xaml` | `Space.4` to `Space.48` |
-| Tokens | Radius | `Resources/Space.xaml` | `Radius.Row`, `Radius.Card`, `Radius.Panel`, `Radius.Pill` |
+| Tokens | Radius | `Resources/Space.xaml`, `Converters/PillRadiusConverter.cs` | `Radius.Row`, `Radius.Card`, `Radius.Panel`, and `PillRadius` (half the height of a pill) |
 | Tokens | Elevation | `Resources/Theme/Tokens.Light.xaml` | `Effect.shadow` |
 | Tokens | Type roles | `Resources/Typography.xaml` | `Text.*` |
 | Size classes | Phone, tablet, desktop values | `Resources/Layout.Phone.xaml`, `Layout.Tablet.xaml`, `Layout.Desktop.xaml` | `Layout.*` |

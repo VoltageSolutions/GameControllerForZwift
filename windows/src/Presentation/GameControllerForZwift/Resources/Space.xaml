@@ -17,15 +17,14 @@
     <sys:Double x:Key="Space.48">48</sys:Double>
 
     <!-- Radius: rows 16 to 20 (UX-V-017), cards 24 to 28 (UX-V-018), panels 32 (UX-V-019). A pill is half its height
-         (UX-V-016): a radius this large always gives a full pill, because a border clamps its corners to fit. -->
+         (UX-V-016), so it takes its radius from its own height with the PillRadius converter in Controls.xaml. -->
     <CornerRadius x:Key="Radius.Row">20</CornerRadius>
     <CornerRadius x:Key="Radius.Card">28</CornerRadius>
     <CornerRadius x:Key="Radius.Panel">32</CornerRadius>
-    <CornerRadius x:Key="Radius.Pill">999</CornerRadius>
 
     <!-- Sizes shared by components. -->
     <sys:Double x:Key="Size.Target">48</sys:Double>
-    <sys:Double x:Key="Size.KeyChipWidth">56</sys:Double>
+    <sys:Double x:Key="Size.KeyChipWidth">80</sys:Double>
     <sys:Double x:Key="Size.KeyChipHeight">32</sys:Double>
     <sys:Double x:Key="Size.StatusDot">8</sys:Double>
     <sys:Double x:Key="Size.IconSmall">18</sys:Double>
@@ -33,5 +32,30 @@
     <sys:Double x:Key="Size.ButtonMaxWidth">480</sys:Double>
     <sys:Double x:Key="Size.SideColumn">520</sys:Double>
     <GridLength x:Key="Size.TitleBarHeight">48</GridLength>
+    <sys:Double x:Key="Size.PickerMinWidth">280</sys:Double>
+    <sys:Double x:Key="Size.PickerMaxWidth">420</sys:Double>
+    <sys:Double x:Key="Size.NumberBoxWidth">96</sys:Double>
+    <sys:Double x:Key="Size.SheetWidth">440</sys:Double>
+    <sys:Double x:Key="Size.DialogWidth">460</sys:Double>
+    <sys:Double x:Key="Size.RowMinWidth">320</sys:Double>
+    <sys:Double x:Key="Size.CardMinWidth">384</sys:Double>
+    <sys:Double x:Key="Size.GraphSize">120</sys:Double>
+    <sys:Double x:Key="Size.DiagramWidth">296</sys:Double>
+    <sys:Double x:Key="Size.DiagramHeight">249</sys:Double>
+    <sys:Double x:Key="Size.TabMinWidth">160</sys:Double>
+    <sys:Double x:Key="Size.Check">24</sys:Double>
+    <CornerRadius x:Key="Radius.Sheet">32,0,0,32</CornerRadius>
+    <Thickness x:Key="Inset.Sheet">16,24,16,24</Thickness>
+    <Thickness x:Key="Inset.SheetHeader">8,0,8,8</Thickness>
+
+    <!-- A gap between the columns of a grid, from the spacing scale. -->
+    <GridLength x:Key="Gap.8">8</GridLength>
+    <GridLength x:Key="Gap.12">12</GridLength>
+    <GridLength x:Key="Gap.16">16</GridLength>
+    <GridLength x:Key="Gap.24">24</GridLength>
+
+    <!-- Insets of a single element, from the spacing scale. -->
+    <Thickness x:Key="Inset.Reader">-19,16,0,0</Thickness>
+    <Thickness x:Key="Inset.DialogButton">6,0,6,0</Thickness>
 
 </ResourceDictionary>

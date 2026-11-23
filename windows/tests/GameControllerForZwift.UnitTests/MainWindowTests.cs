@@ -40,6 +40,7 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton(Substitute.For<IDialogService>());
             services.AddSingleton<ControllerModelMatcher>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<UI.WPF.Theme.LayoutService>();
             services.AddSingleton<ZwiftStatus>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<RideViewModel>();
@@ -264,9 +265,12 @@ namespace GameControllerForZwift.UnitTests
         [Fact]
         public void BottomBar_KeepsTheContentAboveTheBar()
         {
-            WithWindow((_, window) =>
+            WithWindow((provider, window) =>
             {
-                Assert.Equal(88, Find<Grid>(window, "ContentArea").Margin.Bottom);
+                // UX-S-005: the bottom bar is the phone size class. The page keeps the content above the bar, not the shell.
+                Assert.Equal(UI.WPF.Theme.SizeClass.Phone, provider.GetRequiredService<UI.WPF.Theme.LayoutService>().Current);
+                Assert.Equal(88.0, (double)Application.Current.Resources["Layout.NavClearance"]);
+                Assert.Equal(default, Find<Grid>(window, "ContentArea").Margin);
             }, 500);
         }
 
@@ -319,7 +323,7 @@ namespace GameControllerForZwift.UnitTests
         {
             WithWindow((_, window) =>
             {
-                var items = Find<StackPanel>(window, "MoreMenu").Children.OfType<Button>().Take(4).ToList();
+                var items = Find<Panel>(window, "MoreMenu").Children.OfType<Button>().Take(4).ToList();
 
                 Assert.Equal(
                     MenuIds,

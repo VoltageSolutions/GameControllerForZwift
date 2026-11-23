@@ -106,6 +106,12 @@
         <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
         <Setter Property="Margin" Value="4,0,0,0" />
     </Style>
+    <!-- The lead paragraph of a screen, for example the pitch of Support: 20, muted. -->
+    <Style x:Key="Text.Lead" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="LineHeight" Value="29" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+    </Style>
     <!-- The title of a row: 17, weight 700 (UX-V-045). -->
     <Style x:Key="Text.RowTitle" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
         <Setter Property="FontSize" Value="17" />
@@ -115,6 +121,13 @@
     <Style x:Key="Text.RowCaption" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+    </Style>
+    <!-- A small mark beside a row, such as "Changed": 14, weight 700, in the accent text color. -->
+    <Style x:Key="Text.Mark" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.accent-ink}" />
+        <Setter Property="TextWrapping" Value="NoWrap" />
     </Style>
     <!-- A big live number, such as watts or gear. -->
     <Style x:Key="Text.Readout" TargetType="TextBlock" BasedOn="{StaticResource Text.Title}">

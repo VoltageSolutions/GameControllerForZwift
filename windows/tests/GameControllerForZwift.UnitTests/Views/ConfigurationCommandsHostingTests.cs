@@ -1,4 +1,4 @@
-﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Core;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.Core.Controller;
 using GameControllerForZwift.Core.Mapping;
@@ -289,7 +289,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     ControllerSetupPage page = ShowControllerSetup(window);
                     var placeholder = Element<Border>(page, "NoControllerCard");
                     Assert.Equal(Visibility.Visible, placeholder.Visibility);
-                    Assert.Equal(Visibility.Collapsed, Element<StackPanel>(page, "ControllerContent").Visibility);
+                    Assert.Equal(Visibility.Collapsed, Element<UI.WPF.Controls.Stack>(page, "ControllerContent").Visibility);
                     Assert.Null(page.FindName("RefreshListButton"));
 
                     var controller = Controller(Xbox);
@@ -298,7 +298,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Views
                     Pump(window);
 
                     Assert.Equal(Visibility.Collapsed, placeholder.Visibility);
-                    Assert.Equal(Visibility.Visible, Element<StackPanel>(page, "ControllerContent").Visibility);
+                    Assert.Equal(Visibility.Visible, Element<UI.WPF.Controls.Stack>(page, "ControllerContent").Visibility);
                     Assert.Same(controller, viewModel.SelectedController);
                 }
                 finally

@@ -5,30 +5,30 @@
              xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
              AutomationProperties.AutomationId="CreditsPage">
     <!-- docs/spec/screens/credits.md. Two columns on a wide window, one column on a narrow one. -->
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-        <controls:AdaptiveColumns SideWidth="520" Margin="0,0,8,24">
-            <StackPanel>
+    <controls:ScreenPage>
+        <controls:AdaptiveColumns SideWidth="{StaticResource Size.SideColumn}">
+            <controls:Stack Gap="{DynamicResource Layout.SectionGap}">
                 <TextBlock x:Name="PageTitle" Style="{StaticResource Text.PageTitle}" Text="{loc:Loc AboutTitle}"
                            AutomationProperties.AutomationId="CreditsPageTitle" AutomationProperties.HeadingLevel="Level1" />
-                <StackPanel Margin="0,24,0,0">
-                    <controls:VoltageWordmark Height="40" HorizontalAlignment="Left" AutomationProperties.Name="{loc:Loc RideWordmarkName}" />
-                    <TextBlock Margin="0,6,0,0" FontSize="18" FontWeight="SemiBold" Style="{StaticResource Text.Caption}" Text="{loc:Loc AppName}" AutomationProperties.HeadingLevel="Level2" />
-                    <TextBlock x:Name="VersionText" Margin="0,16,0,0" Style="{StaticResource Text.Caption}" FontSize="17" Text="{Binding VersionText}"
+                <controls:Stack Gap="{StaticResource Space.8}">
+                    <controls:VoltageWordmark Height="{StaticResource Space.40}" HorizontalAlignment="Left" AutomationProperties.Name="{loc:Loc RideWordmarkName}" />
+                    <TextBlock Style="{StaticResource Text.BodyStrong}" Foreground="{DynamicResource Brush.muted}" Text="{loc:Loc AppName}" AutomationProperties.HeadingLevel="Level2" />
+                    <TextBlock x:Name="VersionText" Style="{StaticResource Text.Caption}" Text="{Binding VersionText}"
                                AutomationProperties.AutomationId="CreditsVersion" />
-                </StackPanel>
-                <TextBlock Margin="0,24,0,0" Style="{StaticResource Text.Body}" FontSize="18" LineHeight="27" Text="{loc:Loc CreditsDescription}" />
-                <TextBlock Margin="0,16,0,0" Style="{StaticResource Text.Caption}" FontSize="14" Text="{loc:Loc CreditsNotAffiliated}"
+                </controls:Stack>
+                <TextBlock Style="{StaticResource Text.Body}" Text="{loc:Loc CreditsDescription}" />
+                <TextBlock Style="{StaticResource Text.RowCaption}" Text="{loc:Loc CreditsNotAffiliated}"
                            AutomationProperties.AutomationId="CreditsNotAffiliated" />
-            </StackPanel>
+            </controls:Stack>
 
-            <StackPanel>
+            <controls:Stack Gap="{DynamicResource Layout.RowGap}">
                 <controls:ActionRow x:Name="GitHubButton" Title="{loc:Loc CreditsGitHub}" Description="{loc:Loc CreditsGitHubDescription}" Trailing="External"
                                     Command="{Binding OpenGitHubCommand}" AutomationProperties.AutomationId="CreditsGitHubLink" />
-                <controls:ActionRow x:Name="CreditsListButton" Margin="0,12,0,0" Title="{loc:Loc CreditsList}" Description="{loc:Loc CreditsListDescription}" Trailing="Chevron"
+                <controls:ActionRow x:Name="CreditsListButton" Title="{loc:Loc CreditsList}" Description="{loc:Loc CreditsListDescription}" Trailing="Chevron"
                                     Command="{Binding OpenCreditsListCommand}" AutomationProperties.AutomationId="CreditsListLink" />
-                <controls:ActionRow x:Name="LicenseButton" Margin="0,12,0,0" Title="{loc:Loc CreditsLicenseName}" Description="{loc:Loc CreditsLicenseValue}" Trailing="Chevron"
+                <controls:ActionRow x:Name="LicenseButton" Title="{loc:Loc CreditsLicenseName}" Description="{loc:Loc CreditsLicenseValue}" Trailing="Chevron"
                                     Command="{Binding OpenLicenseCommand}" AutomationProperties.AutomationId="CreditsLicenseLink" />
-            </StackPanel>
+            </controls:Stack>
         </controls:AdaptiveColumns>
-    </ScrollViewer>
+    </controls:ScreenPage>
 </UserControl>

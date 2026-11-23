@@ -24,7 +24,7 @@ namespace GameControllerForZwift.UI.WPF.Views
                 var name = new TextBlock { Margin = new Thickness(0, 8, 0, 0), Text = token };
                 name.SetResourceReference(StyleProperty, "Text.Caption");
 
-                var swatch = new StackPanel { Margin = new Thickness(0, 0, 16, 16), Width = 120 };
+                var swatch = new StackPanel { Width = 120 };
                 swatch.Children.Add(color);
                 swatch.Children.Add(name);
                 System.Windows.Automation.AutomationProperties.SetName(swatch, token);

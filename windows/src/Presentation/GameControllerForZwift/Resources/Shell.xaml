@@ -155,7 +155,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
-                    <Border x:Name="Pill" CornerRadius="{StaticResource Radius.Pill}" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" Effect="{DynamicResource Effect.shadow}">
+                    <Border x:Name="Pill" CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource PillRadius}}" Padding="{TemplateBinding Padding}" Background="{TemplateBinding Background}" Effect="{DynamicResource Effect.shadow}">
                         <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center" />
                     </Border>
                     <ControlTemplate.Triggers>
@@ -278,7 +278,7 @@
         <Setter Property="VerticalAlignment" Value="Bottom" />
         <Setter Property="Margin" Value="12,0,12,16" />
         <Setter Property="Padding" Value="4" />
-        <Setter Property="CornerRadius" Value="{StaticResource Radius.Pill}" />
+        <Setter Property="CornerRadius" Value="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource PillRadius}}" />
         <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
         <Setter Property="Effect" Value="{DynamicResource Effect.shadow}" />
     </Style>
