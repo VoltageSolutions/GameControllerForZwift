@@ -34,7 +34,7 @@ This application is made possible through the use of open source libraries. The 
 
 **Gaming Devices changes**
 
-- Wireframe redraw for the PlayStation DualShock 4 and Xbox diagrams
+- Wireframe redraw for the PlayStation DualShock 4, Xbox and Switch Pro diagrams
 
 ### Licenses
 

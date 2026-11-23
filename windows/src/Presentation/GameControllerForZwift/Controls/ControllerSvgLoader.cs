@@ -53,6 +53,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
         {
             [ControllerKind.Generic] = "generic/generic",
             [ControllerKind.Xbox] = "xbox/xbox",
+            [ControllerKind.SwitchPro] = "switch-pro/switch-pro",
             [ControllerKind.PlayStationDualShock4] = "playstation-dualshock4/playstation-dualshock4",
         };
 
@@ -205,6 +206,8 @@ namespace GameControllerForZwift.UI.WPF.Controls
             (string? fill, string? stroke, string cls) = classes switch
             {
                 _ when classes.Contains("ol") => (null, "Brush.art-line", "ol"),
+                _ when classes.Contains("ink") => ("Brush.art-line", null, "ink"),
+                _ when classes.Contains("contour") => (null, "Brush.art-detail", "contour"),
                 _ when classes.Contains("body-fill") => ("Brush.art-body", null, "body-fill"),
                 _ when classes.Contains("arm") => ("Brush.art-shade", null, "arm"),
                 _ when classes.Contains("key") => ("Brush.art-shade", "Brush.art-line", "key"),

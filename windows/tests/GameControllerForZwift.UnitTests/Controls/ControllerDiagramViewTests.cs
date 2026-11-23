@@ -58,7 +58,7 @@ namespace GameControllerForZwift.UnitTests.Controls
         };
 
         /// <summary>Kinds drawn with the Generic drawing have analog trigger fills; the Xbox and DualShock 4 drawings have no triggers.</summary>
-        private static bool IsAnalog(ControllerKind kind) => kind is not (ControllerKind.Xbox or ControllerKind.PlayStationDualShock4);
+        private static bool IsAnalog(ControllerKind kind) => kind is not (ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro);
 
         public static TheoryData<ControllerKind> AllKinds => [.. Enum.GetValues<ControllerKind>()];
 
@@ -357,11 +357,11 @@ namespace GameControllerForZwift.UnitTests.Controls
 
         // The flat DualShock 4 art rests keys and stick caps at Brush.art-shade; the other kinds use Brush.pad-key.
         private static string RestKeyFor(ControllerKind kind, ControllerInput input) =>
-            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 ? "Brush.art-shade" : "Brush.pad-key";
+            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro ? "Brush.art-shade" : "Brush.pad-key";
 
         // Stick travel is per drawing: the DualShock 4 art moves its caps 10 units, the others the default.
         private static double TravelOf(ControllerKind kind) =>
-            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 ? 10.0 : ControllerDiagramView.MaxStickTravel;
+            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro ? 10.0 : ControllerDiagramView.MaxStickTravel;
 
         private static ControllerData ControllerDataFor(ControllerInput input) => input switch
         {
@@ -446,14 +446,30 @@ namespace GameControllerForZwift.UnitTests.Controls
         }
 
         [Fact]
+        public void SwitchPro_DPadArmsHaveNoStrokeAtRestAndAStrokeWhenLit()
+        {
+            WithDiagram(ControllerKind.SwitchPro, diagram =>
+            {
+                diagram.RefreshDiagram();
+                Assert.Null(diagram.InputShape(ControllerInput.DPadUp)!.Stroke);
+
+                diagram.SelectedInput = ControllerInput.DPadUp;
+                diagram.RefreshDiagram();
+                Assert.NotNull(diagram.InputShape(ControllerInput.DPadUp)!.Stroke);
+                Assert.Same(diagram.FindResource("Brush.accent"), FillOf(diagram.InputShape(ControllerInput.DPadUp)));
+            });
+        }
+
+        [Fact]
         public void UXV067_KindsWithoutTheirOwnDrawingUseTheGenericDrawing()
         {
-            ControllerKind[] own = [ControllerKind.Generic, ControllerKind.Xbox, ControllerKind.PlayStationDualShock4];
+            ControllerKind[] own = [ControllerKind.Generic, ControllerKind.Xbox, ControllerKind.PlayStationDualShock4, ControllerKind.SwitchPro];
             foreach (ControllerKind kind in Enum.GetValues<ControllerKind>().Except(own))
                 Assert.Equal(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(kind));
 
             Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(ControllerKind.PlayStationDualShock4));
             Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(ControllerKind.Xbox));
+            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(ControllerKind.SwitchPro));
         }
 
         [Fact]
