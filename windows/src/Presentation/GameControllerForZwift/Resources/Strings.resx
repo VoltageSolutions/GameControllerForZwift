@@ -193,6 +193,34 @@
     <value>Your controller</value>
     <comment>Screen reader name of the controller illustration on the Buttons screen.</comment>
   </data>
+  <data name="ButtonsControllerImageName_Xbox" xml:space="preserve">
+    <value>Your Xbox controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_PlayStationDualShock4" xml:space="preserve">
+    <value>Your PlayStation DualShock 4 controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_PlayStationDualSense" xml:space="preserve">
+    <value>Your PlayStation DualSense controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_SwitchPro" xml:space="preserve">
+    <value>Your Switch Pro controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_JoyConLeft" xml:space="preserve">
+    <value>Your left Joy-Con</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_JoyConRight" xml:space="preserve">
+    <value>Your right Joy-Con</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_JoyConPair" xml:space="preserve">
+    <value>Your pair of Joy-Cons</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
   <data name="ButtonsHint" xml:space="preserve">
     <value>Press a button on your controller to see it light up. Tap a row to change what it does.</value>
     <comment>Buttons screen hint under the title. Pressing a button on the controller lights that button's row. Tapping a row opens the function panel.</comment>

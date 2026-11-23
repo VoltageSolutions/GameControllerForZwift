@@ -178,6 +178,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         public string ControllerName =>
             _selectedController is { } controller ? Localizer.Format("ButtonsControllerName", controller.Name) : string.Empty;
 
+        /// <summary>Gets the kind of the selected controller, which picks the illustration (SCR-BTN-046), or Generic when none is selected.</summary>
+        public ControllerKind ControllerKind => _selectedController?.Kind ?? ControllerKind.Generic;
+
         /// <summary>Gets the selected row, which a click or tap picks and closing the picker clears (SCR-BTN-005 and SCR-BTN-044).</summary>
         public ButtonRowViewModel? SelectedRow
         {
@@ -272,6 +275,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(HasController));
                 OnPropertyChanged(nameof(ControllerName));
+                OnPropertyChanged(nameof(ControllerKind));
                 ResetToDefaultCommand.NotifyCanExecuteChanged();
                 if (value is null)
                     FunctionPicker.Close();

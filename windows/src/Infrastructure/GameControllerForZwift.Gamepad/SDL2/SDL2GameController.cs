@@ -44,6 +44,8 @@ namespace GameControllerForZwift.Gamepad.SDL2
             Name = SDL_GameControllerName(handle) ?? "Unknown Controller";
             VendorId = vendorId;
             ProductId = productId;
+            SdlControllerType = ReadControllerType(handle);
+            Kind = ControllerKindResolver.Resolve(SDL_GameControllerName(handle), SdlControllerType, vendorId, productId);
         }
 
         #endregion
@@ -64,6 +66,16 @@ namespace GameControllerForZwift.Gamepad.SDL2
         /// Gets the USB product ID, or 0 if unknown.
         /// </summary>
         public ushort ProductId { get; }
+
+        /// <summary>
+        /// Gets the SDL controller type name, such as <c>PS5</c>, or <c>null</c> if SDL cannot report it.
+        /// </summary>
+        public string? SdlControllerType { get; }
+
+        /// <summary>
+        /// Gets the kind of controller, worked out once when the controller is opened (CTRL-011).
+        /// </summary>
+        public ControllerKind Kind { get; }
 
         #endregion
 
@@ -127,6 +139,21 @@ namespace GameControllerForZwift.Gamepad.SDL2
         #endregion
 
         #region Private Methods
+
+        private static string? ReadControllerType(IntPtr handle)
+        {
+            try
+            {
+                string type = SDL_GameControllerGetType(handle).ToString();
+                const string prefix = "SDL_CONTROLLER_TYPE_";
+                return type.StartsWith(prefix, StringComparison.Ordinal) ? type[prefix.Length..] : type;
+            }
+            catch (Exception ex) when (ex is DllNotFoundException or EntryPointNotFoundException)
+            {
+                // The loaded SDL2 build lacks the controller-type API; the kind then comes from the name and IDs.
+                return null;
+            }
+        }
 
         private int? GetBatteryPercent()
         {
