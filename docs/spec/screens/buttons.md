@@ -1,7 +1,7 @@
 ---
 id: SPEC-SCR-BTN
 title: Buttons screens
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Buttons screens
@@ -118,7 +118,7 @@ It opens as a sheet on a phone, and as a side panel on a landscape screen. Funct
 | **Riding** | Shift up (harder gear), Shift down (easier gear), Steer left, Steer right, Brake |
 | **Zwift buttons** | Ride On, Power-up |
 | **Menus** | Navigate up, Navigate down, Navigate left, Navigate right, Select, Back |
-| **This app** | Functions that are the app's own: the optional **Switch window size** |
+| **This app** | Functions that are the app's own. The group has none today, so the picker leaves it out. |
 | **Nothing** | No action |
 
 | Hint | Where |
@@ -135,7 +135,7 @@ It opens as a sheet on a phone, and as a side panel on a landscape screen. Funct
 | Functions must use the real Zwift Ride names. The picker must not list invented functions such as "U-turn" or "Camera view". | SCR-BTN-033 |
 | Each function must be a radio choice (`FunctionItem_{function}`) with one short line saying what it does, such as "Shift up, harder gear". | SCR-BTN-034 |
 | Navigate up, Navigate down, Ride On, and Power-up must show their hint. | SCR-BTN-035 |
-| **This app** must list only functions the app really implements. It may list **Switch window size** (Full, then Float, then Mini), which must not be shown as a Zwift function. | SCR-BTN-036 |
+| **This app** must list only functions the app really implements, and must not show them as Zwift functions. When the app implements none, the picker must leave the group out. | SCR-BTN-036 |
 | The sheet or panel must trap focus, and Esc must close it. See [Accessibility](../ux/accessibility.md). | SCR-BTN-037 |
 | Choosing a function must apply right away to the current mapping and show "Unsaved changes". | SCR-BTN-038 |
 

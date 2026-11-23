@@ -1,7 +1,7 @@
 ---
 id: SPEC-UX-VOICE
 title: Voice and copy
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Voice and copy
@@ -25,7 +25,7 @@ The app talks like a friendly person next to you. It says what is happening and 
 | Every sentence should be short. A rider should be able to say it out loud. | UX-W-004 |
 | Copy must not use marketing claims. | UX-W-005 |
 | Copy must not make claims the app cannot verify. | UX-W-006 |
-| Copy and docs must use the serial (Oxford) comma in lists of three or more, as in "Settings, Help and feedback, Credits, and Support this project". | UX-W-017 |
+| Copy and docs must use the serial (Oxford) comma in lists of three or more, as in "Settings, Help and feedback, About, and Support this project". | UX-W-017 |
 | Copy and docs must use active voice with a clear actor. Write "The app must always announce connection problems." Do not write "Connection problems must always be announced." | UX-W-018 |
 
 ## Avoid and use
@@ -75,7 +75,7 @@ The app talks like a friendly person next to you. It says what is happening and 
 | Zwift not connected | "Zwift isn't connected yet" |
 | Waiting for Zwift | "Waiting for Zwift..." |
 | Shift test | "Did your gear change?" with "Yes, it shifted" and "Not yet" |
-| Connection lost | "Your controller is fine" |
+| Zwift cannot see the controller | "Zwift can't see your controller" |
 | Unsaved mapping | "Unsaved changes" |
 | Saved mapping copy | "Saved a copy to your mappings." |
 | Name already used | "You already have a mapping called Climbing. Try another name." |
@@ -87,5 +87,5 @@ The app talks like a friendly person next to you. It says what is happening and 
 
 ??? note "Edge cases"
     - Translated labels can be longer. The button rules in the [visual system](visual-system.md) make long labels move to their own line rather than break.
-    - Where a problem is shown, the copy says what is fine too, such as "Your controller is fine" when Zwift lost the connection.
+    - Where a problem is shown, the copy says what is fine too, such as "Your controller is still connected" when Zwift cannot see it.
     - An item name that contains "and" stays one item, so "Help and feedback" and "Sticks and triggers" get no comma inside them. A list of two items gets no comma either: "Ride and Buttons".

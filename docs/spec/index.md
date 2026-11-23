@@ -53,7 +53,7 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 | [Connections screens](screens/connections.md) | `SCR-CONN` | Controller and Zwift status, "Zwift can't find Voltage Gamepad". |
 | [Settings screen](screens/settings.md) | `SCR-SET` | Appearance, riding options, saved mappings, and logs. |
 | [Help and feedback screen](screens/help.md) | `SCR-HELP` | Common problems, the log folder, and reporting a problem. |
-| [Credits screen](screens/credits.md) | `SCR-CRD` | Version, GitHub link, credits, license, and the Zwift disclaimer. |
+| [About and Credits screens](screens/credits.md) | `SCR-CRD` | About (version, GitHub link, the Zwift disclaimer), Credits, and License. |
 | [Support screen](screens/support.md) | `SCR-SUP` | Ko-fi, a GitHub star, telling a friend, and contributing. |
 
 The saved configurations spec calls a saved set of button assignments a "configuration". The app calls it a **mapping**. The screen specs use "mapping" and refer to the `CFG` rules by ID.

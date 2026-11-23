@@ -31,6 +31,8 @@
                     <Button x:Name="PairBluetoothButton" Margin="0,20,0,0" Command="{Binding PairBluetoothCommand}"
                             Content="{loc:Loc ConnectionsPairBluetooth}"
                             AutomationProperties.AutomationId="ConnectionsPairBluetoothButton" />
+                    <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc ConnectionsUsbHint}"
+                               AutomationProperties.AutomationId="ConnectionsUsbHint" />
                 </StackPanel>
             </Border>
 

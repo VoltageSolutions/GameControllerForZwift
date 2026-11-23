@@ -1,7 +1,7 @@
 ---
 id: SPEC-UX-INPUT
 title: Controller input
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Controller input
@@ -21,7 +21,7 @@ Your controller does different jobs in different places. To keep that clear, eac
 | Setup screens | Find or assign a button. |
 | Everywhere else | The press goes to Zwift as mapped. |
 
-The app may offer **Switch window size** (Full, then Float, then Mini) as an app action that can be mapped to a controller input, such as View. It is the only app action a controller input may trigger. All other mapped inputs go to Zwift.
+A controller input never triggers an app action. Every mapped input goes to Zwift.
 
 *Example: on the Buttons screen you press the right bumper. The "Right bumper" row lights up. The app does not open the picker, and it does not shift gears.*
 
@@ -30,16 +30,14 @@ The app may offer **Switch window size** (Full, then Float, then Mini) as an app
 | A controller press must have exactly one meaning on each screen. | UX-C-001 |
 | On the Buttons screen, a press must only light the matching row. On setup screens, a press must only find or assign a button. A press must not navigate, save, or go back. | UX-C-002 |
 | On setup and Buttons screens, the app must not show a controller hint bar. The screen's own hint says "Press a button on your controller to see it light up. Tap a row to change what it does." | UX-C-003 |
-| The app may offer **Switch window size** (Full, then Float, then Mini) as an app action that can be mapped to a controller input, such as View. It is the only app action a controller input may trigger. The app must send every other mapped input to Zwift. | UX-C-004 |
+| A controller input must not trigger an app action. The app must send every mapped input to Zwift. | UX-C-004 |
 | The app's own dialogs must work with a mouse, a keyboard, and touch. See `CFG-038`. | UX-C-006 |
 
 ```mermaid
 flowchart TD
     P["Controller press"] --> S{"Setup or Buttons screen?"}
     S -- Yes --> F["Find or assign a button"]
-    S -- No --> W{"Mapped to<br/>Switch window size?"}
-    W -- "Yes (optional action)" --> X["Switch window size"]
-    W -- No --> Z["Send to Zwift as mapped"]
+    S -- No --> Z["Send to Zwift as mapped"]
 ```
 
 ??? note "Edge cases"

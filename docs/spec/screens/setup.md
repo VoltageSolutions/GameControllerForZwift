@@ -1,13 +1,13 @@
 ---
 id: SPEC-SCR-SETUP
 title: Setup screens
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Setup screens
 
 !!! tldr "TL;DR"
-    First run walks you through six short screens: connect a controller, choose one if there are several, pair a Bluetooth controller if needed, allow the Windows network permission, pair with Zwift, and try a shift. First run has no tab bar. The one main action on each screen moves you forward. Pairing with Zwift shows live progress where the app can tell.
+    First run walks you through six short screens: connect a controller, choose one if there are several, pair a Bluetooth controller or plug one in if needed, allow the Windows network permission, pair with Zwift, and try a shift. First run has no tab bar. The one main action on each screen moves you forward. Pairing with Zwift shows live progress where the app can tell.
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -34,20 +34,20 @@ The first screen does something: it asks you to press any button, and the contro
 
 *Example: you press the left bumper. The illustration lights it, and the app says "Got it. That's your left bumper."*
 
-**Content, top to bottom:** the title, the line "Press any button on your controller.", the controller illustration, a status line, the main action **Continue**, and a link "Pair a new Bluetooth controller".
+**Content, top to bottom:** the title, the line "Press any button on your controller.", the controller illustration, a status line, the main action **Continue**, a link "Pair a new Bluetooth controller", and under it the line "Or plug it in with a USB cable."
 
 | State | What you see |
 |---|---|
 | Waiting | "Press any button on your controller." A neutral controller illustration. |
 | Pressed | The pressed button lights up. Status: "Got it. That's your left bumper." Continue is enabled. |
-| No controller found | "Looking for your controller..." with the same two ways out: use a different one or pair a new one. |
+| No controller found | "Looking for your controller..." with the same ways out: use a different controller, pair a new Bluetooth controller, or plug one in with a USB cable. |
 
 | Rule | ID |
 |---|---|
 | The first screen must say "Press any button on your controller." and light the pressed button on the illustration. | SCR-SETUP-001 |
 | The screen must have one main action, Continue, enabled after the first press. | SCR-SETUP-002 |
 | The app must announce the first press (`SetupPressAnyButtonStatus`). | SCR-SETUP-003 |
-| The screen must offer "Pair a new Bluetooth controller" (`SetupPairBluetoothButton`). | SCR-SETUP-004 |
+| The screen must offer "Pair a new Bluetooth controller" (`SetupPairBluetoothButton`) and, under it, say that a wired controller works: "Or plug it in with a USB cable." | SCR-SETUP-004 |
 | The screen must not show a controller hint bar. A controller press only finds a button. | SCR-SETUP-005 |
 | The screen must not use a drop-down list or a "Refresh list" button to pick a controller. | SCR-SETUP-006 |
 
@@ -65,7 +65,7 @@ The app uses one controller at a time. A left and right Joy-Con pair counts as o
 
 ## Pair a new Bluetooth controller
 
-**What it is for:** help you pair a controller that is not yet connected to this computer.
+**What it is for:** help you connect a Bluetooth controller that is not yet connected to this computer.
 
 You pick the kind of controller, see the steps to put it in pairing mode, and then the app hands you to the operating system to finish pairing.
 

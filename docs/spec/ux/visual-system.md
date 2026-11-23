@@ -1,7 +1,7 @@
 ---
 id: SPEC-UX-VISUAL
 title: Visual system
-last-updated: 2026-11-19
+last-updated: 2026-11-22
 ---
 
 # Visual system
@@ -25,7 +25,7 @@ On Windows the tokens live in `Resources/Theme/Tokens.Dark.xaml` and `Tokens.Lig
 | `text` | Body text | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#F5F2EC;color:#1F1B16;padding:2px 8px;border-radius:8px">#F5F2EC</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1F1B16;color:#F5F2EC;padding:2px 8px;border-radius:8px">#1F1B16</span> |
 | `muted` | Secondary text | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ABA59C;color:#141312;padding:2px 8px;border-radius:8px">#ABA59C</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#655E55;color:#FFFFFF;padding:2px 8px;border-radius:8px">#655E55</span> |
 | `accent` | Fill for the one main action | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#ED7600</span> |
-| `accent-ink` | Accent as text, icons, status dots | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#141312;color:#ED7600;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FAF8F4;color:#A55200;padding:2px 8px;border-radius:8px">#A55200</span> |
+| `accent-ink` | Accent as text and icons | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#141312;color:#ED7600;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FAF8F4;color:#A55200;padding:2px 8px;border-radius:8px">#A55200</span> |
 | `on-accent` | Label on the accent fill | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#1F1B16</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#1F1B16</span> |
 | `focus` | Focus ring | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#7CC4FF;color:#141312;padding:2px 8px;border-radius:8px">#7CC4FF</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1F5FCC;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1F5FCC</span> |
 | `ok` | Good state (with words) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#5FD39A;color:#141312;padding:2px 8px;border-radius:8px">#5FD39A</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1E7A4C;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1E7A4C</span> |
@@ -41,10 +41,10 @@ The accent is the VOLTAGE brand orange.
 
 | Rule | ID |
 |---|---|
-| The accent fill (`#ED7600`) must fill only the one main action on a screen (Start riding, Continue, Save) and mark live moments (the lit button, "You just pressed"). | UX-V-001 |
+| The accent fill (`#ED7600`) must fill only the one main action on a screen (Pair with Zwift, Continue, Save) and mark live moments (the lit button, "You just pressed"). | UX-V-001 |
 | The label on an accent fill must be `on-accent` (`#1F1B16`) in both modes. The app must never use white text on the accent (2.92:1). | UX-V-002 |
-| Accent used as text, an icon, or a status dot must use `accent-ink`: `#ED7600` in dark mode, `#A55200` in light mode. | UX-V-003 |
-| The Connections tab dot must use `accent-ink` (`#A55200` in light mode, `#ED7600` in dark mode). | UX-V-004 |
+| Accent used as text or an icon must use `accent-ink`: `#ED7600` in dark mode, `#A55200` in light mode. | UX-V-003 |
+| The Connections tab dot must use `err` (`#B3261E` in light mode, `#FF7A70` in dark mode), because it means something needs the person. | UX-V-004 |
 | In light mode the accent fill against the background is only 2.75:1. You must therefore be able to identify a primary button by its dark text label and its shape, never by the fill color alone. | UX-V-005 |
 | Everything else must stay neutral. Screens must not use the accent for decoration. | UX-V-006 |
 | The app's identity must never rely on color alone. The name "Voltage Gamepad", the controller illustration, and the wordmark carry it. | UX-V-007 |
@@ -108,13 +108,56 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 
 | Item | Value | ID |
 |---|---|---|
-| Spacing scale | 4, 8, 12, 16, 20, 24, 32, 48 | UX-V-015 |
+| Spacing scale | 4, 8, 12, 16, 20, 24, 32, 40, 48 | UX-V-015 |
 | Pills (buttons, chips, keycaps) | Radius is half the height | UX-V-016 |
 | Rows | Radius 16 to 20 | UX-V-017 |
 | Cards | Radius 24 to 28 on phone | UX-V-018 |
 | Panels | Radius 32 on tablet | UX-V-019 |
 | Minimum target | 48 px | UX-V-020 |
 | Focus ring | 3 px, 2 px offset | UX-V-021 |
+
+## Layout and spacing
+
+Every screen uses the same margins and gaps, so a person who has seen one screen has seen the spacing of all of them. Values are in px.
+
+| Item | Phone | Tablet | Desktop |
+|---|---|---|---|
+| Page side margin | 20 | 48 | 40 |
+| Page top padding | 24 | 32 | 24 |
+| Page bottom padding | 24 | 48 | 40 |
+| Gap between sections | 24 | 32 | 32 |
+| Gap from a group label to its rows | 8 | 8 | 8 |
+| Gap between list rows | 8 | 12 | 12 |
+| Gap between cards | 16 | 24 | 24 |
+| Card padding | 20 | 32 | 32 |
+| Row padding (vertical, horizontal) | 12, 20 | 12, 20 | 12, 20 |
+
+A status chip is 40 high with 16 of padding left and right. It holds an 8 px dot, then 8 px of space, then the words.
+
+| Rule | ID |
+|---|---|
+| Every screen must take the values in this section from shared styles. A screen must not set its own margins, gaps, or padding. | UX-V-051 |
+| A scrolling area must never clip a shadow. The scroll area must span the window width, and its content must keep the page side margin as padding inside the scroll area, so a card's shadow has room on every side. | UX-V-052 |
+
+On Windows the card, row, and chip styles live in `Resources/Surfaces.xaml`, and the page margins and gaps live in `Resources/Layout.xaml`. A screen refers to them by key and never writes a number.
+
+## Icons
+
+| Rule | ID |
+|---|---|
+| The app must use one icon set. Each icon must be drawn on a 24 px grid with a 2 px stroke and round caps and joins, in the current text color. | UX-V-053 |
+| Icons must be 22 px in the navigation, 18 to 20 px in buttons and rows (UX-V-026), and 24 px for the back button. | UX-V-054 |
+| Icons must mark navigation and actions only. An icon must never show a status: no check marks, plugs, or warning signs for a state. | UX-V-055 |
+
+## Status
+
+Status is a dot plus words.
+
+| Rule | ID |
+|---|---|
+| A working state must use an `ok` dot with words. Anything that needs the person must use an `err` dot with words, including the Connections tab dot (UX-V-004). | UX-V-056 |
+| Status text must stay in `text`. Only the dot carries the color. | UX-V-057 |
+| The accent must mark only the one main action and live moments (UX-V-001). It must not mark a status. | UX-V-058 |
 
 ## Surfaces
 
@@ -148,7 +191,7 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 | Button order must follow the platform: Windows dialogs put the primary action first, Android and iOS put it last. | UX-V-032 |
 | A screen must have at most one primary (accent) button. | UX-V-033 |
 
-*Example: a German label for "Start riding" is longer. The button grows, and if the row is full, the button moves to its own line instead of breaking the label.*
+*Example: a German label for "Pair with Zwift" is longer. The button grows, and if the row is full, the button moves to its own line instead of breaking the label.*
 
 ## Fields and choices
 
@@ -164,7 +207,7 @@ Dropdowns, text boxes, checkboxes, switches, and radio buttons share one look, s
 
 ## Rows and two-column screens
 
-Settings, Help and feedback, Credits, and Support share one layout, so a person who has seen one has seen them all.
+Settings, Help and feedback, About, and Support share one layout, so a person who has seen one has seen them all.
 
 | Rule | ID |
 |---|---|
