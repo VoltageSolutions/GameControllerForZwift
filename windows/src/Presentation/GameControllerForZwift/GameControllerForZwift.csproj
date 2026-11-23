@@ -61,6 +61,7 @@
     <!-- One copy of the controller wireframes lives in docs/assets/controllers (UX-V-067); link it in as WPF resources. -->
     <Resource Include="..\..\..\..\docs\assets\controllers\generic\generic.svg" Link="Assets\Controllers\generic\generic.svg" />
     <Resource Include="..\..\..\..\docs\assets\controllers\playstation-dualshock4\playstation-dualshock4.svg" Link="Assets\Controllers\playstation-dualshock4\playstation-dualshock4.svg" />
+    <Resource Include="..\..\..\..\docs\assets\controllers\xbox\xbox.svg" Link="Assets\Controllers\xbox\xbox.svg" />
     <Resource Include="Assets\logo.ico" />
     <Resource Include="Assets\logo.png" />
     <Resource Include="Assets\logo_transparent.png" />

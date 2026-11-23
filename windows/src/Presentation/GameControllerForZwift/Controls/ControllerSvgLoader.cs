@@ -50,6 +50,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
         private static readonly Dictionary<ControllerKind, string> Files = new()
         {
             [ControllerKind.Generic] = "generic/generic",
+            [ControllerKind.Xbox] = "xbox/xbox",
             [ControllerKind.PlayStationDualShock4] = "playstation-dualshock4/playstation-dualshock4",
         };
 

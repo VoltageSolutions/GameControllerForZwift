@@ -240,7 +240,7 @@ On Windows the buttons, fields, and surfaces live in `Resources/Controls.xaml` a
 | The controller illustration must be a wireframe outline with a ground shadow. It must use theme tokens only (`Brush.pad` and the other `pad` tokens), so it works in light and dark mode. | UX-V-034 |
 | Keys on the illustration must have a thin muted outline, free keys a dashed outline, and the lit key a dark outline plus the accent fill. | UX-V-035 |
 | The illustration must never be the only way to know a mapping. The Buttons list says the same in text. | UX-V-036 |
-| The app must draw an illustration that matches the controller's kind (CTRL-011). Generic and PlayStation DualShock 4 each have their own drawing. Generic is the default. | UX-V-059 |
+| The app must draw an illustration that matches the controller's kind (CTRL-011). Generic, Xbox and PlayStation DualShock 4 each have their own drawing. Generic is the default. | UX-V-059 |
 | Every kind must behave the same: the selected input is lit, pressed inputs are lit, stick caps move with the axis, and free keys are dashed (UX-V-035). | UX-V-060 |
 | Art must be original or licensed CC BY 4.0, with credit in ACKNOWLEDGEMENTS. The app must never use art copied from another site, such as controllertest.io. | UX-V-061 |
 | In every drawing that includes bumpers and triggers, they must be drawn attached to the body at its top edge. A bumper must light when pressed. | UX-V-062 |

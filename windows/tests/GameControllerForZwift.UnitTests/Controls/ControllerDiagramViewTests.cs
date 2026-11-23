@@ -50,15 +50,15 @@ namespace GameControllerForZwift.UnitTests.Controls
             ControllerInput.LeftThumbstickClick, ControllerInput.RightThumbstickClick,
         ];
 
-        /// <summary>The inputs each kind draws (SCR-BTN-048): the DualShock 4 drawing has no bumpers or triggers; every other kind shows the Generic drawing.</summary>
+        /// <summary>The inputs each kind draws (SCR-BTN-048): the Xbox and DualShock 4 drawings have no bumpers or triggers; every other kind shows the Generic drawing.</summary>
         private static ControllerInput[] InputsOf(ControllerKind kind) => kind switch
         {
-            ControllerKind.PlayStationDualShock4 => [.. CommonInputs.Where(i => i is not (ControllerInput.LeftBumper or ControllerInput.RightBumper or ControllerInput.LeftTrigger or ControllerInput.RightTrigger))],
+            ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 => [.. CommonInputs.Where(i => i is not (ControllerInput.LeftBumper or ControllerInput.RightBumper or ControllerInput.LeftTrigger or ControllerInput.RightTrigger))],
             _ => CommonInputs,
         };
 
-        /// <summary>Kinds drawn with the Generic drawing have analog trigger fills; the DualShock 4 drawing has no triggers.</summary>
-        private static bool IsAnalog(ControllerKind kind) => kind != ControllerKind.PlayStationDualShock4;
+        /// <summary>Kinds drawn with the Generic drawing have analog trigger fills; the Xbox and DualShock 4 drawings have no triggers.</summary>
+        private static bool IsAnalog(ControllerKind kind) => kind is not (ControllerKind.Xbox or ControllerKind.PlayStationDualShock4);
 
         public static TheoryData<ControllerKind> AllKinds => [.. Enum.GetValues<ControllerKind>()];
 
@@ -357,11 +357,11 @@ namespace GameControllerForZwift.UnitTests.Controls
 
         // The flat DualShock 4 art rests keys and stick caps at Brush.art-shade; the other kinds use Brush.pad-key.
         private static string RestKeyFor(ControllerKind kind, ControllerInput input) =>
-            kind == ControllerKind.PlayStationDualShock4 ? "Brush.art-shade" : "Brush.pad-key";
+            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 ? "Brush.art-shade" : "Brush.pad-key";
 
         // Stick travel is per drawing: the DualShock 4 art moves its caps 10 units, the others the default.
         private static double TravelOf(ControllerKind kind) =>
-            kind == ControllerKind.PlayStationDualShock4 ? 10.0 : ControllerDiagramView.MaxStickTravel;
+            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 ? 10.0 : ControllerDiagramView.MaxStickTravel;
 
         private static ControllerData ControllerDataFor(ControllerInput input) => input switch
         {
@@ -448,11 +448,12 @@ namespace GameControllerForZwift.UnitTests.Controls
         [Fact]
         public void UXV067_KindsWithoutTheirOwnDrawingUseTheGenericDrawing()
         {
-            ControllerKind[] own = [ControllerKind.Generic, ControllerKind.PlayStationDualShock4];
+            ControllerKind[] own = [ControllerKind.Generic, ControllerKind.Xbox, ControllerKind.PlayStationDualShock4];
             foreach (ControllerKind kind in Enum.GetValues<ControllerKind>().Except(own))
                 Assert.Equal(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(kind));
 
             Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(ControllerKind.PlayStationDualShock4));
+            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(ControllerKind.Xbox));
         }
 
         [Fact]
