@@ -17,6 +17,11 @@
     <Color x:Key="Color.pad">#3A3633</Color>
     <Color x:Key="Color.pad-2">#2A2725</Color>
     <Color x:Key="Color.pad-key">#4A4542</Color>
+    <Color x:Key="Color.art-body">#34302D</Color>
+    <Color x:Key="Color.art-shade">#3E3A36</Color>
+    <Color x:Key="Color.art-line">#A89F94</Color>
+    <Color x:Key="Color.art-detail">#8F877D</Color>
+    <Color x:Key="Color.art-glyph">#E4DDD2</Color>
 
     <SolidColorBrush x:Key="Brush.bg" Color="{StaticResource Color.bg}" />
     <SolidColorBrush x:Key="Brush.surface" Color="{StaticResource Color.surface}" />
@@ -32,6 +37,11 @@
     <SolidColorBrush x:Key="Brush.pad" Color="{StaticResource Color.pad}" />
     <SolidColorBrush x:Key="Brush.pad-2" Color="{StaticResource Color.pad-2}" />
     <SolidColorBrush x:Key="Brush.pad-key" Color="{StaticResource Color.pad-key}" />
+    <SolidColorBrush x:Key="Brush.art-body" Color="{StaticResource Color.art-body}" />
+    <SolidColorBrush x:Key="Brush.art-shade" Color="{StaticResource Color.art-shade}" />
+    <SolidColorBrush x:Key="Brush.art-line" Color="{StaticResource Color.art-line}" />
+    <SolidColorBrush x:Key="Brush.art-detail" Color="{StaticResource Color.art-detail}" />
+    <SolidColorBrush x:Key="Brush.art-glyph" Color="{StaticResource Color.art-glyph}" />
 
     <!-- The VOLTAGE wordmark: every letter is white (SCR-RIDE-034). -->
     <SolidColorBrush x:Key="Brush.wordmark-volt" Color="#FFFFFF" />

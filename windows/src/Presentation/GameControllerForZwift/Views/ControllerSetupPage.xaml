@@ -305,6 +305,7 @@
                                     Width="296" Height="249"
                                     HorizontalAlignment="Center"
                                     SelectedInput="{Binding SelectedRow.Input}"
+                                    Kind="{Binding ControllerKind}"
                                     Rows="{Binding Rows}"
                                     ControllerValues="{Binding CurrentControllerValues}" />
 

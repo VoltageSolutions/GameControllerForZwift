@@ -13,7 +13,7 @@ namespace GameControllerForZwift.UnitTests.Theme
         private static readonly XNamespace Xaml = "http://schemas.microsoft.com/winfx/2006/xaml";
 
         private static readonly string[] TokenNames =
-            ["bg", "surface", "surface-2", "text", "muted", "accent", "accent-ink", "on-accent", "focus", "ok", "err", "pad", "pad-2", "pad-key"];
+            ["bg", "surface", "surface-2", "text", "muted", "accent", "accent-ink", "on-accent", "focus", "ok", "err", "pad", "pad-2", "pad-key", "art-body", "art-shade", "art-line", "art-detail", "art-glyph"];
 
         public static TheoryData<string> Modes => new() { "Dark", "Light" };
 
