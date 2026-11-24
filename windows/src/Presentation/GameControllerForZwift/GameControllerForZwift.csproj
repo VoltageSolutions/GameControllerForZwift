@@ -63,6 +63,7 @@
     <Resource Include="..\..\..\..\docs\assets\controllers\playstation-dualshock4\playstation-dualshock4.svg" Link="Assets\Controllers\playstation-dualshock4\playstation-dualshock4.svg" />
     <Resource Include="..\..\..\..\docs\assets\controllers\xbox\xbox.svg" Link="Assets\Controllers\xbox\xbox.svg" />
     <Resource Include="..\..\..\..\docs\assets\controllers\switch-pro\switch-pro.svg" Link="Assets\Controllers\switch-pro\switch-pro.svg" />
+    <Resource Include="..\..\..\..\docs\assets\controllers\joycon-pair\joycon-pair.svg" Link="Assets\Controllers\joycon-pair\joycon-pair.svg" />
     <Resource Include="Assets\logo.ico" />
     <Resource Include="Assets\logo.png" />
     <Resource Include="Assets\logo_transparent.png" />

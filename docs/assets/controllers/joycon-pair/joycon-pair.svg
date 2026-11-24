@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 474 342">
+<title>Joy-Con pair (grip) controller diagram</title>
+<desc>Flat drawing of a Joy-Con pair in the charging grip. Interactive shapes use ControllerInput ids: A (right), B (bottom), X (top), Y (left) on the right Joy-Con; the D-pad buttons (DPadUp, DPadRight, DPadDown, DPadLeft) on the left Joy-Con; View (minus), Menu (plus), the shoulder lips (LeftBumper, RightBumper; digital) and the two thumbstick groups (the stick and cap rings move together; the cap is L3/R3). Glyph strokes carry data-for with the input they mark. Home, Capture and the Switch logo are decorative.</desc>
+<style>
+/* preview only: platforms map these classes to theme tokens */
+.ol{fill:none;stroke:#555;stroke-width:1.9;stroke-linejoin:round;stroke-linecap:round}
+.body-fill{fill:#eee;stroke:none}
+.key{fill:#e2e2e2;stroke:#555;stroke-width:1.35;stroke-linejoin:round}
+.well{fill:#e2e2e2;stroke:#888;stroke-width:1.2}
+.stick{fill:#e2e2e2;stroke:#555;stroke-width:1.35}
+.cap{fill:#e2e2e2;stroke:#888;stroke-width:1.2}
+.glyph{fill:none;stroke:#333;stroke-width:1.35;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<path class="body-fill" d="M71.4999 319C71.4999 319 53.4999 342.5 28.5001 330C12.7731 322.136 3.419 307.918 2.00014 285.5C-0.499852 246 6.85978 172.917 29.0001 114.5C36.6909 94.2081 52.4999 63.5 52.4999 63.5"/>
+<path class="body-fill" d="M402.398 319C402.398 319 420.398 342.5 445.398 330C461.125 322.136 470.479 307.918 471.898 285.5C474.398 246 467.038 172.917 444.898 114.5C437.207 94.2081 421.398 63.5 421.398 63.5"/>
+<path class="body-fill" d="M168 4.15222H121C82.3399 4.15222 50.9999 35.4923 50.9999 74.1522V270.152C50.9999 308.812 82.34 340.152 121 340.152H168V4.15222Z"/>
+<path class="body-fill" d="M306 4.15222H353C391.66 4.15222 423 35.4923 423 74.1522V270.152C423 308.812 391.66 340.152 353 340.152H306V4.15222Z"/>
+<rect class="body-fill" x="168" y="4.15" width="138" height="336"/>
+<path id="LeftBumper" class="key" d="M57.11 45.71L55.95 45.23C54.49 44.62 53.77 43 54.47 41.58C57.15 36.11 65.23 22.73 84.85 9.65C98.98 0.92 126.44 0.83 135.29 1.05C136.88 1.09 138.11 2.4 138.11 3.99L138.11 4.15L121 4.15C92.47 4.15 67.93 21.22 57.02 45.7Z"/>
+<path id="RightBumper" class="key" d="M416.89 45.71L418.05 45.23C419.51 44.62 420.23 43 419.53 41.58C416.85 36.11 408.77 22.73 389.15 9.65C375.02 0.92 347.56 0.83 338.71 1.05C337.12 1.09 335.89 2.4 335.89 3.99L335.89 4.15L353 4.15C381.53 4.15 406.07 21.22 416.98 45.7Z"/>
+<path class="ol" d="M168 4.15222H121C82.3399 4.15222 50.9999 35.4923 50.9999 74.1522V270.152C50.9999 308.812 82.34 340.152 121 340.152H168V4.15222Z"/>
+<path class="ol" d="M306 4.15222H353C391.66 4.15222 423 35.4923 423 74.1522V270.152C423 308.812 391.66 340.152 353 340.152H306V4.15222Z"/>
+<path class="ol" d="M71.4999 319C71.4999 319 53.4999 342.5 28.5001 330C12.7731 322.136 3.419 307.918 2.00014 285.5C-0.499852 246 6.85978 172.917 29.0001 114.5C36.6909 94.2081 52.4999 63.5 52.4999 63.5"/>
+<path class="ol" d="M402.398 319C402.398 319 420.398 342.5 445.398 330C461.125 322.136 470.479 307.918 471.898 285.5C474.398 246 467.038 172.917 444.898 114.5C437.207 94.2081 421.398 63.5 421.398 63.5"/>
+<path class="ol" d="M168 14H171C174.314 14 177 11.3137 177 8V4H296V8C296 11.3137 298.686 14 302 14H306"/>
+<path class="key" fill="none" d="M235 121H224C218.477 121 214 125.477 214 131V154C214 159.523 218.477 164 224 164H235V121Z"/>
+<path class="key" fill="none" d="M239 121H250C255.523 121 260 125.477 260 131V154C260 159.523 255.523 164 250 164H239V121Z"/>
+<circle class="well" cx="110" cy="90.152" r="29"/>
+<circle class="well" cx="363" cy="184.152" r="29"/>
+<g id="LeftThumbstick" data-travel="7"><circle class="stick" cx="110" cy="90.152" r="21.5"/><circle id="LeftThumbstickClick" class="cap" cx="110" cy="90.152" r="14"/></g>
+<g id="RightThumbstick" data-travel="7"><circle class="stick" cx="363" cy="184.152" r="21.5"/><circle id="RightThumbstickClick" class="cap" cx="363" cy="184.152" r="14"/></g>
+<path id="Menu" class="key" d="M318.4 22.4H323.6V26.9H328.1V32.1H323.6V36.6H318.4V32.1H313.9V26.9H318.4Z"/>
+<rect id="View" class="key" x="145.9" y="26.9" width="14.2" height="5.2" rx="1.4"/>
+<circle id="X" class="key" cx="364" cy="64.152" r="12"/>
+<circle id="A" class="key" cx="387" cy="90.152" r="12"/>
+<circle id="B" class="key" cx="364" cy="114.152" r="12"/>
+<circle id="Y" class="key" cx="340" cy="90.152" r="12"/>
+<path class="glyph" data-for="X" transform="translate(364 64.15)" d="M-3.75 -4.5L3.75 4.5M3.75 -4.5L-3.75 4.5"/>
+<path class="glyph" data-for="A" transform="translate(387 90.15)" d="M-4.12 4.88L0 -4.88L4.12 4.88M-2.25 1.5H2.25"/>
+<path class="glyph" data-for="B" transform="translate(364 114.15)" d="M-2.62 -4.88V4.88M-2.62 -4.88H0.75C4.12 -4.88 4.12 0 0.75 0H-2.62M0.75 0C4.88 0 4.88 4.88 0.75 4.88H-2.62"/>
+<path class="glyph" data-for="Y" transform="translate(340 90.15)" d="M-4.12 -4.88L0 0L4.12 -4.88M0 0V4.88"/>
+<circle id="DPadUp" class="key" cx="110" cy="155.152" r="12"/>
+<circle id="DPadRight" class="key" cx="133" cy="181.152" r="12"/>
+<circle id="DPadDown" class="key" cx="110" cy="205.152" r="12"/>
+<circle id="DPadLeft" class="key" cx="86" cy="181.152" r="12"/>
+<path class="glyph" data-for="DPadUp" transform="translate(110 155.15)" d="M0 -3.2L-3.2 2.8H3.2Z"/>
+<path class="glyph" data-for="DPadRight" transform="translate(133 181.15)" d="M3.2 0L-2.8 -3.2V3.2Z"/>
+<path class="glyph" data-for="DPadDown" transform="translate(110 205.15)" d="M0 3.2L-3.2 -2.8H3.2Z"/>
+<path class="glyph" data-for="DPadLeft" transform="translate(86 181.15)" d="M-3.2 0L2.8 -3.2V3.2Z"/>
+<rect class="key" fill="none" x="121" y="234.152" width="20" height="20" rx="4"/>
+<circle class="glyph" cx="131" cy="244.152" r="7.4"/>
+<circle class="key" fill="none" cx="343" cy="243.152" r="12"/>
+<path class="glyph" transform="translate(343 243.152)" d="M-6.4 0.9L0 -5.1L6.4 0.9M-4.3 -0.7V5.3H4.3V-0.7"/>
+</svg>

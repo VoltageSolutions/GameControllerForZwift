@@ -54,6 +54,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
             [ControllerKind.Generic] = "generic/generic",
             [ControllerKind.Xbox] = "xbox/xbox",
             [ControllerKind.SwitchPro] = "switch-pro/switch-pro",
+            [ControllerKind.JoyConPair] = "joycon-pair/joycon-pair",
             [ControllerKind.PlayStationDualShock4] = "playstation-dualshock4/playstation-dualshock4",
         };
 
