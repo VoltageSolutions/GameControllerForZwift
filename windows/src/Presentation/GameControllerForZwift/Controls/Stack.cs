@@ -153,7 +153,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
                     ArrangeRow(row, y, rowHeight);
                     row.Clear();
                     y += rowHeight + Gap;
-                    x = 0;
                     rowHeight = 0;
                     next = child.DesiredSize.Width;
                 }
