@@ -202,6 +202,7 @@ namespace GameControllerForZwift
             services.AddSingleton<SupportViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();
             services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<HelpViewModel>();
             services.AddTransient<ZwiftFunctionSelectorViewModel>();
 
             // Register MainWindow with DI so it can receive MainWindowViewModel

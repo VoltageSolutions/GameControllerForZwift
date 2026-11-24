@@ -262,18 +262,13 @@
                     </Grid.RowDefinitions>
                     <Grid Margin="{StaticResource Inset.SheetHeader}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="{StaticResource Gap.12}" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="{StaticResource Gap.12}" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <Border Style="{StaticResource Chip.Key}" Background="{DynamicResource Brush.accent}">
-                            <TextBlock Style="{StaticResource Text.Chip}" Foreground="{DynamicResource Brush.on-accent}" Text="{Binding FunctionPicker.Target.Chip}" />
-                        </Border>
-                        <TextBlock x:Name="FunctionPanelTitle" Grid.Column="2" VerticalAlignment="Center" Style="{StaticResource Text.Title}"
+                        <TextBlock x:Name="FunctionPanelTitle" VerticalAlignment="Center" Style="{StaticResource Text.Title}"
                                    Text="{Binding FunctionPicker.Title}" AutomationProperties.HeadingLevel="Level2" />
-                        <Button x:Name="FunctionPanelCloseButton" Grid.Column="4" Style="{StaticResource Button.Icon}" Command="{Binding FunctionPicker.CloseCommand}"
+                        <Button x:Name="FunctionPanelCloseButton" Grid.Column="2" Style="{StaticResource Button.Icon}" Command="{Binding FunctionPicker.CloseCommand}"
                                 AutomationProperties.AutomationId="ButtonsFunctionCloseButton" AutomationProperties.Name="{loc:Loc ButtonsPickerClose}">
                             <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Close}" />
                         </Button>

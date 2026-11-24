@@ -9,6 +9,9 @@ namespace GameControllerForZwift.UI.WPF
         /// <summary>The Issues page of the project on GitHub (SCR-HELP-006).</summary>
         public const string Issues = GitHub + "/issues";
 
+        /// <summary>The page that starts a new issue, for Report a problem (SCR-HELP-004).</summary>
+        public const string NewIssue = Issues + "/new";
+
         /// <summary>The contributing guide (SCR-SUP-004).</summary>
         public const string Contributing = GitHub + "/blob/main/CONTRIBUTING.md";
 

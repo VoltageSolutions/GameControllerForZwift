@@ -35,3 +35,31 @@ On Help and feedback, a controller press goes to Zwift as mapped. See [Controlle
 | ID | Where |
 |---|---|
 | `MenuHelpItem` | The More menu item that opens this screen |
+| `HelpPageTitle` | The screen title |
+| `HelpFindLink` | The row that opens the steps for "Zwift can't find Voltage Gamepad" on Connections |
+| `HelpOpenLogsButton` | **Open log folder** |
+| `HelpReportButton` | **Report a problem** |
+| `HelpFeedbackButton` | **Send feedback** |
+
+## Quoted strings
+
+| Key | English text | Rule |
+|---|---|---|
+| `HelpTitle` | Help and feedback | SCR-HELP-001 |
+| `HelpIntro` | Most problems have a quick fix. Start with the list, and reach me on GitHub if yours is not there. | SCR-HELP-001 |
+| `HelpProblemsSection` | Common problems | SCR-HELP-001 |
+| `HelpProblemFindTitle` | Zwift can't find Voltage Gamepad | SCR-HELP-002 |
+| `HelpProblemFindFix` | Follow the three steps on Connections. | SCR-HELP-002 |
+| `HelpProblemSeeTitle` | Zwift can't see your controller | SCR-HELP-001 |
+| `HelpProblemSeeFix` | In Zwift, pick Voltage Gamepad under Controls again. Your controller stays connected to this app. | SCR-HELP-001 |
+| `HelpProblemButtonTitle` | A button does nothing | SCR-HELP-001 |
+| `HelpProblemButtonFix` | Open Buttons and look at the row for that button. A row that says No action does nothing in Zwift. | SCR-HELP-001 |
+| `HelpProblemMissingTitle` | My controller isn't showing up | SCR-HELP-001 |
+| `HelpProblemMissingFix` | Press a button to wake it. For Bluetooth, pair it in Windows first, or plug it in with a USB cable. | SCR-HELP-001 |
+| `HelpContactSection` | Get in touch | SCR-HELP-003 |
+| `HelpOpenLogs` | Open log folder | SCR-HELP-003 |
+| `HelpOpenLogsDescription` | Check the log before you share it publicly. It lists local network addresses. | SCR-HELP-005 |
+| `HelpReport` | Report a problem | SCR-HELP-004 |
+| `HelpReportDescription` | Opens GitHub. Attach the app version, your controller, and the log file. | SCR-HELP-004 |
+| `HelpFeedback` | Send feedback | SCR-HELP-006 |
+| `HelpFeedbackDescription` | Opens the Issues page of the project on GitHub. | SCR-HELP-006 |

@@ -38,6 +38,7 @@ namespace GameControllerForZwift.UI.WPF
             [typeof(CreditsListViewModel)] = () => new DocumentPage(),
             [typeof(LicenseViewModel)] = () => new DocumentPage(),
             [typeof(SettingsViewModel)] = () => new SettingsPage(),
+            [typeof(HelpViewModel)] = () => new HelpPage(),
             [typeof(SupportViewModel)] = () => new SupportPage(),
             [typeof(StyleGalleryViewModel)] = () => new StyleGalleryPage(),
         });

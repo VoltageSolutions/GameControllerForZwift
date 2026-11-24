@@ -53,7 +53,7 @@
                                               Visibility="{Binding ShowPairWithZwift, Converter={StaticResource BooleanToVisibility}}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <TextBlock Style="{StaticResource Text.Caption}" Text="{Binding}" />
+                                            <TextBlock Style="{StaticResource Text.Body}" Text="{Binding}" />
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>
                                 </ItemsControl>
@@ -70,6 +70,10 @@
                 <Border x:Name="ControllerCard" Style="{StaticResource Surface.Panel}"
                         AutomationProperties.AutomationId="RideControllerCard" AutomationProperties.Name="{Binding ControllerText}">
                     <controls:Stack Gap="{DynamicResource Layout.CardGap}">
+                        <!-- Without a controller the card shows a faded controller (SCR-RIDE-008). It only decorates. -->
+                        <controls:ControllerDiagramView x:Name="FadedController" Opacity="0.35" IsHitTestVisible="False"
+                                                        Width="{StaticResource Size.DiagramWidth}" Height="{StaticResource Size.DiagramHeight}" HorizontalAlignment="Center"
+                                                        Visibility="{Binding ShowNoControllerActions, Converter={StaticResource BooleanToVisibility}}" />
                         <controls:Stack Gap="{StaticResource Space.4}">
                             <TextBlock Style="{StaticResource Text.Title}" Text="{Binding ControllerName}" AutomationProperties.LiveSetting="Polite" />
                             <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.8}" Visibility="{Binding HasController, Converter={StaticResource BooleanToVisibility}}">

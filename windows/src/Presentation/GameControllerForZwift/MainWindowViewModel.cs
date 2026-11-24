@@ -189,10 +189,12 @@ namespace GameControllerForZwift.UI.WPF
             _navigationService.NavigateTo<StyleGalleryViewModel>();
         }
 
-        /// <summary>Help and feedback has no screen, so its menu item is disabled.</summary>
-        [RelayCommand(CanExecute = nameof(HasHelpScreen))]
+        /// <summary>Opens Help and feedback as a pushed screen (UX-N-009).</summary>
+        [RelayCommand]
         private void OpenHelp()
         {
+            IsMoreMenuOpen = false;
+            _navigationService.NavigateTo<HelpViewModel>();
         }
 
         /// <summary>Opens Support this project as a pushed screen (UX-N-009).</summary>
@@ -202,8 +204,6 @@ namespace GameControllerForZwift.UI.WPF
             IsMoreMenuOpen = false;
             _navigationService.NavigateTo<SupportViewModel>();
         }
-
-        private static bool HasHelpScreen() => false;
 
         [RelayCommand(CanExecute = nameof(CanGoBack))]
         private void Back()

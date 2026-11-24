@@ -17,6 +17,7 @@
                 <ResourceDictionary Source="Resources/Surfaces.xaml" />
                 <ResourceDictionary Source="Resources/Components.xaml" />
                 <ResourceDictionary Source="Resources/ButtonsScreen.xaml" />
+                <ResourceDictionary Source="Resources/Document.xaml" />
                 <ResourceDictionary Source="Resources/Shell.xaml" />
                 <!-- Replaced at startup by ThemeService, which keeps the tokens for the chosen appearance last. -->
                 <ResourceDictionary Source="Resources/Theme/Tokens.Dark.xaml" />

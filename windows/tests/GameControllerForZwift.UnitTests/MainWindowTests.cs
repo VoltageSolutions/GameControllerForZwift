@@ -51,6 +51,7 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton(new LicenseViewModel("# License", Substitute.For<IDialogService>()));
             services.AddSingleton<SupportViewModel>();
             services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<HelpViewModel>();
             services.AddSingleton<StyleGalleryViewModel>();
             services.AddTransient<MainWindow>();
             return services.BuildServiceProvider();
@@ -358,7 +359,7 @@ namespace GameControllerForZwift.UnitTests
         }
 
         [Fact]
-        public void UXN008_MenuListsItsItemsInOrderAndDisablesTheOnesWithoutAScreen()
+        public void UXN008_MenuListsItsItemsInOrderAndEveryItemHasAScreen()
         {
             WithWindow((_, window) =>
             {
@@ -369,7 +370,7 @@ namespace GameControllerForZwift.UnitTests
                     items.Select(b => System.Windows.Automation.AutomationProperties.GetAutomationId(b)));
                 Assert.True(Find<Button>(window, "MenuSettingsItem").IsEnabled);
                 Assert.True(Find<Button>(window, "MenuCreditsItem").IsEnabled);
-                Assert.False(Find<Button>(window, "MenuHelpItem").IsEnabled);
+                Assert.True(Find<Button>(window, "MenuHelpItem").IsEnabled);
                 Assert.True(Find<Button>(window, "MenuSupportItem").IsEnabled);
             });
         }

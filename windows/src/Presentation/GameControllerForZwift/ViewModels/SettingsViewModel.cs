@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using GameControllerForZwift.Core.Configurations;
 using GameControllerForZwift.UI.WPF.Dialogs;
 using GameControllerForZwift.UI.WPF.Localization;
-using GameControllerForZwift.UI.WPF.Navigation;
 using GameControllerForZwift.UI.WPF.Theme;
 using System.Globalization;
 using System.IO;
@@ -12,7 +11,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
 {
     /// <summary>
     /// View model of the Settings page (docs/spec/screens/settings.md). It sets the appearance and the ride timeout,
-    /// opens the mappings and log folders, deletes saved mappings, and links to Help and Credits.
+    /// opens the mappings folder, and deletes saved mappings.
     /// </summary>
     public sealed partial class SettingsViewModel : ObservableObject
     {
@@ -20,11 +19,9 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         private readonly IAppSettingsStore _appSettings;
         private readonly IDialogService _dialogs;
         private readonly ThemeService? _themeService;
-        private readonly INavigationService? _navigation;
-        private readonly string _logsFolder;
 
         public SettingsViewModel(IConfigurationStore configurationStore, IAppSettingsStore appSettings, IDialogService dialogService,
-            ThemeService? themeService = null, INavigationService? navigationService = null, string? logsFolder = null)
+            ThemeService? themeService = null)
         {
             ArgumentNullException.ThrowIfNull(configurationStore);
             ArgumentNullException.ThrowIfNull(appSettings);
@@ -33,8 +30,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             _appSettings = appSettings;
             _dialogs = dialogService;
             _themeService = themeService;
-            _navigation = navigationService;
-            _logsFolder = logsFolder ?? Path.Join(AppContext.BaseDirectory, "logs");
             _appearance = themeService?.Appearance ?? Appearance.MatchWindows;
             _rideTimeoutMinutes = appSettings.GetRideTimeoutMinutes();
             _rideTimeoutText = _rideTimeoutMinutes.ToString(CultureInfo.CurrentCulture);
@@ -49,9 +44,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             new(Appearance.Dark, Localizer.Get("AppearanceDark")),
             new(Appearance.MatchWindows, Localizer.Get("AppearanceMatchWindows")),
         ];
-
-        /// <summary>The app version shown in About (SCR-SET-008).</summary>
-        public string VersionText { get; } = Localizer.Format("SettingsVersionFormat", AppVersion.Current);
 
         /// <summary>The chosen appearance. Changing it applies it right away and keeps it (SCR-SET-001, SCR-SET-002).</summary>
         [ObservableProperty]
@@ -124,33 +116,6 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                 _dialogs.ShowError(Localizer.Get("SettingsOpenFolderErrorTitle"), ex.Message);
             }
         }
-
-        /// <summary>Opens the log folder, creating it first (SCR-SET-006).</summary>
-        [RelayCommand]
-        private void OpenLogsFolder()
-        {
-            try
-            {
-                Directory.CreateDirectory(_logsFolder);
-                _dialogs.OpenFolder(_logsFolder);
-            }
-            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
-            {
-                _dialogs.ShowError(Localizer.Get("SettingsOpenFolderErrorTitle"), ex.Message);
-            }
-        }
-
-        /// <summary>Help and feedback has no screen yet, so its link is disabled (SCR-SET-007).</summary>
-        [RelayCommand(CanExecute = nameof(HasHelpScreen))]
-        private void OpenHelp()
-        {
-        }
-
-        private static bool HasHelpScreen() => false;
-
-        /// <summary>Opens Credits as a pushed screen (SCR-SET-008).</summary>
-        [RelayCommand]
-        private void OpenCredits() => _navigation?.NavigateTo<CreditsViewModel>();
 
         /// <summary>
         /// Deletes every saved mapping after a confirmation that states the count (CFG-035), then clears every

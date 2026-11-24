@@ -3,14 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
              Foreground="{DynamicResource Brush.text}">
-    <!-- The Credits list and the License screen (docs/spec/screens/credits.md). The reader scrolls the document, so this
-         page keeps the page padding itself and leaves room for the bottom bar. -->
-    <UserControl.Resources>
-        <!-- Runs inside the document inherit the text color of the theme. -->
-        <Style TargetType="Run">
-            <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
-        </Style>
-    </UserControl.Resources>
+    <!-- The Credits list and the License screen (docs/spec/screens/credits.md). The viewer scrolls the document, so this
+         page keeps the page padding itself and leaves room for the bottom bar. Document.xaml styles the text. -->
     <Grid Margin="{DynamicResource Layout.PagePadding}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -19,11 +13,12 @@
         </Grid.RowDefinitions>
         <TextBlock x:Name="PageTitle" Style="{StaticResource Text.PageTitle}" Text="{Binding Title}"
                    AutomationProperties.AutomationId="{Binding TitleAutomationId}" AutomationProperties.HeadingLevel="Level1" />
-        <FlowDocumentReader x:Name="Reader" Grid.Row="1" Margin="{StaticResource Inset.Reader}" ViewingMode="Scroll" Document="{Binding Document}">
-            <FlowDocumentReader.CommandBindings>
+        <FlowDocumentScrollViewer x:Name="Reader" Grid.Row="1" Margin="{StaticResource Inset.Reader}" IsToolBarVisible="False"
+                                  VerticalScrollBarVisibility="Auto" BorderThickness="0" Background="Transparent" Document="{Binding Document}">
+            <FlowDocumentScrollViewer.CommandBindings>
                 <CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
-            </FlowDocumentReader.CommandBindings>
-        </FlowDocumentReader>
+            </FlowDocumentScrollViewer.CommandBindings>
+        </FlowDocumentScrollViewer>
         <Border Grid.Row="2" Height="{DynamicResource Layout.NavClearance}" />
     </Grid>
 </UserControl>

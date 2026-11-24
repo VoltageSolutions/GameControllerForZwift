@@ -35,6 +35,7 @@
     <sys:Double x:Key="Size.PickerMinWidth">280</sys:Double>
     <sys:Double x:Key="Size.PickerMaxWidth">420</sys:Double>
     <sys:Double x:Key="Size.NumberBoxWidth">96</sys:Double>
+    <sys:Double x:Key="Size.RowTextWidth">280</sys:Double>
     <sys:Double x:Key="Size.SheetWidth">440</sys:Double>
     <sys:Double x:Key="Size.DialogWidth">460</sys:Double>
     <sys:Double x:Key="Size.RowMinWidth">320</sys:Double>
@@ -55,7 +56,7 @@
     <GridLength x:Key="Gap.24">24</GridLength>
 
     <!-- Insets of a single element, from the spacing scale. -->
-    <Thickness x:Key="Inset.Reader">-19,16,0,0</Thickness>
+    <Thickness x:Key="Inset.Reader">0,16,0,0</Thickness>
     <Thickness x:Key="Inset.DialogButton">6,0,6,0</Thickness>
 
 </ResourceDictionary>
