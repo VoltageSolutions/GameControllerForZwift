@@ -126,7 +126,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 if (x > 0 && next > limit)
                 {
                     height += rowHeight + Gap;
-                    x = 0;
                     rowHeight = 0;
                     next = child.DesiredSize.Width;
                 }
@@ -139,8 +138,10 @@ namespace GameControllerForZwift.UI.WPF.Controls
             return new Size(widest, height + rowHeight);
         }
 
+        // Children of a row are arranged over the height of the row, so their own vertical alignment centers them.
         private Size ArrangeWrapped(Size finalSize)
         {
+            var row = new List<UIElement>();
             double x = 0;
             double y = 0;
             double rowHeight = 0;
@@ -149,18 +150,31 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 double next = x + (x > 0 ? Gap : 0) + child.DesiredSize.Width;
                 if (x > 0 && next > finalSize.Width)
                 {
+                    ArrangeRow(row, y, rowHeight);
+                    row.Clear();
                     y += rowHeight + Gap;
                     x = 0;
                     rowHeight = 0;
+                    next = child.DesiredSize.Width;
                 }
 
-                double left = x > 0 ? x + Gap : 0;
-                child.Arrange(new Rect(left, y, child.DesiredSize.Width, child.DesiredSize.Height));
-                x = left + child.DesiredSize.Width;
+                row.Add(child);
+                x = next;
                 rowHeight = Math.Max(rowHeight, child.DesiredSize.Height);
             }
 
+            ArrangeRow(row, y, rowHeight);
             return finalSize;
+        }
+
+        private void ArrangeRow(List<UIElement> row, double y, double rowHeight)
+        {
+            double left = 0;
+            foreach (UIElement child in row)
+            {
+                child.Arrange(new Rect(left, y, child.DesiredSize.Width, rowHeight));
+                left += child.DesiredSize.Width + Gap;
+            }
         }
     }
 }

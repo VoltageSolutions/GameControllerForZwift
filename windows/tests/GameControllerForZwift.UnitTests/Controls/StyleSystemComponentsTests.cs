@@ -119,6 +119,22 @@ namespace GameControllerForZwift.UnitTests.Controls
             });
         }
 
+        [Fact]
+        public void UXV031_AWrappedRowCentersItsShorterChildren()
+        {
+            TestApplication.Run(() =>
+            {
+                Border tall = Box(20, 40);
+                Border short1 = Box(20, 10);
+                short1.VerticalAlignment = VerticalAlignment.Center;
+                var stack = new Stack { Orientation = Orientation.Horizontal, Wrap = true, Gap = 8, Children = { tall, short1 } };
+
+                Layout(stack, 100);
+
+                Assert.Equal(new Point(28, 15), short1.TranslatePoint(default, stack));
+            });
+        }
+
         [Theory]
         [InlineData(700, 320, 12, 2)]
         [InlineData(1000, 320, 12, 3)]
