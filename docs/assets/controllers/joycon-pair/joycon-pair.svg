@@ -29,8 +29,8 @@
 <circle class="well" cx="363" cy="184.152" r="29"/>
 <g id="LeftThumbstick" data-travel="7"><circle class="stick" cx="110" cy="90.152" r="21.5"/><circle id="LeftThumbstickClick" class="cap" cx="110" cy="90.152" r="14"/></g>
 <g id="RightThumbstick" data-travel="7"><circle class="stick" cx="363" cy="184.152" r="21.5"/><circle id="RightThumbstickClick" class="cap" cx="363" cy="184.152" r="14"/></g>
-<path id="Menu" class="key" d="M318.4 22.4H323.6V26.9H328.1V32.1H323.6V36.6H318.4V32.1H313.9V26.9H318.4Z"/>
-<rect id="View" class="key" x="145.9" y="26.9" width="14.2" height="5.2" rx="1.4"/>
+<path id="Menu" class="key" d="M325.5 31.85H332.1V37.5H337.75V44.1H332.1V49.75H325.5V44.1H319.85V37.5H325.5Z"/>
+<rect id="View" class="key" x="136.25" y="37.5" width="17.9" height="6.6" rx="1.6"/>
 <circle id="X" class="key" cx="364" cy="64.152" r="12"/>
 <circle id="A" class="key" cx="387" cy="90.152" r="12"/>
 <circle id="B" class="key" cx="364" cy="114.152" r="12"/>
