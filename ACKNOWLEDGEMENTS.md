@@ -36,6 +36,12 @@ This application is made possible through the use of open source libraries. The 
 
 - Wireframe redraw for the PlayStation DualShock 4, Xbox, Switch Pro and Joy-Con pair diagrams
 
+- [DualSense Gamepad](https://www.figma.com/community/file/1443422876457138371/dualsense-gamepad) - by Jonathan Lancaster - *CC BY 4.0*
+
+**DualSense Gamepad changes**
+
+- Wireframe redraw for the PlayStation DualSense diagram, with the top shape split into bumper and trigger
+
 ### Licenses
 
 

@@ -55,6 +55,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
             [ControllerKind.Xbox] = "xbox/xbox",
             [ControllerKind.SwitchPro] = "switch-pro/switch-pro",
             [ControllerKind.JoyConPair] = "joycon-pair/joycon-pair",
+            [ControllerKind.PlayStationDualSense] = "playstation-dualsense/playstation-dualsense",
             [ControllerKind.PlayStationDualShock4] = "playstation-dualshock4/playstation-dualshock4",
         };
 
@@ -167,7 +168,16 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 var path = new Path { Data = geometry };
                 var all = new HashSet<string>(inheritedClasses.Concat(classes), StringComparer.Ordinal);
                 if (context.Styles.IsFlatArt)
+                {
                     ApplyArtStyle(path, all, context.Styles, (string?)source.Attribute("fill") == "none");
+                    if (isFill)
+                    {
+                        // An analog trigger fill is the accent colour with no outline; the diagram reveals it with a clip.
+                        path.SetResourceReference(Shape.FillProperty, "Brush.accent");
+                        path.Stroke = null;
+                        path.StrokeThickness = 0;
+                    }
+                }
                 else
                     ApplyStyle(path, all, classes.Count == 0 ? inIconGroup : inIconGroup && !classes.Contains("key"), isFill, source, tag, context.Styles);
                 element = path;

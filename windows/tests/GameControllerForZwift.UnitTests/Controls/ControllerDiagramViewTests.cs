@@ -359,13 +359,13 @@ namespace GameControllerForZwift.UnitTests.Controls
 
         // The flat DualShock 4 art rests keys and stick caps at Brush.art-shade; the other kinds use Brush.pad-key.
         private static string RestKeyFor(ControllerKind kind, ControllerInput input) =>
-            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro or ControllerKind.JoyConPair ? "Brush.art-shade" : "Brush.pad-key";
+            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro or ControllerKind.JoyConPair or ControllerKind.PlayStationDualSense ? "Brush.art-shade" : "Brush.pad-key";
 
         // Stick travel is per drawing: the DualShock 4 art moves its caps 10 units, the others the default.
         private static double TravelOf(ControllerKind kind) =>
             kind switch
             {
-                ControllerKind.JoyConPair => 7.0,
+                ControllerKind.JoyConPair or ControllerKind.PlayStationDualSense => 7.0,
                 ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro => 10.0,
                 _ => ControllerDiagramView.MaxStickTravel,
             };
@@ -453,6 +453,20 @@ namespace GameControllerForZwift.UnitTests.Controls
         }
 
         [Fact]
+        public void DualSense_TriggerFillIsTheAccentWithNoOutlineAndRisesFromTheBottom()
+        {
+            WithDiagram(ControllerKind.PlayStationDualSense, diagram =>
+            {
+                diagram.RefreshDiagram();
+                var fill = (System.Windows.Shapes.Path)diagram.Element("LeftTriggerFill")!;
+                Assert.Null(fill.Stroke);
+                Assert.Equal(0, diagram.LeftTriggerClipRect!.Value.Height);
+                Assert.NotNull(diagram.Element("LeftTrigger"));
+                Assert.NotNull(diagram.Element("LeftBumper"));
+            });
+        }
+
+        [Fact]
         public void SwitchPro_DPadArmsHaveNoStrokeAtRestAndAStrokeWhenLit()
         {
             WithDiagram(ControllerKind.SwitchPro, diagram =>
@@ -470,7 +484,7 @@ namespace GameControllerForZwift.UnitTests.Controls
         [Fact]
         public void UXV067_KindsWithoutTheirOwnDrawingUseTheGenericDrawing()
         {
-            ControllerKind[] own = [ControllerKind.Generic, ControllerKind.Xbox, ControllerKind.PlayStationDualShock4, ControllerKind.SwitchPro, ControllerKind.JoyConPair];
+            ControllerKind[] own = [ControllerKind.Generic, ControllerKind.Xbox, ControllerKind.PlayStationDualShock4, ControllerKind.SwitchPro, ControllerKind.JoyConPair, ControllerKind.PlayStationDualSense];
             foreach (ControllerKind kind in Enum.GetValues<ControllerKind>().Except(own))
                 Assert.Equal(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(kind));
 
