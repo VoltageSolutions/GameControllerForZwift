@@ -83,9 +83,9 @@ namespace GameControllerForZwift.UI.WPF.Tests.Screenshots
                 services.AddSingleton(_ => new CreditsListViewModel(ReadShippedFile("ACKNOWLEDGEMENTS.md"), _context.Dialogs));
                 services.AddSingleton(_ => new LicenseViewModel(ReadShippedFile("LICENSE.md"), _context.Dialogs));
                 services.AddSingleton<SupportViewModel>();
-                services.AddSingleton(sp => new SettingsViewModel(
-                    _context.Store, _context.Settings, _context.Dialogs, theme, sp.GetRequiredService<INavigationService>(),
-                    Path.Join(Path.GetTempPath(), "GameControllerForZwift.Screenshots", "logs")));
+                services.AddSingleton(_ => new SettingsViewModel(_context.Store, _context.Settings, _context.Dialogs, theme));
+                services.AddSingleton(sp => new HelpViewModel(
+                    _context.Dialogs, sp.GetRequiredService<INavigationService>(), Path.Join(Path.GetTempPath(), "GameControllerForZwift.Screenshots", "logs")));
                 services.AddSingleton<StyleGalleryViewModel>();
                 services.AddTransient<UI.WPF.MainWindow>();
                 _provider = services.BuildServiceProvider();
@@ -102,6 +102,8 @@ namespace GameControllerForZwift.UI.WPF.Tests.Screenshots
             public ControllerSetupViewModel Setup => _provider.GetRequiredService<ControllerSetupViewModel>();
 
             public MainWindowViewModel Shell => _provider.GetRequiredService<MainWindowViewModel>();
+
+            public HelpViewModel Help => _provider.GetRequiredService<HelpViewModel>();
 
             public CreditsViewModel Credits => _provider.GetRequiredService<CreditsViewModel>();
 
@@ -202,6 +204,14 @@ namespace GameControllerForZwift.UI.WPF.Tests.Screenshots
                 h.Press(ControllerInput.X);
                 h.Setup.SelectedController = null;
             }, h => h.Ride.IsRiding && h.Ride.HasProblem ? null : "the riding view or the controller problem did not show"),
+            new("ride", "controllerback", "Ride, riding, controller is back", true, true, h =>
+            {
+                h.MapXToShiftUp();
+                h.Press(ControllerInput.X);
+                h.Setup.SelectedController = null;
+                h.Pump();
+                h.Setup.SelectedController = Controller(Xbox);
+            }, h => h.Ride.IsRiding && !h.Ride.HasProblem && h.Ride.RecoveryText.Length > 0 ? null : "the recovery line did not show"),
             new("ride", "finished-ask", "Ride finished, with the donation ask", true, true, h => FinishRide(h), h => h.Ride.IsFinished && h.Ride.ShowDonationAsk ? null : "the summary or the ask did not show"),
             new("ride", "finished-noask", "Ride finished, without the donation ask", true, true, h => FinishRide(h), h => h.Ride.IsFinished && !h.Ride.ShowDonationAsk ? null : "the summary did not show, or the ask showed"),
             new("buttons", "list", "Buttons, mapping list", true, true, h => h.Shell.SelectTab(ShellTab.Buttons), null),
@@ -215,6 +225,8 @@ namespace GameControllerForZwift.UI.WPF.Tests.Screenshots
             new("connections", "notconnected", "Connections, Zwift not connected, steps shown", false, true, h => h.Shell.SelectTab(ShellTab.Connections),
                 h => h.Shell.CurrentViewModel is ConnectionsViewModel { ShowSteps: true } ? null : "the steps did not show"),
             new("settings", "default", "Settings", true, true, h => h.Shell.OpenSettingsCommand.Execute(null), null),
+            new("help", "default", "Help and feedback", true, true, h => h.Shell.OpenHelpCommand.Execute(null),
+                h => h.Shell.CurrentViewModel is HelpViewModel ? null : "the Help screen did not open"),
             new("about", "default", "About", true, true, h => h.Shell.OpenCreditsCommand.Execute(null), null),
             new("credits", "list", "About, Credits list", true, true, h =>
             {
@@ -237,10 +249,7 @@ namespace GameControllerForZwift.UI.WPF.Tests.Screenshots
             }, h => h.Shell.IsMoreMenuOpen ? null : "the menu did not open"),
         ];
 
-        private static readonly (string Screen, string State, string Reason)[] SkippedStates =
-        [
-            ("help", "default", "Help and feedback has no screen yet: its More menu item is disabled (MainWindowViewModel.OpenHelp), so no view model reaches it."),
-        ];
+        private static readonly (string Screen, string State, string Reason)[] SkippedStates = [];
 
         private static void FinishRide(Harness h)
         {

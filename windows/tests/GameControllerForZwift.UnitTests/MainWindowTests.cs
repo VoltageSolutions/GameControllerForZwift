@@ -40,6 +40,7 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton(Substitute.For<IDialogService>());
             services.AddSingleton<ControllerModelMatcher>();
             services.AddSingleton<INavigationService, NavigationService>();
+            services.AddSingleton<UI.WPF.Theme.LayoutService>();
             services.AddSingleton<ZwiftStatus>();
             services.AddSingleton<MainWindowViewModel>();
             services.AddSingleton<RideViewModel>();
@@ -50,6 +51,7 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton(new LicenseViewModel("# License", Substitute.For<IDialogService>()));
             services.AddSingleton<SupportViewModel>();
             services.AddSingleton<SettingsViewModel>();
+            services.AddSingleton<HelpViewModel>();
             services.AddSingleton<StyleGalleryViewModel>();
             services.AddTransient<MainWindow>();
             return services.BuildServiceProvider();
@@ -264,10 +266,52 @@ namespace GameControllerForZwift.UnitTests
         [Fact]
         public void BottomBar_KeepsTheContentAboveTheBar()
         {
+            WithWindow((provider, window) =>
+            {
+                // UX-S-005: the bottom bar is the phone size class. The page keeps the content above the bar, not the shell.
+                Assert.Equal(UI.WPF.Theme.SizeClass.Phone, provider.GetRequiredService<UI.WPF.Theme.LayoutService>().Current);
+                Assert.Equal(88.0, (double)Application.Current.Resources["Layout.NavClearance"]);
+                Assert.Equal(default, Find<Grid>(window, "ContentArea").Margin);
+            }, 500);
+        }
+
+        [Fact]
+        public void UXN013_TheMenuLayerAndTheOverlayLayerSitAboveTheNavigationAndTheMoreButton()
+        {
             WithWindow((_, window) =>
             {
-                Assert.Equal(88, Find<Grid>(window, "ContentArea").Margin.Bottom);
-            }, 500);
+                int overlay = Panel.GetZIndex(Find<Grid>(window, "OverlayHost"));
+                int menu = Panel.GetZIndex(Find<Grid>(window, "MoreMenuLayer"));
+
+                Assert.True(menu > Panel.GetZIndex(Find<Border>(window, "NavBottomBar")));
+                Assert.True(menu > Panel.GetZIndex(Find<UI.WPF.Controls.MoreMenuButton>(window, "MoreButton")));
+                Assert.True(overlay > menu);
+            });
+        }
+
+        [Fact]
+        public void UXN013_TheFunctionPickerSheetCoversTheNavigationWhileItIsOpen()
+        {
+            WithWindow((provider, window) =>
+            {
+                window.ViewModel.SelectTab(ShellTab.Buttons);
+                Pump(window);
+                var host = Find<Grid>(window, "OverlayHost");
+                var setup = provider.GetRequiredService<ControllerSetupViewModel>();
+                Assert.Empty(host.Children);
+
+                setup.SelectRowCommand.Execute(setup.Rows[0]);
+                Pump(window);
+
+                var sheet = Assert.IsType<Grid>(Assert.Single(host.Children));
+                Assert.Equal("FunctionOverlay", sheet.Name);
+                Assert.Same(setup, sheet.DataContext);
+
+                setup.FunctionPicker.Close();
+                Pump(window);
+
+                Assert.Empty(host.Children);
+            });
         }
 
         [Fact]
@@ -315,18 +359,18 @@ namespace GameControllerForZwift.UnitTests
         }
 
         [Fact]
-        public void UXN008_MenuListsItsItemsInOrderAndDisablesTheOnesWithoutAScreen()
+        public void UXN008_MenuListsItsItemsInOrderAndEveryItemHasAScreen()
         {
             WithWindow((_, window) =>
             {
-                var items = Find<StackPanel>(window, "MoreMenu").Children.OfType<Button>().Take(4).ToList();
+                var items = Find<Panel>(window, "MoreMenu").Children.OfType<Button>().Take(4).ToList();
 
                 Assert.Equal(
                     MenuIds,
                     items.Select(b => System.Windows.Automation.AutomationProperties.GetAutomationId(b)));
                 Assert.True(Find<Button>(window, "MenuSettingsItem").IsEnabled);
                 Assert.True(Find<Button>(window, "MenuCreditsItem").IsEnabled);
-                Assert.False(Find<Button>(window, "MenuHelpItem").IsEnabled);
+                Assert.True(Find<Button>(window, "MenuHelpItem").IsEnabled);
                 Assert.True(Find<Button>(window, "MenuSupportItem").IsEnabled);
             });
         }

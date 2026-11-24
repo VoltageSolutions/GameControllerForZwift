@@ -120,43 +120,21 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ActionRow">
                     <Grid SnapsToDevicePixels="True">
-                        <Border x:Name="Fill" CornerRadius="20" Background="{DynamicResource Brush.surface}" Effect="{DynamicResource Effect.shadow}" />
-                        <Border x:Name="Film" CornerRadius="20" Background="{DynamicResource Brush.text}" Opacity="0" IsHitTestVisible="False" />
-                        <Grid MinHeight="44" Margin="20,10">
+                        <Border x:Name="Fill" CornerRadius="{StaticResource Radius.Row}" Background="{DynamicResource Brush.surface}" Effect="{DynamicResource Effect.shadow}" />
+                        <Border x:Name="Film" CornerRadius="{StaticResource Radius.Row}" Background="{DynamicResource Brush.text}" Opacity="0" IsHitTestVisible="False" />
+                        <Grid MinHeight="40" Margin="{DynamicResource Layout.RowPadding}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
                             <StackPanel VerticalAlignment="Center">
-                                <TextBlock x:Name="EyebrowText" Text="{TemplateBinding Eyebrow}" FontSize="14" Foreground="{DynamicResource Brush.muted}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <Trigger Property="Text" Value="">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
+                                <TextBlock x:Name="EyebrowText" Style="{StaticResource Text.RowCaption}" Text="{TemplateBinding Eyebrow}">
                                 </TextBlock>
-                                <TextBlock x:Name="TitleText" Text="{TemplateBinding Title}" FontSize="17" FontWeight="Bold" TextWrapping="Wrap"
-                                           Foreground="{DynamicResource Brush.text}" />
-                                <TextBlock x:Name="DescriptionText" Margin="0,2,0,0" Text="{TemplateBinding Description}" FontSize="14" TextWrapping="Wrap"
-                                           Foreground="{DynamicResource Brush.muted}">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Style.Triggers>
-                                                <Trigger Property="Text" Value="">
-                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                </Trigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
+                                <TextBlock x:Name="TitleText" Style="{StaticResource Text.RowTitle}" Text="{TemplateBinding Title}" />
+                                <TextBlock x:Name="DescriptionText" Margin="0,2,0,0" Style="{StaticResource Text.RowCaption}" Text="{TemplateBinding Description}" />
                             </StackPanel>
                             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
-                            <TextBlock Text="{TemplateBinding TrailingText}" Margin="16,0,0,0" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold"
-                                       Foreground="{DynamicResource Brush.muted}" />
+                            <TextBlock Text="{TemplateBinding TrailingText}" Margin="16,0,0,0" VerticalAlignment="Center" Style="{StaticResource Text.Caption}" FontWeight="SemiBold" />
                             <Viewbox x:Name="Mark" Width="18" Height="18" Margin="12,0,0,0" VerticalAlignment="Center" Visibility="Collapsed">
                                 <Path x:Name="MarkPath" Width="24" Height="24" Stretch="None" Stroke="{DynamicResource Brush.text}" StrokeThickness="2.4"
                                       StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
@@ -165,6 +143,12 @@
                         </Grid>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="Eyebrow" Value="">
+                            <Setter TargetName="EyebrowText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="Description" Value="">
+                            <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <Trigger Property="Trailing" Value="Chevron">
                             <Setter TargetName="Mark" Property="Visibility" Value="Visible" />
                             <Setter TargetName="MarkPath" Property="Data" Value="{StaticResource Icon.Chevron}" />
@@ -200,26 +184,18 @@
             <Setter.Value>
                 <ControlTemplate TargetType="controls:ActionRow">
                     <Grid SnapsToDevicePixels="True">
-                        <Border x:Name="Fill" CornerRadius="20" Background="{DynamicResource Brush.surface}" Effect="{DynamicResource Effect.shadow}" />
-                        <Border x:Name="Film" CornerRadius="20" Background="{DynamicResource Brush.text}" Opacity="0" IsHitTestVisible="False" />
-                        <StackPanel MinHeight="44" Margin="20,10" VerticalAlignment="Center">
-                            <TextBlock x:Name="TitleText" Text="{TemplateBinding Title}" FontSize="17" FontWeight="Bold" TextWrapping="Wrap"
+                        <Border x:Name="Fill" CornerRadius="{StaticResource Radius.Row}" Background="{DynamicResource Brush.surface}" Effect="{DynamicResource Effect.shadow}" />
+                        <Border x:Name="Film" CornerRadius="{StaticResource Radius.Row}" Background="{DynamicResource Brush.text}" Opacity="0" IsHitTestVisible="False" />
+                        <StackPanel MinHeight="40" Margin="{DynamicResource Layout.RowPadding}" VerticalAlignment="Center">
+                            <TextBlock x:Name="TitleText" Style="{StaticResource Text.RowTitle}" Text="{TemplateBinding Title}"
                                        Foreground="{DynamicResource Brush.err}" />
-                            <TextBlock Margin="0,2,0,0" Text="{TemplateBinding Description}" FontSize="14" TextWrapping="Wrap"
-                                       Foreground="{DynamicResource Brush.muted}">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Style.Triggers>
-                                            <Trigger Property="Text" Value="">
-                                                <Setter Property="Visibility" Value="Collapsed" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
+                            <TextBlock x:Name="DescriptionText" Margin="0,2,0,0" Style="{StaticResource Text.RowCaption}" Text="{TemplateBinding Description}" />
                         </StackPanel>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <Trigger Property="Description" Value="">
+                            <Setter TargetName="DescriptionText" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="Film" Property="Opacity" Value="0.06" />
                         </Trigger>
@@ -255,7 +231,7 @@
         <Setter Property="ItemContainerStyle">
             <Setter.Value>
                 <Style TargetType="ListBoxItem">
-                    <Setter Property="Height" Value="48" />
+                    <Setter Property="MinHeight" Value="48" />
                     <Setter Property="Cursor" Value="Hand" />
                     <Setter Property="FontFamily" Value="{DynamicResource Font.Figtree}" />
                     <Setter Property="FontSize" Value="15" />
@@ -267,7 +243,14 @@
                             <ControlTemplate TargetType="ListBoxItem">
                                 <Grid SnapsToDevicePixels="True">
                                     <Border x:Name="Fill" CornerRadius="22" Background="Transparent" />
-                                    <ContentPresenter Margin="4,0" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    <ContentPresenter Margin="8,4" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <ContentPresenter.Resources>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="TextWrapping" Value="Wrap" />
+                                                <Setter Property="TextAlignment" Value="Center" />
+                                            </Style>
+                                        </ContentPresenter.Resources>
+                                    </ContentPresenter>
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">

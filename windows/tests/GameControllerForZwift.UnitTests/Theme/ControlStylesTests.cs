@@ -170,16 +170,25 @@ namespace GameControllerForZwift.UnitTests.Theme
         }
 
         [Theory]
-        [InlineData("Surface.Card", 24)]
-        [InlineData("Surface.Row", 18)]
+        [InlineData("Surface.Card", 28)]
+        [InlineData("Surface.Row", 20)]
         [InlineData("Surface.Panel", 32)]
-        [InlineData("Surface.Chip", 16)]
         public void UXV017_UXV018_UXV019_SurfacesUseTheSpecRadii(string key, double radius)
         {
             Hosted(() => new Border { Style = Named(key) }, border =>
             {
                 Assert.Equal(radius, border.CornerRadius.TopLeft);
                 Assert.Equal(default, border.BorderThickness);
+            });
+        }
+
+        [Fact]
+        public void UXV016_AChipIsAPillOfHalfItsHeight()
+        {
+            Hosted(() => new Border { Style = Named("Surface.Chip") }, border =>
+            {
+                Assert.Equal(32, border.ActualHeight);
+                Assert.Equal(16, border.CornerRadius.TopLeft);
             });
         }
 
@@ -191,8 +200,8 @@ namespace GameControllerForZwift.UnitTests.Theme
                 Assert.Equal(64, text.FontSize);
                 Assert.Equal(FontWeights.ExtraBold, text.FontWeight);
                 Assert.Equal(FontNumeralAlignment.Tabular, System.Windows.Documents.Typography.GetNumeralAlignment(text));
-                Assert.Equal(52.0, (double)Named("Text.Display").Setters.OfType<Setter>().Single(s => s.Property == TextBlock.FontSizeProperty).Value);
             });
+            Hosted(() => new TextBlock { Text = "Ready", Style = Named("Text.Display") }, text => Assert.Equal(52, text.FontSize));
         }
 
         [Fact]

@@ -95,36 +95,6 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
         }
 
         [Fact]
-        public void SCRSET006_OpenLogsFolder_CreatesAndOpensTheLogFolder()
-        {
-            string logs = Path.Join(_context.ConfigurationsFolder, "logs-test");
-            var viewModel = new SettingsViewModel(_context.Store, _context.Settings, _context.Dialogs, logsFolder: logs);
-
-            viewModel.OpenLogsFolderCommand.Execute(null);
-
-            Assert.True(Directory.Exists(logs));
-            Assert.Equal([logs], _context.Dialogs.OpenedFolders);
-        }
-
-        [Fact]
-        public void SCRSET007_HelpLinkIsDisabledWhileThereIsNoHelpScreen()
-        {
-            Assert.False(CreateViewModel().OpenHelpCommand.CanExecute(null));
-        }
-
-        [Fact]
-        public void SCRSET008_VersionAndCreditsLink()
-        {
-            var navigation = NSubstitute.Substitute.For<GameControllerForZwift.UI.WPF.Navigation.INavigationService>();
-            var viewModel = new SettingsViewModel(_context.Store, _context.Settings, _context.Dialogs, navigationService: navigation);
-
-            viewModel.OpenCreditsCommand.Execute(null);
-
-            Assert.StartsWith("Version ", viewModel.VersionText, StringComparison.Ordinal);
-            navigation.Received(1).NavigateTo<CreditsViewModel>();
-        }
-
-        [Fact]
         public void SCRSET002_AppearanceIsSaved()
         {
             SettingsViewModel viewModel = CreateViewModel();

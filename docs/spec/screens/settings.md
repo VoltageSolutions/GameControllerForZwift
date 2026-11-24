@@ -15,7 +15,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 **What it is for:** change how the app looks, set when a ride ends, and manage saved mappings.
 
-**Content, top to bottom:** the screen title "Settings" (`SettingsPageTitle`), then three sections, each with a level 2 heading.
+**Content, top to bottom:** the screen title "Settings" (`SettingsPageTitle`) with a short line about what the screen is for, then three sections, each with a level 2 heading. On a wide window the title and the line sit on the left, and every section sits in the column on the right (UX-V-049).
 
 | Section | Content |
 |---|---|
@@ -63,6 +63,7 @@ On Settings, a controller press goes to Zwift as mapped. Dialogs work with touch
 | Key | English text | Rule |
 |---|---|---|
 | `SettingsTitle` | Settings | SCR-SET-010 |
+| `SettingsIntro` | Choose how the app looks, when a ride ends, and what happens to your saved mappings. | SCR-SET-011 |
 | `SettingsAppearanceSection` | Appearance | SCR-SET-001 |
 | `AppearanceLight` | Light | SCR-SET-001 |
 | `AppearanceDark` | Dark | SCR-SET-001 |

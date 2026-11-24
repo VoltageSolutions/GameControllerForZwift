@@ -713,29 +713,81 @@
     <value>Couldn't open the folder</value>
     <comment>Title of the error dialog shown when a folder from the Settings screen could not be opened.</comment>
   </data>
-  <data name="SettingsHelpSection" xml:space="preserve">
-    <value>Help</value>
-    <comment>Heading of the section on the Settings screen with the log folder and the link to Help and feedback.</comment>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Choose how the app looks, when a ride ends, and what happens to your saved mappings.</value>
+    <comment>Short line under the title of the Settings screen. A mapping is a saved set of button assignments.</comment>
   </data>
-  <data name="SettingsOpenLogs" xml:space="preserve">
-    <value>Open the log folder</value>
-    <comment>Button on the Settings screen that opens the folder with the app's log files.</comment>
-  </data>
-  <data name="SettingsHelpLinkText" xml:space="preserve">
+  <data name="HelpTitle" xml:space="preserve">
     <value>Help and feedback</value>
-    <comment>Link on the Settings screen to the Help and feedback screen.</comment>
+    <comment>Title of the Help and feedback screen.</comment>
   </data>
-  <data name="SettingsAboutSection" xml:space="preserve">
-    <value>About</value>
-    <comment>Heading of the section on the Settings screen with the app version and the link to Credits.</comment>
+  <data name="HelpIntro" xml:space="preserve">
+    <value>Most problems have a quick fix. Start with the list, and reach me on GitHub if yours is not there.</value>
+    <comment>Short line under the title of the Help and feedback screen. Me is the maintainer of the app.</comment>
   </data>
-  <data name="SettingsVersionFormat" xml:space="preserve">
-    <value>Version {0}</value>
-    <comment>Line on the Settings screen that shows the app version. {0} is the version number, for example 0.6.0.</comment>
+  <data name="HelpProblemsSection" xml:space="preserve">
+    <value>Common problems</value>
+    <comment>Heading over the list of common problems on the Help and feedback screen.</comment>
   </data>
-  <data name="SettingsCreditsLinkText" xml:space="preserve">
-    <value>Credits</value>
-    <comment>Link on the Settings screen to the Credits screen.</comment>
+  <data name="HelpProblemFindTitle" xml:space="preserve">
+    <value>Zwift can't find Voltage Gamepad</value>
+    <comment>Common problem on the Help and feedback screen. Voltage Gamepad is the name the app shows to Zwift. Keep it.</comment>
+  </data>
+  <data name="HelpProblemFindFix" xml:space="preserve">
+    <value>Follow the three steps on Connections.</value>
+    <comment>Fix for the problem that Zwift cannot find the app. Connections is the name of a tab.</comment>
+  </data>
+  <data name="HelpProblemSeeTitle" xml:space="preserve">
+    <value>Zwift can't see your controller</value>
+    <comment>Common problem on the Help and feedback screen: Zwift lost the connection to the app.</comment>
+  </data>
+  <data name="HelpProblemSeeFix" xml:space="preserve">
+    <value>In Zwift, pick Voltage Gamepad under Controls again. Your controller stays connected to this app.</value>
+    <comment>Fix for the problem that Zwift lost the connection. Voltage Gamepad is the name the app shows to Zwift. Keep it.</comment>
+  </data>
+  <data name="HelpProblemButtonTitle" xml:space="preserve">
+    <value>A button does nothing</value>
+    <comment>Common problem on the Help and feedback screen.</comment>
+  </data>
+  <data name="HelpProblemButtonFix" xml:space="preserve">
+    <value>Open Buttons and look at the row for that button. A row that says No action does nothing in Zwift.</value>
+    <comment>Fix for a button that does nothing. Buttons is the name of a tab, and No action is a label on it.</comment>
+  </data>
+  <data name="HelpProblemMissingTitle" xml:space="preserve">
+    <value>My controller isn't showing up</value>
+    <comment>Common problem on the Help and feedback screen.</comment>
+  </data>
+  <data name="HelpProblemMissingFix" xml:space="preserve">
+    <value>Press a button to wake it. For Bluetooth, pair it in Windows first, or plug it in with a USB cable.</value>
+    <comment>Fix for a controller that is not listed.</comment>
+  </data>
+  <data name="HelpContactSection" xml:space="preserve">
+    <value>Get in touch</value>
+    <comment>Heading over the log folder, Report a problem, and Send feedback on the Help and feedback screen.</comment>
+  </data>
+  <data name="HelpOpenLogs" xml:space="preserve">
+    <value>Open log folder</value>
+    <comment>Row on the Help and feedback screen that opens the folder with the log files.</comment>
+  </data>
+  <data name="HelpOpenLogsDescription" xml:space="preserve">
+    <value>Check the log before you share it publicly. It lists local network addresses.</value>
+    <comment>Line under Open log folder. Warns that the log has private details.</comment>
+  </data>
+  <data name="HelpReport" xml:space="preserve">
+    <value>Report a problem</value>
+    <comment>Row on the Help and feedback screen that opens GitHub to start an issue.</comment>
+  </data>
+  <data name="HelpReportDescription" xml:space="preserve">
+    <value>Opens GitHub. Attach the app version, your controller, and the log file.</value>
+    <comment>Line under Report a problem. Says what to attach.</comment>
+  </data>
+  <data name="HelpFeedback" xml:space="preserve">
+    <value>Send feedback</value>
+    <comment>Row on the Help and feedback screen that opens the Issues page of the project on GitHub.</comment>
+  </data>
+  <data name="HelpFeedbackDescription" xml:space="preserve">
+    <value>Opens the Issues page of the project on GitHub.</value>
+    <comment>Line under Send feedback.</comment>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>Game Controller for Zwift</value>

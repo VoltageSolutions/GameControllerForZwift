@@ -1,117 +1,165 @@
 <UserControl x:Class="GameControllerForZwift.UI.WPF.Views.StyleGalleryPage"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
              AutomationProperties.AutomationId="StyleGalleryPage">
-    <!-- Debug builds only. Every shared component in each state (docs/spec/ux/visual-system.md). Developers read this
-         screen, so its text is English only (UX-L-009). -->
-    <UserControl.Resources>
-        <Style x:Key="Section" TargetType="TextBlock" BasedOn="{StaticResource Text.BodyStrong}">
-            <Setter Property="FontSize" Value="20" />
-            <Setter Property="Margin" Value="0,40,0,16" />
-        </Style>
-        <Style x:Key="Group" TargetType="WrapPanel">
-            <Setter Property="Orientation" Value="Horizontal" />
-        </Style>
-        <Style TargetType="Button" BasedOn="{StaticResource Button.Secondary}">
-            <Setter Property="Margin" Value="0,0,12,12" />
-        </Style>
-    </UserControl.Resources>
+    <!-- Debug builds only. Every shared component in each state (docs/spec/ux/visual-system.md,
+         docs/spec/ux/style-system.md, UX-S-011). Developers read this screen, so its text is English only (UX-L-009). -->
+    <controls:ScreenPage>
+        <controls:Stack Gap="{DynamicResource Layout.SectionGap}">
+            <controls:Stack Gap="{StaticResource Space.8}">
+                <TextBlock x:Name="PageTitle" Style="{StaticResource Text.PageTitle}" Text="Style gallery"
+                           AutomationProperties.AutomationId="StyleGalleryPageTitle" AutomationProperties.HeadingLevel="Level1" />
+                <TextBlock Style="{StaticResource Text.Caption}"
+                           Text="Every shared component in each state. Switch the app theme in Settings to see light, dark, and contrast themes. Resize the window to see the three size classes." />
+            </controls:Stack>
 
-    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
-        <StackPanel Margin="0,0,64,48">
-            <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="Style gallery"
-                       AutomationProperties.AutomationId="StyleGalleryPageTitle" AutomationProperties.HeadingLevel="Level1" />
-            <TextBlock Margin="0,8,0,0" Style="{StaticResource Text.Caption}"
-                       Text="Every shared component in each state. Switch the app theme in Settings to see light, dark, and contrast themes." />
+            <controls:Section Label="Type">
+                <controls:Stack Gap="{StaticResource Space.8}">
+                    <TextBlock Style="{StaticResource Text.PageTitle}" Text="Page title" />
+                    <TextBlock Style="{StaticResource Text.Display}" Text="Ready when you are" />
+                    <TextBlock Style="{StaticResource Text.Readout}" Text="1,086" />
+                    <TextBlock Style="{StaticResource Text.Title}" Text="Title, extra bold" />
+                    <TextBlock Style="{StaticResource Text.Body}" Text="Body, regular. Zwift can see your controller." />
+                    <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Body strong, semibold" />
+                    <TextBlock Style="{StaticResource Text.Caption}" Text="Caption, muted" />
+                    <TextBlock Style="{StaticResource Text.RowTitle}" Text="Row title" />
+                    <TextBlock Style="{StaticResource Text.RowCaption}" Text="Row caption, muted" />
+                </controls:Stack>
+            </controls:Section>
 
-            <TextBlock Style="{StaticResource Section}" Text="Type" AutomationProperties.HeadingLevel="Level2" />
-            <TextBlock Style="{StaticResource Text.Display}" Text="Ready when you are" />
-            <TextBlock Style="{StaticResource Text.Readout}" Text="1,086" />
-            <TextBlock Style="{StaticResource Text.Title}" Text="Title, 28 extra bold" />
-            <TextBlock Style="{StaticResource Text.Body}" Text="Body, 18 regular. Zwift can see your controller." />
-            <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Body strong, 18 semibold" />
-            <TextBlock Style="{StaticResource Text.Caption}" Text="Caption, 15 muted" />
+            <controls:Section Label="Buttons">
+                <controls:Stack Gap="{DynamicResource Layout.CardGap}">
+                    <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{DynamicResource Layout.ButtonGap}">
+                        <Button x:Name="SamplePrimaryButton" Style="{StaticResource Button.Primary}">
+                            <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.8}">
+                                <Path Style="{StaticResource ButtonIcon}" Data="M7,4.5 V19.5 L19,12 Z" Fill="{DynamicResource Brush.on-accent}" StrokeThickness="0" />
+                                <TextBlock Text="Start riding" VerticalAlignment="Center" />
+                            </controls:Stack>
+                        </Button>
+                        <Button Style="{StaticResource Button.Standard}" Content="Save as new" />
+                        <Button Content="Cancel" />
+                        <Button Style="{StaticResource Button.Icon}" AutomationProperties.Name="Back">
+                            <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Back}" />
+                        </Button>
+                    </controls:Stack>
+                    <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{DynamicResource Layout.ButtonGap}">
+                        <Button Style="{StaticResource Button.Primary}" Content="Save" IsEnabled="False" />
+                        <Button Style="{StaticResource Button.Standard}" Content="Save as new" IsEnabled="False" />
+                        <Button Content="Delete" IsEnabled="False" />
+                    </controls:Stack>
+                    <TextBlock Style="{StaticResource Text.Caption}" Text="A long label grows the button and never wraps or cuts the text (UX-V-029)." />
+                    <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{DynamicResource Layout.ButtonGap}">
+                        <Button Style="{StaticResource Button.Primary}" Content="Mit dem Fahren beginnen" />
+                        <Button Content="Ohne Speichern wechseln" />
+                    </controls:Stack>
+                </controls:Stack>
+            </controls:Section>
 
-            <TextBlock Style="{StaticResource Section}" Text="Buttons" AutomationProperties.HeadingLevel="Level2" />
-            <WrapPanel Style="{StaticResource Group}">
-                <Button x:Name="SamplePrimaryButton" Style="{StaticResource Button.Primary}" Margin="0,0,12,12">
-                    <StackPanel Orientation="Horizontal">
-                        <Path Style="{StaticResource ButtonIcon}" Data="M7,4.5 V19.5 L19,12 Z" Fill="{DynamicResource Brush.on-accent}" StrokeThickness="0" />
-                        <TextBlock Text="Start riding" VerticalAlignment="Center" />
-                    </StackPanel>
-                </Button>
-                <Button Style="{StaticResource Button.Standard}" Margin="0,0,12,12" Content="Save as new" />
-                <Button Content="Cancel" />
-                <Button Style="{StaticResource Button.Icon}" Margin="0,0,12,12" AutomationProperties.Name="Back">
-                    <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Back}" />
-                </Button>
-            </WrapPanel>
-            <WrapPanel Style="{StaticResource Group}">
-                <Button Style="{StaticResource Button.Primary}" Margin="0,0,12,12" Content="Save" IsEnabled="False" />
-                <Button Style="{StaticResource Button.Standard}" Margin="0,0,12,12" Content="Save as new" IsEnabled="False" />
-                <Button Content="Delete" IsEnabled="False" />
-            </WrapPanel>
-            <TextBlock Margin="0,4,0,8" Style="{StaticResource Text.Caption}" Text="A long label grows the button and never wraps or cuts the text (UX-V-029)." />
-            <WrapPanel Style="{StaticResource Group}">
-                <Button Style="{StaticResource Button.Primary}" Margin="0,0,12,12" Content="Mit dem Fahren beginnen" />
-                <Button Content="Ohne Speichern wechseln" />
-            </WrapPanel>
+            <controls:Section Label="Fields">
+                <controls:Stack Gap="{DynamicResource Layout.CardGap}">
+                    <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{DynamicResource Layout.ButtonGap}">
+                        <ComboBox x:Name="SampleComboBox" Width="{StaticResource Size.PickerMinWidth}" ItemsSource="{Binding SampleChoices}" SelectedItem="{Binding SelectedChoice}"
+                                  AutomationProperties.Name="Mapping" />
+                        <ComboBox Width="{StaticResource Size.PickerMinWidth}" ItemsSource="{Binding SampleChoices}" SelectedIndex="0" IsEnabled="False"
+                                  AutomationProperties.Name="Mapping, disabled" />
+                    </controls:Stack>
+                    <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{DynamicResource Layout.ButtonGap}">
+                        <TextBox x:Name="SampleTextBox" Width="{StaticResource Size.PickerMinWidth}" Text="{Binding SampleText, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Name" />
+                        <TextBox Width="{StaticResource Size.PickerMinWidth}" Text="Can't edit" IsEnabled="False" AutomationProperties.Name="Name, disabled" />
+                    </controls:Stack>
+                </controls:Stack>
+            </controls:Section>
 
-            <TextBlock Style="{StaticResource Section}" Text="Fields" AutomationProperties.HeadingLevel="Level2" />
-            <WrapPanel Style="{StaticResource Group}">
-                <ComboBox x:Name="SampleComboBox" Width="260" Margin="0,0,12,12" ItemsSource="{Binding SampleChoices}" SelectedItem="{Binding SelectedChoice}"
-                          AutomationProperties.Name="Mapping" />
-                <ComboBox Width="260" Margin="0,0,12,12" ItemsSource="{Binding SampleChoices}" SelectedIndex="0" IsEnabled="False"
-                          AutomationProperties.Name="Mapping, disabled" />
-            </WrapPanel>
-            <WrapPanel Style="{StaticResource Group}">
-                <TextBox x:Name="SampleTextBox" Width="260" Margin="0,0,12,12" Text="{Binding SampleText, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Name" />
-                <TextBox Width="260" Margin="0,0,12,12" Text="Can't edit" IsEnabled="False" AutomationProperties.Name="Name, disabled" />
-            </WrapPanel>
+            <controls:Section Label="Choices">
+                <controls:Stack Gap="{DynamicResource Layout.RowGap}">
+                    <CheckBox x:Name="SampleCheckBox" Content="Show mappings from other controllers" IsChecked="{Binding IsChecked}" />
+                    <CheckBox Content="Not checked" />
+                    <CheckBox Content="Checked and disabled" IsChecked="True" IsEnabled="False" />
+                    <CheckBox x:Name="SampleSwitch" Style="{StaticResource Switch}" Width="{StaticResource Size.PickerMaxWidth}" HorizontalAlignment="Left" Content="Announce each shift" IsChecked="{Binding IsSwitchOn}" />
+                    <CheckBox Style="{StaticResource Switch}" Width="{StaticResource Size.PickerMaxWidth}" HorizontalAlignment="Left" Content="Start with Windows" />
+                    <RadioButton GroupName="Sample" Content="Light" />
+                    <RadioButton GroupName="Sample" Content="Dark" />
+                    <RadioButton GroupName="Sample" Content="Match Windows" IsChecked="True" />
+                </controls:Stack>
+            </controls:Section>
 
-            <TextBlock Style="{StaticResource Section}" Text="Choices" AutomationProperties.HeadingLevel="Level2" />
-            <CheckBox x:Name="SampleCheckBox" Content="Show mappings from other controllers" IsChecked="{Binding IsChecked}" />
-            <CheckBox Content="Not checked" />
-            <CheckBox Content="Checked and disabled" IsChecked="True" IsEnabled="False" />
-            <CheckBox x:Name="SampleSwitch" Style="{StaticResource Switch}" Width="360" HorizontalAlignment="Left" Content="Announce each shift" IsChecked="{Binding IsSwitchOn}" />
-            <CheckBox Style="{StaticResource Switch}" Width="360" HorizontalAlignment="Left" Content="Start with Windows" />
-            <RadioButton GroupName="Sample" Content="Light" />
-            <RadioButton GroupName="Sample" Content="Dark" />
-            <RadioButton GroupName="Sample" Content="Match Windows" IsChecked="True" />
+            <controls:Section Label="Status">
+                <controls:Stack Gap="{DynamicResource Layout.RowGap}">
+                    <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.12}">
+                        <controls:StatusDot IsOk="True" />
+                        <TextBlock Style="{StaticResource Text.Status}" Text="Status dot, ok" />
+                    </controls:Stack>
+                    <controls:Stack Orientation="Horizontal" Gap="{StaticResource Space.12}">
+                        <controls:StatusDot IsOk="False" />
+                        <TextBlock Style="{StaticResource Text.Status}" Text="Status dot, err" />
+                    </controls:Stack>
+                    <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{StaticResource Space.8}">
+                        <controls:StatusChip IsOk="True" Text="Controller connected" />
+                        <controls:StatusChip IsOk="False" Text="Zwift can't see your controller" />
+                    </controls:Stack>
+                </controls:Stack>
+            </controls:Section>
 
-            <TextBlock Style="{StaticResource Section}" Text="Surfaces" AutomationProperties.HeadingLevel="Level2" />
-            <WrapPanel Style="{StaticResource Group}">
-                <Border Style="{StaticResource Surface.Card}" Width="260" Margin="0,0,16,16">
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Card" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="Radius 24, padding 24" />
-                    </StackPanel>
-                </Border>
-                <Border Style="{StaticResource Surface.Panel}" Width="300" Margin="0,0,16,16">
-                    <StackPanel>
-                        <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Panel" />
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="Radius 32, padding 32" />
-                    </StackPanel>
-                </Border>
-            </WrapPanel>
-            <Border Style="{StaticResource Surface.Row}" MaxWidth="560" HorizontalAlignment="Left" Margin="0,0,0,16">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Style="{StaticResource Text.Caption}" Text="Right bumper" />
-                        <TextBlock Style="{StaticResource Text.BodyStrong}" Text="Shift up" />
-                    </StackPanel>
-                    <Border Grid.Column="1" Style="{StaticResource Surface.Chip}" VerticalAlignment="Center">
-                        <TextBlock VerticalAlignment="Center" FontSize="14" FontWeight="Bold" Text="RB" />
+            <controls:Section Label="Surfaces">
+                <controls:Stack Gap="{DynamicResource Layout.CardGap}">
+                    <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{DynamicResource Layout.CardGap}">
+                        <Border Style="{StaticResource Surface.Card}" Width="{StaticResource Size.PickerMinWidth}">
+                            <controls:Stack>
+                                <TextBlock Style="{StaticResource Text.RowTitle}" Text="Card" />
+                                <TextBlock Style="{StaticResource Text.Caption}" Text="Radius 28, card padding" />
+                            </controls:Stack>
+                        </Border>
+                        <Border Style="{StaticResource Surface.Panel}" Width="{StaticResource Size.PickerMinWidth}">
+                            <controls:Stack>
+                                <TextBlock Style="{StaticResource Text.RowTitle}" Text="Panel" />
+                                <TextBlock Style="{StaticResource Text.Caption}" Text="Radius 32, card padding" />
+                            </controls:Stack>
+                        </Border>
+                    </controls:Stack>
+                    <Border Style="{StaticResource Surface.Row}" MaxWidth="{StaticResource Size.SideColumn}" HorizontalAlignment="Left">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <controls:Stack VerticalAlignment="Center">
+                                <TextBlock Style="{StaticResource Text.Caption}" Text="Right bumper" />
+                                <TextBlock Style="{StaticResource Text.RowTitle}" Text="Shift up" />
+                            </controls:Stack>
+                            <Border Grid.Column="1" Style="{StaticResource Chip.Key}">
+                                <TextBlock Style="{StaticResource Text.Chip}" Text="RB" />
+                            </Border>
+                        </Grid>
                     </Border>
-                </Grid>
-            </Border>
+                    <Border Style="{StaticResource Surface.RowDisabled}" MaxWidth="{StaticResource Size.SideColumn}" HorizontalAlignment="Left">
+                        <TextBlock Style="{StaticResource Text.RowTitle}" Foreground="{DynamicResource Brush.muted}" VerticalAlignment="Center" Text="A row with no action" />
+                    </Border>
+                    <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{DynamicResource Layout.CardGap}">
+                        <Border Style="{StaticResource Chip.Live}">
+                            <TextBlock Style="{StaticResource Text.Title}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource Brush.on-accent}" Text="X" />
+                        </Border>
+                        <UniformGrid Rows="1" Columns="3" Width="{StaticResource Size.SideColumn}">
+                            <controls:Stat Value="32 min" Label="ride time" />
+                            <controls:Stat Value="5" Label="shifts" />
+                            <controls:Stat Value="1" Label="ride together" />
+                        </UniformGrid>
+                    </controls:Stack>
+                </controls:Stack>
+            </controls:Section>
 
-            <TextBlock Style="{StaticResource Section}" Text="Colors" AutomationProperties.HeadingLevel="Level2" />
-            <WrapPanel x:Name="Swatches" Orientation="Horizontal" />
-        </StackPanel>
-    </ScrollViewer>
+            <controls:Section Label="Rows">
+                <controls:Stack Gap="{DynamicResource Layout.RowGap}" MaxWidth="{StaticResource Size.SideColumn}">
+                    <controls:ActionRow Title="Opens another screen" Description="Chevron" Trailing="Chevron" />
+                    <controls:ActionRow Title="Opens outside the app" Description="External mark" Trailing="External" />
+                    <controls:ActionRow Title="Deletes something" Style="{StaticResource ActionRow.Danger}" />
+                    <controls:ActionRow Title="Not available" IsEnabled="False" />
+                </controls:Stack>
+            </controls:Section>
+
+            <controls:Section Label="Colors">
+                <controls:Stack x:Name="Swatches" Orientation="Horizontal" Wrap="True" Gap="{StaticResource Space.16}" />
+            </controls:Section>
+        </controls:Stack>
+    </controls:ScreenPage>
 </UserControl>

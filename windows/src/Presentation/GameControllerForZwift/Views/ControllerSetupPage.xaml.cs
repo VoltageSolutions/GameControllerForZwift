@@ -1,4 +1,4 @@
-﻿using GameControllerForZwift.Core;
+using GameControllerForZwift.Core;
 using GameControllerForZwift.UI.WPF.Controls;
 using GameControllerForZwift.UI.WPF.ViewModels;
 using System.ComponentModel;
@@ -17,23 +17,9 @@ namespace GameControllerForZwift.UI.WPF.Views
     {
         #region Fields
 
-        internal const double MinimumRowWidth = 320;
-        internal const double MaximumCardsWidth = 1000;
         internal const double MaximumPickerWidth = 420;
         private const double TwoColumnBreakpointWidth = 900;
         private const double LandscapeControllerColumnWidth = 376;
-
-        private const double RowGap = 12;
-        private const double CardPadding = 24;
-
-        public static readonly DependencyProperty RowWidthProperty =
-            DependencyProperty.Register(nameof(RowWidth), typeof(double), typeof(ControllerSetupPage), new PropertyMetadata(MinimumRowWidth + RowGap));
-
-        public static readonly DependencyProperty CardWidthProperty =
-            DependencyProperty.Register(nameof(CardWidth), typeof(double), typeof(ControllerSetupPage), new PropertyMetadata(MinimumRowWidth + 2 * CardPadding + RowGap));
-
-        public static readonly DependencyProperty CardRowWidthProperty =
-            DependencyProperty.Register(nameof(CardRowWidth), typeof(double), typeof(ControllerSetupPage), new PropertyMetadata(MinimumRowWidth + RowGap));
 
         public ControllerSetupViewModel ViewModel => (ControllerSetupViewModel)DataContext;
 
@@ -60,44 +46,22 @@ namespace GameControllerForZwift.UI.WPF.Views
                 SetScreenActive(true);
                 UpdateLayoutWidths(ActualWidth);
             };
-            Unloaded += (_, _) => SetScreenActive(false);
+            Unloaded += (_, _) =>
+            {
+                SetScreenActive(false);
+                MoveSheetBack();
+            };
         }
 
         #endregion
-
-        public double RowWidth
-        {
-            get => (double)GetValue(RowWidthProperty);
-            set => SetValue(RowWidthProperty, value);
-        }
-
-        public double CardWidth
-        {
-            get => (double)GetValue(CardWidthProperty);
-            set => SetValue(CardWidthProperty, value);
-        }
-
-        public double CardRowWidth
-        {
-            get => (double)GetValue(CardRowWidthProperty);
-            set => SetValue(CardRowWidthProperty, value);
-        }
-
-        internal static double ColumnWidth(double available) => ColumnWidth(available, MinimumRowWidth);
-
-        internal static double ColumnWidth(double available, double minimum)
-        {
-            return Math.Max(minimum, available / ColumnCount(available, minimum));
-        }
-
-        internal static int ColumnCount(double available, double minimum) =>
-            Math.Max(1, (int)Math.Floor(available / (minimum + RowGap)));
 
         private void UpdateLayoutWidths(double pageWidth)
         {
             if (pageWidth <= 0)
                 return;
 
+            // The gap below and beside the controller card is the card gap of the size class.
+            double cardGap = TryFindResource("Layout.CardGap") as double? ?? 0;
             bool isLandscapeTwoColumn = pageWidth >= TwoColumnBreakpointWidth;
 
             if (isLandscapeTwoColumn)
@@ -108,7 +72,7 @@ namespace GameControllerForZwift.UI.WPF.Views
                 Grid.SetRow(ControllerVisualCard, 0);
                 Grid.SetColumn(DetailsHost, 1);
                 Grid.SetRow(DetailsHost, 0);
-                ControllerVisualCard.Margin = new Thickness(0, 0, 16, 16);
+                ControllerVisualCard.Margin = new Thickness(0, 0, cardGap, cardGap);
                 ControllerVisualCard.HorizontalAlignment = HorizontalAlignment.Stretch;
             }
             else
@@ -119,23 +83,13 @@ namespace GameControllerForZwift.UI.WPF.Views
                 Grid.SetRow(ControllerVisualCard, 0);
                 Grid.SetColumn(DetailsHost, 0);
                 Grid.SetRow(DetailsHost, 1);
-                ControllerVisualCard.Margin = new Thickness(0, 0, 0, 16);
-                ControllerVisualCard.HorizontalAlignment = HorizontalAlignment.Left;
+                ControllerVisualCard.Margin = new Thickness(0, 0, 0, cardGap);
+                ControllerVisualCard.HorizontalAlignment = HorizontalAlignment.Stretch;
             }
 
-            double rightColumnWidth = isLandscapeTwoColumn
-                ? Math.Max(MinimumRowWidth, pageWidth - LandscapeControllerColumnWidth - 16 - SystemParameters.VerticalScrollBarWidth)
-                : Math.Max(0, pageWidth - SystemParameters.VerticalScrollBarWidth);
-
-            RowWidth = ColumnWidth(rightColumnWidth);
-
-            // Stacked, the card spans the row columns below it. Each row's slot includes its right margin, so the drawn width is the slots minus one gap.
-            ControllerVisualCard.Width = isLandscapeTwoColumn
-                ? double.NaN
-                : Math.Max(0, ColumnCount(rightColumnWidth, MinimumRowWidth) * RowWidth - RowGap);
-            CardWidth = ColumnWidth(Math.Min(rightColumnWidth, MaximumCardsWidth), MinimumRowWidth + 2 * CardPadding);
-            CardRowWidth = ColumnWidth(Math.Max(0, CardWidth - RowGap - 2 * CardPadding));
-            ConfigurationComboBox.Width = Math.Clamp(Math.Max(0, pageWidth - SystemParameters.VerticalScrollBarWidth) - RowGap, 240, MaximumPickerWidth);
+            // The picker never grows wider than the page minus its padding.
+            double padding = TryFindResource("Layout.PagePadding") is Thickness page ? page.Left + page.Right : 0;
+            ConfigurationComboBox.Width = Math.Clamp(pageWidth - padding, 240, MaximumPickerWidth);
         }
 
         private void SetScreenActive(bool active)
@@ -187,12 +141,40 @@ namespace GameControllerForZwift.UI.WPF.Views
             if (ViewModel.FunctionPicker.IsOpen)
             {
                 _focusBeforePanel = Keyboard.FocusedElement;
+                MoveSheetToWindow();
                 Dispatcher.BeginInvoke(DispatcherPriority.Input, () => FunctionPanel.MoveFocus(new TraversalRequest(FocusNavigationDirection.First)));
             }
-            else if (_focusBeforePanel is UIElement { IsVisible: true } previous)
+            else
             {
-                Keyboard.Focus(previous);
-                _focusBeforePanel = null;
+                MoveSheetBack();
+                if (_focusBeforePanel is UIElement { IsVisible: true } previous)
+                {
+                    Keyboard.Focus(previous);
+                    _focusBeforePanel = null;
+                }
+            }
+        }
+
+        // The sheet covers the navigation and the More button, so while it is open it lives in the window's overlay layer
+        // (UX-N-013). It keeps its data context and its names, and it comes back to the page when it closes. Without a
+        // main window, for example when the page is hosted alone, it stays in the page.
+        private void MoveSheetToWindow()
+        {
+            if (Window.GetWindow(this) is MainWindow window && FunctionOverlay.Parent == PageRoot)
+            {
+                PageRoot.Children.Remove(FunctionOverlay);
+                FunctionOverlay.DataContext = DataContext;
+                window.ShowOverlay(FunctionOverlay);
+            }
+        }
+
+        private void MoveSheetBack()
+        {
+            if (FunctionOverlay.Parent is Panel parent && parent != PageRoot)
+            {
+                parent.Children.Remove(FunctionOverlay);
+                FunctionOverlay.ClearValue(DataContextProperty);
+                PageRoot.Children.Add(FunctionOverlay);
             }
         }
 

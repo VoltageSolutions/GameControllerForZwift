@@ -1,0 +1,53 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf">
+
+    <!-- Styles for the documents of the Credits list and the License screens (SCR-CRD-011, SCR-CRD-012). Markdig.Wpf
+         asks for these keys. They bring the text into the type system: Figtree (UX-V-011), headings at weight 800 and
+         700 (UX-V-012), body text at the body size of the size class, and links in the accent text color. -->
+
+    <Style x:Key="{x:Static markdig:Styles.DocumentStyleKey}" TargetType="FlowDocument">
+        <Setter Property="FontFamily" Value="{StaticResource Font.Figtree}" />
+        <Setter Property="FontSize" Value="{DynamicResource Layout.BodySize}" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
+        <Setter Property="PagePadding" Value="0" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="ColumnWidth" Value="999999" />
+    </Style>
+
+    <Style x:Key="{x:Static markdig:Styles.Heading1StyleKey}" TargetType="Paragraph">
+        <Setter Property="FontSize" Value="{DynamicResource Layout.TitleSize}" />
+        <Setter Property="FontWeight" Value="ExtraBold" />
+        <Setter Property="Margin" Value="0,24,0,8" />
+    </Style>
+    <Style x:Key="{x:Static markdig:Styles.Heading2StyleKey}" TargetType="Paragraph">
+        <Setter Property="FontSize" Value="20" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Margin" Value="0,24,0,8" />
+    </Style>
+    <Style x:Key="{x:Static markdig:Styles.Heading3StyleKey}" TargetType="Paragraph">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+        <Setter Property="Margin" Value="0,16,0,4" />
+    </Style>
+    <Style x:Key="{x:Static markdig:Styles.Heading4StyleKey}" TargetType="Paragraph" BasedOn="{StaticResource {x:Static markdig:Styles.Heading3StyleKey}}" />
+    <Style x:Key="{x:Static markdig:Styles.Heading5StyleKey}" TargetType="Paragraph" BasedOn="{StaticResource {x:Static markdig:Styles.Heading3StyleKey}}" />
+    <Style x:Key="{x:Static markdig:Styles.Heading6StyleKey}" TargetType="Paragraph" BasedOn="{StaticResource {x:Static markdig:Styles.Heading3StyleKey}}" />
+
+    <Style x:Key="{x:Static markdig:Styles.HyperlinkStyleKey}" TargetType="Hyperlink">
+        <Setter Property="Foreground" Value="{DynamicResource Brush.accent-ink}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="{x:Static markdig:Styles.CodeStyleKey}" TargetType="Run">
+        <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+    </Style>
+    <Style x:Key="{x:Static markdig:Styles.CodeBlockStyleKey}" TargetType="Paragraph">
+        <Setter Property="FontFamily" Value="Consolas" />
+        <Setter Property="Background" Value="{DynamicResource Brush.surface-2}" />
+        <Setter Property="Padding" Value="12" />
+    </Style>
+
+</ResourceDictionary>

@@ -17,7 +17,7 @@ namespace GameControllerForZwift.UnitTests.Views
             {
                 var page = new StyleGalleryPage { DataContext = new StyleGalleryViewModel() };
 
-                var swatches = Assert.IsType<WrapPanel>(page.FindName("Swatches"));
+                var swatches = Assert.IsAssignableFrom<Panel>(page.FindName("Swatches"));
                 Assert.Equal(ThemeService.TokenNames.Count, swatches.Children.Count);
                 Assert.NotNull(page.FindName("SamplePrimaryButton"));
             });

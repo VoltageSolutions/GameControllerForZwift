@@ -144,11 +144,14 @@ namespace GameControllerForZwift.UI.WPF.Tests
         }
 
         [Fact]
-        public void Help_IsDisabledBecauseItHasNoScreen()
+        public void UXN008_UXN009_HelpIsPushedAndClosesTheMenu()
         {
-            Assert.False(_viewModel.OpenHelpCommand.CanExecute(null));
+            _viewModel.IsMoreMenuOpen = true;
+
             _viewModel.OpenHelpCommand.Execute(null);
-            _navigation.DidNotReceiveWithAnyArgs().NavigateTo(default(Type)!);
+
+            _navigation.Received(1).NavigateTo<HelpViewModel>();
+            Assert.False(_viewModel.IsMoreMenuOpen);
         }
 
         [Fact]

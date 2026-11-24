@@ -5,66 +5,58 @@
              xmlns:vm="clr-namespace:GameControllerForZwift.UI.WPF.ViewModels"
              xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
              AutomationProperties.AutomationId="SettingsPage">
-    <!-- docs/spec/screens/settings.md. Two columns on a wide window, one column on a narrow one. -->
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-        <controls:AdaptiveColumns SideWidth="520" Margin="0,0,8,24">
-            <StackPanel>
+    <!-- docs/spec/screens/settings.md. Two columns on a wide window: the title and what the screen is for on the left, every
+         row on the right (UX-V-049). One column on a narrow one. -->
+    <controls:ScreenPage>
+        <controls:AdaptiveColumns SideWidth="{StaticResource Size.SideColumn}">
+            <controls:Stack Gap="{DynamicResource Layout.SectionGap}">
                 <TextBlock x:Name="PageTitle" Style="{StaticResource Text.PageTitle}" Text="{loc:Loc SettingsTitle}"
                            AutomationProperties.AutomationId="SettingsPageTitle" AutomationProperties.HeadingLevel="Level1" />
+                <TextBlock MaxWidth="{StaticResource Size.SideColumn}" HorizontalAlignment="Left" Style="{StaticResource Text.Lead}" Text="{loc:Loc SettingsIntro}" />
+            </controls:Stack>
 
+            <controls:Stack Gap="{DynamicResource Layout.SectionGap}">
                 <!-- Appearance (SCR-SET-001) -->
-                <TextBlock Margin="4,24,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SettingsAppearanceSection}" AutomationProperties.HeadingLevel="Level2" />
-                <ListBox x:Name="AppearancePicker" Style="{StaticResource Segmented}"
-                         ItemsSource="{x:Static vm:SettingsViewModel.AppearanceOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
-                         SelectedValue="{Binding Appearance}"
-                         AutomationProperties.AutomationId="SettingsAppearanceGroup" AutomationProperties.Name="{loc:Loc SettingsAppearanceSection}" />
+                <controls:Section Label="{loc:Loc SettingsAppearanceSection}">
+                    <ListBox x:Name="AppearancePicker" Style="{StaticResource Segmented}"
+                             ItemsSource="{x:Static vm:SettingsViewModel.AppearanceOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                             SelectedValue="{Binding Appearance}"
+                             AutomationProperties.AutomationId="SettingsAppearanceGroup" AutomationProperties.Name="{loc:Loc SettingsAppearanceSection}" />
+                </controls:Section>
 
-                <!-- Rides: the ride timeout (SCR-SET-012, SCR-SET-013) -->
-                <TextBlock Margin="4,24,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SettingsRidesSection}" AutomationProperties.HeadingLevel="Level2" />
-                <Border Style="{StaticResource Surface.Row}" CornerRadius="20">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock FontSize="17" FontWeight="Bold" TextWrapping="Wrap" Style="{StaticResource Text.Body}" Text="{loc:Loc SettingsRideTimeout}" />
-                            <TextBlock Margin="0,2,0,0" FontSize="14" Style="{StaticResource Text.Caption}" TextWrapping="Wrap" Text="{loc:Loc SettingsRideTimeoutDescription}" />
-                        </StackPanel>
-                        <TextBox x:Name="RideTimeoutBox" Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Width="96"
-                                 Text="{Binding RideTimeoutText, UpdateSourceTrigger=LostFocus}"
-                                 AutomationProperties.AutomationId="SettingsRideTimeoutInput" AutomationProperties.Name="{loc:Loc SettingsRideTimeout}" />
-                    </Grid>
-                </Border>
-                <TextBlock x:Name="RideTimeoutMessage" Margin="4,8,0,0" Style="{StaticResource Text.Caption}" TextWrapping="Wrap"
-                           Foreground="{DynamicResource Brush.accent-ink}" Text="{Binding RideTimeoutMessage}"
-                           Visibility="{Binding HasRideTimeoutMessage, Converter={StaticResource BooleanToVisibility}}"
-                           AutomationProperties.AutomationId="SettingsRideTimeoutMessage" AutomationProperties.LiveSetting="Polite" />
-            </StackPanel>
+                <!-- Rides: the ride timeout (SCR-SET-012, SCR-SET-013). On a narrow window the box moves under the words
+                     (UX-V-030). -->
+                <controls:Section Label="{loc:Loc SettingsRidesSection}">
+                    <controls:Stack Gap="{StaticResource Space.8}">
+                        <Border Style="{StaticResource Surface.Row}">
+                            <controls:Stack Orientation="Horizontal" Wrap="True" Gap="{StaticResource Space.16}">
+                                <controls:Stack Gap="{StaticResource Space.4}" MaxWidth="{StaticResource Size.RowTextWidth}" VerticalAlignment="Center">
+                                    <TextBlock Style="{StaticResource Text.RowTitle}" Text="{loc:Loc SettingsRideTimeout}" />
+                                    <TextBlock Style="{StaticResource Text.RowCaption}" Text="{loc:Loc SettingsRideTimeoutDescription}" />
+                                </controls:Stack>
+                                <TextBox x:Name="RideTimeoutBox" VerticalAlignment="Center" Width="{StaticResource Size.NumberBoxWidth}"
+                                         Text="{Binding RideTimeoutText, UpdateSourceTrigger=LostFocus}"
+                                         AutomationProperties.AutomationId="SettingsRideTimeoutInput" AutomationProperties.Name="{loc:Loc SettingsRideTimeout}" />
+                            </controls:Stack>
+                        </Border>
+                        <TextBlock x:Name="RideTimeoutMessage" Style="{StaticResource Text.Caption}"
+                                   Foreground="{DynamicResource Brush.accent-ink}" Text="{Binding RideTimeoutMessage}"
+                                   Visibility="{Binding HasRideTimeoutMessage, Converter={StaticResource BooleanToVisibility}}"
+                                   AutomationProperties.AutomationId="SettingsRideTimeoutMessage" AutomationProperties.LiveSetting="Polite" />
+                    </controls:Stack>
+                </controls:Section>
 
-            <StackPanel>
                 <!-- Mappings (SCR-SET-003 to SCR-SET-005) -->
-                <TextBlock Margin="4,0,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SettingsMappingsSection}" AutomationProperties.HeadingLevel="Level2" />
-                <controls:ActionRow x:Name="OpenMappingsButton" Title="{loc:Loc SettingsOpenMappings}" Trailing="External"
-                                    Command="{Binding OpenMappingsFolderCommand}" AutomationProperties.AutomationId="SettingsOpenMappingsButton" />
-                <controls:ActionRow x:Name="DeleteAllButton" Margin="0,12,0,0" Style="{StaticResource ActionRow.Danger}"
-                                    Title="{loc:Loc SettingsDeleteAll}" Description="{Binding DeleteDescription}"
-                                    Command="{Binding DeleteAllConfigurationsCommand}" AutomationProperties.AutomationId="SettingsDeleteAllButton" />
-
-                <!-- Help (SCR-SET-006, SCR-SET-007) -->
-                <TextBlock Margin="4,24,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SettingsHelpSection}" AutomationProperties.HeadingLevel="Level2" />
-                <controls:ActionRow x:Name="OpenLogsButton" Title="{loc:Loc SettingsOpenLogs}" Trailing="External"
-                                    Command="{Binding OpenLogsFolderCommand}" AutomationProperties.AutomationId="SettingsOpenLogsButton" />
-                <controls:ActionRow x:Name="HelpLinkButton" Margin="0,12,0,0" Title="{loc:Loc SettingsHelpLinkText}" Trailing="Chevron"
-                                    Command="{Binding OpenHelpCommand}" AutomationProperties.AutomationId="SettingsHelpLink" />
-
-                <!-- About (SCR-SET-008) -->
-                <TextBlock Margin="4,24,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SettingsAboutSection}" AutomationProperties.HeadingLevel="Level2" />
-                <TextBlock x:Name="VersionText" Margin="4,0,0,12" Style="{StaticResource Text.Caption}" Text="{Binding VersionText}"
-                           AutomationProperties.AutomationId="SettingsVersion" />
-                <controls:ActionRow x:Name="CreditsLinkButton" Title="{loc:Loc SettingsCreditsLinkText}" Trailing="Chevron"
-                                    Command="{Binding OpenCreditsCommand}" AutomationProperties.AutomationId="SettingsCreditsLink" />
-            </StackPanel>
+                <controls:Section Label="{loc:Loc SettingsMappingsSection}">
+                    <controls:Stack Gap="{DynamicResource Layout.RowGap}">
+                        <controls:ActionRow x:Name="OpenMappingsButton" Title="{loc:Loc SettingsOpenMappings}" Trailing="External"
+                                            Command="{Binding OpenMappingsFolderCommand}" AutomationProperties.AutomationId="SettingsOpenMappingsButton" />
+                        <controls:ActionRow x:Name="DeleteAllButton" Style="{StaticResource ActionRow.Danger}"
+                                            Title="{loc:Loc SettingsDeleteAll}" Description="{Binding DeleteDescription}"
+                                            Command="{Binding DeleteAllConfigurationsCommand}" AutomationProperties.AutomationId="SettingsDeleteAllButton" />
+                    </controls:Stack>
+                </controls:Section>
+            </controls:Stack>
         </controls:AdaptiveColumns>
-    </ScrollViewer>
+    </controls:ScreenPage>
 </UserControl>

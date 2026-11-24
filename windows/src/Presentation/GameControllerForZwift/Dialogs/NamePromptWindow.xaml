@@ -1,12 +1,12 @@
 <Window x:Class="GameControllerForZwift.UI.WPF.Dialogs.NamePromptWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Width="460"
+        xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
+        Style="{StaticResource Dialog.Window}"
         SizeToContent="Height"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
         WindowStartupLocation="CenterOwner"
-        Foreground="{DynamicResource TextFillColorPrimaryBrush}"
         FocusManager.FocusedElement="{Binding ElementName=NameTextBox}"
         AutomationProperties.AutomationId="NamePromptDialog">
     <Grid>
@@ -15,58 +15,46 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Margin="24,20,24,24">
-            <TextBlock
-                x:Name="HeadingText"
-                Margin="0,0,0,12"
-                Style="{StaticResource SubtitleTextBlockStyle}"
-                TextWrapping="Wrap"
-                AutomationProperties.AutomationId="NamePromptHeading"
-                AutomationProperties.HeadingLevel="Level1" />
-            <TextBlock
-                x:Name="MessageText"
-                Margin="0,0,0,12"
-                Style="{StaticResource BodyTextBlockStyle}"
-                TextWrapping="Wrap"
-                AutomationProperties.AutomationId="NamePromptMessage" />
-            <TextBox
-                x:Name="NameTextBox"
-                MaxLength="200"
-                TextChanged="NameTextBox_TextChanged"
-                AutomationProperties.AutomationId="ConfigurationNameTextBox"
-                AutomationProperties.Name="Configuration name"
-                AutomationProperties.LabeledBy="{Binding ElementName=MessageText}" />
-            <TextBlock
-                x:Name="ValidationText"
-                Margin="0,8,0,0"
-                Foreground="{DynamicResource SystemFillColorCriticalBrush}"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                TextWrapping="Wrap"
-                Visibility="Collapsed"
-                AutomationProperties.AutomationId="ConfigurationNameValidationText"
-                AutomationProperties.LiveSetting="Polite" />
-        </StackPanel>
+        <Border Grid.Row="0" Style="{StaticResource Dialog.Body}">
+            <controls:Stack Gap="{StaticResource Space.12}">
+                <TextBlock
+                    x:Name="HeadingText"
+                    Style="{StaticResource Text.Title}"
+                    AutomationProperties.AutomationId="NamePromptHeading"
+                    AutomationProperties.HeadingLevel="Level1" />
+                <TextBlock
+                    x:Name="MessageText"
+                    Style="{StaticResource Text.Body}"
+                    AutomationProperties.AutomationId="NamePromptMessage" />
+                <TextBox
+                    x:Name="NameTextBox"
+                    MaxLength="200"
+                    TextChanged="NameTextBox_TextChanged"
+                    AutomationProperties.AutomationId="ConfigurationNameTextBox"
+                    AutomationProperties.Name="Configuration name"
+                    AutomationProperties.LabeledBy="{Binding ElementName=MessageText}" />
+                <TextBlock
+                    x:Name="ValidationText"
+                    Foreground="{DynamicResource Brush.err}"
+                    Style="{StaticResource Text.Caption}"
+                    Visibility="Collapsed"
+                    AutomationProperties.AutomationId="ConfigurationNameValidationText"
+                    AutomationProperties.LiveSetting="Polite" />
+            </controls:Stack>
+        </Border>
 
-        <Border
-            Grid.Row="1"
-            Padding="24"
-            Background="{DynamicResource CardBackgroundFillColorDefaultBrush}"
-            BorderBrush="{DynamicResource CardStrokeColorDefaultBrush}"
-            BorderThickness="0,1,0,0">
+        <Border Grid.Row="1" Style="{StaticResource Dialog.Footer}">
             <UniformGrid Rows="1" Columns="2">
                 <Button
                     x:Name="OkButton"
-                    Margin="0,0,6,0" VerticalAlignment="Center"
-                    HorizontalAlignment="Stretch"
                     Content="Save"
                     IsDefault="True"
-                    Style="{StaticResource Button.Primary}"
+                    Style="{StaticResource Dialog.ButtonCellPrimary}"
                     Click="OkButton_Click"
                     AutomationProperties.AutomationId="NamePromptOkButton" />
                 <Button
                     x:Name="CancelButton"
-                    Margin="6,0,0,0" VerticalAlignment="Center"
-                    HorizontalAlignment="Stretch"
+                    Style="{StaticResource Dialog.ButtonCell}"
                     Content="Cancel"
                     IsCancel="True"
                     AutomationProperties.AutomationId="NamePromptCancelButton" />

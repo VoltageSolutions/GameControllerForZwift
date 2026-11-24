@@ -37,6 +37,7 @@ Start with the TL;DR. Then read the sections you care about. Each section opens 
 | [UX overview](ux/index.md) | none | Brand idea, audiences, how screens are designed and reviewed. |
 | [Principles](ux/principles.md) | `UX-P` | The design principles the whole app follows. |
 | [Visual system](ux/visual-system.md) | `UX-V` | Color, type, spacing, buttons, illustration, motion. |
+| [Style system](ux/style-system.md) | `UX-S` | How each app keeps to the visual system: tokens, size classes, components, and the tests that catch drift. |
 | [Voice and copy](ux/voice.md) | `UX-W` | How the app talks and what it calls things. |
 | [Navigation](ux/navigation.md) | `UX-N` | Tabs, the More button, and where they go on each screen size. |
 | [Controller input](ux/controller-input.md) | `UX-C` | What a controller press means on each kind of screen. |

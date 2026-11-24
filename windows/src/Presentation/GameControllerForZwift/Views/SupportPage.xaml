@@ -5,41 +5,41 @@
              xmlns:controls="clr-namespace:GameControllerForZwift.UI.WPF.Controls"
              AutomationProperties.AutomationId="SupportPage">
     <!-- docs/spec/screens/support.md. Two columns on a wide window, one column on a narrow one. -->
-    <ScrollViewer VerticalScrollBarVisibility="Auto" Focusable="False">
-        <controls:AdaptiveColumns SideWidth="520" Margin="0,0,8,24">
-            <StackPanel>
+    <controls:ScreenPage>
+        <controls:AdaptiveColumns SideWidth="{StaticResource Size.SideColumn}">
+            <controls:Stack Gap="{DynamicResource Layout.SectionGap}">
                 <TextBlock x:Name="PageTitle" Style="{StaticResource Text.PageTitle}" Text="{loc:Loc SupportTitle}"
                            AutomationProperties.AutomationId="SupportPageTitle" AutomationProperties.HeadingLevel="Level1" />
-                <TextBlock Margin="0,24,0,0" MaxWidth="520" HorizontalAlignment="Left" Style="{StaticResource Text.Caption}" FontSize="20" LineHeight="29"
+                <TextBlock MaxWidth="{StaticResource Size.SideColumn}" HorizontalAlignment="Left" Style="{StaticResource Text.Lead}"
                            Text="{loc:Loc SupportPitch}" />
                 <!-- The one accent action of the screen (SCR-SUP-006). -->
-                <Button x:Name="KofiButton" Margin="0,24,0,0" HorizontalAlignment="Left" Style="{StaticResource Button.Primary}" Padding="48,0"
+                <Button x:Name="KofiButton" HorizontalAlignment="Left" Style="{StaticResource Button.Primary}"
                         Command="{Binding OpenKofiCommand}" Content="{loc:Loc SupportKofi}"
                         AutomationProperties.AutomationId="SupportKofiButton" />
-            </StackPanel>
+            </controls:Stack>
 
-            <StackPanel>
-                <TextBlock Margin="4,0,0,8" Style="{StaticResource Text.Section}" Text="{loc:Loc SupportOtherWays}" AutomationProperties.HeadingLevel="Level2" />
-                <controls:ActionRow x:Name="StarButton" Title="{loc:Loc SupportStar}" Description="{loc:Loc SupportStarDescription}" Trailing="External"
-                                    Command="{Binding OpenStarCommand}" AutomationProperties.AutomationId="SupportStarButton" />
-                <controls:ActionRow x:Name="ShareButton" Margin="0,12,0,0" Title="{loc:Loc SupportShare}" Description="{loc:Loc SupportShareDescription}"
-                                    Command="{Binding CopyShareLinkCommand}" AutomationProperties.AutomationId="SupportShareButton" />
-                <TextBlock x:Name="ShareStatus" Margin="4,4,0,0" Text="{Binding ShareStatus}"
-                           AutomationProperties.AutomationId="SupportShareStatus" AutomationProperties.LiveSetting="Polite">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Caption}">
-                            <Style.Triggers>
-                                <Trigger Property="Text" Value="">
-                                    <Setter Property="Height" Value="0" />
-                                    <Setter Property="Margin" Value="0" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-                <controls:ActionRow x:Name="ContributeButton" Margin="0,12,0,0" Title="{loc:Loc SupportContribute}" Description="{loc:Loc SupportContributeDescription}" Trailing="External"
-                                    Command="{Binding OpenContributingCommand}" AutomationProperties.AutomationId="SupportContributeButton" />
-            </StackPanel>
+            <controls:Section Label="{loc:Loc SupportOtherWays}">
+                <controls:Stack Gap="{DynamicResource Layout.RowGap}">
+                    <controls:ActionRow x:Name="StarButton" Title="{loc:Loc SupportStar}" Description="{loc:Loc SupportStarDescription}" Trailing="External"
+                                        Command="{Binding OpenStarCommand}" AutomationProperties.AutomationId="SupportStarButton" />
+                    <controls:ActionRow x:Name="ShareButton" Title="{loc:Loc SupportShare}" Description="{loc:Loc SupportShareDescription}"
+                                        Command="{Binding CopyShareLinkCommand}" AutomationProperties.AutomationId="SupportShareButton" />
+                    <TextBlock x:Name="ShareStatus" Text="{Binding ShareStatus}"
+                               AutomationProperties.AutomationId="SupportShareStatus" AutomationProperties.LiveSetting="Polite">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource Text.Caption}">
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <controls:ActionRow x:Name="ContributeButton" Title="{loc:Loc SupportContribute}" Description="{loc:Loc SupportContributeDescription}" Trailing="External"
+                                        Command="{Binding OpenContributingCommand}" AutomationProperties.AutomationId="SupportContributeButton" />
+                </controls:Stack>
+            </controls:Section>
         </controls:AdaptiveColumns>
-    </ScrollViewer>
+    </controls:ScreenPage>
 </UserControl>
