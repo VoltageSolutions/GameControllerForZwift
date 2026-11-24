@@ -376,7 +376,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
                     case "translate" when n.Length >= 1:
                         {
                             double ty = n.Length > 1 ? n[1] : 0;
-                            if (dropTriggerScale && n[0] == 0 && ty != 0) break;
+                            if (dropTriggerScale && Math.Abs(n[0]) < 1e-9 && Math.Abs(ty) > 1e-9) break;
                             steps.Add(new TranslateTransform(n[0], ty));
                             break;
                         }
@@ -447,12 +447,12 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 var info = new StyleInfo();
                 foreach (Match rule in RuleRegex().Matches(css))
                 {
-                    foreach (string selector in rule.Groups[1].Value.Split(','))
+                    IEnumerable<string> classSelectors = rule.Groups[1].Value.Split(',')
+                        .Select(selector => selector.Trim())
+                        .Where(s => s.Contains('.') && !s.StartsWith('#'));
+                    foreach (string s in classSelectors)
                     {
-                        string s = selector.Trim();
-                        int dot = s.LastIndexOf('.');
-                        if (dot < 0 || s.StartsWith('#')) continue;
-                        string cls = s[(dot + 1)..];
+                        string cls = s[(s.LastIndexOf('.') + 1)..];
                         info._declarations[cls] = info._declarations.GetValueOrDefault(cls, "") + ";" + rule.Groups[2].Value;
                     }
                 }

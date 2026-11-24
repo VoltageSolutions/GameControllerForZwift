@@ -165,11 +165,8 @@ namespace GameControllerForZwift.UI.WPF.Controls
             BuildInputHighlightMap();
 
             // Start every trigger fill empty until the first refresh.
-            foreach (Path? fill in new[] { _drawing?.LeftTriggerFill, _drawing?.RightTriggerFill })
-            {
-                if (fill?.Data is not null)
-                    fill.Clip = new RectangleGeometry(new Rect(fill.Data.Bounds.X, fill.Data.Bounds.Bottom, fill.Data.Bounds.Width, 0));
-            }
+            foreach (Path fill in new[] { _drawing?.LeftTriggerFill, _drawing?.RightTriggerFill }.OfType<Path>().Where(fill => fill.Data is not null))
+                fill.Clip = new RectangleGeometry(new Rect(fill.Data.Bounds.X, fill.Data.Bounds.Bottom, fill.Data.Bounds.Width, 0));
         }
 
         private static void OnKindChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -283,11 +280,11 @@ namespace GameControllerForZwift.UI.WPF.Controls
             if (_drawing is null)
                 return;
 
-            foreach (ControllerInput input in Enum.GetValues<ControllerInput>())
-            {
-                if (_drawing.ById.GetValueOrDefault(input.ToString()) is Shape shape)
-                    _inputHighlights[input] = shape;
-            }
+            var shapes = Enum.GetValues<ControllerInput>()
+                .Select(input => (Input: input, Shape: _drawing.ById.GetValueOrDefault(input.ToString()) as Shape))
+                .Where(pair => pair.Shape is not null);
+            foreach (var (input, shape) in shapes)
+                _inputHighlights[input] = shape!;
         }
 
         /// <summary>Reports the illustration as an image named for the kind, such as "Your Xbox controller" (SCR-BTN-047).</summary>
