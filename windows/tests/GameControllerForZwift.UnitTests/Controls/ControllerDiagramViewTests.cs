@@ -50,17 +50,16 @@ namespace GameControllerForZwift.UnitTests.Controls
             ControllerInput.LeftThumbstickClick, ControllerInput.RightThumbstickClick,
         ];
 
-        /// <summary>The inputs each kind draws (SCR-BTN-048): the Xbox and DualShock 4 drawings have no bumpers or triggers; every other kind shows the Generic drawing.</summary>
+        /// <summary>The inputs each kind draws (SCR-BTN-048): the Switch Pro and Joy-Con pair drawings have bumpers but no triggers; every other kind draws all of them.</summary>
         private static ControllerInput[] InputsOf(ControllerKind kind) => kind switch
         {
             // The Switch Pro and Joy-Con pair drawings have bumpers (their shoulder lips) and no triggers.
             ControllerKind.SwitchPro or ControllerKind.JoyConPair => [.. CommonInputs.Where(i => i is not (ControllerInput.LeftTrigger or ControllerInput.RightTrigger))],
-            ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 => [.. CommonInputs.Where(i => i is not (ControllerInput.LeftBumper or ControllerInput.RightBumper or ControllerInput.LeftTrigger or ControllerInput.RightTrigger))],
             _ => CommonInputs,
         };
 
-        /// <summary>Kinds drawn with the Generic drawing have analog trigger fills; the Xbox and DualShock 4 drawings have no triggers.</summary>
-        private static bool IsAnalog(ControllerKind kind) => kind is not (ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro or ControllerKind.JoyConPair);
+        /// <summary>Every drawing with triggers fills them in proportion to the pull; the Switch Pro and Joy-Con pair triggers are not drawn.</summary>
+        private static bool IsAnalog(ControllerKind kind) => kind is not (ControllerKind.SwitchPro or ControllerKind.JoyConPair);
 
         public static TheoryData<ControllerKind> AllKinds => [.. Enum.GetValues<ControllerKind>()];
 
@@ -425,7 +424,7 @@ namespace GameControllerForZwift.UnitTests.Controls
                 diagram.RefreshDiagram();
                 Shape? genericA = diagram.InputShape(ControllerInput.A);
 
-                diagram.Kind = ControllerKind.PlayStationDualShock4;
+                diagram.Kind = ControllerKind.SwitchPro;
                 diagram.RefreshDiagram();
 
                 Assert.NotSame(genericA, diagram.InputShape(ControllerInput.A));
