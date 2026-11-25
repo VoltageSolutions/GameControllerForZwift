@@ -1,7 +1,7 @@
 ---
 id: SPEC-SCR-BTN
 title: Buttons screens
-last-updated: 2026-11-22
+last-updated: 2026-11-24
 ---
 
 # Buttons screens
@@ -47,6 +47,9 @@ The screen's hint says: "Press a button on your controller to see it light up. T
 | The Save button is the screen's one main action, and it must be an accent button only when it is enabled (that is, when a saved mapping has unsaved changes, see `CFG-037`). | SCR-BTN-008 |
 | The screen must have a **Reset to default** action for the current mapping's mappings. | SCR-BTN-009 |
 | The Buttons screen must stay visual: the illustration first, the list as the text version. | SCR-BTN-010 |
+| The illustration must match the selected controller's kind (CTRL-011 and UX-V-059). When the kind changes because you select another controller, the illustration changes with it. | SCR-BTN-046 |
+| The accessible name of `ButtonsControllerImage` must include the kind, for example "Your Xbox controller". | SCR-BTN-047 |
+| The illustration must show only the inputs the kind has, and the list must list only those inputs. | SCR-BTN-048 |
 | A row stays selected only while its function picker is open. When the picker closes, by any means, no row is selected. A row then looks selected only while you hold its button, so you can test your controller. | SCR-BTN-044 |
 | On Windows, the function picker is a side panel. On Android and iOS, it must be a bottom sheet built with the platform's native bottom sheet component, not a custom one. | SCR-BTN-045 |
 
@@ -147,14 +150,14 @@ It opens as a sheet on a phone, and as a side panel on a landscape screen. Funct
 
 **What it is for:** show analog inputs live and let you map each direction.
 
-Sticks and triggers are analog. A small tilt steers a little. A light squeeze brakes a little. The tab shows each stick's live position with its dead zone, one row per direction, and live trigger fill.
+Sticks and triggers are analog. A small tilt steers a little. A light squeeze brakes a little. The tab lists the same kind of rows as the Buttons tab, in the same two columns that reflow with the window: the left side down the first column and the right side down the second. Each side has its trigger, its stick click, and one row per direction. The controller illustration shows where each stick is. A trigger's row shows how far it is pulled.
 
 | Rule | ID |
 |---|---|
-| Each stick must show its live position and the dead zone. | SCR-BTN-039 |
-| Each stick must have a row per direction (left, right, up, down) and each stick click must have its own row. | SCR-BTN-040 |
-| Each trigger must show a live fill. | SCR-BTN-041 |
-| The screen must show a brake caution: "Even a light squeeze can stop you." It must show where you choose or assign the brake function. | SCR-BTN-042 |
+| The controller illustration must show each stick's live position (UX-V-060). The tab must not draw a separate stick graph. | SCR-BTN-039 |
+| The tab must list its rows like the Buttons tab, one row per input in the same columns. In order, the rows are the trigger, the stick click, and the stick up, down, left, and right, with the left side in the first column and the right side in the second. The tab must not group rows in cards. | SCR-BTN-040 |
+| A trigger's row must fill its chip with the accent from left to right in proportion to the pull, from 0 to 100 percent, with the label staying readable. A pulled trigger must not light its whole chip. | SCR-BTN-041 |
+| The brake caution, "Even a light squeeze can stop you.", must appear with the Brake function in the function picker. | SCR-BTN-042 |
 | **Advanced** (dead zones and curves) must be a section at the bottom of this tab. | SCR-BTN-043 |
 
 ??? note "Edge cases"
@@ -170,7 +173,7 @@ A controller press lights the matching row. Dialogs work with touch, mouse, and 
 |---|---|
 | `ButtonsMappingPicker`, `ButtonsSaveButton`, `ButtonsSaveAsButton` | Top of the screen |
 | `ButtonsRow_{input}` | List rows |
-| `ButtonsControllerImage` | Illustration |
+| `ButtonsControllerImage` | Illustration. Its name includes the controller kind, for example "Your Xbox controller". |
 | `FunctionItem_{function}` | Function picker |
 | `MappingItem_{id}` | A saved mapping in the picker (the mapping's GUID) |
 | `MessageDialogPrimaryButton`, `MessageDialogSecondaryButton`, `MessageDialogCloseButton` | Message dialogs |

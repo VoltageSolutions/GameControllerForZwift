@@ -121,6 +121,7 @@ namespace GameControllerForZwift.Gamepad.SDL2
                     _controllers.Add(controller);
                     _controllersByInstanceId[present[i]] = controller;
                     LogControllerConnected(controller.Name);
+                    LogControllerKind(controller.Name, controller.SdlControllerType ?? "unknown", controller.VendorId, controller.ProductId, controller.Kind);
                 }
 
                 // Return a snapshot so later calls cannot mutate what callers are enumerating.
@@ -328,6 +329,9 @@ namespace GameControllerForZwift.Gamepad.SDL2
 
         [LoggerMessage(Level = LogLevel.Information, Message = "Controller connected: {Name}")]
         private partial void LogControllerConnected(string name);
+
+        [LoggerMessage(Level = LogLevel.Information, Message = "Controller kind: SDL name '{Name}', SDL type {Type}, VID {Vid:X4}, PID {Pid:X4}, resolved {Kind}.")]
+        private partial void LogControllerKind(string name, string type, ushort vid, ushort pid, ControllerKind kind);
 
         [LoggerMessage(Level = LogLevel.Information, Message = "Controller disconnected: {Name}")]
         private partial void LogControllerDisconnected(string name);

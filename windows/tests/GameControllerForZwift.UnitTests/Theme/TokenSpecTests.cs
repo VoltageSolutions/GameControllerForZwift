@@ -13,7 +13,7 @@ namespace GameControllerForZwift.UnitTests.Theme
         private static readonly XNamespace Xaml = "http://schemas.microsoft.com/winfx/2006/xaml";
 
         private static readonly string[] TokenNames =
-            ["bg", "surface", "surface-2", "text", "muted", "accent", "accent-ink", "on-accent", "focus", "ok", "err", "pad", "pad-2", "pad-key"];
+            ["bg", "surface", "surface-2", "text", "muted", "accent", "accent-ink", "on-accent", "focus", "ok", "err", "art-body", "art-shade", "art-line", "art-detail", "art-glyph"];
 
         public static TheoryData<string> Modes => new() { "Dark", "Light" };
 
@@ -140,8 +140,7 @@ namespace GameControllerForZwift.UnitTests.Theme
             return rows;
         }
 
-        // A contrast row names tokens in backticks, or uses the words the table uses for the accent fill and the
-        // controller illustration.
+        // A contrast row names tokens in backticks, or uses the words the table uses for the accent fill.
         private static string? ContrastName(string cell)
         {
             Match token = Regex.Match(cell, "`([a-z0-9-]+)`");
@@ -156,12 +155,7 @@ namespace GameControllerForZwift.UnitTests.Theme
                 return "accent";
             }
 
-            return cell switch
-            {
-                "illustration key" => "pad-key",
-                "body" => "pad",
-                _ => null,
-            };
+            return null;
         }
 
         private static Dictionary<string, string> XamlColors(string mode)

@@ -2,7 +2,7 @@
 id: SPEC-CTRL
 title: Controller detection
 target: Windows v0.4.0
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Controller detection
@@ -86,6 +86,32 @@ Some third-party controllers present themselves to Windows as an Xbox controller
 ??? note "Edge cases"
     - The same 8BitDo controller in another mode (for example Switch mode) reports a different model, so it has its own configurations.
     - Two controllers that report the same model are still two entries in the list (CTRL-001).
+
+## Controller kind
+
+The app also works out what kind of controller it is, so the Buttons screen can draw the right diagram. The kind never changes the controller's name, model, or saved configurations.
+
+*Example: an 8BitDo controller that reports as "Xbox One S Controller" is the Xbox kind. A controller the app does not recognize is the Generic kind and gets the Xbox drawing.*
+
+| Kind | Used for | Drawing |
+|---|---|---|
+| `Generic` | A controller the app cannot identify. The default. | The Xbox drawing. |
+| `Xbox` | Every Xbox variant, and third-party controllers that identify as Xbox. | ![Xbox drawing](../../assets/controllers/xbox/xbox.svg){ width="180" } |
+| `PlayStationDualShock4` | DualShock 4. | ![DualShock 4 drawing](../../assets/controllers/playstation-dualshock4/playstation-dualshock4.svg){ width="180" } |
+| `PlayStationDualSense` | DualSense and DualSense Edge. | ![DualSense drawing](../../assets/controllers/playstation-dualsense/playstation-dualsense.svg){ width="180" } |
+| `SwitchPro` | Switch Pro Controller, including the Switch 2 Pro Controller. | ![Switch Pro drawing](../../assets/controllers/switch-pro/switch-pro.svg){ width="180" } |
+| `JoyConLeft` | A single left Joy-Con. | The Xbox drawing, until single Joy-Cons are drawn. |
+| `JoyConRight` | A single right Joy-Con. | The Xbox drawing, until single Joy-Cons are drawn. |
+| `JoyConPair` | A left and right Joy-Con used together as one controller (CTRL-001). | ![Joy-Con pair drawing](../../assets/controllers/joycon-pair/joycon-pair.svg){ width="180" } |
+
+| Rule | ID |
+|---|---|
+| The app must give every connected controller one kind from the `ControllerKind` list above. | CTRL-011 |
+| The app must identify the kind from the SDL controller name (`SDL_GameControllerName`) first, then from the SDL controller type, then from the vendor and product IDs. The first step that gives a kind wins. | CTRL-012 |
+| The app must treat a controller no step identifies as `Generic`. | CTRL-013 |
+| Name matching must use case-insensitive substring rules held in one table in the code, so I can add a rule without changing the lookup. | CTRL-014 |
+| A third-party controller that identifies as an Xbox controller must get the `Xbox` kind (CTRL-010). | CTRL-015 |
+| The kind must not change the controller's model, its list entry, or which configurations it shares (CFG-011). | CTRL-016 |
 
 ## Out of scope
 

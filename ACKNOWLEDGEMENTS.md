@@ -23,12 +23,17 @@ This application is made possible through the use of open source libraries. The 
 
 ## Graphics
 
-- [Gamepad Visualizer](https://controllertest.io/) - by controllertest.io - *CC BY 4.0*
+- [Gaming Devices](https://www.figma.com/community/file/817697371474907588/gaming-devices) - by Oscar Nilsson - *CC BY 4.0*
 
-**Gamepad Visualizer changes**
+**Gaming Devices changes**
 
-- Light and darkmode colors
-- Button press colors and animations
+- Wireframe redraw for the PlayStation DualShock 4, Xbox, Switch Pro and Joy-Con pair diagrams
+
+- [DualSense Gamepad](https://www.figma.com/community/file/1443422876457138371/dualsense-gamepad) - by Jonathan Lancaster - *CC BY 4.0*
+
+**DualSense Gamepad changes**
+
+- Wireframe redraw for the PlayStation DualSense diagram, with the top shape split into bumper and trigger
 
 ### Licenses
 

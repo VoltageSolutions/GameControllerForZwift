@@ -14,9 +14,11 @@
     <Color x:Key="Color.focus">#1F5FCC</Color>
     <Color x:Key="Color.ok">#1E7A4C</Color>
     <Color x:Key="Color.err">#B3261E</Color>
-    <Color x:Key="Color.pad">#E6E0D5</Color>
-    <Color x:Key="Color.pad-2">#D5CDBF</Color>
-    <Color x:Key="Color.pad-key">#F6F2EB</Color>
+    <Color x:Key="Color.art-body">#EFEAE0</Color>
+    <Color x:Key="Color.art-shade">#E5DECF</Color>
+    <Color x:Key="Color.art-line">#6F675C</Color>
+    <Color x:Key="Color.art-detail">#82796B</Color>
+    <Color x:Key="Color.art-glyph">#4F483F</Color>
 
     <SolidColorBrush x:Key="Brush.bg" Color="{StaticResource Color.bg}" />
     <SolidColorBrush x:Key="Brush.surface" Color="{StaticResource Color.surface}" />
@@ -29,9 +31,11 @@
     <SolidColorBrush x:Key="Brush.focus" Color="{StaticResource Color.focus}" />
     <SolidColorBrush x:Key="Brush.ok" Color="{StaticResource Color.ok}" />
     <SolidColorBrush x:Key="Brush.err" Color="{StaticResource Color.err}" />
-    <SolidColorBrush x:Key="Brush.pad" Color="{StaticResource Color.pad}" />
-    <SolidColorBrush x:Key="Brush.pad-2" Color="{StaticResource Color.pad-2}" />
-    <SolidColorBrush x:Key="Brush.pad-key" Color="{StaticResource Color.pad-key}" />
+    <SolidColorBrush x:Key="Brush.art-body" Color="{StaticResource Color.art-body}" />
+    <SolidColorBrush x:Key="Brush.art-shade" Color="{StaticResource Color.art-shade}" />
+    <SolidColorBrush x:Key="Brush.art-line" Color="{StaticResource Color.art-line}" />
+    <SolidColorBrush x:Key="Brush.art-detail" Color="{StaticResource Color.art-detail}" />
+    <SolidColorBrush x:Key="Brush.art-glyph" Color="{StaticResource Color.art-glyph}" />
 
     <!-- The VOLTAGE wordmark: VOLT in the accent color and AGE in the text color (SCR-RIDE-034). -->
     <SolidColorBrush x:Key="Brush.wordmark-volt" Color="{StaticResource Color.accent}" />
