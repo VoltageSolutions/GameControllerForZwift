@@ -51,7 +51,6 @@ namespace GameControllerForZwift.UI.WPF.Controls
         /// <summary>Folder and file name (without extension) of the drawing for each kind that has its own.</summary>
         private static readonly Dictionary<ControllerKind, string> Files = new()
         {
-            [ControllerKind.Generic] = "generic/generic",
             [ControllerKind.Xbox] = "xbox/xbox",
             [ControllerKind.SwitchPro] = "switch-pro/switch-pro",
             [ControllerKind.JoyConPair] = "joycon-pair/joycon-pair",
@@ -59,10 +58,10 @@ namespace GameControllerForZwift.UI.WPF.Controls
             [ControllerKind.PlayStationDualShock4] = "playstation-dualshock4/playstation-dualshock4",
         };
 
-        /// <summary>Kinds without a drawing of their own show the Generic drawing.</summary>
+        /// <summary>Kinds without a drawing of their own, the Generic kind included, show the Xbox drawing.</summary>
         /// <summary>Path of the SVG relative to the Controllers asset folder, such as <c>xbox/xbox.svg</c>.</summary>
         public static string RelativePath(ControllerKind kind) =>
-            (Files.TryGetValue(kind, out string? file) ? file : Files[ControllerKind.Generic]) + ".svg";
+            (Files.TryGetValue(kind, out string? file) ? file : Files[ControllerKind.Xbox]) + ".svg";
 
         public static Uri ResourceUri(ControllerKind kind) =>
             new($"pack://application:,,,/{typeof(ControllerSvgLoader).Assembly.GetName().Name};component/Assets/Controllers/{RelativePath(kind)}", UriKind.Absolute);
@@ -447,12 +446,12 @@ namespace GameControllerForZwift.UI.WPF.Controls
                 var info = new StyleInfo();
                 foreach (Match rule in RuleRegex().Matches(css))
                 {
-                    IEnumerable<string> classSelectors = rule.Groups[1].Value.Split(',')
+                    IEnumerable<string> classNames = rule.Groups[1].Value.Split(',')
                         .Select(selector => selector.Trim())
-                        .Where(s => s.Contains('.') && !s.StartsWith('#'));
-                    foreach (string s in classSelectors)
+                        .Where(s => s.Contains('.') && !s.StartsWith('#'))
+                        .Select(s => s[(s.LastIndexOf('.') + 1)..]);
+                    foreach (string cls in classNames)
                     {
-                        string cls = s[(s.LastIndexOf('.') + 1)..];
                         info._declarations[cls] = info._declarations.GetValueOrDefault(cls, "") + ";" + rule.Groups[2].Value;
                     }
                 }

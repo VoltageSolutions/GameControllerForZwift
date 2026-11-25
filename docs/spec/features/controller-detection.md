@@ -91,18 +91,18 @@ Some third-party controllers present themselves to Windows as an Xbox controller
 
 The app also works out what kind of controller it is, so the Buttons screen can draw the right diagram. The kind never changes the controller's name, model, or saved configurations.
 
-*Example: an 8BitDo controller that reports as "Xbox One S Controller" is the Xbox kind. A controller the app does not recognize is the Generic kind and gets the generic drawing.*
+*Example: an 8BitDo controller that reports as "Xbox One S Controller" is the Xbox kind. A controller the app does not recognize is the Generic kind and gets the Xbox drawing.*
 
-| Kind | Used for |
-|---|---|
-| `Generic` | A controller the app cannot identify. The default. |
-| `Xbox` | Every Xbox variant, and third-party controllers that identify as Xbox. |
-| `PlayStationDualShock4` | DualShock 4. |
-| `PlayStationDualSense` | DualSense and DualSense Edge. |
-| `SwitchPro` | Switch Pro Controller, including the Switch 2 Pro Controller. |
-| `JoyConLeft` | A single left Joy-Con. |
-| `JoyConRight` | A single right Joy-Con. |
-| `JoyConPair` | A left and right Joy-Con used together as one controller (CTRL-001). |
+| Kind | Used for | Drawing |
+|---|---|---|
+| `Generic` | A controller the app cannot identify. The default. | The Xbox drawing. |
+| `Xbox` | Every Xbox variant, and third-party controllers that identify as Xbox. | ![Xbox drawing](../../assets/controllers/xbox/xbox.svg){ width="180" } |
+| `PlayStationDualShock4` | DualShock 4. | ![DualShock 4 drawing](../../assets/controllers/playstation-dualshock4/playstation-dualshock4.svg){ width="180" } |
+| `PlayStationDualSense` | DualSense and DualSense Edge. | ![DualSense drawing](../../assets/controllers/playstation-dualsense/playstation-dualsense.svg){ width="180" } |
+| `SwitchPro` | Switch Pro Controller, including the Switch 2 Pro Controller. | ![Switch Pro drawing](../../assets/controllers/switch-pro/switch-pro.svg){ width="180" } |
+| `JoyConLeft` | A single left Joy-Con. | The Xbox drawing, until single Joy-Cons are drawn. |
+| `JoyConRight` | A single right Joy-Con. | The Xbox drawing, until single Joy-Cons are drawn. |
+| `JoyConPair` | A left and right Joy-Con used together as one controller (CTRL-001). | ![Joy-Con pair drawing](../../assets/controllers/joycon-pair/joycon-pair.svg){ width="180" } |
 
 | Rule | ID |
 |---|---|

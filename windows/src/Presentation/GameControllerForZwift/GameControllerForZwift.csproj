@@ -59,7 +59,6 @@
       <TargetPath>Figtree-OFL.txt</TargetPath>
     </None>
     <!-- One copy of the controller wireframes lives in docs/assets/controllers (UX-V-067); link it in as WPF resources. -->
-    <Resource Include="..\..\..\..\docs\assets\controllers\generic\generic.svg" Link="Assets\Controllers\generic\generic.svg" />
     <Resource Include="..\..\..\..\docs\assets\controllers\playstation-dualshock4\playstation-dualshock4.svg" Link="Assets\Controllers\playstation-dualshock4\playstation-dualshock4.svg" />
     <Resource Include="..\..\..\..\docs\assets\controllers\xbox\xbox.svg" Link="Assets\Controllers\xbox\xbox.svg" />
     <Resource Include="..\..\..\..\docs\assets\controllers\switch-pro\switch-pro.svg" Link="Assets\Controllers\switch-pro\switch-pro.svg" />

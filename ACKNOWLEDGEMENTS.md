@@ -23,13 +23,6 @@ This application is made possible through the use of open source libraries. The 
 
 ## Graphics
 
-- [Gamepad Visualizer](https://controllertest.io/) - by controllertest.io - *CC BY 4.0*
-
-**Gamepad Visualizer changes**
-
-- Light and darkmode colors
-- Button press colors and animations
-
 - [Gaming Devices](https://www.figma.com/community/file/817697371474907588/gaming-devices) - by Oscar Nilsson - *CC BY 4.0*
 
 **Gaming Devices changes**

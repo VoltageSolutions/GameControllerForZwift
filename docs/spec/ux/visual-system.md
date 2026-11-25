@@ -242,17 +242,17 @@ How a drawing is made, with its classes, line weights, and shoulder shapes, is i
 | The controller illustration must be a wireframe outline with a ground shadow. It must use theme tokens only (`Brush.pad` and the other `pad` tokens), so it works in light and dark mode. | UX-V-034 |
 | Keys on the illustration must have a thin muted outline, free keys a dashed outline, and the lit key a dark outline plus the accent fill. | UX-V-035 |
 | The illustration must never be the only way to know a mapping. The Buttons list says the same in text. | UX-V-036 |
-| The app must draw an illustration that matches the controller's kind (CTRL-011). Generic, Xbox, PlayStation DualShock 4, PlayStation DualSense, Switch Pro and the Joy-Con pair each have their own drawing. Generic is the default. | UX-V-059 |
+| The app must draw an illustration that matches the controller's kind (CTRL-011). Xbox, PlayStation DualShock 4, PlayStation DualSense, Switch Pro and the Joy-Con pair each have their own drawing. Every other kind, the Generic kind included, uses the Xbox drawing. | UX-V-059 |
 | Every kind must behave the same: the selected input is lit, pressed inputs are lit, stick caps move with the axis, and free keys are dashed (UX-V-035). | UX-V-060 |
 | Art must be original or licensed CC BY 4.0, with credit in ACKNOWLEDGEMENTS. The app must never use art copied from another site, such as controllertest.io. | UX-V-061 |
 | In every drawing that includes bumpers and triggers, they must be drawn attached to the body at its top edge. A bumper must light when pressed. | UX-V-062 |
 | In every drawing that includes analog triggers, they must fill in proportion to the pull, from 0 to 100 percent. The trigger's outline must not light while it is pulled. | UX-V-063 |
 | In every drawing that includes digital triggers, they must light when pressed and must not fill. | UX-V-064 |
-| Face button glyphs must follow the drawing's labels: A, B, X, and Y for the Generic drawing, and Cross, Circle, Square, and Triangle for the PlayStation drawing. Logical inputs keep their `ControllerInput` names. | UX-V-065 |
+| Face button glyphs must follow the drawing's labels: A, B, X, and Y for the Xbox drawing, and Cross, Circle, Square, and Triangle for the PlayStation drawing. Logical inputs keep their `ControllerInput` names. | UX-V-065 |
 | A drawing must show only the inputs it has. Logical inputs map to the shapes by id (UX-V-068). | UX-V-066 |
 | Vector assets must live in the repo as SVG files under `docs/assets/controllers/<kind>/`, one folder per kind that has its own drawing. | UX-V-067 |
 | Each interactive shape in an SVG must carry an `id` equal to its `ControllerInput` name, for example `A`, `LeftBumper`, `LeftTrigger`, `LeftThumbstick`, `LeftThumbstickClick`, and `DPadUp`. Each analog trigger must also carry `LeftTriggerFill` or `RightTriggerFill`; a digital trigger (ZL and ZR) carries only `LeftTrigger` or `RightTrigger`. WPF, Android, and iOS must build their native components from the same files. | UX-V-068 |
-| A kind without its own drawing must use the Generic drawing. | UX-V-069 |
+| A kind without its own drawing must use the Xbox drawing. | UX-V-069 |
 
 ??? note "Edge cases"
     - A kind has no shape for an input it lacks, so the app lights nothing for it. A Joy-Con pair uses the left Joy-Con's ids for the left half and the right Joy-Con's ids for the right half.

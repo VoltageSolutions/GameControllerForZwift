@@ -113,7 +113,7 @@ namespace GameControllerForZwift.UnitTests.Controls
                 Assert.Equal(0, diagram.RightStickTransform!.Y);
                 Assert.Equal(0, diagram.LeftTriggerClipRect!.Value.Height);
                 Assert.Equal(0, diagram.RightTriggerClipRect!.Value.Height);
-                Assert.Same(diagram.FindResource("Brush.pad-key"), FillOf(diagram.InputShape(ControllerInput.A)));
+                Assert.Same(diagram.FindResource("Brush.art-shade"), FillOf(diagram.InputShape(ControllerInput.A)));
             });
         }
 
@@ -126,12 +126,12 @@ namespace GameControllerForZwift.UnitTests.Controls
                 diagram.RefreshDiagram();
 
                 Assert.Same(diagram.FindResource("Brush.accent"), FillOf(diagram.InputShape(ControllerInput.RightBumper)));
-                Assert.Same(diagram.FindResource("Brush.pad-key"), FillOf(diagram.InputShape(ControllerInput.LeftBumper)));
+                Assert.Same(diagram.FindResource("Brush.art-shade"), FillOf(diagram.InputShape(ControllerInput.LeftBumper)));
 
                 diagram.SelectedInput = null;
                 diagram.RefreshDiagram();
 
-                Assert.Same(diagram.FindResource("Brush.pad-key"), FillOf(diagram.InputShape(ControllerInput.RightBumper)));
+                Assert.Same(diagram.FindResource("Brush.art-shade"), FillOf(diagram.InputShape(ControllerInput.RightBumper)));
             });
         }
 
@@ -148,12 +148,12 @@ namespace GameControllerForZwift.UnitTests.Controls
                 diagram.RefreshDiagram();
 
                 Assert.Same(diagram.FindResource("Brush.accent"), FillOf(diagram.InputShape(ControllerInput.A)));
-                Assert.Same(diagram.FindResource("Brush.pad-key"), FillOf(diagram.InputShape(ControllerInput.B)));
+                Assert.Same(diagram.FindResource("Brush.art-shade"), FillOf(diagram.InputShape(ControllerInput.B)));
 
                 viewModel.Selector(ControllerInput.A).ControllerData = new ControllerData();
                 diagram.RefreshDiagram();
 
-                Assert.Same(diagram.FindResource("Brush.pad-key"), FillOf(diagram.InputShape(ControllerInput.A)));
+                Assert.Same(diagram.FindResource("Brush.art-shade"), FillOf(diagram.InputShape(ControllerInput.A)));
             });
         }
 
@@ -173,10 +173,10 @@ namespace GameControllerForZwift.UnitTests.Controls
                 };
                 diagram.RefreshDiagram();
 
-                Assert.Equal(ControllerDiagramView.MaxStickTravel, diagram.LeftStickTransform!.X, 6);
-                Assert.Equal(-ControllerDiagramView.MaxStickTravel, diagram.LeftStickTransform!.Y, 6);
-                Assert.Equal(-ControllerDiagramView.MaxStickTravel, diagram.RightStickTransform!.X, 6);
-                Assert.Equal(ControllerDiagramView.MaxStickTravel, diagram.RightStickTransform!.Y, 6);
+                Assert.Equal(TravelOf(ControllerKind.Generic), diagram.LeftStickTransform!.X, 6);
+                Assert.Equal(-TravelOf(ControllerKind.Generic), diagram.LeftStickTransform!.Y, 6);
+                Assert.Equal(-TravelOf(ControllerKind.Generic), diagram.RightStickTransform!.X, 6);
+                Assert.Equal(TravelOf(ControllerKind.Generic), diagram.RightStickTransform!.Y, 6);
                 Assert.True(diagram.LeftTriggerClipRect!.Value.Height > diagram.RightTriggerClipRect!.Value.Height);
                 Assert.True(diagram.RightTriggerClipRect!.Value.Height > 0);
 
@@ -197,7 +197,7 @@ namespace GameControllerForZwift.UnitTests.Controls
                 diagram.SelectedInput = ControllerInput.A;
                 System.Windows.Threading.Dispatcher.CurrentDispatcher.Invoke(System.Windows.Threading.DispatcherPriority.ApplicationIdle, () => { });
 
-                Assert.Equal(ControllerDiagramView.MaxStickTravel, diagram.LeftStickTransform!.X, 6);
+                Assert.Equal(TravelOf(ControllerKind.Generic), diagram.LeftStickTransform!.X, 6);
                 Assert.Same(diagram.FindResource("Brush.accent"), FillOf(diagram.InputShape(ControllerInput.A)));
             });
         }
@@ -223,12 +223,12 @@ namespace GameControllerForZwift.UnitTests.Controls
 
                     rows.Remove(row);
                     diagram.RefreshDiagram();
-                    Assert.Same(diagram.FindResource("Brush.pad-key"), FillOf(diagram.InputShape(ControllerInput.B)));
+                    Assert.Same(diagram.FindResource("Brush.art-shade"), FillOf(diagram.InputShape(ControllerInput.B)));
 
                     rows.Add(row);
                     rows.Clear();
                     diagram.RefreshDiagram();
-                    Assert.Same(diagram.FindResource("Brush.pad-key"), FillOf(diagram.InputShape(ControllerInput.B)));
+                    Assert.Same(diagram.FindResource("Brush.art-shade"), FillOf(diagram.InputShape(ControllerInput.B)));
                 }
                 finally
                 {
@@ -381,9 +381,8 @@ namespace GameControllerForZwift.UnitTests.Controls
             });
         }
 
-        // The flat DualShock 4 art rests keys and stick caps at Brush.art-shade; the other kinds use Brush.pad-key.
-        private static string RestKeyFor(ControllerKind kind, ControllerInput input) =>
-            kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro or ControllerKind.JoyConPair or ControllerKind.PlayStationDualSense ? "Brush.art-shade" : "Brush.pad-key";
+        // Every drawing rests keys and stick caps at Brush.art-shade.
+        private static string RestKeyFor(ControllerKind kind, ControllerInput input) => "Brush.art-shade";
 
         // Stick travel is per drawing: the DualShock 4 art moves its caps 10 units, the others the default.
         private static double TravelOf(ControllerKind kind) =>
@@ -391,7 +390,7 @@ namespace GameControllerForZwift.UnitTests.Controls
             {
                 ControllerKind.JoyConPair or ControllerKind.PlayStationDualSense => 7.0,
                 ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro => 10.0,
-                _ => ControllerDiagramView.MaxStickTravel,
+                _ => 10.0,
             };
 
         private static ControllerData ControllerDataFor(ControllerInput input) => input switch
@@ -506,15 +505,16 @@ namespace GameControllerForZwift.UnitTests.Controls
         }
 
         [Fact]
-        public void UXV067_KindsWithoutTheirOwnDrawingUseTheGenericDrawing()
+        public void UXV069_KindsWithoutTheirOwnDrawingUseTheXboxDrawing()
         {
-            ControllerKind[] own = [ControllerKind.Generic, ControllerKind.Xbox, ControllerKind.PlayStationDualShock4, ControllerKind.SwitchPro, ControllerKind.JoyConPair, ControllerKind.PlayStationDualSense];
+            ControllerKind[] own = [ControllerKind.Xbox, ControllerKind.PlayStationDualShock4, ControllerKind.SwitchPro, ControllerKind.JoyConPair, ControllerKind.PlayStationDualSense];
             foreach (ControllerKind kind in Enum.GetValues<ControllerKind>().Except(own))
-                Assert.Equal(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(kind));
+                Assert.Equal(ControllerSvgLoader.RelativePath(ControllerKind.Xbox), ControllerSvgLoader.RelativePath(kind));
 
-            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(ControllerKind.PlayStationDualShock4));
-            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(ControllerKind.Xbox));
-            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Generic), ControllerSvgLoader.RelativePath(ControllerKind.SwitchPro));
+            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Xbox), ControllerSvgLoader.RelativePath(ControllerKind.PlayStationDualShock4));
+            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Xbox), ControllerSvgLoader.RelativePath(ControllerKind.PlayStationDualSense));
+            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Xbox), ControllerSvgLoader.RelativePath(ControllerKind.SwitchPro));
+            Assert.NotEqual(ControllerSvgLoader.RelativePath(ControllerKind.Xbox), ControllerSvgLoader.RelativePath(ControllerKind.JoyConPair));
         }
 
         [Fact]

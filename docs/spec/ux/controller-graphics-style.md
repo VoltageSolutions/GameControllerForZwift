@@ -15,14 +15,13 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 Each kind with its own drawing has one folder, `docs/assets/controllers/<kind>/`, with the SVG and a `README.md` that credits the source art. The files sit in `docs/` so Windows, Android, and iOS build their native components from the same SVGs.
 
-| Kind | Folder |
-|---|---|
-| Generic | `generic` |
-| Xbox | `xbox` |
-| PlayStation DualShock 4 | `playstation-dualshock4` |
-| PlayStation DualSense | `playstation-dualsense` |
-| Switch Pro | `switch-pro` |
-| Joy-Con pair (grip) | `joycon-pair` |
+| Kind | Folder | Drawing |
+|---|---|---|
+| Xbox, and any kind without its own drawing | `xbox` | ![Xbox drawing](../../assets/controllers/xbox/xbox.svg){ width="320" } |
+| PlayStation DualShock 4 | `playstation-dualshock4` | ![DualShock 4 drawing](../../assets/controllers/playstation-dualshock4/playstation-dualshock4.svg){ width="320" } |
+| PlayStation DualSense | `playstation-dualsense` | ![DualSense drawing](../../assets/controllers/playstation-dualsense/playstation-dualsense.svg){ width="320" } |
+| Switch Pro | `switch-pro` | ![Switch Pro drawing](../../assets/controllers/switch-pro/switch-pro.svg){ width="320" } |
+| Joy-Con pair (grip) | `joycon-pair` | ![Joy-Con pair drawing](../../assets/controllers/joycon-pair/joycon-pair.svg){ width="320" } |
 
 ## Look
 
@@ -73,7 +72,7 @@ Ids follow UX-V-068: an interactive shape's `id` is its `ControllerInput` name. 
 
 | Id | Shape |
 |---|---|
-| `A`, `B`, `X`, `Y` | The four face buttons, by position (right, bottom, left, top on the Generic drawing). |
+| `A`, `B`, `X`, `Y` | The four face buttons, by position (right, bottom, left, top on the Xbox drawing). |
 | `DPadUp`, `DPadDown`, `DPadLeft`, `DPadRight` | The D-pad arms. |
 | `View`, `Menu` | The two center buttons. |
 | `LeftBumper`, `RightBumper` | The shoulder buttons (L1 and R1, or L and R). |
