@@ -246,7 +246,7 @@ How a drawing is made, with its classes, line weights, and shoulder shapes, is i
 | Every kind must behave the same: the selected input is lit, pressed inputs are lit, stick caps move with the axis, and free keys are dashed (UX-V-035). | UX-V-060 |
 | Art must be original or licensed CC BY 4.0, with credit in ACKNOWLEDGEMENTS. The app must never use art copied from another site, such as controllertest.io. | UX-V-061 |
 | In every drawing that includes bumpers and triggers, they must be drawn attached to the body at its top edge. A bumper must light when pressed. | UX-V-062 |
-| In every drawing that includes analog triggers, they must fill in proportion to the pull, from 0 to 100 percent. | UX-V-063 |
+| In every drawing that includes analog triggers, they must fill in proportion to the pull, from 0 to 100 percent. The trigger's outline must not light while it is pulled. | UX-V-063 |
 | In every drawing that includes digital triggers, they must light when pressed and must not fill. | UX-V-064 |
 | Face button glyphs must follow the drawing's labels: A, B, X, and Y for the Generic drawing, and Cross, Circle, Square, and Triangle for the PlayStation drawing. Logical inputs keep their `ControllerInput` names. | UX-V-065 |
 | A drawing must show only the inputs it has. Logical inputs map to the shapes by id (UX-V-068). | UX-V-066 |

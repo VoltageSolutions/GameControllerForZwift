@@ -351,6 +351,36 @@ namespace GameControllerForZwift.UnitTests.Controls
             });
         }
 
+        [Theory]
+        [InlineData(ControllerKind.Xbox)]
+        [InlineData(ControllerKind.PlayStationDualShock4)]
+        [InlineData(ControllerKind.PlayStationDualSense)]
+        public void UXV063_PullingAnAnalogTriggerFillsItWithoutLightingTheWholeOutline(ControllerKind kind)
+        {
+            using var context = new ConfigurationTestContext();
+            WithDiagram(kind, diagram =>
+            {
+                var viewModel = context.CreateViewModel(Xbox);
+                diagram.Rows = viewModel.Rows;
+                object accent = diagram.FindResource("Brush.accent");
+                object rest = diagram.FindResource(RestKeyFor(kind, ControllerInput.LeftTrigger));
+
+                viewModel.Selector(ControllerInput.LeftTrigger).ControllerData = ControllerDataFor(ControllerInput.LeftTrigger);
+                diagram.ControllerValues = new ControllerData { LeftTrigger = Full / 4 };
+                diagram.RefreshDiagram();
+
+                Assert.Same(rest, FillOf(diagram.InputShape(ControllerInput.LeftTrigger)));
+                Rect clip = diagram.LeftTriggerClipRect!.Value;
+                Assert.True(clip.Height > 0);
+                Assert.True(clip.Height < ((System.Windows.Shapes.Path)diagram.Element("LeftTriggerFill")!).Data.Bounds.Height);
+
+                // Selecting the trigger row still lights its outline, as for every other input (UX-V-060).
+                diagram.SelectedInput = ControllerInput.LeftTrigger;
+                diagram.RefreshDiagram();
+                Assert.Same(accent, FillOf(diagram.InputShape(ControllerInput.LeftTrigger)));
+            });
+        }
+
         // The flat DualShock 4 art rests keys and stick caps at Brush.art-shade; the other kinds use Brush.pad-key.
         private static string RestKeyFor(ControllerKind kind, ControllerInput input) =>
             kind is ControllerKind.Xbox or ControllerKind.PlayStationDualShock4 or ControllerKind.SwitchPro or ControllerKind.JoyConPair or ControllerKind.PlayStationDualSense ? "Brush.art-shade" : "Brush.pad-key";

@@ -184,8 +184,19 @@ namespace GameControllerForZwift.UI.WPF.Controls
             if (SelectedInput == input)
                 return true;
 
+            // An analog trigger shows how far it is pulled with its fill (UX-V-063), so being pulled does not light its whole outline.
+            if (HasAnalogFill(input))
+                return false;
+
             return _subscribedRows?.Any(row => row.Input == input && row.IsPressed) == true;
         }
+
+        private bool HasAnalogFill(ControllerInput input) => input switch
+        {
+            ControllerInput.LeftTrigger => _drawing?.LeftTriggerFill is not null,
+            ControllerInput.RightTrigger => _drawing?.RightTriggerFill is not null,
+            _ => false,
+        };
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
