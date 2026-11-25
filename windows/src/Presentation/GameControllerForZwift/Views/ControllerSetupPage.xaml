@@ -33,16 +33,16 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <!-- The chip. A trigger's chip also fills with the accent from left to right as the trigger is pulled (SCR-BTN-041). -->
+                                <!-- The chip. A trigger's chip also fills with the accent from left to right as the trigger is pulled: a full accent pill, clipped so a straight edge moves across (SCR-BTN-041). -->
                                 <Grid x:Name="ChipHost" MinWidth="44" Height="30" VerticalAlignment="Center">
                                     <Border x:Name="Chip" CornerRadius="15" Background="{DynamicResource Brush.surface-2}" />
-                                    <Border x:Name="PullFill" CornerRadius="15" HorizontalAlignment="Left" Background="{DynamicResource Brush.accent}" Visibility="Collapsed">
-                                        <Border.Width>
+                                    <Border x:Name="PullFill" CornerRadius="15" Background="{DynamicResource Brush.accent}" Visibility="Collapsed">
+                                        <Border.Clip>
                                             <MultiBinding Converter="{StaticResource PullFill}">
                                                 <Binding Path="PullRatio" />
                                                 <Binding Path="ActualWidth" ElementName="ChipHost" />
                                             </MultiBinding>
-                                        </Border.Width>
+                                        </Border.Clip>
                                     </Border>
                                     <TextBlock x:Name="ChipText" Margin="10,0" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{DynamicResource Font.Figtree}"
                                                FontSize="15" FontWeight="ExtraBold" Foreground="{DynamicResource Brush.text}" Text="{Binding Chip}" />

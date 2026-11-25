@@ -6,8 +6,8 @@ using System.Windows.Media;
 namespace GameControllerForZwift.UI.WPF.Converters
 {
     /// <summary>
-    /// Turns how far a trigger is pulled (0 to 1) and the width of its chip into the part of the chip that is filled, as a
-    /// width, or as a clip rectangle when the target is a geometry (SCR-BTN-041).
+    /// Turns how far a trigger is pulled (0 to 1) and the width of its chip into a clip rectangle over the filled part of the chip,
+    /// so a full pill is revealed by a straight edge that moves from left to right (SCR-BTN-041).
     /// </summary>
     public sealed class PullFillConverter : IMultiValueConverter
     {
@@ -19,9 +19,7 @@ namespace GameControllerForZwift.UI.WPF.Converters
                 return DependencyProperty.UnsetValue;
 
             double filled = Math.Max(0, width) * Math.Clamp(ratio, 0.0, 1.0);
-            return targetType == typeof(Geometry)
-                ? new RectangleGeometry(new Rect(0, 0, filled, ChipHeight))
-                : filled;
+            return new RectangleGeometry(new Rect(0, 0, filled, ChipHeight));
         }
 
         public object[] ConvertBack(object? value, Type[] targetTypes, object? parameter, CultureInfo culture) =>
