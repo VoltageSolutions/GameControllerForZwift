@@ -30,9 +30,6 @@ On Windows the tokens live in `Resources/Theme/Tokens.Dark.xaml` and `Tokens.Lig
 | `focus` | Focus ring | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#7CC4FF;color:#141312;padding:2px 8px;border-radius:8px">#7CC4FF</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1F5FCC;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1F5FCC</span> |
 | `ok` | Good state (with words) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#5FD39A;color:#141312;padding:2px 8px;border-radius:8px">#5FD39A</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1E7A4C;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1E7A4C</span> |
 | `err` | Problem state (with words) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FF7A70;color:#141312;padding:2px 8px;border-radius:8px">#FF7A70</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#B3261E;color:#FFFFFF;padding:2px 8px;border-radius:8px">#B3261E</span> |
-| `pad` | Controller illustration body | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#3A3633;color:#F5F2EC;padding:2px 8px;border-radius:8px">#3A3633</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E6E0D5;color:#1F1B16;padding:2px 8px;border-radius:8px">#E6E0D5</span> |
-| `pad-2` | Illustration shading | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#2A2725;color:#F5F2EC;padding:2px 8px;border-radius:8px">#2A2725</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#D5CDBF;color:#1F1B16;padding:2px 8px;border-radius:8px">#D5CDBF</span> |
-| `pad-key` | Illustration keys | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#4A4542;color:#F5F2EC;padding:2px 8px;border-radius:8px">#4A4542</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#F6F2EB;color:#1F1B16;padding:2px 8px;border-radius:8px">#F6F2EB</span> |
 | `art-body` | Controller art: body and touchpad fill | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#34302D;color:#F5F2EC;padding:2px 8px;border-radius:8px">#34302D</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#EFEAE0;color:#1F1B16;padding:2px 8px;border-radius:8px">#EFEAE0</span> |
 | `art-shade` | Controller art: shade for keys, wells, sticks, caps | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#3E3A36;color:#F5F2EC;padding:2px 8px;border-radius:8px">#3E3A36</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E5DECF;color:#1F1B16;padding:2px 8px;border-radius:8px">#E5DECF</span> |
 | `art-line` | Controller art: outline strokes | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#A89F94;color:#1F1B16;padding:2px 8px;border-radius:8px">#A89F94</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#6F675C;color:#F5F2EC;padding:2px 8px;border-radius:8px">#6F675C</span> |
@@ -84,7 +81,6 @@ Text needs 4.5:1. Icons, focus rings, status dots, and graphics people need to s
 | `art-glyph` on `art-shade` | 8.36 | 6.73 |
 | `art-body` on `bg` (graphic) | 1.42 | 1.13 |
 | accent fill on `bg` (graphic) | 6.36 | 2.75 |
-| illustration key on body | 1.27 | 1.18 |
 
 The last two rows are below 3:1, so they carry extra cues. See [Accessibility](accessibility.md#color-contrast).
 
@@ -239,7 +235,7 @@ How a drawing is made, with its classes, line weights, and shoulder shapes, is i
 
 | Rule | ID |
 |---|---|
-| The controller illustration must be a wireframe outline with a ground shadow. It must use theme tokens only (`Brush.pad` and the other `pad` tokens), so it works in light and dark mode. | UX-V-034 |
+| The controller illustration must be a wireframe outline with a ground shadow. It must use theme tokens only (the `art` tokens), so it works in light and dark mode. | UX-V-034 |
 | Keys on the illustration must have a thin muted outline, free keys a dashed outline, and the lit key a dark outline plus the accent fill. | UX-V-035 |
 | The illustration must never be the only way to know a mapping. The Buttons list says the same in text. | UX-V-036 |
 | The app must draw an illustration that matches the controller's kind (CTRL-011). Xbox, PlayStation DualShock 4, PlayStation DualSense, Switch Pro and the Joy-Con pair each have their own drawing. Every other kind, the Generic kind included, uses the Xbox drawing. | UX-V-059 |

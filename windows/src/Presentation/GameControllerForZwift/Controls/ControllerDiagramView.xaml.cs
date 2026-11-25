@@ -23,7 +23,7 @@ namespace GameControllerForZwift.UI.WPF.Controls
 
         private const double AxisMax = 32767.0;
         private const string LitBrushKey = "Brush.accent";
-        private const string RestBrushKey = "Brush.pad-key";
+        private const string RestBrushKey = "Brush.art-shade";
 
         public static readonly DependencyProperty KindProperty =
             DependencyProperty.Register(nameof(Kind), typeof(ControllerKind), typeof(ControllerDiagramView),

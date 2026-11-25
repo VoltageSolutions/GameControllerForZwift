@@ -14,9 +14,6 @@
     <Color x:Key="Color.focus">#7CC4FF</Color>
     <Color x:Key="Color.ok">#5FD39A</Color>
     <Color x:Key="Color.err">#FF7A70</Color>
-    <Color x:Key="Color.pad">#3A3633</Color>
-    <Color x:Key="Color.pad-2">#2A2725</Color>
-    <Color x:Key="Color.pad-key">#4A4542</Color>
     <Color x:Key="Color.art-body">#34302D</Color>
     <Color x:Key="Color.art-shade">#3E3A36</Color>
     <Color x:Key="Color.art-line">#A89F94</Color>
@@ -34,9 +31,6 @@
     <SolidColorBrush x:Key="Brush.focus" Color="{StaticResource Color.focus}" />
     <SolidColorBrush x:Key="Brush.ok" Color="{StaticResource Color.ok}" />
     <SolidColorBrush x:Key="Brush.err" Color="{StaticResource Color.err}" />
-    <SolidColorBrush x:Key="Brush.pad" Color="{StaticResource Color.pad}" />
-    <SolidColorBrush x:Key="Brush.pad-2" Color="{StaticResource Color.pad-2}" />
-    <SolidColorBrush x:Key="Brush.pad-key" Color="{StaticResource Color.pad-key}" />
     <SolidColorBrush x:Key="Brush.art-body" Color="{StaticResource Color.art-body}" />
     <SolidColorBrush x:Key="Brush.art-shade" Color="{StaticResource Color.art-shade}" />
     <SolidColorBrush x:Key="Brush.art-line" Color="{StaticResource Color.art-line}" />
