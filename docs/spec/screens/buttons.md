@@ -1,7 +1,7 @@
 ---
 id: SPEC-SCR-BTN
 title: Buttons screens
-last-updated: 2026-11-22
+last-updated: 2026-11-24
 ---
 
 # Buttons screens
@@ -150,14 +150,14 @@ It opens as a sheet on a phone, and as a side panel on a landscape screen. Funct
 
 **What it is for:** show analog inputs live and let you map each direction.
 
-Sticks and triggers are analog. A small tilt steers a little. A light squeeze brakes a little. The tab shows each stick's live position with its dead zone, one row per direction, and live trigger fill.
+Sticks and triggers are analog. A small tilt steers a little. A light squeeze brakes a little. The tab lists the same kind of rows as the Buttons tab, in the same two columns that reflow with the window: the left side down the first column and the right side down the second. Each side has its trigger, its stick click, and one row per direction. The controller illustration shows where each stick is. A trigger's row shows how far it is pulled.
 
 | Rule | ID |
 |---|---|
-| Each stick must show its live position and the dead zone. | SCR-BTN-039 |
-| Each stick must have a row per direction (left, right, up, down) and each stick click must have its own row. | SCR-BTN-040 |
-| Each trigger must show a live fill. | SCR-BTN-041 |
-| The screen must show a brake caution: "Even a light squeeze can stop you." It must show where you choose or assign the brake function. | SCR-BTN-042 |
+| The controller illustration must show each stick's live position (UX-V-060). The tab must not draw a separate stick graph. | SCR-BTN-039 |
+| The tab must list its rows like the Buttons tab, one row per input in the same columns. In order, the rows are the trigger, the stick click, and the stick up, down, left, and right, with the left side in the first column and the right side in the second. The tab must not group rows in cards. | SCR-BTN-040 |
+| A trigger's row must fill its chip with the accent from left to right in proportion to the pull, from 0 to 100 percent, with the label staying readable. A pulled trigger must not light its whole chip. | SCR-BTN-041 |
+| The brake caution, "Even a light squeeze can stop you.", must appear with the Brake function in the function picker. | SCR-BTN-042 |
 | **Advanced** (dead zones and curves) must be a section at the bottom of this tab. | SCR-BTN-043 |
 
 ??? note "Edge cases"

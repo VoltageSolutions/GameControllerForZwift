@@ -11,6 +11,8 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
     /// </summary>
     public sealed partial class ButtonRowViewModel : ObservableObject
     {
+        private const double TriggerAxisMax = 32767.0;
+
         private readonly ZwiftFunctionSelectorViewModel _selector;
 
         /// <summary>True while the row is the selected one (SCR-BTN-005).</summary>
@@ -63,6 +65,17 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         /// <summary>True while the input is pressed on the controller.</summary>
         public bool IsPressed => _selector.IsPressed;
 
+        /// <summary>True for the two analog triggers, whose row fills as the trigger is pulled (SCR-BTN-041).</summary>
+        public bool IsAnalogTrigger => Info.Input is ControllerInput.LeftTrigger or ControllerInput.RightTrigger;
+
+        /// <summary>How far the trigger is pulled, 0 to 1, or 0 for any other input.</summary>
+        public double PullRatio => Info.Input switch
+        {
+            ControllerInput.LeftTrigger => Math.Clamp(_selector.ControllerData.LeftTrigger / TriggerAxisMax, 0.0, 1.0),
+            ControllerInput.RightTrigger => Math.Clamp(_selector.ControllerData.RightTrigger / TriggerAxisMax, 0.0, 1.0),
+            _ => 0.0,
+        };
+
         /// <summary>The live controller state, for the stick and trigger drawings.</summary>
         public ControllerData ControllerData => _selector.ControllerData;
 
@@ -82,6 +95,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
                     break;
                 case nameof(ZwiftFunctionSelectorViewModel.IsPressed):
                     OnPropertyChanged(nameof(IsPressed));
+                    OnPropertyChanged(nameof(PullRatio));
                     break;
             }
         }

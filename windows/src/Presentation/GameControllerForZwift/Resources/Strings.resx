@@ -309,30 +309,6 @@
     <value>What each stick and trigger does</value>
     <comment>Screen reader name of the list of rows on the Sticks and triggers tab.</comment>
   </data>
-  <data name="ButtonsLeftStick" xml:space="preserve">
-    <value>Left stick</value>
-    <comment>Heading of the card for the left stick on the Sticks and triggers tab.</comment>
-  </data>
-  <data name="ButtonsRightStick" xml:space="preserve">
-    <value>Right stick</value>
-    <comment>Heading of the card for the right stick on the Sticks and triggers tab.</comment>
-  </data>
-  <data name="ButtonsTriggers" xml:space="preserve">
-    <value>Triggers</value>
-    <comment>Heading of the card for the two triggers on the Sticks and triggers tab.</comment>
-  </data>
-  <data name="ButtonsStickPosition" xml:space="preserve">
-    <value>Where the stick is now</value>
-    <comment>Screen reader name of the live drawing of a stick's position.</comment>
-  </data>
-  <data name="ButtonsTriggerFill" xml:space="preserve">
-    <value>How far the trigger is pulled</value>
-    <comment>Screen reader name of the live bar that shows how far a trigger is pulled.</comment>
-  </data>
-  <data name="ButtonsBrakeCaution" xml:space="preserve">
-    <value>Even a light squeeze can stop you.</value>
-    <comment>Caution on the Sticks and triggers tab. A trigger mapped to Brake slows the rider as soon as it is squeezed a little.</comment>
-  </data>
   <data name="ButtonsPickerTitle" xml:space="preserve">
     <value>What should {0} do?</value>
     <comment>Heading of the panel where the person picks a Zwift function. {0} is the input, for example RB.</comment>

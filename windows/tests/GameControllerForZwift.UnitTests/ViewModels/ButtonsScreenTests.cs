@@ -29,7 +29,48 @@ namespace GameControllerForZwift.UI.WPF.Tests.ViewModels
 
             Assert.Equal(ButtonsCatalog.Inputs.Count, viewModel.Rows.Count);
             Assert.All(viewModel.ButtonRows, r => Assert.Equal(ButtonsTab.Buttons, r.Info.Tab));
-            Assert.Equal(viewModel.Rows.Count, viewModel.ButtonRows.Count + viewModel.LeftStickRows.Count + viewModel.RightStickRows.Count + viewModel.TriggerRows.Count);
+            Assert.All(viewModel.SticksAndTriggersRows, r => Assert.Equal(ButtonsTab.SticksAndTriggers, r.Info.Tab));
+            Assert.Equal(viewModel.Rows.Count, viewModel.ButtonRows.Count + viewModel.SticksAndTriggersRows.Count);
+        }
+
+        [Fact]
+        public void SCRBTN040_SticksAndTriggersFillTwoColumnsLeftThenRight()
+        {
+            var viewModel = _context.CreateViewModel(Xbox);
+
+            ControllerInput[] order = [.. viewModel.SticksAndTriggersRows.Select(r => r.Input)];
+
+            // Rows pair up across the two columns, so each left input sits beside its right counterpart.
+            Assert.Equal(
+                [
+                    ControllerInput.LeftTrigger, ControllerInput.RightTrigger,
+                    ControllerInput.LeftThumbstickClick, ControllerInput.RightThumbstickClick,
+                    ControllerInput.LeftThumbstickTiltUp, ControllerInput.RightThumbstickTiltUp,
+                    ControllerInput.LeftThumbstickTiltDown, ControllerInput.RightThumbstickTiltDown,
+                    ControllerInput.LeftThumbstickTiltLeft, ControllerInput.RightThumbstickTiltLeft,
+                    ControllerInput.LeftThumbstickTiltRight, ControllerInput.RightThumbstickTiltRight,
+                ],
+                order);
+        }
+
+        [Fact]
+        public void SCRBTN041_ATriggerRowReportsHowFarTheTriggerIsPulled()
+        {
+            var viewModel = _context.CreateViewModel(Xbox);
+            ButtonRowViewModel left = viewModel.Rows.Single(r => r.Input == ControllerInput.LeftTrigger);
+            ButtonRowViewModel a = viewModel.Rows.Single(r => r.Input == ControllerInput.A);
+            var changed = new List<string?>();
+            left.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
+
+            Assert.True(left.IsAnalogTrigger);
+            Assert.False(a.IsAnalogTrigger);
+            Assert.Equal(0, left.PullRatio);
+
+            viewModel.Selector(ControllerInput.LeftTrigger).ControllerData = new ControllerData { LeftTrigger = 32767 / 2 };
+
+            Assert.Equal(0.5, left.PullRatio, 3);
+            Assert.Contains(nameof(ButtonRowViewModel.PullRatio), changed);
+            Assert.Equal(0, a.PullRatio);
         }
 
         [Fact]

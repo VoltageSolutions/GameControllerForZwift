@@ -47,12 +47,4 @@
             </Setter.Value>
         </Setter>
     </Style>
-
-    <Style TargetType="{x:Type controls:ThumbstickGraph}">
-        <Setter Property="MinX" Value="-1" />
-        <Setter Property="MaxX" Value="1" />
-        <Setter Property="MinY" Value="-1" />
-        <Setter Property="MaxY" Value="1" />
-        <Setter Property="Width" Value="300" />
-    </Style>
 </ResourceDictionary>

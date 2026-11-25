@@ -132,9 +132,7 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
             var selectors = AllSelectors.ToDictionary(vm => vm.SelectedInput);
             _rows = ButtonsCatalog.Inputs.Select(info => new ButtonRowViewModel(info, selectors[info.Input])).ToList();
             ButtonRows = Tab(ButtonsTab.Buttons);
-            LeftStickRows = _rows.Where(r => r.Info.Key.StartsWith("LS", StringComparison.Ordinal)).ToList();
-            RightStickRows = _rows.Where(r => r.Info.Key.StartsWith("RS", StringComparison.Ordinal)).ToList();
-            TriggerRows = _rows.Where(r => r.Input is ControllerInput.LeftTrigger or ControllerInput.RightTrigger).ToList();
+            SticksAndTriggersRows = SticksAndTriggersOrder.Select(input => _rows.Single(r => r.Input == input)).ToList();
 
             _showOtherControllersConfigurations = _appSettings.GetShowOtherControllersConfigurations();
 
@@ -159,14 +157,21 @@ namespace GameControllerForZwift.UI.WPF.ViewModels
         /// <summary>Gets the rows of the Buttons tab: buttons, D-pad, and bumpers.</summary>
         public IReadOnlyList<ButtonRowViewModel> ButtonRows { get; }
 
-        /// <summary>Gets the rows of the left stick: its click and its four directions.</summary>
-        public IReadOnlyList<ButtonRowViewModel> LeftStickRows { get; }
+        /// <summary>
+        /// Gets the rows of the Sticks and triggers tab, in the order they fill the two columns: the left side down the first column,
+        /// the right side down the second (SCR-BTN-040).
+        /// </summary>
+        public IReadOnlyList<ButtonRowViewModel> SticksAndTriggersRows { get; }
 
-        /// <summary>Gets the rows of the right stick: its click and its four directions.</summary>
-        public IReadOnlyList<ButtonRowViewModel> RightStickRows { get; }
-
-        /// <summary>Gets the rows of the two triggers.</summary>
-        public IReadOnlyList<ButtonRowViewModel> TriggerRows { get; }
+        private static readonly ControllerInput[] SticksAndTriggersOrder =
+        [
+            ControllerInput.LeftTrigger, ControllerInput.RightTrigger,
+            ControllerInput.LeftThumbstickClick, ControllerInput.RightThumbstickClick,
+            ControllerInput.LeftThumbstickTiltUp, ControllerInput.RightThumbstickTiltUp,
+            ControllerInput.LeftThumbstickTiltDown, ControllerInput.RightThumbstickTiltDown,
+            ControllerInput.LeftThumbstickTiltLeft, ControllerInput.RightThumbstickTiltLeft,
+            ControllerInput.LeftThumbstickTiltRight, ControllerInput.RightThumbstickTiltRight,
+        ];
 
         /// <summary>Gets the panel where you choose what the selected row does (SCR-BTN-005).</summary>
         public FunctionPickerViewModel FunctionPicker { get; } = new();
