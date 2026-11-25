@@ -69,6 +69,31 @@ namespace GameControllerForZwift.UI.WPF.Dialogs
             using var process = Process.Start(new ProcessStartInfo(folderPath) { UseShellExecute = true });
         }
 
+        public void OpenUrl(string url)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(url);
+            if (!Uri.TryCreate(url, UriKind.Absolute, out Uri? uri) || uri.Scheme != Uri.UriSchemeHttps)
+            {
+                throw new ArgumentException("Only https addresses can be opened.", nameof(url));
+            }
+
+            using var process = Process.Start(new ProcessStartInfo(uri.AbsoluteUri) { UseShellExecute = true });
+        }
+
+        public bool CopyText(string text)
+        {
+            try
+            {
+                Clipboard.SetText(text);
+                return true;
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                // Another program holds the clipboard.
+                return false;
+            }
+        }
+
         private static bool? ShowModal(Window dialog)
         {
             var owner = GetOwner();

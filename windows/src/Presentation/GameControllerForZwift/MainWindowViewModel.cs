@@ -148,7 +148,7 @@ namespace GameControllerForZwift.UI.WPF
         public void UpdateLayoutForWidth(double width) => NavLayout = LayoutForWidth(width);
 
         /// <summary>Shows the first tab after start. The history starts empty.</summary>
-        public void NavigateToStartPage() => SelectTab(ShellTab.Buttons);
+        public void NavigateToStartPage() => SelectTab(ShellTab.Ride);
 
         /// <summary>Shows a tab and clears the history.</summary>
         public void SelectTab(ShellTab tab) => SelectedTab = Tabs.Single(t => t.Tab == tab);
@@ -172,7 +172,7 @@ namespace GameControllerForZwift.UI.WPF
         private void OpenCredits()
         {
             IsMoreMenuOpen = false;
-            _navigationService.NavigateTo<AboutPageViewModel>();
+            _navigationService.NavigateTo<CreditsViewModel>();
         }
 
         /// <summary>
@@ -195,15 +195,15 @@ namespace GameControllerForZwift.UI.WPF
         {
         }
 
-        /// <summary>Support this project has no screen, so its menu item is disabled.</summary>
-        [RelayCommand(CanExecute = nameof(HasSupportScreen))]
+        /// <summary>Opens Support this project as a pushed screen (UX-N-009).</summary>
+        [RelayCommand]
         private void OpenSupport()
         {
+            IsMoreMenuOpen = false;
+            _navigationService.NavigateTo<SupportViewModel>();
         }
 
         private static bool HasHelpScreen() => false;
-
-        private static bool HasSupportScreen() => false;
 
         [RelayCommand(CanExecute = nameof(CanGoBack))]
         private void Back()

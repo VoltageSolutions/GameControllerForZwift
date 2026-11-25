@@ -1,7 +1,7 @@
 ---
 id: SPEC-UX-ACCESS
 title: Accessibility
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Accessibility
@@ -19,7 +19,7 @@ Text needs 4.5:1. Icons, focus rings, status dots, and graphics people need to s
 |---|---|
 | Text pairs must reach 4.5:1 and meaningful non-text pairs 3:1, in both modes. | UX-A-001 |
 | Every status must have words as well as color. | UX-A-002 |
-| Accent text, icons, and dots must use `accent-ink` (`#ED7600` in dark mode, `#A55200` in light mode). | UX-A-003 |
+| Accent text and icons must use `accent-ink` (`#ED7600` in dark mode, `#A55200` in light mode). Status dots must use `ok` or `err`. | UX-A-003 |
 | Text on the accent fill must be `#1F1B16` (5.86:1). The app must not use white on the accent (2.92:1). | UX-A-004 |
 | The app must follow the system dark or light setting. | UX-A-005 |
 | When a Windows contrast theme is on, the app must use system colors. | UX-A-006 |
@@ -28,7 +28,7 @@ Fixes made to pairs that failed:
 
 | Problem | Before | Fix |
 |---|---|---|
-| Connections tab dot, light mode | Amber placeholder at 1.57:1 | `accent-ink` `#A55200`, 5.20:1 on `bg` |
+| Connections tab dot, light mode | Amber placeholder at 1.57:1 | `err` `#B3261E`, 6.16:1 on `bg` |
 | Lit button on the controller drawing, light mode | Accent on the body at 1.39:1 | Dark outline around the lit key |
 | Keys against the body, both modes | 1.2:1 | Thin muted outline on every key, dashed outline on free keys |
 
@@ -87,8 +87,8 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | ID | Role | Name read out |
 |---|---|---|
 | `NavRideTab`, `NavButtonsTab`, `NavConnectionsTab` | Tab (1 to 3 of 3) | "Ride", "Buttons", "Connections" (plus ", Zwift not connected" when the dot shows) |
-| `MenuButton` | Button, expands | "More: settings, help, credits, support" or "Close menu" |
-| `MenuSettingsItem`, `MenuHelpItem`, `MenuCreditsItem`, `MenuSupportItem` | Menu item | "Settings", "Help and feedback", "Credits", "Support this project" |
+| `MenuButton` | Button, expands | "More: settings, help, about, support" or "Close menu" |
+| `MenuSettingsItem`, `MenuHelpItem`, `MenuCreditsItem`, `MenuSupportItem` | Menu item | "Settings", "Help and feedback", "About", "Support this project" |
 | `NavBackButton` | Button | "Back" |
 | `SetupPressAnyButtonStatus` | Live status | "Got it. That's your left bumper" |
 | `SetupContinueButton`, `SetupPairBluetoothButton` | Button | "Continue", "Pair a new Bluetooth controller" |
@@ -97,10 +97,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 | `RideControllerCard` | Group | "Your Xbox controller, awake and connected" |
 | `RideStats` | Group | "12 rides together, 1,086 shifts, riding since September" |
 | `RideZwiftStatus` | Live status | "Zwift is connected to Voltage Gamepad" or "Zwift isn't connected yet" |
-| `RideStartButton` | Button | "Start riding" |
 | `RideLastPressStatus` | Live status | "Shift up, right bumper" |
-| `RideWindowSizeGroup` | Radio group | "Window size: Full, Float, Mini" |
-| `RideStopButton` | Button | "Stop riding" |
 | `ButtonsMappingPicker` | Button, opens | "Mapping: Climbing, unsaved changes" |
 | `ButtonsSaveButton`, `ButtonsSaveAsButton` | Button | "Save", "Save as new" |
 | `ButtonsRow_{input}` | Button | "Right bumper: shift up" |
@@ -134,8 +131,7 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 
 | Rule | ID |
 |---|---|
-| The app must announce changes, not repeats: Zwift connected or lost, controller asleep or back, and the first press in setup. | UX-A-025 |
-| While riding, shift announcements must be optional: Settings has "Announce each shift", off by default. | UX-A-026 |
+| The app must announce changes, not repeats: Zwift connected or lost, controller disconnected or back, and the first press in setup. | UX-A-025 |
 | The app must always announce connection problems. | UX-A-027 |
 | The app must never move focus to announce something. | UX-A-028 |
 
@@ -162,3 +158,4 @@ Repeated items add a key after an underscore: `ButtonsRow_RB`, `FunctionItem_Shi
 |---|---|
 | Every new screen must pass a contrast check and have a written reading order before I build it. | UX-A-032 |
 | I must check every new Windows screen with Accessibility Insights and Narrator. | UX-A-033 |
+| A unit test must fail when an ID listed in the Accessibility IDs table of a screen spec is missing from the app. It must report as its own check on a pull request (UX-L-014). | UX-A-034 |

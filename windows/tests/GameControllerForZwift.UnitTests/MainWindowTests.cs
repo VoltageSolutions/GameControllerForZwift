@@ -34,7 +34,9 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton(dataIntegrator);
             services.AddSingleton(profileService);
             services.AddSingleton(Substitute.For<IConfigurationStore>());
-            services.AddSingleton(Substitute.For<IAppSettingsStore>());
+            var settings = Substitute.For<IAppSettingsStore>();
+            settings.GetRideStats().Returns(GameControllerForZwift.Core.Rides.RideStats.None);
+            services.AddSingleton(settings);
             services.AddSingleton(Substitute.For<IDialogService>());
             services.AddSingleton<ControllerModelMatcher>();
             services.AddSingleton<INavigationService, NavigationService>();
@@ -43,7 +45,10 @@ namespace GameControllerForZwift.UnitTests
             services.AddSingleton<RideViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();
             services.AddSingleton<ConnectionsViewModel>();
-            services.AddSingleton(new AboutPageViewModel("# Acknowledgements"));
+            services.AddSingleton<CreditsViewModel>();
+            services.AddSingleton(new CreditsListViewModel("# Credits", Substitute.For<IDialogService>()));
+            services.AddSingleton(new LicenseViewModel("# License", Substitute.For<IDialogService>()));
+            services.AddSingleton<SupportViewModel>();
             services.AddSingleton<SettingsViewModel>();
             services.AddSingleton<StyleGalleryViewModel>();
             services.AddTransient<MainWindow>();
@@ -103,13 +108,13 @@ namespace GameControllerForZwift.UnitTests
             });
 
         [Fact]
-        public void Start_ShowsTheButtonsTabWithEmptyHistory()
+        public void Start_ShowsTheRideTabWithEmptyHistory()
         {
             WithWindow((provider, window) =>
             {
-                var page = Assert.IsType<ControllerSetupPage>(ShownContent(window));
-                Assert.Same(provider.GetRequiredService<ControllerSetupViewModel>(), page.DataContext);
-                Assert.Equal(ShellTab.Buttons, window.ViewModel.SelectedTab!.Tab);
+                var page = Assert.IsType<RidePage>(ShownContent(window));
+                Assert.Same(provider.GetRequiredService<RideViewModel>(), page.DataContext);
+                Assert.Equal(ShellTab.Ride, window.ViewModel.SelectedTab!.Tab);
                 Assert.Same(window.ViewModel.SelectedTab, Find<UI.WPF.Controls.NavTabList>(window, "SidebarTabs").SelectedItem);
                 Assert.False(window.ViewModel.CanGoBack);
                 Assert.Equal(Visibility.Collapsed, Find<Button>(window, "BackButton").Visibility);
@@ -161,7 +166,7 @@ namespace GameControllerForZwift.UnitTests
                 window.ViewModel.SelectTab(ShellTab.Connections);
                 window.ViewModel.OpenCreditsCommand.Execute(null);
                 Pump(window);
-                Assert.IsType<AboutPage>(ShownContent(window));
+                Assert.IsType<CreditsPage>(ShownContent(window));
 
                 Click(Find<Button>(window, "BackButton"));
                 Pump(window);
@@ -214,8 +219,8 @@ namespace GameControllerForZwift.UnitTests
                     .GetField("_views", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
                     .GetValue(viewCache)!;
 
-                Assert.Equal(5, views.Count);
-                Assert.True(((FrameworkElement)views[typeof(AboutPageViewModel)]!).IsMeasureValid);
+                Assert.Equal(6, views.Count);
+                Assert.True(((FrameworkElement)views[typeof(CreditsViewModel)]!).IsMeasureValid);
                 Assert.Null(((FrameworkElement)views[typeof(SettingsViewModel)]!).Parent);
             });
         }
@@ -288,7 +293,7 @@ namespace GameControllerForZwift.UnitTests
                 PressKey(window, Key.Escape);
 
                 Assert.False(window.ViewModel.IsMoreMenuOpen);
-                Assert.IsType<ControllerSetupPage>(ShownContent(window));
+                Assert.IsType<RidePage>(ShownContent(window));
             });
         }
 
@@ -322,7 +327,7 @@ namespace GameControllerForZwift.UnitTests
                 Assert.True(Find<Button>(window, "MenuSettingsItem").IsEnabled);
                 Assert.True(Find<Button>(window, "MenuCreditsItem").IsEnabled);
                 Assert.False(Find<Button>(window, "MenuHelpItem").IsEnabled);
-                Assert.False(Find<Button>(window, "MenuSupportItem").IsEnabled);
+                Assert.True(Find<Button>(window, "MenuSupportItem").IsEnabled);
             });
         }
 
@@ -406,7 +411,7 @@ namespace GameControllerForZwift.UnitTests
                 window.RaiseEvent(args);
 
                 Assert.True(args.Handled);
-                Assert.IsType<ControllerSetupViewModel>(window.ViewModel.CurrentViewModel);
+                Assert.IsType<RideViewModel>(window.ViewModel.CurrentViewModel);
             });
         }
 
@@ -420,7 +425,7 @@ namespace GameControllerForZwift.UnitTests
                 window.RaiseEvent(args);
 
                 Assert.False(args.Handled);
-                Assert.IsType<ControllerSetupViewModel>(window.ViewModel.CurrentViewModel);
+                Assert.IsType<RideViewModel>(window.ViewModel.CurrentViewModel);
             });
         }
 

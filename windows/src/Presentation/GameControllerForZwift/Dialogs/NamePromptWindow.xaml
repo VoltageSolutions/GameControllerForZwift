@@ -56,16 +56,16 @@
             <UniformGrid Rows="1" Columns="2">
                 <Button
                     x:Name="OkButton"
-                    Margin="0,0,4,0"
+                    Margin="0,0,6,0" VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
                     Content="Save"
                     IsDefault="True"
-                    Style="{DynamicResource AccentButtonStyle}"
+                    Style="{StaticResource Button.Primary}"
                     Click="OkButton_Click"
                     AutomationProperties.AutomationId="NamePromptOkButton" />
                 <Button
                     x:Name="CancelButton"
-                    Margin="4,0,0,0"
+                    Margin="6,0,0,0" VerticalAlignment="Center"
                     HorizontalAlignment="Stretch"
                     Content="Cancel"
                     IsCancel="True"

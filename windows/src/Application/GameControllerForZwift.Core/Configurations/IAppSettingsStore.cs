@@ -29,5 +29,44 @@ namespace GameControllerForZwift.Core.Configurations
         /// Records whether the configuration list also shows the configurations of other controller models (CFG-039).
         /// </summary>
         void SetShowOtherControllersConfigurations(bool show);
+
+        /// <summary>The ride timeout used when none is saved, in minutes (SCR-SET-012).</summary>
+        public const int DefaultRideTimeoutMinutes = 10;
+
+        /// <summary>The smallest ride timeout, in minutes (SCR-SET-012).</summary>
+        public const int MinimumRideTimeoutMinutes = 5;
+
+        /// <summary>
+        /// Returns the saved appearance name (for example "Dark"), or null if none is saved (SCR-SET-002).
+        /// </summary>
+        string? GetAppearance();
+
+        /// <summary>
+        /// Records the appearance name (SCR-SET-002).
+        /// </summary>
+        void SetAppearance(string appearance);
+
+        /// <summary>
+        /// Returns how many minutes without a press or a connection end a ride. It is <see cref="DefaultRideTimeoutMinutes"/>
+        /// if unset, and never less than <see cref="MinimumRideTimeoutMinutes"/> (SCR-SET-012).
+        /// </summary>
+        int GetRideTimeoutMinutes();
+
+        /// <summary>
+        /// Records the ride timeout in minutes. A value below <see cref="MinimumRideTimeoutMinutes"/> is raised to it (SCR-SET-012).
+        /// </summary>
+        void SetRideTimeoutMinutes(int minutes);
+
+        /// <summary>Returns the totals of all finished rides, or <see cref="Rides.RideStats.None"/> (SCR-RIDE-003).</summary>
+        Rides.RideStats GetRideStats();
+
+        /// <summary>Adds a finished ride to the totals (SCR-RIDE-003).</summary>
+        void RecordRide(int shifts, DateTimeOffset startedAt);
+
+        /// <summary>Returns whether the donation ask has been shown. It is shown at most once (SCR-RIDE-030).</summary>
+        bool GetDonationAskShown();
+
+        /// <summary>Records that the donation ask has been shown (SCR-RIDE-031).</summary>
+        void SetDonationAskShown();
     }
 }

@@ -1,0 +1,26 @@
+<UserControl x:Class="GameControllerForZwift.UI.WPF.Views.DocumentPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:markdig="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
+             Foreground="{DynamicResource Brush.text}">
+    <!-- The Credits list and the License screen (docs/spec/screens/credits.md). -->
+    <UserControl.Resources>
+        <!-- Runs inside the document inherit the text color of the theme. -->
+        <Style TargetType="Run">
+            <Setter Property="Foreground" Value="{DynamicResource Brush.text}" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="PageTitle" Style="{StaticResource Text.Title}" Text="{Binding Title}"
+                   AutomationProperties.AutomationId="{Binding TitleAutomationId}" AutomationProperties.HeadingLevel="Level1" />
+        <FlowDocumentReader x:Name="Reader" Grid.Row="1" Margin="-19,16,0,0" ViewingMode="Scroll" Document="{Binding Document}">
+            <FlowDocumentReader.CommandBindings>
+                <CommandBinding Command="{x:Static markdig:Commands.Hyperlink}" Executed="OpenHyperlink" />
+            </FlowDocumentReader.CommandBindings>
+        </FlowDocumentReader>
+    </Grid>
+</UserControl>

@@ -1,0 +1,369 @@
+using GameControllerForZwift.Core.Controller;
+using System.Globalization;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Shapes;
+using Path = System.Windows.Shapes.Path;
+using System.Xml.Linq;
+
+namespace GameControllerForZwift.UI.WPF.Controls
+{
+    /// <summary>One controller drawing built from a wireframe SVG, with the parts the diagram animates.</summary>
+    internal sealed class ControllerSvgDrawing
+    {
+        public required Canvas Root { get; init; }
+        public required Dictionary<string, FrameworkElement> ById { get; init; }
+        public TranslateTransform? LeftStick { get; init; }
+        public TranslateTransform? RightStick { get; init; }
+        public Path? LeftTriggerFill { get; init; }
+        public Path? RightTriggerFill { get; init; }
+        public Rect LeftTriggerFillBounds { get; init; }
+        public Rect RightTriggerFillBounds { get; init; }
+        /// <summary>Stick cap travel in drawing units, from <c>data-travel</c> on the movable group (default 8).</summary>
+        public double LeftTravel { get; init; } = ControllerSvgLoader.DefaultTravel;
+        public double RightTravel { get; init; } = ControllerSvgLoader.DefaultTravel;
+        /// <summary>Theme brush key a shape rests at, by id, when it is not <c>Brush.art-shade</c>.</summary>
+        public required Dictionary<string, string> RestBrushes { get; init; }
+        /// <summary>Ids of arm shapes (class <c>arm</c>): drawn without a stroke at rest and stroked when lit.</summary>
+        public required HashSet<string> ArmIds { get; init; }
+        /// <summary>Glyph strokes by the id of the key they mark (<c>data-for</c>); they turn to the ink color when that key is lit.</summary>
+        public required Dictionary<string, Path> GlyphFor { get; init; }
+    }
+
+    /// <summary>
+    /// Builds WPF elements from the restricted SVG subset in <c>docs/assets/controllers</c> (viewBox, g, path, rect, circle,
+    /// ellipse, line, polyline, polygon, transform, class, id). Classes map to theme brushes
+    /// (<c>DynamicResource</c> references) so the drawing follows the appearance. Ids give lookup by <see cref="ControllerInput"/> name.
+    /// </summary>
+    internal static partial class ControllerSvgLoader
+    {
+        public const string LeftStickId = "LeftThumbstick";
+        public const string RightStickId = "RightThumbstick";
+        public const string LeftTriggerFillId = "LeftTriggerFill";
+        public const string RightTriggerFillId = "RightTriggerFill";
+        public const double DefaultTravel = 8.0;
+        public const string GlyphBrushKey = "Brush.art-glyph";
+        public const string GlyphLitBrushKey = "Brush.on-accent";
+
+        /// <summary>Folder and file name (without extension) of the drawing for each kind that has its own.</summary>
+        private static readonly Dictionary<ControllerKind, string> Files = new()
+        {
+            [ControllerKind.Xbox] = "xbox/xbox",
+            [ControllerKind.SwitchPro] = "switch-pro/switch-pro",
+            [ControllerKind.JoyConPair] = "joycon-pair/joycon-pair",
+            [ControllerKind.PlayStationDualSense] = "playstation-dualsense/playstation-dualsense",
+            [ControllerKind.PlayStationDualShock4] = "playstation-dualshock4/playstation-dualshock4",
+        };
+
+        /// <summary>
+        /// Path of the SVG relative to the Controllers asset folder, such as <c>xbox/xbox.svg</c>. Kinds without a drawing of
+        /// their own, the Generic kind included, show the Xbox drawing.
+        /// </summary>
+        public static string RelativePath(ControllerKind kind) =>
+            (Files.TryGetValue(kind, out string? file) ? file : Files[ControllerKind.Xbox]) + ".svg";
+
+        public static Uri ResourceUri(ControllerKind kind) =>
+            new($"pack://application:,,,/{typeof(ControllerSvgLoader).Assembly.GetName().Name};component/Assets/Controllers/{RelativePath(kind)}", UriKind.Absolute);
+
+        /// <summary>Loads the embedded SVG for a kind, or null when the resource is missing or unreadable.</summary>
+        public static ControllerSvgDrawing? TryLoad(ControllerKind kind)
+        {
+            try
+            {
+                var info = Application.GetResourceStream(ResourceUri(kind));
+                if (info is null)
+                    return null;
+
+                using Stream stream = info.Stream;
+                return Load(XDocument.Load(stream));
+            }
+            catch (Exception ex) when (ex is IOException or System.Xml.XmlException or UriFormatException or InvalidOperationException)
+            {
+                return null;
+            }
+        }
+
+        public static ControllerSvgDrawing Load(XDocument document)
+        {
+            XElement svg = document.Root ?? throw new InvalidDataException("The SVG has no root element.");
+            double[] box = Numbers(svg.Attribute("viewBox")?.Value);
+            if (box.Length != 4)
+                throw new InvalidDataException("The SVG needs a viewBox.");
+
+            var styles = StyleInfo.Parse(svg.Descendants().FirstOrDefault(e => e.Name.LocalName == "style")?.Value ?? "");
+            var context = new Context(styles);
+
+            var content = new Canvas { RenderTransform = new TranslateTransform(-box[0], -box[1]) };
+            foreach (XElement child in svg.Elements())
+                AddElement(content, child, context, inheritedClasses: []);
+
+            var root = new Canvas { Width = box[2], Height = box[3], SnapsToDevicePixels = false };
+            root.Children.Add(content);
+
+            return new ControllerSvgDrawing
+            {
+                Root = root,
+                ById = context.ById,
+                LeftStick = context.LeftStick,
+                RightStick = context.RightStick,
+                LeftTriggerFill = context.LeftFill,
+                RightTriggerFill = context.RightFill,
+                LeftTriggerFillBounds = context.LeftFill?.Data?.Bounds ?? Rect.Empty,
+                RightTriggerFillBounds = context.RightFill?.Data?.Bounds ?? Rect.Empty,
+                LeftTravel = context.LeftTravel,
+                RightTravel = context.RightTravel,
+                RestBrushes = context.RestBrushes,
+                ArmIds = context.ArmIds,
+                GlyphFor = context.GlyphFor,
+            };
+        }
+
+        private sealed class Context(StyleInfo styles)
+        {
+            public StyleInfo Styles { get; } = styles;
+            public Dictionary<string, FrameworkElement> ById { get; } = [];
+            public TranslateTransform? LeftStick { get; set; }
+            public TranslateTransform? RightStick { get; set; }
+            public Path? LeftFill { get; set; }
+            public Path? RightFill { get; set; }
+            public double LeftTravel { get; set; } = DefaultTravel;
+            public double RightTravel { get; set; } = DefaultTravel;
+            public Dictionary<string, string> RestBrushes { get; } = [];
+            public HashSet<string> ArmIds { get; } = [];
+            public Dictionary<string, Path> GlyphFor { get; } = [];
+        }
+
+        private static void AddElement(Canvas parent, XElement source, Context context, HashSet<string> inheritedClasses)
+        {
+            string tag = source.Name.LocalName;
+            string? id = (string?)source.Attribute("id");
+            var classes = new HashSet<string>(
+                ((string?)source.Attribute("class"))?.Split(' ', StringSplitOptions.RemoveEmptyEntries) ?? [],
+                StringComparer.Ordinal);
+
+            FrameworkElement? element;
+            bool isFill = id is LeftTriggerFillId or RightTriggerFillId;
+
+            if (tag == "g")
+            {
+                var group = new Canvas();
+                var next = new HashSet<string>(inheritedClasses.Concat(classes), StringComparer.Ordinal);
+                foreach (XElement child in source.Elements())
+                    AddElement(group, child, context, next);
+                element = group;
+            }
+            else
+            {
+                Geometry? geometry = BuildGeometry(source, tag);
+                if (geometry is null)
+                    return; // title, desc, style, defs and anything else outside the subset
+                var path = new Path { Data = geometry };
+                var all = new HashSet<string>(inheritedClasses.Concat(classes), StringComparer.Ordinal);
+                ApplyArtStyle(path, all, context.Styles, (string?)source.Attribute("fill") == "none");
+                if (isFill)
+                {
+                    // An analog trigger fill is the accent colour with no outline; the diagram reveals it with a clip.
+                    path.SetResourceReference(Shape.FillProperty, "Brush.accent");
+                    path.Stroke = null;
+                    path.StrokeThickness = 0;
+                }
+                element = path;
+                if (!string.IsNullOrEmpty(id) && classes.Contains("arm")) { context.RestBrushes[id] = "Brush.art-shade"; context.ArmIds.Add(id); }
+                if (!string.IsNullOrEmpty(id) && classes.Contains("key")) context.RestBrushes[id] = "Brush.art-shade";
+                if (!string.IsNullOrEmpty(id) && classes.Contains("cap")) context.RestBrushes[id] = "Brush.art-shade";
+                if ((string?)source.Attribute("data-for") is { Length: > 0 } target && classes.Contains("glyph"))
+                    context.GlyphFor[target] = path;
+                if (id == LeftTriggerFillId) context.LeftFill = path;
+                if (id == RightTriggerFillId) context.RightFill = path;
+            }
+
+            TransformGroup transform = BuildTransform((string?)source.Attribute("transform"), dropTriggerScale: isFill);
+            if (id is LeftStickId or RightStickId)
+            {
+                var move = new TranslateTransform();
+                transform.Children.Add(move);
+                double travel = double.TryParse((string?)source.Attribute("data-travel"), NumberStyles.Float, CultureInfo.InvariantCulture, out double dt) && dt > 0 ? dt : DefaultTravel;
+                if (id == LeftStickId) { context.LeftStick = move; context.LeftTravel = travel; }
+                else { context.RightStick = move; context.RightTravel = travel; }
+            }
+            if (transform.Children.Count > 0)
+                element.RenderTransform = transform;
+
+            if (!string.IsNullOrEmpty(id))
+                context.ById[id] = element;
+
+            parent.Children.Add(element);
+        }
+
+        /// <summary>Each class maps to its <c>Brush.art-*</c> tokens, with stroke widths from the SVG's style block.</summary>
+        private static void ApplyArtStyle(Path path, HashSet<string> classes, StyleInfo styles, bool hasOwnNoFill)
+        {
+            (string? fill, string? stroke, string cls) = classes switch
+            {
+                _ when classes.Contains("ol") => (null, "Brush.art-line", "ol"),
+                _ when classes.Contains("ink") => ("Brush.art-line", null, "ink"),
+                _ when classes.Contains("contour") => (null, "Brush.art-detail", "contour"),
+                _ when classes.Contains("body-fill") => ("Brush.art-body", null, "body-fill"),
+                _ when classes.Contains("arm") => ("Brush.art-shade", null, "arm"),
+                _ when classes.Contains("key") => ("Brush.art-shade", "Brush.art-line", "key"),
+                _ when classes.Contains("well") => ("Brush.art-shade", "Brush.art-detail", "well"),
+                _ when classes.Contains("stick") => ("Brush.art-shade", "Brush.art-line", "stick"),
+                _ when classes.Contains("cap") => ("Brush.art-shade", "Brush.art-detail", "cap"),
+                _ when classes.Contains("glyph") => (null, "Brush.art-glyph", "glyph"),
+                _ => (null, "Brush.art-line", ""),
+            };
+
+            // A shape that sets fill="none" itself (the touchpad, drawn as a key outline over the body fill) stays unfilled.
+            if (fill is not null && !hasOwnNoFill) path.SetResourceReference(Shape.FillProperty, fill);
+            if (stroke is not null)
+            {
+                path.SetResourceReference(Shape.StrokeProperty, stroke);
+                path.StrokeThickness = styles.Width(cls) ?? 1;
+                path.StrokeLineJoin = PenLineJoin.Round;
+            }
+            if (cls == "arm")
+            {
+                path.StrokeThickness = styles.Width("key") ?? 1.35;
+                path.StrokeLineJoin = PenLineJoin.Round;
+            }
+            if (cls == "glyph")
+                path.StrokeStartLineCap = path.StrokeEndLineCap = PenLineCap.Round;
+
+            if (classes.Contains("free") && path.StrokeThickness > 0)
+                path.StrokeDashArray = new DoubleCollection((styles.Dash("free") ?? [4, 3]).Select(d => d / path.StrokeThickness));
+        }
+
+        private static Geometry? BuildGeometry(XElement e, string tag)
+        {
+            switch (tag)
+            {
+                case "path":
+                    return Geometry.Parse((string?)e.Attribute("d") ?? "");
+                case "rect":
+                    {
+                        double rx = Num(e, "rx"), ry = e.Attribute("ry") is null ? rx : Num(e, "ry");
+                        return new RectangleGeometry(new Rect(Num(e, "x"), Num(e, "y"), Num(e, "width"), Num(e, "height")), rx, ry);
+                    }
+                case "circle":
+                    return new EllipseGeometry(new Point(Num(e, "cx"), Num(e, "cy")), Num(e, "r"), Num(e, "r"));
+                case "ellipse":
+                    return new EllipseGeometry(new Point(Num(e, "cx"), Num(e, "cy")), Num(e, "rx"), Num(e, "ry"));
+                case "line":
+                    return new LineGeometry(new Point(Num(e, "x1"), Num(e, "y1")), new Point(Num(e, "x2"), Num(e, "y2")));
+                case "polyline":
+                case "polygon":
+                    {
+                        double[] n = Numbers((string?)e.Attribute("points"));
+                        if (n.Length < 4) return null;
+                        var figure = new PathFigure { StartPoint = new Point(n[0], n[1]), IsClosed = tag == "polygon", IsFilled = tag == "polygon" };
+                        for (int i = 2; i + 1 < n.Length; i += 2)
+                            figure.Segments.Add(new LineSegment(new Point(n[i], n[i + 1]), true));
+                        return new PathGeometry([figure]);
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        /// <summary>
+        /// SVG lists transforms outermost first; WPF applies a group's children first to last, so the list is reversed.
+        /// A trigger fill ships collapsed with <c>translate(0 c) scale(1 0) translate(0 -c)</c>; the scale and the
+        /// vertical pivots are dropped because the diagram reveals the fill with a clip instead.
+        /// </summary>
+        internal static TransformGroup BuildTransform(string? value, bool dropTriggerScale)
+        {
+            var steps = new List<Transform>();
+            foreach (Match m in TransformRegex().Matches(value ?? ""))
+            {
+                double[] n = Numbers(m.Groups[2].Value);
+                switch (m.Groups[1].Value)
+                {
+                    case "translate" when n.Length >= 1:
+                        {
+                            double ty = n.Length > 1 ? n[1] : 0;
+                            if (dropTriggerScale && Math.Abs(n[0]) < 1e-9 && Math.Abs(ty) > 1e-9) break;
+                            steps.Add(new TranslateTransform(n[0], ty));
+                            break;
+                        }
+                    case "scale" when n.Length >= 1:
+                        if (!dropTriggerScale)
+                            steps.Add(new ScaleTransform(n[0], n.Length > 1 ? n[1] : n[0]));
+                        break;
+                    case "rotate" when n.Length >= 1:
+                        steps.Add(n.Length >= 3 ? new RotateTransform(n[0], n[1], n[2]) : new RotateTransform(n[0]));
+                        break;
+                    case "matrix" when n.Length == 6:
+                        steps.Add(new MatrixTransform(n[0], n[1], n[2], n[3], n[4], n[5]));
+                        break;
+                }
+            }
+
+            steps.Reverse();
+            var group = new TransformGroup();
+            foreach (Transform step in steps)
+                group.Children.Add(step);
+            return group;
+        }
+
+        private static double Num(XElement e, string name) =>
+            double.TryParse((string?)e.Attribute(name), NumberStyles.Float, CultureInfo.InvariantCulture, out double v) ? v : 0;
+
+        private static double[] Numbers(string? value) =>
+            string.IsNullOrWhiteSpace(value)
+                ? []
+                : [.. value.Split([' ', ',', '\t', '\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
+                    .Select(s => double.TryParse(s, NumberStyles.Float, CultureInfo.InvariantCulture, out double v) ? v : 0)];
+
+        [GeneratedRegex(@"(\w+)\s*\(([^)]*)\)")]
+        private static partial Regex TransformRegex();
+
+        [GeneratedRegex(@"([^{}]+)\{([^}]*)\}")]
+        private static partial Regex RuleRegex();
+
+        [GeneratedRegex(@"stroke-dasharray\s*:\s*([^;}]+)")]
+        private static partial Regex DashRegex();
+
+        [GeneratedRegex(@"stroke-width\s*:\s*([0-9.]+)")]
+        private static partial Regex WidthRegex();
+
+        /// <summary>The few facts read from the SVG's preview <c>&lt;style&gt;</c> block; colors in it are ignored (the theme owns them).</summary>
+        private sealed class StyleInfo
+        {
+            private readonly Dictionary<string, string> _declarations = [];
+
+
+            /// <summary>True for the flat controller art, whose style block declares the <c>ol</c> (body outline) class.</summary>
+
+            public double? Width(string cls) =>
+                _declarations.TryGetValue(cls, out string? d) && WidthRegex().Matches(d) is { Count: > 0 } m
+                    ? double.Parse(m[^1].Groups[1].Value, CultureInfo.InvariantCulture)
+                    : null;
+
+            public double[]? Dash(string cls) =>
+                _declarations.TryGetValue(cls, out string? d) && DashRegex().Matches(d) is { Count: > 0 } m
+                    ? Numbers(m[^1].Groups[1].Value)
+                    : null;
+
+            public static StyleInfo Parse(string css)
+            {
+                var info = new StyleInfo();
+                foreach (Match rule in RuleRegex().Matches(css))
+                {
+                    IEnumerable<string> classNames = rule.Groups[1].Value.Split(',')
+                        .Select(selector => selector.Trim())
+                        .Where(s => s.Contains('.') && !s.StartsWith('#'))
+                        .Select(s => s[(s.LastIndexOf('.') + 1)..]);
+                    foreach (string cls in classNames)
+                    {
+                        info._declarations[cls] = info._declarations.GetValueOrDefault(cls, "") + ";" + rule.Groups[2].Value;
+                    }
+                }
+
+                return info;
+            }
+        }
+    }
+}

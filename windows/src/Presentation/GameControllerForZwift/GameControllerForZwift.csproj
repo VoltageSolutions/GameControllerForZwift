@@ -39,6 +39,9 @@
 		<None Include="..\..\..\..\ACKNOWLEDGEMENTS.md">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+		<None Include="..\..\..\..\LICENSE.md">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 
   <ItemGroup>
@@ -55,6 +58,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Figtree-OFL.txt</TargetPath>
     </None>
+    <!-- One copy of the controller wireframes lives in docs/assets/controllers (UX-V-067); link it in as WPF resources. -->
+    <Resource Include="..\..\..\..\docs\assets\controllers\playstation-dualshock4\playstation-dualshock4.svg" Link="Assets\Controllers\playstation-dualshock4\playstation-dualshock4.svg" />
+    <Resource Include="..\..\..\..\docs\assets\controllers\xbox\xbox.svg" Link="Assets\Controllers\xbox\xbox.svg" />
+    <Resource Include="..\..\..\..\docs\assets\controllers\switch-pro\switch-pro.svg" Link="Assets\Controllers\switch-pro\switch-pro.svg" />
+    <Resource Include="..\..\..\..\docs\assets\controllers\joycon-pair\joycon-pair.svg" Link="Assets\Controllers\joycon-pair\joycon-pair.svg" />
+    <Resource Include="..\..\..\..\docs\assets\controllers\playstation-dualsense\playstation-dualsense.svg" Link="Assets\Controllers\playstation-dualsense\playstation-dualsense.svg" />
     <Resource Include="Assets\logo.ico" />
     <Resource Include="Assets\logo.png" />
     <Resource Include="Assets\logo_transparent.png" />
@@ -67,8 +76,8 @@
     <PackageReference Include="Markdig.Wpf" Version="0.5.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="11.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.15" />
-    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="10.0.15" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="11.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.EventLog" Version="11.0.0" />
   </ItemGroup>
 
   <ItemGroup>

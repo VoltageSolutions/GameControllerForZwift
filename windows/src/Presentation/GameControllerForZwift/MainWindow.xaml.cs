@@ -26,17 +26,19 @@ namespace GameControllerForZwift.UI.WPF
             [typeof(RideViewModel)] = () => new RidePage(),
             [typeof(ControllerSetupViewModel)] = () => new ControllerSetupPage(),
             [typeof(ConnectionsViewModel)] = () => new ConnectionsPage(),
-            [typeof(AboutPageViewModel)] = () => new AboutPage(),
+            [typeof(CreditsViewModel)] = () => new CreditsPage(),
+            [typeof(CreditsListViewModel)] = () => new DocumentPage(),
+            [typeof(LicenseViewModel)] = () => new DocumentPage(),
             [typeof(SettingsViewModel)] = () => new SettingsPage(),
+            [typeof(SupportViewModel)] = () => new SupportPage(),
             [typeof(StyleGalleryViewModel)] = () => new StyleGalleryPage(),
         });
 
         // Pages that have not been visited yet are built and laid out while the app is idle, one per idle turn, so the
-        // first visit is instant. The About page is the slow one: it converts the acknowledgements markdown into a
-        // FlowDocument and parses the ko-fi SVG.
+        // first visit is instant. The document pages are the slow ones: they convert markdown into a FlowDocument.
         private static readonly Type[] _pagesToPrepare =
         [
-            typeof(RideViewModel), typeof(ConnectionsViewModel), typeof(AboutPageViewModel), typeof(SettingsViewModel),
+            typeof(ControllerSetupViewModel), typeof(ConnectionsViewModel), typeof(CreditsViewModel), typeof(SettingsViewModel), typeof(SupportViewModel),
         ];
         private int _nextPageToPrepare;
 

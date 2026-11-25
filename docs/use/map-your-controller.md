@@ -51,7 +51,7 @@ Mappings belong to a controller model, so a second controller of the same model 
 
 To reuse a mapping I made for another controller, I check **Show mappings from other controllers**. The list then also shows those mappings, with the controller name in parentheses, for example `Climbing (Xbox Series X Controller)`. When I pick one, the app asks whether to use it with this controller and saves a copy for it. The original stays with the other controller.
 
-Each mapping is a JSON file in `%LOCALAPPDATA%\GameControllerForZwift\Profiles`. To share one, I click **Open folder** in the **...** menu and send the file. To use a file someone sent me, I click **Import a mapping...**. To remove every saved mapping at once, I go to **Settings** and click **Delete all**.
+Each mapping is a JSON file in `%LOCALAPPDATA%\GameControllerForZwift\Profiles`. To share one, I click **Open folder** in the **...** menu and send the file. To use a file someone sent me, I click **Import a mapping...**. To remove every saved mapping at once, I open **Settings** from the **...** menu and click **Delete all saved mappings**. I can also click **Open the mappings folder** there. The delete button is disabled when nothing is saved.
 
 ## Analog sticks and triggers
 

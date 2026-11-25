@@ -10,6 +10,10 @@ Intro screen that guides new users with initial setup.
 
 Today the network code is covered by unit and integration tests, and the final check is a live ride in Zwift. A small Zwift simulator would play Zwift's side of the conversation: discover the device over mDNS, connect, subscribe, send the RideOn handshake and the device information requests, and then check the button frames. That would let CI test the whole path from a simulated gamepad to the bytes Zwift receives.
 
+## A mini overlay mode
+
+A small always-on-top window that shows the last press and connection problems over a full-screen Zwift. On Windows it would also have a notification-area mode, with an icon and a toast for problems.
+
 ## Better logging
 
 - One place that configures all log providers (Event Log and file).

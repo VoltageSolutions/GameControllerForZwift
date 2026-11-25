@@ -49,7 +49,7 @@ The download happens once. Later builds reuse `windows/.cache/sdl2/SDL2.dll`.
 | `GameControllerForZwift.Network.UnitTests` | Unit | Direct Connect framing and sessions, UUIDs, keypad frames, analog input, mDNS profile, replies that match the known-good Zwift Ride presentation | Any OS |
 | `GameControllerForZwift.Network.IntegrationTests` | Integration | `MdnsAdvertiser` and `ZwiftRideOutputService` over real sockets | Any OS |
 | `GameControllerForZwift.UnitTests` | Unit (WPF) | App startup, view models, converters, controls, navigation | Windows |
-| `GameControllerForZwift.UITests` | UI | Drives the real app with Appium and WinAppDriver (About and Settings pages) | Windows, with WinAppDriver and Appium installed |
+| `GameControllerForZwift.UITests` | UI | Drives the real app with Appium and WinAppDriver (Settings, Credits, and Support screens) | Windows, with WinAppDriver and Appium installed |
 
 The tests use xUnit and NSubstitute. Run them all with:
 
@@ -62,6 +62,33 @@ Or run one project:
 ```powershell
 dotnet test windows/tests/GameControllerForZwift.Network.UnitTests
 ```
+
+### Screenshot catalog
+
+I keep an opt-in test that renders every screen and state of the app to PNG files. I use it to compare screens with the mockups and the spec without clicking through the app. It carries the trait `Category=Screenshots`. It does nothing unless the environment variable `GCFZ_SCREENSHOTS` names an output folder, so a normal `dotnet test` passes it at once and writes nothing. Windows CI leaves it out.
+
+```powershell
+$env:GCFZ_SCREENSHOTS = "$PWD\.shots"
+dotnet test windows/tests/GameControllerForZwift.UnitTests --filter Category=Screenshots
+```
+
+The test drives each state through the real view models, with fakes for the controller, the Zwift connection, and the dialogs. It renders every state in light and dark at three window sizes: phone (400 x 860, bottom bar), tablet (820 x 1100, rail), and desktop (1280 x 800, sidebar). A screen that scrolls also gets a full-height image. The output folder holds:
+
+- one PNG per variant, named `{screen}-{state}-{theme}-{size}.png`;
+- one contact sheet per state, `sheet-{screen}-{state}.png`, with light and dark as rows and the three sizes as columns;
+- `index.md`, which lists every file and any state that was skipped, with the reason.
+
+The `.shots/` folder is git-ignored.
+
+### String and accessibility checks
+
+Some unit tests keep the app equal to the specs. They carry the trait `Category=Localization` or `Category=Accessibility`. The string checks compare the English text in `Strings.resx` with the **Quoted strings** table of each screen spec, and they check every `Strings.<culture>.resx` for missing keys and changed placeholders. The accessibility check looks for every ID in the **Accessibility IDs** table of each screen spec. Run only these checks with:
+
+```powershell
+dotnet test windows/tests/GameControllerForZwift.UnitTests --filter "Category=Localization|Category=Accessibility"
+```
+
+On a pull request, the Localization CI workflow runs them as their own check, **Localization and Accessibility Results**, for changes under `docs/spec` or `windows`. Windows CI leaves them out of **Unit Test Results**.
 
 !!! note "UI tests need extra tools"
     The UI tests need WinAppDriver and an Appium server with the Windows driver. CI installs both. Locally, you can skip that project and run the others.
@@ -94,7 +121,7 @@ The GitHub Actions workflows live in `.github/workflows/`.
 
 | Workflow | File | When it runs | What it does |
 |---|---|---|---|
-| Windows CI | `windows-ci.yml` | Every pull request | Builds and publishes the app, runs the unit, integration and UI tests, checks formatting, the version, CodeQL and vulnerable packages, and uploads coverage. |
+| Windows CI | `windows-ci.yml` | Every pull request | Builds and publishes the app, runs the unit, integration and UI tests, runs the string and accessibility checks as their own check, checks formatting, the version, CodeQL and vulnerable packages, and uploads coverage. |
 | Windows CD | `windows-cd.yml` | Push to `main` (not for docs-only changes) | Publishes both zips, creates the GitHub release and opens the next release branch. |
 | Windows CodeQL and Coverage | `windows-codeql-and-coverage.yml` | Push to `main` (not for docs-only changes) | Refreshes the CodeQL alerts and Codecov coverage that pull requests compare against. |
 | Docs CI | `docs-ci.yml` | Pull requests that change the docs | Builds the docs site with `--strict`. |

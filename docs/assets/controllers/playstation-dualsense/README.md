@@ -1,0 +1,1 @@
+Redrawn from DualSense Gamepad by Jonathan Lancaster, CC BY 4.0. Paths reused; converted to plain strokes and restyled; speaker dots, PlayStation button, mute button and light-bar marks removed; the top shape is split into a bumper band (L1/R1) and a trigger (L2/R2) with fill shapes. See ACKNOWLEDGEMENTS.md.

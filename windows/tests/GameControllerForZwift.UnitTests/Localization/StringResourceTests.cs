@@ -7,6 +7,7 @@ namespace GameControllerForZwift.UnitTests.Localization
     /// Keeps Resources/Strings.resx and the code that uses it in step (docs/spec/ux/localization.md, UX-L-010 and
     /// UX-L-011).
     /// </summary>
+    [Trait("Category", "Localization")]
     public partial class StringResourceTests
     {
         private static readonly XNamespace Xaml = "http://schemas.microsoft.com/winfx/2006/xaml";
@@ -19,6 +20,9 @@ namespace GameControllerForZwift.UnitTests.Localization
             "Views/RidePage.xaml",
             "Views/ConnectionsPage.xaml",
             "Views/ControllerSetupPage.xaml",
+            "Views/SettingsPage.xaml",
+            "Views/CreditsPage.xaml",
+            "Views/SupportPage.xaml",
         ];
 
         // Attributes that hold text people see or hear.

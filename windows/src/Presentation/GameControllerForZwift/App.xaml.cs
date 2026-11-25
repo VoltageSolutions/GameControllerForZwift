@@ -48,7 +48,9 @@ namespace GameControllerForZwift
             ServiceProvider = serviceCollection.BuildServiceProvider();
 
             // Color tokens for the appearance, before the first frame (SCR-SET-001: Match Windows by default).
-            ServiceProvider.GetRequiredService<ThemeService>().Apply(Appearance.MatchWindows);
+            string? savedAppearance = ServiceProvider.GetRequiredService<IAppSettingsStore>().GetAppearance();
+            ServiceProvider.GetRequiredService<ThemeService>().Apply(
+                Enum.TryParse(savedAppearance, out Appearance appearance) && Enum.IsDefined(appearance) ? appearance : Appearance.MatchWindows);
 
             // Show the main window
             var mainWindow = ServiceProvider.GetRequiredService<MainWindow>();
@@ -60,6 +62,9 @@ namespace GameControllerForZwift
 
             // Lists controllers as they connect and disconnect (CTRL-002). Started here, on the UI thread, which owns SDL.
             ServiceProvider.GetRequiredService<ControllerSetupViewModel>().StartControllerDetection();
+
+            // Follows the controller and Zwift so a ride starts and ends by itself, whichever tab is showing (SCR-RIDE-036).
+            ServiceProvider.GetRequiredService<RideViewModel>().StartTimer();
 
             // Start the Zwift Ride output (Direct Connect server + mDNS advertisement) in the background. It always runs and is the only output.
             {
@@ -85,6 +90,9 @@ namespace GameControllerForZwift
             {
                 // Stop asking SDL for controllers before the input service shuts SDL down.
                 ServiceProvider?.GetService<ControllerSetupViewModel>()?.StopControllerDetection();
+
+                // A ride ends when the app closes, and it counts in the stats (SCR-RIDE-037).
+                ServiceProvider?.GetService<RideViewModel>()?.EndRideForExit();
 
                 if (ServiceProvider is IAsyncDisposable provider)
                 {
@@ -185,13 +193,12 @@ namespace GameControllerForZwift
             services.AddSingleton<RideViewModel>();
             services.AddSingleton<ConnectionsViewModel>();
             services.AddSingleton<StyleGalleryViewModel>();
-            services.AddSingleton<AboutPageViewModel>(provider =>
-            {
-                var fileService = provider.GetRequiredService<IFileService>();
-                string appDirectory = AppContext.BaseDirectory;
-                string filePath = Path.Join(appDirectory, "ACKNOWLEDGEMENTS.md");
-                return new AboutPageViewModel(fileService, filePath);
-            });
+            services.AddSingleton<CreditsViewModel>();
+            services.AddSingleton(provider => new CreditsListViewModel(
+                provider.GetRequiredService<IDialogService>(), Path.Join(AppContext.BaseDirectory, "ACKNOWLEDGEMENTS.md")));
+            services.AddSingleton(provider => new LicenseViewModel(
+                provider.GetRequiredService<IDialogService>(), Path.Join(AppContext.BaseDirectory, "LICENSE.md")));
+            services.AddSingleton<SupportViewModel>();
             services.AddSingleton<ControllerSetupViewModel>();
             services.AddSingleton<SettingsViewModel>();
             services.AddTransient<ZwiftFunctionSelectorViewModel>();

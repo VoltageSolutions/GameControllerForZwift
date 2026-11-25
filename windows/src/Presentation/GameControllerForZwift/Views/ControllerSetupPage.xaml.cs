@@ -18,22 +18,14 @@ namespace GameControllerForZwift.UI.WPF.Views
         #region Fields
 
         internal const double MinimumRowWidth = 320;
-        internal const double MaximumCardsWidth = 1000;
         internal const double MaximumPickerWidth = 420;
         private const double TwoColumnBreakpointWidth = 900;
         private const double LandscapeControllerColumnWidth = 376;
 
         private const double RowGap = 12;
-        private const double CardPadding = 24;
 
         public static readonly DependencyProperty RowWidthProperty =
             DependencyProperty.Register(nameof(RowWidth), typeof(double), typeof(ControllerSetupPage), new PropertyMetadata(MinimumRowWidth + RowGap));
-
-        public static readonly DependencyProperty CardWidthProperty =
-            DependencyProperty.Register(nameof(CardWidth), typeof(double), typeof(ControllerSetupPage), new PropertyMetadata(MinimumRowWidth + 2 * CardPadding + RowGap));
-
-        public static readonly DependencyProperty CardRowWidthProperty =
-            DependencyProperty.Register(nameof(CardRowWidth), typeof(double), typeof(ControllerSetupPage), new PropertyMetadata(MinimumRowWidth + RowGap));
 
         public ControllerSetupViewModel ViewModel => (ControllerSetupViewModel)DataContext;
 
@@ -69,18 +61,6 @@ namespace GameControllerForZwift.UI.WPF.Views
         {
             get => (double)GetValue(RowWidthProperty);
             set => SetValue(RowWidthProperty, value);
-        }
-
-        public double CardWidth
-        {
-            get => (double)GetValue(CardWidthProperty);
-            set => SetValue(CardWidthProperty, value);
-        }
-
-        public double CardRowWidth
-        {
-            get => (double)GetValue(CardRowWidthProperty);
-            set => SetValue(CardRowWidthProperty, value);
         }
 
         internal static double ColumnWidth(double available) => ColumnWidth(available, MinimumRowWidth);
@@ -133,8 +113,6 @@ namespace GameControllerForZwift.UI.WPF.Views
             ControllerVisualCard.Width = isLandscapeTwoColumn
                 ? double.NaN
                 : Math.Max(0, ColumnCount(rightColumnWidth, MinimumRowWidth) * RowWidth - RowGap);
-            CardWidth = ColumnWidth(Math.Min(rightColumnWidth, MaximumCardsWidth), MinimumRowWidth + 2 * CardPadding);
-            CardRowWidth = ColumnWidth(Math.Max(0, CardWidth - RowGap - 2 * CardPadding));
             ConfigurationComboBox.Width = Math.Clamp(Math.Max(0, pageWidth - SystemParameters.VerticalScrollBarWidth) - RowGap, 240, MaximumPickerWidth);
         }
 

@@ -21,6 +21,11 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: Selenium.*
         update-types: ['version-update:semver-major']
+      # The tests use xunit v2. These majors need xunit v3, so they move together with a migration
+      - dependency-name: xunit.runner.visualstudio
+        update-types: ['version-update:semver-major']
+      - dependency-name: Xunit.StaFact
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: pip
     directory: /docs

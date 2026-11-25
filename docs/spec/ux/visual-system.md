@@ -1,7 +1,7 @@
 ---
 id: SPEC-UX-VISUAL
 title: Visual system
-last-updated: 2026-11-19
+last-updated: 2026-11-22
 ---
 
 # Visual system
@@ -25,14 +25,16 @@ On Windows the tokens live in `Resources/Theme/Tokens.Dark.xaml` and `Tokens.Lig
 | `text` | Body text | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#F5F2EC;color:#1F1B16;padding:2px 8px;border-radius:8px">#F5F2EC</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1F1B16;color:#F5F2EC;padding:2px 8px;border-radius:8px">#1F1B16</span> |
 | `muted` | Secondary text | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ABA59C;color:#141312;padding:2px 8px;border-radius:8px">#ABA59C</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#655E55;color:#FFFFFF;padding:2px 8px;border-radius:8px">#655E55</span> |
 | `accent` | Fill for the one main action | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#ED7600</span> |
-| `accent-ink` | Accent as text, icons, status dots | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#141312;color:#ED7600;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FAF8F4;color:#A55200;padding:2px 8px;border-radius:8px">#A55200</span> |
+| `accent-ink` | Accent as text and icons | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#141312;color:#ED7600;padding:2px 8px;border-radius:8px">#ED7600</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FAF8F4;color:#A55200;padding:2px 8px;border-radius:8px">#A55200</span> |
 | `on-accent` | Label on the accent fill | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#1F1B16</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#ED7600;color:#1F1B16;padding:2px 8px;border-radius:8px">#1F1B16</span> |
 | `focus` | Focus ring | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#7CC4FF;color:#141312;padding:2px 8px;border-radius:8px">#7CC4FF</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1F5FCC;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1F5FCC</span> |
 | `ok` | Good state (with words) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#5FD39A;color:#141312;padding:2px 8px;border-radius:8px">#5FD39A</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#1E7A4C;color:#FFFFFF;padding:2px 8px;border-radius:8px">#1E7A4C</span> |
 | `err` | Problem state (with words) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#FF7A70;color:#141312;padding:2px 8px;border-radius:8px">#FF7A70</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#B3261E;color:#FFFFFF;padding:2px 8px;border-radius:8px">#B3261E</span> |
-| `pad` | Controller illustration body | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#3A3633;color:#F5F2EC;padding:2px 8px;border-radius:8px">#3A3633</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E6E0D5;color:#1F1B16;padding:2px 8px;border-radius:8px">#E6E0D5</span> |
-| `pad-2` | Illustration shading | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#2A2725;color:#F5F2EC;padding:2px 8px;border-radius:8px">#2A2725</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#D5CDBF;color:#1F1B16;padding:2px 8px;border-radius:8px">#D5CDBF</span> |
-| `pad-key` | Illustration keys | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#4A4542;color:#F5F2EC;padding:2px 8px;border-radius:8px">#4A4542</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#F6F2EB;color:#1F1B16;padding:2px 8px;border-radius:8px">#F6F2EB</span> |
+| `art-body` | Controller art: body and touchpad fill | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#34302D;color:#F5F2EC;padding:2px 8px;border-radius:8px">#34302D</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#EFEAE0;color:#1F1B16;padding:2px 8px;border-radius:8px">#EFEAE0</span> |
+| `art-shade` | Controller art: shade for keys, wells, sticks, caps | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#3E3A36;color:#F5F2EC;padding:2px 8px;border-radius:8px">#3E3A36</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E5DECF;color:#1F1B16;padding:2px 8px;border-radius:8px">#E5DECF</span> |
+| `art-line` | Controller art: outline strokes | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#A89F94;color:#1F1B16;padding:2px 8px;border-radius:8px">#A89F94</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#6F675C;color:#F5F2EC;padding:2px 8px;border-radius:8px">#6F675C</span> |
+| `art-detail` | Controller art: detail strokes (well and cap rings) | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#8F877D;color:#1F1B16;padding:2px 8px;border-radius:8px">#8F877D</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#82796B;color:#F5F2EC;padding:2px 8px;border-radius:8px">#82796B</span> |
+| `art-glyph` | Controller art: glyph on a key | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#E4DDD2;color:#1F1B16;padding:2px 8px;border-radius:8px">#E4DDD2</span> | <span style="font-family:var(--md-code-font-family, ui-monospace, Consolas, monospace);background:#4F483F;color:#F5F2EC;padding:2px 8px;border-radius:8px">#4F483F</span> |
 | `shadow` | Elevation | none | `0 1px 2px rgba(60,40,20,.06), 0 8px 24px rgba(60,40,20,.08)` |
 
 The accent is the VOLTAGE brand orange.
@@ -41,10 +43,10 @@ The accent is the VOLTAGE brand orange.
 
 | Rule | ID |
 |---|---|
-| The accent fill (`#ED7600`) must fill only the one main action on a screen (Start riding, Continue, Save) and mark live moments (the lit button, "You just pressed"). | UX-V-001 |
+| The accent fill (`#ED7600`) must fill only the one main action on a screen (Pair with Zwift, Continue, Save) and mark live moments (the lit button, "You just pressed"). | UX-V-001 |
 | The label on an accent fill must be `on-accent` (`#1F1B16`) in both modes. The app must never use white text on the accent (2.92:1). | UX-V-002 |
-| Accent used as text, an icon, or a status dot must use `accent-ink`: `#ED7600` in dark mode, `#A55200` in light mode. | UX-V-003 |
-| The Connections tab dot must use `accent-ink` (`#A55200` in light mode, `#ED7600` in dark mode). | UX-V-004 |
+| Accent used as text or an icon must use `accent-ink`: `#ED7600` in dark mode, `#A55200` in light mode. | UX-V-003 |
+| The Connections tab dot must use `err` (`#B3261E` in light mode, `#FF7A70` in dark mode), because it means something needs the person. | UX-V-004 |
 | In light mode the accent fill against the background is only 2.75:1. You must therefore be able to identify a primary button by its dark text label and its shape, never by the fill color alone. | UX-V-005 |
 | Everything else must stay neutral. Screens must not use the accent for decoration. | UX-V-006 |
 | The app's identity must never rely on color alone. The name "Voltage Gamepad", the controller illustration, and the wordmark carry it. | UX-V-007 |
@@ -72,8 +74,13 @@ Text needs 4.5:1. Icons, focus rings, status dots, and graphics people need to s
 | `focus` on `bg` | 9.89 | 5.55 |
 | `ok` on `bg` | 9.96 | 5.02 |
 | `err` on `bg` | 7.31 | 6.16 |
+| `art-line` on `art-body` | 5.01 | 4.65 |
+| `art-line` on `art-shade` | 4.32 | 4.16 |
+| `art-detail` on `art-body` | 3.69 | 3.58 |
+| `art-detail` on `art-shade` | 3.18 | 3.20 |
+| `art-glyph` on `art-shade` | 8.36 | 6.73 |
+| `art-body` on `bg` (graphic) | 1.42 | 1.13 |
 | accent fill on `bg` (graphic) | 6.36 | 2.75 |
-| illustration key on body | 1.27 | 1.18 |
 
 The last two rows are below 3:1, so they carry extra cues. See [Accessibility](accessibility.md#color-contrast).
 
@@ -108,13 +115,56 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 
 | Item | Value | ID |
 |---|---|---|
-| Spacing scale | 4, 8, 12, 16, 20, 24, 32, 48 | UX-V-015 |
+| Spacing scale | 4, 8, 12, 16, 20, 24, 32, 40, 48 | UX-V-015 |
 | Pills (buttons, chips, keycaps) | Radius is half the height | UX-V-016 |
 | Rows | Radius 16 to 20 | UX-V-017 |
 | Cards | Radius 24 to 28 on phone | UX-V-018 |
 | Panels | Radius 32 on tablet | UX-V-019 |
 | Minimum target | 48 px | UX-V-020 |
 | Focus ring | 3 px, 2 px offset | UX-V-021 |
+
+## Layout and spacing
+
+Every screen uses the same margins and gaps, so a person who has seen one screen has seen the spacing of all of them. Values are in px.
+
+| Item | Phone | Tablet | Desktop |
+|---|---|---|---|
+| Page side margin | 20 | 48 | 40 |
+| Page top padding | 24 | 32 | 24 |
+| Page bottom padding | 24 | 48 | 40 |
+| Gap between sections | 24 | 32 | 32 |
+| Gap from a group label to its rows | 8 | 8 | 8 |
+| Gap between list rows | 8 | 12 | 12 |
+| Gap between cards | 16 | 24 | 24 |
+| Card padding | 20 | 32 | 32 |
+| Row padding (vertical, horizontal) | 12, 20 | 12, 20 | 12, 20 |
+
+A status chip is 40 high with 16 of padding left and right. It holds an 8 px dot, then 8 px of space, then the words.
+
+| Rule | ID |
+|---|---|
+| Every screen must take the values in this section from shared styles. A screen must not set its own margins, gaps, or padding. | UX-V-051 |
+| A scrolling area must never clip a shadow. The scroll area must span the window width, and its content must keep the page side margin as padding inside the scroll area, so a card's shadow has room on every side. | UX-V-052 |
+
+On Windows the card, row, and chip styles live in `Resources/Surfaces.xaml`, and the page margins and gaps live in `Resources/Layout.xaml`. A screen refers to them by key and never writes a number.
+
+## Icons
+
+| Rule | ID |
+|---|---|
+| The app must use one icon set. Each icon must be drawn on a 24 px grid with a 2 px stroke and round caps and joins, in the current text color. | UX-V-053 |
+| Icons must be 22 px in the navigation, 18 to 20 px in buttons and rows (UX-V-026), and 24 px for the back button. | UX-V-054 |
+| Icons must mark navigation and actions only. An icon must never show a status: no check marks, plugs, or warning signs for a state. | UX-V-055 |
+
+## Status
+
+Status is a dot plus words.
+
+| Rule | ID |
+|---|---|
+| A working state must use an `ok` dot with words. Anything that needs the person must use an `err` dot with words, including the Connections tab dot (UX-V-004). | UX-V-056 |
+| Status text must stay in `text`. Only the dot carries the color. | UX-V-057 |
+| The accent must mark only the one main action and live moments (UX-V-001). It must not mark a status. | UX-V-058 |
 
 ## Surfaces
 
@@ -148,7 +198,7 @@ Sizes are in px (dp on Android, pt on iOS). Desktop uses the tablet column.
 | Button order must follow the platform: Windows dialogs put the primary action first, Android and iOS put it last. | UX-V-032 |
 | A screen must have at most one primary (accent) button. | UX-V-033 |
 
-*Example: a German label for "Start riding" is longer. The button grows, and if the row is full, the button moves to its own line instead of breaking the label.*
+*Example: a German label for "Pair with Zwift" is longer. The button grows, and if the row is full, the button moves to its own line instead of breaking the label.*
 
 ## Fields and choices
 
@@ -162,15 +212,47 @@ Dropdowns, text boxes, checkboxes, switches, and radio buttons share one look, s
 | A choice and its label must form one 48 px target (UX-V-020). Clicking the label toggles the choice. | UX-V-042 |
 | An unchecked checkbox, an off switch, and an empty radio button must have a 2 px `muted` outline, so the control stands out from the background at 3:1 or more. This is one of the outlines accessibility needs (see the edge cases under Surfaces). | UX-V-043 |
 
+## Rows and two-column screens
+
+Settings, Help and feedback, About, and Support share one layout, so a person who has seen one has seen them all.
+
+| Rule | ID |
+|---|---|
+| A row that does something must be one button, at least 64 px high, radius 20, on `surface` with the soft shadow. It must show a title (17, weight 700), an optional line under it (14, `muted`), and at its right edge a chevron when it opens another screen or an arrow out of a box when it opens something outside the app. The whole row must be the target. | UX-V-045 |
+| A row that deletes something must show its title in `err`. A disabled row must use `surface-2` and `muted`, with no shadow. | UX-V-046 |
+| A label over a group of rows must be 17, weight 700, `muted`, with 4 px of indent. | UX-V-047 |
+| A choice among a few labeled options, such as Appearance, must be a segmented track: pills on `surface-2`, with the chosen pill raised on `surface`. | UX-V-048 |
+| On a window at least 900 px wide, these screens must show two columns: the title and the explanation on the left, and a 520 px column of rows on the right. Below 900 px they must show one column, in the same order. | UX-V-049 |
+| A screen title on tablet and desktop must be 48, weight 800. | UX-V-050 |
+
+On Windows the row is the `ActionRow` control, the segmented track is the `Segmented` style, and the two columns are the `AdaptiveColumns` panel.
+
 On Windows the buttons, fields, and surfaces live in `Resources/Controls.xaml` and `Resources/Surfaces.xaml`. In Debug builds, the style gallery in the More menu shows each one in every state.
 
 ## Illustration
 
+How a drawing is made, with its classes, line weights, and shoulder shapes, is in the [controller graphics style](controller-graphics-style.md).
+
 | Rule | ID |
 |---|---|
-| The app must fill the controller illustration with soft shapes and a ground shadow. It must never draw a wireframe. | UX-V-034 |
+| The controller illustration must be a wireframe outline with a ground shadow. It must use theme tokens only (the `art` tokens), so it works in light and dark mode. | UX-V-034 |
 | Keys on the illustration must have a thin muted outline, free keys a dashed outline, and the lit key a dark outline plus the accent fill. | UX-V-035 |
 | The illustration must never be the only way to know a mapping. The Buttons list says the same in text. | UX-V-036 |
+| The app must draw an illustration that matches the controller's kind (CTRL-011). Xbox, PlayStation DualShock 4, PlayStation DualSense, Switch Pro and the Joy-Con pair each have their own drawing. Every other kind, the Generic kind included, uses the Xbox drawing. | UX-V-059 |
+| Every kind must behave the same: the selected input is lit, pressed inputs are lit, stick caps move with the axis, and free keys are dashed (UX-V-035). | UX-V-060 |
+| Art must be original or licensed CC BY 4.0, with credit in ACKNOWLEDGEMENTS. The app must never use art copied from another site, such as controllertest.io. | UX-V-061 |
+| In every drawing that includes bumpers and triggers, they must be drawn attached to the body at its top edge. A bumper must light when pressed. | UX-V-062 |
+| In every drawing that includes analog triggers, they must fill in proportion to the pull, from 0 to 100 percent. The trigger's outline must not light while it is pulled. | UX-V-063 |
+| In every drawing that includes digital triggers, they must light when pressed and must not fill. | UX-V-064 |
+| Face button glyphs must follow the drawing's labels: A, B, X, and Y for the Xbox drawing, and Cross, Circle, Square, and Triangle for the PlayStation drawing. Logical inputs keep their `ControllerInput` names. | UX-V-065 |
+| A drawing must show only the inputs it has. Logical inputs map to the shapes by id (UX-V-068). | UX-V-066 |
+| Vector assets must live in the repo as SVG files under `docs/assets/controllers/<kind>/`, one folder per kind that has its own drawing. | UX-V-067 |
+| Each interactive shape in an SVG must carry an `id` equal to its `ControllerInput` name, for example `A`, `LeftBumper`, `LeftTrigger`, `LeftThumbstick`, `LeftThumbstickClick`, and `DPadUp`. Each analog trigger must also carry `LeftTriggerFill` or `RightTriggerFill`; a digital trigger (ZL and ZR) carries only `LeftTrigger` or `RightTrigger`. WPF, Android, and iOS must build their native components from the same files. | UX-V-068 |
+| A kind without its own drawing must use the Xbox drawing. | UX-V-069 |
+
+??? note "Edge cases"
+    - A kind has no shape for an input it lacks, so the app lights nothing for it. A Joy-Con pair uses the left Joy-Con's ids for the left half and the right Joy-Con's ids for the right half.
+    - A single Joy-Con is drawn sideways, so a stick direction on screen is rotated from the logical direction. The logical input stays the same.
 
 ## Motion
 

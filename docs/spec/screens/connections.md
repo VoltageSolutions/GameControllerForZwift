@@ -1,13 +1,13 @@
 ---
 id: SPEC-SCR-CONN
 title: Connections screens
-last-updated: 2026-11-17
+last-updated: 2026-11-22
 ---
 
 # Connections screens
 
 !!! tldr "TL;DR"
-    The Connections tab has two jobs: your controller and Zwift. For the controller you can use a different one or pair a new one. For Zwift you see its status, the three pairing steps with live progress where the app can tell, and a help screen, "Zwift can't find Voltage Gamepad", with live checks and the checks the app cannot make. The tab shows a dot whenever Zwift is not connected.
+    The Connections tab has two jobs: your controller and Zwift. For the controller you can use a different one, pair a new Bluetooth one, or plug one in with a USB cable. For Zwift you see its status, the three pairing steps with live progress where the app can tell, and a help screen, "Zwift can't find Voltage Gamepad", with live checks and the checks the app cannot make. The tab shows a dot whenever Zwift is not connected.
 
 In the rules, "must", "should", and "may" have the meaning given in [how to read a spec](../index.md).
 
@@ -15,7 +15,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 
 **What it is for:** see and fix both connections in one place.
 
-**Content, top to bottom:** your controller (its name and state in words, with **Use a different controller** and **Pair a new Bluetooth controller**), then the Zwift card (`ConnectionsZwiftCard`) with its status, the three steps, and a **Show me how** button (`ConnectionsShowMeHowButton`), then a link to the help screen.
+**Content, top to bottom:** your controller (its name and state in words, with **Use a different controller** and **Pair a new Bluetooth controller**, and under that button the line "Or plug it in with a USB cable."), then the Zwift card (`ConnectionsZwiftCard`) with its status, the three steps, and a **Show me how** button (`ConnectionsShowMeHowButton`), then a link to the help screen.
 
 | State | What you see |
 |---|---|
@@ -33,7 +33,7 @@ In the rules, "must", "should", and "may" have the meaning given in [how to read
 | The card must show a live-updating status, and the app must announce it as a live region. | SCR-CONN-005 |
 | When Zwift is not connected, the Connections tab must show its dot, and the card's main action must be **Pair with Zwift** (or **Show me how** if the steps are collapsed). | SCR-CONN-006 |
 | When Zwift is connected, the screen must not use the accent fill for any action. | SCR-CONN-007 |
-| The screen must link to the list of supported controllers once that list exists. | SCR-CONN-008 |
+| Under **Pair a new Bluetooth controller** the screen must say that a wired controller works: "Or plug it in with a USB cable." | SCR-CONN-019 |
 
 ## The three Zwift steps
 
@@ -98,3 +98,11 @@ On Connections, a controller press goes to Zwift as mapped. This is not a screen
 | `ConnectionsTrainerReminder` | The reminder to set Power Source back to your trainer |
 | `ConnectionsStep1` to `ConnectionsStep3` | The step texts |
 | `ConnectionsShowMeHowButton` | The steps button |
+
+## Quoted strings
+
+| Key | English text | Rule |
+|---|---|---|
+| `ConnectionsPickerLabel` | Use a different controller | SCR-CONN-002 |
+| `ConnectionsPairBluetooth` | Pair a new Bluetooth controller | SCR-CONN-002 |
+| `ConnectionsUsbHint` | Or plug it in with a USB cable. | SCR-CONN-019 |

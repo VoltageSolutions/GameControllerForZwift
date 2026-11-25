@@ -46,11 +46,11 @@ namespace GameControllerForZwift.UI.WPF.Tests
         }
 
         [Fact]
-        public void NavigateToStartPage_ShowsTheButtonsTabWithAnEmptyHistory()
+        public void UXN018_NavigateToStartPage_ShowsTheRideTabWithAnEmptyHistory()
         {
             _viewModel.NavigateToStartPage();
 
-            _navigation.Received(1).NavigateToRoot(typeof(ControllerSetupViewModel));
+            _navigation.Received(1).NavigateToRoot(typeof(RideViewModel));
         }
 
         [Theory]
@@ -81,7 +81,12 @@ namespace GameControllerForZwift.UI.WPF.Tests
             var changed = new List<string?>();
             _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
 
-            Show(new RideViewModel());
+            using var context = new GameControllerForZwift.UI.WPF.Tests.ViewModels.ConfigurationTestContext();
+            using var status = new ZwiftStatus();
+            var setup = context.CreateViewModel();
+            using var ride = new RideViewModel(status, setup, context.Settings, context.Dialogs, _navigation,
+                new ConnectionsViewModel(status, setup, _ => { }));
+            Show(ride);
 
             Assert.Equal(ShellTab.Ride, _viewModel.SelectedTab!.Tab);
             Assert.False(_viewModel.IsPushedScreen);
@@ -116,7 +121,7 @@ namespace GameControllerForZwift.UI.WPF.Tests
 
             _viewModel.IsMoreMenuOpen = true;
             _viewModel.OpenCreditsCommand.Execute(null);
-            _navigation.Received(1).NavigateTo<AboutPageViewModel>();
+            _navigation.Received(1).NavigateTo<CreditsViewModel>();
             Assert.False(_viewModel.IsMoreMenuOpen);
         }
 
@@ -139,13 +144,22 @@ namespace GameControllerForZwift.UI.WPF.Tests
         }
 
         [Fact]
-        public void HelpAndSupport_AreDisabledBecauseTheyHaveNoScreen()
+        public void Help_IsDisabledBecauseItHasNoScreen()
         {
             Assert.False(_viewModel.OpenHelpCommand.CanExecute(null));
-            Assert.False(_viewModel.OpenSupportCommand.CanExecute(null));
             _viewModel.OpenHelpCommand.Execute(null);
-            _viewModel.OpenSupportCommand.Execute(null);
             _navigation.DidNotReceiveWithAnyArgs().NavigateTo(default(Type)!);
+        }
+
+        [Fact]
+        public void UXN008_UXN009_SupportIsPushedAndClosesTheMenu()
+        {
+            _viewModel.IsMoreMenuOpen = true;
+
+            _viewModel.OpenSupportCommand.Execute(null);
+
+            _navigation.Received(1).NavigateTo<SupportViewModel>();
+            Assert.False(_viewModel.IsMoreMenuOpen);
         }
 
         [Fact]
@@ -153,7 +167,7 @@ namespace GameControllerForZwift.UI.WPF.Tests
         {
             var changed = new List<string?>();
             _viewModel.PropertyChanged += (_, e) => changed.Add(e.PropertyName);
-            Assert.Equal("More: settings, help, credits, support", _viewModel.MoreButtonName);
+            Assert.Equal("More: settings, help, about, support", _viewModel.MoreButtonName);
 
             _viewModel.ToggleMoreMenuCommand.Execute(null);
             Assert.True(_viewModel.IsMoreMenuOpen);

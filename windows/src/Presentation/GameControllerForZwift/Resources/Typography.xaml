@@ -87,6 +87,19 @@
         <Setter Property="LineHeight" Value="56" />
         <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
     </Style>
+    <!-- A screen title on a tablet or desktop: 48, weight 800 (UX-V-012). -->
+    <Style x:Key="Text.PageTitle" TargetType="TextBlock" BasedOn="{StaticResource Text.Title}">
+        <Setter Property="FontSize" Value="48" />
+        <Setter Property="LineHeight" Value="53" />
+        <Setter Property="LineStackingStrategy" Value="BlockLineHeight" />
+    </Style>
+    <!-- The label over a group of rows: 17, weight 700, muted. -->
+    <Style x:Key="Text.Section" TargetType="TextBlock" BasedOn="{StaticResource Text.Body}">
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="{DynamicResource Brush.muted}" />
+        <Setter Property="Margin" Value="4,0,0,0" />
+    </Style>
     <!-- A big live number, such as watts or gear. -->
     <Style x:Key="Text.Readout" TargetType="TextBlock" BasedOn="{StaticResource Text.Title}">
         <Setter Property="FontSize" Value="64" />

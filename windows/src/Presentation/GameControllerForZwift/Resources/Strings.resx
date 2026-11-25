@@ -62,7 +62,7 @@
     <comment>Screen reader name of the back button on a screen opened from the More menu.</comment>
   </data>
   <data name="MenuMore" xml:space="preserve">
-    <value>More: settings, help, credits, support</value>
+    <value>More: settings, help, about, support</value>
     <comment>Screen reader name of the More button while its menu is closed.</comment>
   </data>
   <data name="MenuClose" xml:space="preserve">
@@ -81,9 +81,9 @@
     <value>Help and feedback</value>
     <comment>More menu item.</comment>
   </data>
-  <data name="MenuCredits" xml:space="preserve">
-    <value>Credits</value>
-    <comment>More menu item.</comment>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>About</value>
+    <comment>More menu item that opens the About screen, which shows the app version and links to the Credits and License screens.</comment>
   </data>
   <data name="MenuSupport" xml:space="preserve">
     <value>Support this project</value>
@@ -94,12 +94,8 @@
     <comment>More menu item shown only in Debug builds, for developers.</comment>
   </data>
   <data name="RideTitle" xml:space="preserve">
-    <value>Ride</value>
-    <comment>Title of the Ride screen.</comment>
-  </data>
-  <data name="RidePlaceholder" xml:space="preserve">
-    <value>Set up what each button does on the Buttons tab.</value>
-    <comment>Text on the Ride screen, which has no content of its own yet.</comment>
+    <value>Ready when you are</value>
+    <comment>Title of the Ride screen, shown while the controller and Zwift are ready or being set up.</comment>
   </data>
   <data name="ConnectionsTitle" xml:space="preserve">
     <value>Connections</value>
@@ -144,6 +140,10 @@
   <data name="ConnectionsPairBluetooth" xml:space="preserve">
     <value>Pair a new Bluetooth controller</value>
     <comment>Connections screen, button that opens the Windows Bluetooth settings so the person can pair a controller.</comment>
+  </data>
+  <data name="ConnectionsUsbHint" xml:space="preserve">
+    <value>Or plug it in with a USB cable.</value>
+    <comment>Line under the Pair a new Bluetooth controller button. It says a wired controller works too. It follows the button, so it starts with Or.</comment>
   </data>
   <data name="ConnectionsShowMeHow" xml:space="preserve">
     <value>Show me how</value>
@@ -192,6 +192,34 @@
   <data name="ButtonsControllerImageName" xml:space="preserve">
     <value>Your controller</value>
     <comment>Screen reader name of the controller illustration on the Buttons screen.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_Xbox" xml:space="preserve">
+    <value>Your Xbox controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_PlayStationDualShock4" xml:space="preserve">
+    <value>Your PlayStation DualShock 4 controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_PlayStationDualSense" xml:space="preserve">
+    <value>Your PlayStation DualSense controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_SwitchPro" xml:space="preserve">
+    <value>Your Switch Pro controller</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_JoyConLeft" xml:space="preserve">
+    <value>Your left Joy-Con</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_JoyConRight" xml:space="preserve">
+    <value>Your right Joy-Con</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
+  </data>
+  <data name="ButtonsControllerImageName_JoyConPair" xml:space="preserve">
+    <value>Your pair of Joy-Cons</value>
+    <comment>Screen reader name of the controller illustration on the Buttons screen when the controller is this kind.</comment>
   </data>
   <data name="ButtonsHint" xml:space="preserve">
     <value>Press a button on your controller to see it light up. Tap a row to change what it does.</value>
@@ -280,30 +308,6 @@
   <data name="ButtonsSticksListName" xml:space="preserve">
     <value>What each stick and trigger does</value>
     <comment>Screen reader name of the list of rows on the Sticks and triggers tab.</comment>
-  </data>
-  <data name="ButtonsLeftStick" xml:space="preserve">
-    <value>Left stick</value>
-    <comment>Heading of the card for the left stick on the Sticks and triggers tab.</comment>
-  </data>
-  <data name="ButtonsRightStick" xml:space="preserve">
-    <value>Right stick</value>
-    <comment>Heading of the card for the right stick on the Sticks and triggers tab.</comment>
-  </data>
-  <data name="ButtonsTriggers" xml:space="preserve">
-    <value>Triggers</value>
-    <comment>Heading of the card for the two triggers on the Sticks and triggers tab.</comment>
-  </data>
-  <data name="ButtonsStickPosition" xml:space="preserve">
-    <value>Where the stick is now</value>
-    <comment>Screen reader name of the live drawing of a stick's position.</comment>
-  </data>
-  <data name="ButtonsTriggerFill" xml:space="preserve">
-    <value>How far the trigger is pulled</value>
-    <comment>Screen reader name of the live bar that shows how far a trigger is pulled.</comment>
-  </data>
-  <data name="ButtonsBrakeCaution" xml:space="preserve">
-    <value>Even a light squeeze can stop you.</value>
-    <comment>Caution on the Sticks and triggers tab. A trigger mapped to Brake slows the rider as soon as it is squeezed a little.</comment>
   </data>
   <data name="ButtonsPickerTitle" xml:space="preserve">
     <value>What should {0} do?</value>
@@ -648,5 +652,353 @@
   <data name="FunctionItemName" xml:space="preserve">
     <value>{0}, {1}</value>
     <comment>Screen reader name of a function in the panel where the person picks what a button does. {0} is the function, for example Shift up, and {1} is the line that says what it does, for example Harder gear.</comment>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Settings</value>
+    <comment>Title of the Settings screen.</comment>
+  </data>
+  <data name="SettingsAppearanceSection" xml:space="preserve">
+    <value>Appearance</value>
+    <comment>Heading of the section on the Settings screen where the person picks Light, Dark, or Match Windows.</comment>
+  </data>
+  <data name="SettingsRidesSection" xml:space="preserve">
+    <value>Rides</value>
+    <comment>Heading of the section on the Settings screen about rides, which start and end by themselves.</comment>
+  </data>
+  <data name="SettingsRideTimeout" xml:space="preserve">
+    <value>End a ride after</value>
+    <comment>Label of the number box on the Settings screen. The number is minutes, and a ride ends after that many minutes without a button press or without a connection.</comment>
+  </data>
+  <data name="SettingsRideTimeoutDescription" xml:space="preserve">
+    <value>Minutes without a button press or a connection before a ride ends. The minimum is 5.</value>
+    <comment>Description under the ride timeout number box on the Settings screen.</comment>
+  </data>
+  <data name="SettingsRideTimeoutMinimum" xml:space="preserve">
+    <value>The ride timeout must be 5 minutes or more.</value>
+    <comment>Message on the Settings screen shown when the person types a ride timeout below 5 minutes.</comment>
+  </data>
+  <data name="SettingsMappingsSection" xml:space="preserve">
+    <value>Mappings</value>
+    <comment>Heading of the section on the Settings screen about saved mappings. A mapping is a saved set of button assignments for one controller.</comment>
+  </data>
+  <data name="SettingsOpenMappings" xml:space="preserve">
+    <value>Open the mappings folder</value>
+    <comment>Button on the Settings screen that opens the folder where saved mappings are kept, so the person can copy files to share them.</comment>
+  </data>
+  <data name="SettingsDeleteAll" xml:space="preserve">
+    <value>Delete all saved mappings</value>
+    <comment>Button on the Settings screen that deletes every saved mapping after asking.</comment>
+  </data>
+  <data name="SettingsDeleteAllConfirmOne" xml:space="preserve">
+    <value>Delete 1 saved mapping? This can't be undone. Default stays.</value>
+    <comment>Confirmation on the Settings screen when exactly one mapping is saved. Default is the built-in mapping that cannot be deleted.</comment>
+  </data>
+  <data name="SettingsDeleteAllConfirm" xml:space="preserve">
+    <value>Delete all {0} saved mappings? This can't be undone. Default stays.</value>
+    <comment>Confirmation on the Settings screen when more than one mapping is saved. {0} is how many. Default is the built-in mapping that cannot be deleted.</comment>
+  </data>
+  <data name="SettingsDeleteNone" xml:space="preserve">
+    <value>There are no saved mappings to delete.</value>
+    <comment>Description shown under the disabled Delete all saved mappings button on the Settings screen when no mapping is saved.</comment>
+  </data>
+  <data name="SettingsDeleteConfirmTitle" xml:space="preserve">
+    <value>Delete all saved mappings?</value>
+    <comment>Title of the confirmation dialog for deleting every saved mapping.</comment>
+  </data>
+  <data name="SettingsDeleteConfirmButton" xml:space="preserve">
+    <value>Delete all</value>
+    <comment>Confirm button of the dialog for deleting every saved mapping.</comment>
+  </data>
+  <data name="SettingsDeleteErrorTitle" xml:space="preserve">
+    <value>Couldn't delete saved mappings</value>
+    <comment>Title of the error dialog shown when saved mappings could not be deleted.</comment>
+  </data>
+  <data name="SettingsOpenFolderErrorTitle" xml:space="preserve">
+    <value>Couldn't open the folder</value>
+    <comment>Title of the error dialog shown when a folder from the Settings screen could not be opened.</comment>
+  </data>
+  <data name="SettingsHelpSection" xml:space="preserve">
+    <value>Help</value>
+    <comment>Heading of the section on the Settings screen with the log folder and the link to Help and feedback.</comment>
+  </data>
+  <data name="SettingsOpenLogs" xml:space="preserve">
+    <value>Open the log folder</value>
+    <comment>Button on the Settings screen that opens the folder with the app's log files.</comment>
+  </data>
+  <data name="SettingsHelpLinkText" xml:space="preserve">
+    <value>Help and feedback</value>
+    <comment>Link on the Settings screen to the Help and feedback screen.</comment>
+  </data>
+  <data name="SettingsAboutSection" xml:space="preserve">
+    <value>About</value>
+    <comment>Heading of the section on the Settings screen with the app version and the link to Credits.</comment>
+  </data>
+  <data name="SettingsVersionFormat" xml:space="preserve">
+    <value>Version {0}</value>
+    <comment>Line on the Settings screen that shows the app version. {0} is the version number, for example 0.6.0.</comment>
+  </data>
+  <data name="SettingsCreditsLinkText" xml:space="preserve">
+    <value>Credits</value>
+    <comment>Link on the Settings screen to the Credits screen.</comment>
+  </data>
+  <data name="AppName" xml:space="preserve">
+    <value>Game Controller for Zwift</value>
+    <comment>The name of the app. Keep Zwift, which is a product name.</comment>
+  </data>
+  <data name="AboutTitle" xml:space="preserve">
+    <value>About</value>
+    <comment>Accessible name of the About screen, which has no visible title. The VOLTAGE wordmark at its top is the heading.</comment>
+  </data>
+  <data name="CreditsVersionFormat" xml:space="preserve">
+    <value>Version {0}</value>
+    <comment>Line on the Credits screen that shows the app version. {0} is the version number, for example 0.6.0.</comment>
+  </data>
+  <data name="CreditsDescription" xml:space="preserve">
+    <value>Use the controller you already own to shift and steer in Zwift. Free and open source, with no ads and no account.</value>
+    <comment>Short description of the app on the Credits screen.</comment>
+  </data>
+  <data name="CreditsNotAffiliated" xml:space="preserve">
+    <value>Not made by or affiliated with Zwift. Zwift and Zwift Ride are trademarks of Zwift, Inc.</value>
+    <comment>Disclaimer on the Credits screen. Keep Zwift and Zwift Ride, which are product names.</comment>
+  </data>
+  <data name="CreditsGitHub" xml:space="preserve">
+    <value>Project on GitHub</value>
+    <comment>Link on the Credits screen that opens the project's GitHub page. Keep GitHub, which is a product name.</comment>
+  </data>
+  <data name="CreditsGitHubDescription" xml:space="preserve">
+    <value>Source code, issues and docs</value>
+    <comment>Description under the Project on GitHub link on the Credits screen.</comment>
+  </data>
+  <data name="CreditsList" xml:space="preserve">
+    <value>Credits</value>
+    <comment>Row label on the Credits screen that opens the list of projects and people the app builds on. Also the title of that list screen.</comment>
+  </data>
+  <data name="CreditsListDescription" xml:space="preserve">
+    <value>The projects and people this builds on</value>
+    <comment>Description under the Credits row on the Credits screen.</comment>
+  </data>
+  <data name="CreditsLicenseName" xml:space="preserve">
+    <value>License</value>
+    <comment>Row label on the Credits screen that opens the license text. Also the title of that screen.</comment>
+  </data>
+  <data name="CreditsLicenseValue" xml:space="preserve">
+    <value>GNU General Public License v3</value>
+    <comment>Description under the License row on the Credits screen. The name of a software license.</comment>
+  </data>
+  <data name="SupportTitle" xml:space="preserve">
+    <value>Support this project</value>
+    <comment>Title of the Support this project screen.</comment>
+  </data>
+  <data name="SupportPitch" xml:space="preserve">
+    <value>This app is free and open source, with no ads and no account. If it's earned a place in your rides, you can chip in.</value>
+    <comment>Short pitch at the top of the Support this project screen.</comment>
+  </data>
+  <data name="SupportKofi" xml:space="preserve">
+    <value>Chip in on Ko-fi</value>
+    <comment>Button on the Support this project screen that opens the project's Ko-fi page. Keep Ko-fi, which is a product name.</comment>
+  </data>
+  <data name="SupportOtherWays" xml:space="preserve">
+    <value>Other ways to help</value>
+    <comment>Heading above the quieter ways to help on the Support this project screen.</comment>
+  </data>
+  <data name="SupportStar" xml:space="preserve">
+    <value>Star it on GitHub</value>
+    <comment>Row label on the Support this project screen that opens the project's GitHub page so the person can star it. Keep GitHub.</comment>
+  </data>
+  <data name="SupportStarDescription" xml:space="preserve">
+    <value>Helps other riders find it</value>
+    <comment>Description under the Star it on GitHub row.</comment>
+  </data>
+  <data name="SupportShare" xml:space="preserve">
+    <value>Tell a friend</value>
+    <comment>Row label on the Support this project screen that copies a link to the project.</comment>
+  </data>
+  <data name="SupportShareDescription" xml:space="preserve">
+    <value>Copy a link to share</value>
+    <comment>Description under the Tell a friend row.</comment>
+  </data>
+  <data name="SupportShareCopied" xml:space="preserve">
+    <value>Link copied</value>
+    <comment>Status on the Support this project screen after the link was copied to the clipboard. Read out by screen readers.</comment>
+  </data>
+  <data name="SupportContribute" xml:space="preserve">
+    <value>Help with the code or docs</value>
+    <comment>Row label on the Support this project screen that opens the contributing guide.</comment>
+  </data>
+  <data name="SupportContributeDescription" xml:space="preserve">
+    <value>Contributing guide on GitHub</value>
+    <comment>Description under the Help with the code or docs row. Keep GitHub.</comment>
+  </data>
+  <data name="RideControllerHere" xml:space="preserve">
+    <value>Your {0} is here</value>
+    <comment>Ride screen, controller card, when a controller is connected. {0} is the controller name, for example Xbox Controller.</comment>
+  </data>
+  <data name="RideControllerName" xml:space="preserve">
+    <value>Your {0}</value>
+    <comment>Ride screen, controller panel, the line over the controller state. {0} is the controller name, for example Xbox Controller.</comment>
+  </data>
+  <data name="RideControllerAwake" xml:space="preserve">
+    <value>Awake and connected</value>
+    <comment>Ride screen, controller panel, the state of a connected controller.</comment>
+  </data>
+  <data name="RideStatRidesOne" xml:space="preserve">
+    <value>ride together</value>
+    <comment>Ride screen, label under the number 1 in the stats: one ride with this controller. Lower case, it follows the number.</comment>
+  </data>
+  <data name="RideStatRidesOther" xml:space="preserve">
+    <value>rides together</value>
+    <comment>Ride screen, label under the number of rides in the stats. Lower case, it follows the number.</comment>
+  </data>
+  <data name="RideStatShiftsOne" xml:space="preserve">
+    <value>shift</value>
+    <comment>Ride screen, label under the number 1 in the stats: one shift. Lower case, it follows the number.</comment>
+  </data>
+  <data name="RideStatShiftsOther" xml:space="preserve">
+    <value>shifts</value>
+    <comment>Ride screen, label under the number of shifts in the stats. Lower case, it follows the number.</comment>
+  </data>
+  <data name="RideStatSince" xml:space="preserve">
+    <value>riding since</value>
+    <comment>Ride screen, label under the month in the stats, for example Sep. Lower case, it follows the month.</comment>
+  </data>
+  <data name="RideChipControllerReady" xml:space="preserve">
+    <value>Controller connected</value>
+    <comment>Ride screen, riding view, chip that says the controller is connected.</comment>
+  </data>
+  <data name="RideChipControllerGone" xml:space="preserve">
+    <value>Controller disconnected</value>
+    <comment>Ride screen, riding view, chip that says the controller is not connected.</comment>
+  </data>
+  <data name="RideChipZwiftSees" xml:space="preserve">
+    <value>Zwift can see your controller</value>
+    <comment>Ride screen, riding view, chip that says Zwift can see the controller as Voltage Gamepad. Keep Zwift.</comment>
+  </data>
+  <data name="RideChipZwiftLost" xml:space="preserve">
+    <value>Zwift can't see your controller</value>
+    <comment>Ride screen, riding view, chip that says Zwift cannot see the controller. Keep Zwift.</comment>
+  </data>
+  <data name="RideRidingWith" xml:space="preserve">
+    <value>Riding with</value>
+    <comment>Ride screen, riding view, small label over the name of the mapping in use. The mapping name follows it.</comment>
+  </data>
+  <data name="RideNoControllerTitle" xml:space="preserve">
+    <value>Wake your controller</value>
+    <comment>Title of the Ride screen when no controller is connected. It asks the person to press a button on the controller to wake it.</comment>
+  </data>
+  <data name="RideNoControllerStatus" xml:space="preserve">
+    <value>Looking for your controller...</value>
+    <comment>Ride screen status while the app looks for a controller.</comment>
+  </data>
+  <data name="RidePairWithZwift" xml:space="preserve">
+    <value>Pair with Zwift</value>
+    <comment>Main button on the Ride screen when Zwift is not connected. It opens the Connections tab, which has the pairing steps. Keep Zwift.</comment>
+  </data>
+  <data name="RideMappingLabel" xml:space="preserve">
+    <value>Mapping</value>
+    <comment>Label on the Ride screen above the name of the selected mapping. A mapping is a saved set of button assignments.</comment>
+  </data>
+  <data name="RideChangeMapping" xml:space="preserve">
+    <value>Change</value>
+    <comment>Button on the Ride screen that opens the Buttons tab so the person can pick another mapping.</comment>
+  </data>
+  <data name="RideWordmarkName" xml:space="preserve">
+    <value>VOLTAGE</value>
+    <comment>Screen reader name of the VOLTAGE wordmark at the top of the Ride screen. VOLTAGE is a brand name and stays as it is.</comment>
+  </data>
+  <data name="RideStatsRidesOne" xml:space="preserve">
+    <value>1 ride together</value>
+    <comment>Ride screen stat, shown when exactly one ride has been counted.</comment>
+  </data>
+  <data name="RideStatsRidesOther" xml:space="preserve">
+    <value>{0} rides together</value>
+    <comment>Ride screen stat. {0} is how many rides have been counted, two or more.</comment>
+  </data>
+  <data name="RideStatsShiftsOne" xml:space="preserve">
+    <value>1 shift</value>
+    <comment>Ride screen stat, shown when exactly one shift has been counted.</comment>
+  </data>
+  <data name="RideStatsShiftsOther" xml:space="preserve">
+    <value>{0} shifts</value>
+    <comment>Ride screen stat. {0} is how many shifts have been counted, zero or two or more.</comment>
+  </data>
+  <data name="RideStatsSince" xml:space="preserve">
+    <value>Riding since {0}</value>
+    <comment>Ride screen stat. {0} is the month and year of the first counted ride, for example September 2026.</comment>
+  </data>
+  <data name="RideJustPressed" xml:space="preserve">
+    <value>You just pressed</value>
+    <comment>Small label above the big readout of the last button press on the Ride screen while riding.</comment>
+  </data>
+  <data name="RidePressFormat" xml:space="preserve">
+    <value>{0}, {1}</value>
+    <comment>Big readout of the last button press while riding. {0} is what the button does, for example Shift up, and {1} is the button, for example right bumper.</comment>
+  </data>
+  <data name="RideNoPress" xml:space="preserve">
+    <value>Nothing yet</value>
+    <comment>Big readout while riding before any button was pressed.</comment>
+  </data>
+  <data name="RideShiftsThisRideOne" xml:space="preserve">
+    <value>1 shift this ride</value>
+    <comment>Line while riding, for exactly one shift so far.</comment>
+  </data>
+  <data name="RideShiftsThisRideOther" xml:space="preserve">
+    <value>{0} shifts this ride</value>
+    <comment>Line while riding. {0} is the number of shifts so far. Used for any number except one.</comment>
+  </data>
+  <data name="RideQuickReference" xml:space="preserve">
+    <value>Your main buttons</value>
+    <comment>Heading above the shift buttons while riding.</comment>
+  </data>
+  <data name="RideQuickReferenceFormat" xml:space="preserve">
+    <value>{0}: {1}</value>
+    <comment>Quick reference line while riding. {0} is the button, for example Right bumper, and {1} is what it does, for example Shift up.</comment>
+  </data>
+  <data name="RideZwiftLostTitle" xml:space="preserve">
+    <value>Zwift can't see your controller</value>
+    <comment>Title on the Ride screen while riding when Zwift can no longer see the controller. Keep Zwift.</comment>
+  </data>
+  <data name="RideZwiftLostBody" xml:space="preserve">
+    <value>Your controller is still connected. In Zwift, pick Voltage Gamepad under Controls again.</value>
+    <comment>Body on the Ride screen when Zwift can no longer see the controller. Keep Voltage Gamepad, which is the device name Zwift shows, and keep Controls and Zwift.</comment>
+  </data>
+  <data name="RideControllerAsleepTitle" xml:space="preserve">
+    <value>Your controller disconnected.</value>
+    <comment>Title on the Ride screen while riding when the controller disconnected, for example because it went to sleep or was turned off.</comment>
+  </data>
+  <data name="RideControllerAsleepBody" xml:space="preserve">
+    <value>Wake it up to reconnect and continue riding.</value>
+    <comment>Instruction on the Ride screen when the controller disconnected. It asks the person to wake the controller so it reconnects.</comment>
+  </data>
+  <data name="RideControllerBack" xml:space="preserve">
+    <value>Your controller is back</value>
+    <comment>Status on the Ride screen, read out by screen readers, when the controller returned during a ride.</comment>
+  </data>
+  <data name="RideFinishedTitle" xml:space="preserve">
+    <value>Nice ride</value>
+    <comment>Title of the summary that shows when a ride ends.</comment>
+  </data>
+  <data name="RideFinishedTimeLabel" xml:space="preserve">
+    <value>ride time</value>
+    <comment>Short label under the length of the ride in the ride summary, for example under 1 h 5 min. Lowercase.</comment>
+  </data>
+  <data name="RideDurationHoursMinutes" xml:space="preserve">
+    <value>{0} h {1} min</value>
+    <comment>Length of a ride of an hour or more. {0} is hours and {1} is minutes.</comment>
+  </data>
+  <data name="RideDurationMinutes" xml:space="preserve">
+    <value>{0} min</value>
+    <comment>Length of a ride under an hour. {0} is minutes.</comment>
+  </data>
+  <data name="RideFinishedDone" xml:space="preserve">
+    <value>Done</value>
+    <comment>Button on the ride summary that returns to the Ride screen.</comment>
+  </data>
+  <data name="RideAskPitch" xml:space="preserve">
+    <value>This app is free. If it's earned a place in your rides, you can support the project.</value>
+    <comment>One-time message on the ride summary that asks for support. It does not claim any result.</comment>
+  </data>
+  <data name="RideAskLater" xml:space="preserve">
+    <value>Maybe later</value>
+    <comment>Button on the one-time support message that dismisses it. The message does not come back.</comment>
   </data>
 </root>

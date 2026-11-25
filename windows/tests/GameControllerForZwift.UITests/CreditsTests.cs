@@ -1,11 +1,11 @@
 namespace GameControllerForZwift.UITests
 {
     [Collection("Application collection")]
-    public sealed class AboutTests : IDisposable
+    public sealed class CreditsTests : IDisposable
     {
         private readonly AppFixture _fixture;
 
-        public AboutTests(AppFixture fixture)
+        public CreditsTests(AppFixture fixture)
         {
             _fixture = fixture;
             _fixture.AppSession.Reset();
@@ -16,8 +16,9 @@ namespace GameControllerForZwift.UITests
         {
             _fixture.AppSession.OpenFromMenu("MenuCreditsItem");
 
-            Assert.True(_fixture.AppSession.Exists("OpenGitHubButton"));
-            Assert.True(_fixture.AppSession.Exists("OpenkofiButton"));
+            Assert.True(_fixture.AppSession.Exists("CreditsGitHubLink"));
+            Assert.True(_fixture.AppSession.Exists("CreditsListLink"));
+            Assert.True(_fixture.AppSession.Exists("CreditsLicenseLink"));
         }
 
         public void Dispose() => _fixture.AppSession.Reset();

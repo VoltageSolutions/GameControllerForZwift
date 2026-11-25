@@ -175,12 +175,12 @@
                         </StackPanel>
                     </controls:MenuPillButton>
                     <controls:MenuPillButton x:Name="MenuCreditsItem" Style="{StaticResource MenuPill}" Command="{Binding ViewModel.OpenCreditsCommand}"
-                            AutomationProperties.AutomationId="MenuCreditsItem" AutomationProperties.Name="{loc:Loc MenuCredits}">
+                            AutomationProperties.AutomationId="MenuCreditsItem" AutomationProperties.Name="{loc:Loc MenuAbout}">
                         <StackPanel Orientation="Horizontal">
                             <Viewbox Width="20" Height="20" Margin="1,0">
                                 <Path Style="{StaticResource IconStroke}" Data="{StaticResource Icon.Credits}" />
                             </Viewbox>
-                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{loc:Loc MenuCredits}" />
+                            <TextBlock Margin="12,0,0,0" VerticalAlignment="Center" Text="{loc:Loc MenuAbout}" />
                         </StackPanel>
                     </controls:MenuPillButton>
                     <controls:MenuPillButton x:Name="MenuSupportItem" Style="{StaticResource MenuPill}" Command="{Binding ViewModel.OpenSupportCommand}"
