@@ -34,6 +34,7 @@ Audiences decide what the words say and which features exist. They never decide 
 |---|---|
 | [Principles](principles.md) | Why the app is designed the way it is. |
 | [Visual system](visual-system.md) | What it looks like. |
+| [Controller graphics style](controller-graphics-style.md) | How a controller drawing is made. |
 | [Voice and copy](voice.md) | What it says. |
 | [Localization](localization.md) | How it says it in other languages. |
 | [Navigation](navigation.md) | How you move around. |

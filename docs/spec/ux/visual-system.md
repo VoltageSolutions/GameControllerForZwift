@@ -235,6 +235,8 @@ On Windows the buttons, fields, and surfaces live in `Resources/Controls.xaml` a
 
 ## Illustration
 
+How a drawing is made, with its classes, line weights, and shoulder shapes, is in the [controller graphics style](controller-graphics-style.md).
+
 | Rule | ID |
 |---|---|
 | The controller illustration must be a wireframe outline with a ground shadow. It must use theme tokens only (`Brush.pad` and the other `pad` tokens), so it works in light and dark mode. | UX-V-034 |
@@ -249,7 +251,7 @@ On Windows the buttons, fields, and surfaces live in `Resources/Controls.xaml` a
 | Face button glyphs must follow the drawing's labels: A, B, X, and Y for the Generic drawing, and Cross, Circle, Square, and Triangle for the PlayStation drawing. Logical inputs keep their `ControllerInput` names. | UX-V-065 |
 | A drawing must show only the inputs it has. Logical inputs map to the shapes by id (UX-V-068). | UX-V-066 |
 | Vector assets must live in the repo as SVG files under `docs/assets/controllers/<kind>/`, one folder per kind that has its own drawing. | UX-V-067 |
-| Each interactive shape in an SVG must carry an `id` equal to its `ControllerInput` name, for example `A`, `LeftBumper`, `LeftTrigger`, `LeftThumbstick`, `LeftThumbstickClick`, and `DPadUp`. Each analog trigger must also carry `LeftTriggerFill` or `RightTriggerFill`. WPF, Android, and iOS must build their native components from the same files. | UX-V-068 |
+| Each interactive shape in an SVG must carry an `id` equal to its `ControllerInput` name, for example `A`, `LeftBumper`, `LeftTrigger`, `LeftThumbstick`, `LeftThumbstickClick`, and `DPadUp`. Each analog trigger must also carry `LeftTriggerFill` or `RightTriggerFill`; a digital trigger (ZL and ZR) carries only `LeftTrigger` or `RightTrigger`. WPF, Android, and iOS must build their native components from the same files. | UX-V-068 |
 | A kind without its own drawing must use the Generic drawing. | UX-V-069 |
 
 ??? note "Edge cases"
