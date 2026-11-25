@@ -50,15 +50,10 @@ namespace GameControllerForZwift.UnitTests.Controls
             ControllerInput.LeftThumbstickClick, ControllerInput.RightThumbstickClick,
         ];
 
-        /// <summary>The inputs each kind draws (SCR-BTN-048): the Switch Pro and Joy-Con pair drawings have bumpers but no triggers; every other kind draws all of them.</summary>
-        private static ControllerInput[] InputsOf(ControllerKind kind) => kind switch
-        {
-            // The Switch Pro and Joy-Con pair drawings have bumpers (their shoulder lips) and no triggers.
-            ControllerKind.SwitchPro or ControllerKind.JoyConPair => [.. CommonInputs.Where(i => i is not (ControllerInput.LeftTrigger or ControllerInput.RightTrigger))],
-            _ => CommonInputs,
-        };
+        /// <summary>The inputs each kind draws (SCR-BTN-048): every kind draws all of them; the Switch Pro and Joy-Con pair triggers (ZL, ZR) are digital.</summary>
+        private static ControllerInput[] InputsOf(ControllerKind kind) => CommonInputs;
 
-        /// <summary>Every drawing with triggers fills them in proportion to the pull; the Switch Pro and Joy-Con pair triggers are not drawn.</summary>
+        /// <summary>Every drawing except the Switch Pro and Joy-Con pair fills its triggers in proportion to the pull; theirs are digital and only light.</summary>
         private static bool IsAnalog(ControllerKind kind) => kind is not (ControllerKind.SwitchPro or ControllerKind.JoyConPair);
 
         public static TheoryData<ControllerKind> AllKinds => [.. Enum.GetValues<ControllerKind>()];
